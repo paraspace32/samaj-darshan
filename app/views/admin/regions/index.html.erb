@@ -1,0 +1,95 @@
+<% content_for(:page_title, "Regions") %>
+
+<%# Form (create or edit) %>
+<div class="bg-white rounded-2xl border border-gray-200/60 p-6 mb-6 shadow-sm">
+  <h2 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <%= @region.persisted? ? "Edit Region" : "Add New Region" %>
+  </h2>
+
+  <%= form_with model: [:admin, @region], class: "space-y-4" do |f| %>
+    <% if @region.errors.any? %>
+      <div class="rounded-xl bg-red-50 border border-red-200/60 p-4">
+        <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+          <% @region.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Name (English)</label>
+        <%= f.text_field :name_en, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "e.g. Damoh" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Name (हिंदी)</label>
+        <%= f.text_field :name_hi, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "e.g. दमोह", dir: "auto" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Position</label>
+        <%= f.number_field :position, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", min: 0 %>
+      </div>
+      <div class="flex items-end gap-3">
+        <%= f.submit @region.persisted? ? "Update" : "Add Region", class: "rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md transition-all cursor-pointer" %>
+        <% if @region.persisted? %>
+          <%= link_to "Cancel", admin_regions_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# Table %>
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+  <% if @regions.any? %>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
+          <th class="px-6 py-3.5 font-semibold w-16">Pos</th>
+          <th class="px-6 py-3.5 font-semibold">Name (EN)</th>
+          <th class="px-6 py-3.5 font-semibold">Name (HI)</th>
+          <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">Slug</th>
+          <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Articles</th>
+          <th class="px-6 py-3.5 font-semibold">Status</th>
+          <th class="px-6 py-3.5 font-semibold w-40"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <% @regions.each do |region| %>
+          <tr class="hover:bg-orange-50/30 transition-colors">
+            <td class="px-6 py-4 text-gray-400 font-medium"><%= region.position %></td>
+            <td class="px-6 py-4 font-semibold text-gray-900"><%= region.name_en %></td>
+            <td class="px-6 py-4 text-gray-600"><%= region.name_hi %></td>
+            <td class="px-6 py-4 text-gray-400 text-xs font-mono hidden sm:table-cell"><%= region.slug %></td>
+            <td class="px-6 py-4 text-gray-500 hidden md:table-cell"><%= region.articles.count %></td>
+            <td class="px-6 py-4">
+              <% if region.active? %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Active
+                </span>
+              <% else %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-500 border border-gray-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Inactive
+                </span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <%= link_to "Edit", edit_admin_region_path(region), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold" %>
+              <%= button_to region.active? ? "Deactivate" : "Activate", toggle_active_admin_region_path(region), method: :patch, class: "text-xs text-gray-500 hover:text-gray-700 font-medium cursor-pointer", form: { class: "inline" } %>
+              <%= button_to "Delete", admin_region_path(region), method: :delete, data: { turbo_confirm: "Delete '#{region.name_en}'?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="px-6 py-16 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+      </div>
+      <p class="text-gray-400 text-sm">No regions yet. Add one above.</p>
+    </div>
+  <% end %>
+</div>

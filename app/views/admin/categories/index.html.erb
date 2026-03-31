@@ -1,0 +1,107 @@
+<% content_for(:page_title, "Categories") %>
+
+<%# Form (create or edit) %>
+<div class="bg-white rounded-2xl border border-gray-200/60 p-6 mb-6 shadow-sm">
+  <h2 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+    <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+    <%= @category.persisted? ? "Edit Category" : "Add New Category" %>
+  </h2>
+
+  <%= form_with model: [:admin, @category], class: "space-y-4" do |f| %>
+    <% if @category.errors.any? %>
+      <div class="rounded-xl bg-red-50 border border-red-200/60 p-4">
+        <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+          <% @category.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Name (English)</label>
+        <%= f.text_field :name_en, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "e.g. General News" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Name (हिंदी)</label>
+        <%= f.text_field :name_hi, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "e.g. सामान्य समाचार", dir: "auto" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Color</label>
+        <div class="flex items-center gap-2">
+          <%= f.color_field :color, class: "w-10 h-10 rounded-xl border border-gray-200 cursor-pointer p-0.5" %>
+          <%= f.text_field :color, id: nil, class: "flex-1 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-mono focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", maxlength: 7 %>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Position</label>
+        <%= f.number_field :position, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", min: 0 %>
+      </div>
+      <div class="flex items-end gap-3">
+        <%= f.submit @category.persisted? ? "Update" : "Add Category", class: "rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md transition-all cursor-pointer" %>
+        <% if @category.persisted? %>
+          <%= link_to "Cancel", admin_categories_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# Table %>
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+  <% if @categories.any? %>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
+          <th class="px-6 py-3.5 font-semibold w-16">Pos</th>
+          <th class="px-6 py-3.5 font-semibold">Name (EN)</th>
+          <th class="px-6 py-3.5 font-semibold">Name (HI)</th>
+          <th class="px-6 py-3.5 font-semibold w-20">Color</th>
+          <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Articles</th>
+          <th class="px-6 py-3.5 font-semibold">Status</th>
+          <th class="px-6 py-3.5 font-semibold w-40"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <% @categories.each do |cat| %>
+          <tr class="hover:bg-orange-50/30 transition-colors">
+            <td class="px-6 py-4 text-gray-400 font-medium"><%= cat.position %></td>
+            <td class="px-6 py-4 font-semibold text-gray-900">
+              <span class="inline-flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full shrink-0 ring-2 ring-white shadow-sm" style="background-color: <%= cat.color %>"></span>
+                <%= cat.name_en %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-600"><%= cat.name_hi %></td>
+            <td class="px-6 py-4 text-gray-400 text-xs font-mono"><%= cat.color %></td>
+            <td class="px-6 py-4 text-gray-500 hidden md:table-cell"><%= cat.articles.count %></td>
+            <td class="px-6 py-4">
+              <% if cat.active? %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Active
+                </span>
+              <% else %>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-500 border border-gray-200">
+                  <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>Inactive
+                </span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <%= link_to "Edit", edit_admin_category_path(cat), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold" %>
+              <%= button_to cat.active? ? "Deactivate" : "Activate", toggle_active_admin_category_path(cat), method: :patch, class: "text-xs text-gray-500 hover:text-gray-700 font-medium cursor-pointer", form: { class: "inline" } %>
+              <%= button_to "Delete", admin_category_path(cat), method: :delete, data: { turbo_confirm: "Delete '#{cat.name_en}'?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="px-6 py-16 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+      </div>
+      <p class="text-gray-400 text-sm">No categories yet. Add one above.</p>
+    </div>
+  <% end %>
+</div>

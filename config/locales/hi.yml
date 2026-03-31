@@ -1,0 +1,96 @@
+hi:
+  brand:
+    name: "समाज दर्शन"
+    tagline: "समाज की आवाज़"
+    logo_letter: "असाटी"
+
+  nav:
+    home: "होम"
+    admin: "एडमिन पैनल"
+    new_article: "नया लेख"
+    articles: "लेख"
+    regions: "क्षेत्र"
+    categories: "श्रेणियाँ"
+    users: "उपयोगकर्ता"
+    sign_in: "लॉगिन"
+    logout: "लॉगआउट"
+    language_switch: "English"
+
+  feed:
+    title: "समाज दर्शन"
+    subtitle: "समाज की आवाज़ · Voice of the Community"
+    no_articles: "अभी तक कोई समाचार प्रकाशित नहीं हुआ।"
+    news_from: "%{name} से समाचार"
+    articles_in: "%{name} लेख"
+    all_regions: "सभी क्षेत्र"
+    regions: "क्षेत्र"
+    categories: "श्रेणियाँ"
+    previous: "← पिछला"
+    next: "अगला →"
+    page_info: "पृष्ठ %{current} / %{total}"
+    ago: "%{time} पहले"
+
+  article:
+    read_other_lang: "Read in English"
+    back_to_news: "← समाचार पर वापस"
+    more_from: "%{name} से और"
+    no_related: "कोई संबंधित लेख नहीं।"
+    share_whatsapp: "WhatsApp पर शेयर करें"
+
+  login:
+    title: "अपने खाते में लॉगिन करें"
+    phone_label: "फ़ोन नंबर"
+    phone_placeholder: "9876543210"
+    password_label: "पासवर्ड"
+    password_placeholder: "पासवर्ड दर्ज करें"
+    submit: "लॉगिन"
+    footer: "समाज दर्शन — समाज की आवाज़"
+
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "लगभग 1 घंटा"
+        other: "लगभग %{count} घंटे"
+      about_x_months:
+        one: "लगभग 1 महीना"
+        other: "लगभग %{count} महीने"
+      about_x_years:
+        one: "लगभग 1 साल"
+        other: "लगभग %{count} साल"
+      almost_x_years:
+        one: "लगभग 1 साल"
+        other: "लगभग %{count} साल"
+      half_a_minute: "आधा मिनट"
+      less_than_x_seconds:
+        one: "1 सेकंड से कम"
+        other: "%{count} सेकंड से कम"
+      less_than_x_minutes:
+        one: "1 मिनट से कम"
+        other: "%{count} मिनट से कम"
+      over_x_years:
+        one: "1 साल से अधिक"
+        other: "%{count} साल से अधिक"
+      x_days:
+        one: "1 दिन"
+        other: "%{count} दिन"
+      x_minutes:
+        one: "1 मिनट"
+        other: "%{count} मिनट"
+      x_months:
+        one: "1 महीना"
+        other: "%{count} महीने"
+      x_seconds:
+        one: "1 सेकंड"
+        other: "%{count} सेकंड"
+      x_years:
+        one: "1 साल"
+        other: "%{count} साल"
+
+  flash:
+    login_required: "कृपया जारी रखने के लिए लॉगिन करें।"
+    account_blocked: "आपका खाता अवरुद्ध कर दिया गया है। एडमिन से संपर्क करें।"
+    invalid_credentials: "फ़ोन नंबर या पासवर्ड गलत है।"
+    blocked_login: "आपका खाता अवरुद्ध कर दिया गया है। एडमिन से संपर्क करें।"
+    welcome_back: "वापस स्वागत है, %{name}!"
+    logged_out: "सफलतापूर्वक लॉगआउट हो गए।"
+    not_authorized: "आप यह कार्य करने के लिए अधिकृत नहीं हैं।"

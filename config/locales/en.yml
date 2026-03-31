@@ -1,0 +1,56 @@
+en:
+  brand:
+    name: "Samaj Darshan"
+    tagline: "Voice of the Community"
+    logo_letter: "Asati"
+
+  nav:
+    home: "Home"
+    admin: "Admin Panel"
+    new_article: "New Article"
+    articles: "Articles"
+    regions: "Regions"
+    categories: "Categories"
+    users: "Users"
+    sign_in: "Sign In"
+    logout: "Logout"
+    language_switch: "हिंदी"
+
+  feed:
+    title: "Samaj Darshan"
+    subtitle: "Voice of the Community · समाज की आवाज़"
+    no_articles: "No articles published yet."
+    news_from: "News from %{name}"
+    articles_in: "%{name} articles"
+    all_regions: "All Regions"
+    regions: "Regions"
+    categories: "Categories"
+    previous: "← Previous"
+    next: "Next →"
+    page_info: "Page %{current} of %{total}"
+    ago: "%{time} ago"
+
+  article:
+    read_other_lang: "हिंदी में पढ़ें"
+    back_to_news: "← Back to News"
+    more_from: "More from %{name}"
+    no_related: "No related articles."
+    share_whatsapp: "Share on WhatsApp"
+
+  login:
+    title: "Sign in to your account"
+    phone_label: "Phone Number"
+    phone_placeholder: "9876543210"
+    password_label: "Password"
+    password_placeholder: "Enter password"
+    submit: "Sign In"
+    footer: "Samaj Darshan — Voice of the Community"
+
+  flash:
+    login_required: "Please login to continue."
+    account_blocked: "Your account has been blocked. Contact admin."
+    invalid_credentials: "Invalid phone number or password."
+    blocked_login: "Your account has been blocked. Contact admin."
+    welcome_back: "Welcome back, %{name}!"
+    logged_out: "Logged out successfully."
+    not_authorized: "You are not authorized to perform this action."

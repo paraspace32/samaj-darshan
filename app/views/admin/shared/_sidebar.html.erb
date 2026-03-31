@@ -1,0 +1,39 @@
+<aside class="w-64 bg-gray-900 text-gray-300 flex flex-col min-h-screen shrink-0">
+  <%# Brand %>
+  <div class="px-5 h-16 flex items-center border-b border-gray-800/50">
+    <%= link_to admin_root_path, class: "flex items-center gap-2.5 group" do %>
+      <div class="w-8 h-8 gradient-brand rounded-xl flex items-center justify-center shadow-sm shadow-orange-600/30 group-hover:shadow-md group-hover:shadow-orange-600/40 transition-shadow">
+        <span class="text-white font-extrabold text-sm">स</span>
+      </div>
+      <div>
+        <span class="font-bold text-white text-sm">Samaj Darshan</span>
+      </div>
+    <% end %>
+    <span class="ml-auto text-[10px] bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded-full font-semibold">Admin</span>
+  </div>
+
+  <%# Nav links %>
+  <nav class="flex-1 px-3 py-5 space-y-1">
+    <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Main</p>
+    <%= admin_nav_link "Dashboard", admin_root_path, "home" %>
+    <%= admin_nav_link "Articles", admin_articles_path, "newspaper" %>
+
+    <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>
+    <%= admin_nav_link "Regions", admin_regions_path, "map-pin" %>
+    <%= admin_nav_link "Categories", admin_categories_path, "tag" %>
+    <%= admin_nav_link "Users", admin_users_path, "users" %>
+  </nav>
+
+  <%# User info %>
+  <div class="px-4 py-4 border-t border-gray-800/50">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center">
+        <span class="text-white font-bold text-xs"><%= current_user.name[0] %></span>
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-white truncate"><%= current_user.name %></p>
+        <p class="text-xs text-gray-500"><%= current_user.role.humanize %></p>
+      </div>
+    </div>
+  </div>
+</aside>

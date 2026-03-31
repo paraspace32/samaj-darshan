@@ -1,0 +1,77 @@
+<%= form_with model: [:admin, user], class: "max-w-2xl space-y-6" do |f| %>
+  <% if user.errors.any? %>
+    <div class="rounded-2xl bg-red-50 border border-red-200/60 p-5 animate-fade-in">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <h3 class="text-sm font-bold text-red-800"><%= pluralize(user.errors.count, "error") %> found:</h3>
+      </div>
+      <ul class="list-disc list-inside text-sm text-red-700 space-y-1 ml-7">
+        <% user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm space-y-5">
+    <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      Account Information
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Full Name</label>
+        <%= f.text_field :name, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "Full name" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Phone Number</label>
+        <%= f.telephone_field :phone, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "9876543210", maxlength: 10 %>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-600 mb-1.5">Email (optional)</label>
+      <%= f.email_field :email, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "user@example.com" %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Role</label>
+        <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, { class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50" } %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Status</label>
+        <%= f.select :status, User.statuses.keys.map { |s| [s.humanize, s] }, {}, { class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50" } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm space-y-5">
+    <div>
+      <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+        <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        Password
+      </h2>
+      <% if user.persisted? %>
+        <p class="text-xs text-gray-400 mt-1">Leave blank to keep the current password.</p>
+      <% end %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Password</label>
+        <%= f.password_field :password, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "Enter password", autocomplete: "new-password" %>
+      </div>
+      <div>
+        <label class="block text-sm font-semibold text-gray-600 mb-1.5">Confirm Password</label>
+        <%= f.password_field :password_confirmation, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "Confirm password", autocomplete: "new-password" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit user.persisted? ? "Update User" : "Create User", class: "rounded-xl gradient-brand px-6 py-3 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all cursor-pointer" %>
+    <%= link_to "Cancel", admin_users_path, class: "rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+  </div>
+<% end %>

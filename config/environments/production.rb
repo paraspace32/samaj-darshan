@@ -84,6 +84,10 @@ Rails.application.configure do
   # For stricter security, replace with a list of allowed hostnames.
   config.hosts.clear
 
+  # If needed, remove the Host Authorization middleware (useful for tunnels and temporary hostnames).
+  # Be cautious: removing this disables one protection against Host header attacks.
+  config.middleware.delete ActionDispatch::HostAuthorization
+
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

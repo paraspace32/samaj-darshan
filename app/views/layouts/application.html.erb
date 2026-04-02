@@ -171,5 +171,16 @@
     <% if controller_name == "articles" && action_name == "index" && params[:page].blank? && params[:slug].blank? %>
       <%= render "shared/billboard_splash" %>
     <% end %>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('<%= pwa_service_worker_path(format: :js) %>').then(function(reg) {
+            console.log('Service worker registered with scope:', reg.scope);
+          }).catch(function(err) {
+            console.warn('Service worker registration failed:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

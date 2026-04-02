@@ -12,8 +12,8 @@ module Rails
         theme_color: "#ea580c",
         description: I18n.t("brand.tagline"),
         icons: [
-          { src: view_context.image_path("icon-192.png"), sizes: "192x192", type: "image/png" },
-          { src: view_context.image_path("icon-512.png"), sizes: "512x512", type: "image/png" }
+          { src: "#{request.base_url}/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "#{request.base_url}/icon-512.png", sizes: "512x512", type: "image/png" }
         ],
         prefer_related_applications: false
       }

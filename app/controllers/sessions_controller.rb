@@ -32,7 +32,7 @@ class SessionsController < ApplicationController
 
   def redirect_if_logged_in
     if logged_in?
-      redirect_to current_user.admin_or_above? ? admin_root_path : root_path
+      redirect_to current_user.admin_panel_access? ? admin_root_path : root_path
     end
   end
 end

@@ -18,7 +18,7 @@
       </div>
     <% end %>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div>
         <label class="block text-sm font-semibold text-gray-600 mb-1.5">Name (English)</label>
         <%= f.text_field :name_en, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "e.g. Damoh" %>
@@ -31,12 +31,12 @@
         <label class="block text-sm font-semibold text-gray-600 mb-1.5">Position</label>
         <%= f.number_field :position, class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", min: 0 %>
       </div>
-      <div class="flex items-end gap-3">
-        <%= f.submit @region.persisted? ? "Update" : "Add Region", class: "rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md transition-all cursor-pointer" %>
-        <% if @region.persisted? %>
-          <%= link_to "Cancel", admin_regions_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
-        <% end %>
-      </div>
+    </div>
+    <div class="flex items-center gap-3 mt-4">
+      <%= f.submit @region.persisted? ? "Update" : "Add Region", class: "rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md transition-all cursor-pointer" %>
+      <% if @region.persisted? %>
+        <%= link_to "Cancel", admin_regions_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+      <% end %>
     </div>
   <% end %>
 </div>
@@ -44,7 +44,8 @@
 <%# Table %>
 <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
   <% if @regions.any? %>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[640px]">
       <thead>
         <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
           <th class="px-6 py-3.5 font-semibold w-16">Pos</th>
@@ -84,6 +85,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <div class="px-6 py-16 text-center">
       <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">

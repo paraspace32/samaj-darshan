@@ -1,4 +1,10 @@
 <% content_for(:title, "#{@article.display_title} — #{t('brand.name')}") %>
+<% content_for(:og_title, @article.display_title) %>
+<% content_for(:og_type, "article") %>
+<% content_for(:description, truncate(strip_tags(@article.display_content), length: 200)) %>
+<% if @article.cover_image.attached? %>
+  <% content_for(:og_image, rails_storage_proxy_url(@article.cover_image)) %>
+<% end %>
 
 <div class="flex flex-col lg:flex-row gap-10">
   <%# Main content %>
@@ -24,10 +30,7 @@
     <%# Title %>
     <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3"><%= @article.display_title %></h1>
 
-    <%# Secondary title in other language %>
-    <p class="text-base sm:text-lg text-gray-400 mb-6 leading-relaxed" dir="auto">
-      <%= I18n.locale == :hi ? @article.title_en : @article.title_hi %>
-    </p>
+    <% other_title = I18n.locale == :hi ? @article.title_en : @article.title_hi %>
 
     <%# Author card %>
     <div class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200/60">
@@ -41,6 +44,8 @@
         </p>
       </div>
     </div>
+
+    <%= render "shared/billboard_article_top" %>
 
     <%# Image carousel (cover + additional images) %>
     <% gallery_images = [@article.cover_image.attached? ? @article.cover_image : nil, *(@article.images.attached? ? @article.images : [])].compact %>
@@ -98,6 +103,8 @@
       <%= simple_format(@article.display_content) %>
     </div>
 
+    <%= render "shared/billboard_article_mid" %>
+
     <%# Share & actions %>
     <div class="bg-gray-50 rounded-2xl border border-gray-200/60 p-5 sm:p-6 mb-8">
       <p class="text-sm font-semibold text-gray-900 mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
@@ -117,17 +124,20 @@
       </div>
     </div>
 
-    <%# Bilingual toggle %>
-    <details class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden mb-8 shadow-sm">
-      <summary class="px-5 sm:px-6 py-4 text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors flex items-center gap-2">
-        <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
-        <%= t("article.read_other_lang") %>
-      </summary>
-      <div class="px-5 sm:px-6 pb-6 pt-2 prose prose-sm prose-gray max-w-none border-t border-gray-100" dir="auto">
-        <h3 class="text-lg font-bold"><%= I18n.locale == :hi ? @article.title_en : @article.title_hi %></h3>
-        <%= simple_format(I18n.locale == :hi ? @article.content_en : @article.content_hi) %>
-      </div>
-    </details>
+    <%# Bilingual toggle (only if other language has content) %>
+    <% other_content = I18n.locale == :hi ? @article.content_en : @article.content_hi %>
+    <% if other_title.present? || other_content.present? %>
+      <details class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden mb-8 shadow-sm">
+        <summary class="px-5 sm:px-6 py-4 text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          <%= t("article.read_other_lang") %>
+        </summary>
+        <div class="px-5 sm:px-6 pb-6 pt-2 prose prose-sm prose-gray max-w-none border-t border-gray-100" dir="auto">
+          <% if other_title.present? %><h3 class="text-lg font-bold"><%= other_title %></h3><% end %>
+          <% if other_content.present? %><%= simple_format(other_content) %><% end %>
+        </div>
+      </details>
+    <% end %>
 
     <%# Back link %>
     <div class="mt-8">

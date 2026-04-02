@@ -2,7 +2,10 @@ module Admin
   class ArticlesController < BaseController
     before_action :set_article, only: [ :show, :edit, :update, :destroy, :publish, :approve, :reject, :submit_for_review ]
     before_action :set_form_collections, only: [ :new, :create, :edit, :update ]
+    before_action :require_content_creator, only: [ :new, :create ]
     before_action :require_editor_access, only: [ :publish, :approve, :reject ]
+    before_action :authorize_edit, only: [ :edit, :update ]
+    before_action :authorize_delete, only: [ :destroy ]
 
     def index
       @articles = Article.includes(:region, :category, :author).order(created_at: :desc)
@@ -89,6 +92,14 @@ module Admin
     def set_form_collections
       @regions = Region.active.ordered
       @categories = Category.active.ordered
+    end
+
+    def authorize_edit
+      raise Authorization::NotAuthorizedError unless current_user.can_edit_article?(@article)
+    end
+
+    def authorize_delete
+      raise Authorization::NotAuthorizedError unless current_user.can_delete_articles?
     end
 
     def article_params

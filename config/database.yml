@@ -90,6 +90,7 @@ production:
     database: samaj_darshan_production
     username: samaj_darshan
     password: <%= ENV["SAMAJ_DARSHAN_DATABASE_PASSWORD"] %>
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
   cache:
     <<: *primary_production
     database: samaj_darshan_production_cache

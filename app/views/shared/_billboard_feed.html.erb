@@ -1,0 +1,21 @@
+<% feed_bbs = billboards_for(:feed_inline) %>
+<% if feed_bbs.any? %>
+  <% bb = feed_bbs.sample %>
+  <% bb.track_impression! %>
+  <div class="col-span-1 sm:col-span-2 animate-fade-in">
+    <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm relative">
+      <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
+      <% if bb.link_url.present? %>
+        <%= link_to billboard_click_path(bb), class: "block" do %>
+          <% if bb.image.attached? %>
+            <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-48 sm:h-56 object-cover", loading: "lazy" %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% if bb.image.attached? %>
+          <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-48 sm:h-56 object-cover", loading: "lazy" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
 
-  allow_browser versions: :modern
+  allow_browser versions: { safari: 14, chrome: 80, firefox: 80, opera: 70, ie: false }
   stale_when_importmap_changes
 
   before_action :set_locale

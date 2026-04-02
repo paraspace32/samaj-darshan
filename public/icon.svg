@@ -1,4 +1,17 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="96" fill="#ea580c"/>
-  <text x="256" y="320" font-family="serif" font-size="280" font-weight="bold" fill="white" text-anchor="middle">स</text>
+<svg width="512" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c81010"/>
+      <stop offset="100%" stop-color="#8b0a2a"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="512" height="200" rx="30" ry="30" fill="url(#bg)"/>
+  <rect x="2" y="2" width="508" height="196" rx="28" ry="28" fill="none" stroke="#ffd750" stroke-width="2" opacity="0.7"/>
+  <rect x="8" y="8" width="496" height="184" rx="24" ry="24" fill="none" stroke="white" stroke-width="0.5" opacity="0.15"/>
+  <line x1="30" y1="60" x2="482" y2="60" stroke="#ffd750" stroke-width="1" opacity="0.4"/>
+  <line x1="30" y1="145" x2="482" y2="145" stroke="#ffd750" stroke-width="1" opacity="0.4"/>
+  <text x="256" y="46" font-family="sans-serif" font-size="28" font-weight="bold" fill="#ffebc0" text-anchor="middle" dominant-baseline="middle">अंतर्राष्ट्रीय</text>
+  <text x="258" y="104" font-family="sans-serif" font-size="58" font-weight="bold" fill="rgba(80,0,0,0.4)" text-anchor="middle" dominant-baseline="middle">असाटी समाज</text>
+  <text x="256" y="102" font-family="sans-serif" font-size="58" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">असाटी समाज</text>
+  <text x="256" y="170" font-family="sans-serif" font-size="28" font-weight="bold" fill="#ffebc0" text-anchor="middle" dominant-baseline="middle">दर्शन</text>
 </svg>

@@ -88,6 +88,9 @@
     <% if @articles.any? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <% @articles.each_with_index do |article, idx| %>
+          <% if idx == 4 %>
+            <%= render "shared/billboard_feed" %>
+          <% end %>
           <div class="animate-fade-in" style="animation-delay: <%= idx * 50 %>ms">
             <%= link_to article_path(article), class: "group block bg-white rounded-2xl border border-gray-200/60 overflow-hidden card-hover" do %>
               <div class="relative">

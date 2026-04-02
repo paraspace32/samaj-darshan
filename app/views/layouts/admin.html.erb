@@ -13,36 +13,45 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-gray-50/80">
+  <body class="min-h-screen bg-gray-50/80" data-controller="admin-sidebar">
     <div class="flex min-h-screen">
-      <%= render "admin/shared/sidebar" %>
+      <%# Mobile overlay %>
+      <div data-admin-sidebar-target="overlay" data-action="click->admin-sidebar#close" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
+
+      <%# Sidebar — off-canvas on mobile, fixed on desktop %>
+      <div data-admin-sidebar-target="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 -translate-x-full transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 lg:z-auto">
+        <%= render "admin/shared/sidebar" %>
+      </div>
 
       <div class="flex-1 flex flex-col min-w-0">
         <%# Top bar %>
-        <header class="h-16 bg-white/90 glass border-b border-gray-200/60 flex items-center justify-between px-6 shrink-0 sticky top-0 z-40">
+        <header class="h-14 sm:h-16 bg-white/90 glass border-b border-gray-200/60 flex items-center justify-between px-4 sm:px-6 shrink-0 sticky top-0 z-30">
           <div class="flex items-center gap-3">
-            <h1 class="text-lg font-bold text-gray-900"><%= yield :page_title %></h1>
+            <button data-action="admin-sidebar#toggle" class="lg:hidden p-1.5 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <h1 class="text-base sm:text-lg font-bold text-gray-900 truncate"><%= yield :page_title %></h1>
           </div>
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 sm:gap-4">
             <%= link_to root_path, target: "_blank", class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-600 transition-colors" do %>
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              View Site
+              <span class="hidden sm:inline">View Site</span>
             <% end %>
-            <div class="w-px h-5 bg-gray-200"></div>
+            <div class="w-px h-5 bg-gray-200 hidden sm:block"></div>
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-full gradient-brand flex items-center justify-center">
                 <span class="text-white font-semibold text-xs"><%= current_user.name[0] %></span>
               </div>
-              <span class="text-sm font-medium text-gray-700 hidden sm:inline"><%= current_user.name %></span>
+              <span class="text-sm font-medium text-gray-700 hidden md:inline"><%= current_user.name %></span>
             </div>
-            <%= link_to "Logout", logout_path, class: "text-sm text-gray-400 hover:text-red-600 transition-colors" %>
+            <%= link_to "Logout", logout_path, class: "text-xs sm:text-sm text-gray-400 hover:text-red-600 transition-colors" %>
           </div>
         </header>
 
         <%# Flash %>
         <% if flash[:notice] %>
-          <div class="mx-6 mt-4 animate-fade-in" data-controller="flash">
-            <div class="rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 px-5 py-3.5 text-sm flex items-center justify-between shadow-sm">
+          <div class="mx-4 sm:mx-6 mt-4 animate-fade-in" data-controller="flash">
+            <div class="rounded-xl bg-emerald-50 border border-emerald-200/60 text-emerald-800 px-4 sm:px-5 py-3 text-sm flex items-center justify-between shadow-sm">
               <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span><%= flash[:notice] %></span>
@@ -52,8 +61,8 @@
           </div>
         <% end %>
         <% if flash[:alert] %>
-          <div class="mx-6 mt-4 animate-fade-in" data-controller="flash">
-            <div class="rounded-xl bg-red-50 border border-red-200/60 text-red-800 px-5 py-3.5 text-sm flex items-center justify-between shadow-sm">
+          <div class="mx-4 sm:mx-6 mt-4 animate-fade-in" data-controller="flash">
+            <div class="rounded-xl bg-red-50 border border-red-200/60 text-red-800 px-4 sm:px-5 py-3 text-sm flex items-center justify-between shadow-sm">
               <div class="flex items-center gap-3">
                 <svg class="w-5 h-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                 <span><%= flash[:alert] %></span>
@@ -64,7 +73,7 @@
         <% end %>
 
         <%# Main content %>
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-4 sm:p-6">
           <%= yield %>
         </main>
       </div>

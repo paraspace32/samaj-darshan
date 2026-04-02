@@ -1,9 +1,9 @@
 <% content_for(:page_title, "Users") %>
 
 <%# Header %>
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
   <p class="text-sm text-gray-500"><%= @users.count %> user<%= @users.count == 1 ? "" : "s" %></p>
-  <%= link_to new_admin_user_path, class: "inline-flex items-center gap-2 rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all" do %>
+  <%= link_to new_admin_user_path, class: "inline-flex items-center gap-2 rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all self-start" do %>
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
     New User
   <% end %>
@@ -42,7 +42,8 @@
 <%# Table %>
 <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
   <% if @users.any? %>
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[700px]">
       <thead>
         <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
           <th class="px-6 py-3.5 font-semibold">Name</th>
@@ -90,6 +91,7 @@
         <% end %>
       </tbody>
     </table>
+    </div>
   <% else %>
     <div class="px-6 py-16 text-center">
       <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">

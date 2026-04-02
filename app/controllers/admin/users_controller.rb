@@ -1,6 +1,6 @@
 module Admin
   class UsersController < BaseController
-    before_action :require_super_admin, only: [ :create, :destroy, :toggle_status ]
+    before_action :require_super_admin
     before_action :set_user, only: [ :edit, :update, :destroy, :toggle_status ]
 
     def index
@@ -14,7 +14,7 @@ module Admin
     end
 
     def new
-      @user = User.new(role: :contributor, status: :active)
+      @user = User.new(role: :user, status: :active)
     end
 
     def create

@@ -1,0 +1,15 @@
+<% bb = billboard_for(:top_banner) %>
+<% if bb&.image&.attached? %>
+  <% bb.track_impression! %>
+  <div class="bg-gray-100 border-b border-gray-200/60">
+    <div class="max-w-6xl mx-auto">
+      <% if bb.link_url.present? %>
+        <%= link_to billboard_click_path(bb), class: "block" do %>
+          <%= optimized_image_tag bb.image, variant: :banner, class: "w-full h-auto object-cover max-h-24 sm:max-h-32", loading: "eager" %>
+        <% end %>
+      <% else %>
+        <%= optimized_image_tag bb.image, variant: :banner, class: "w-full h-auto object-cover max-h-24 sm:max-h-32", loading: "eager" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   has_many :articles, foreign_key: :author_id, dependent: :restrict_with_error
 
-  enum :role, { super_admin: 0, admin: 1, editor: 2, contributor: 3 }
+  enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account
 
   validates :name, presence: true
@@ -17,15 +17,55 @@ class User < ApplicationRecord
   scope :by_role, ->(role) { where(role: role) }
   scope :active_users, -> { where(status: :active) }
 
-  def admin_or_above?
-    super_admin? || admin?
+  def admin_panel_access?
+    super_admin? || editor? || co_editor? || moderator?
+  end
+
+  def can_manage_users?
+    super_admin?
+  end
+
+  def can_manage_regions?
+    super_admin?
+  end
+
+  def can_manage_categories?
+    super_admin?
+  end
+
+  def can_manage_billboards?
+    super_admin? || editor?
+  end
+
+  def can_manage_live_streams?
+    super_admin? || editor?
+  end
+
+  def can_create_articles?
+    super_admin? || editor? || co_editor?
+  end
+
+  def can_edit_any_article?
+    super_admin? || editor?
+  end
+
+  def can_edit_article?(article)
+    can_edit_any_article? || (co_editor? && article.author_id == id)
   end
 
   def can_publish?
-    super_admin? || admin? || editor?
+    super_admin? || editor?
   end
 
   def can_review?
-    super_admin? || admin? || editor?
+    super_admin? || editor?
+  end
+
+  def can_delete_articles?
+    super_admin?
+  end
+
+  def can_flag_articles?
+    super_admin? || editor? || moderator?
   end
 end

@@ -88,7 +88,7 @@
           <% article.images.each do |img| %>
             <div class="relative group">
               <%= optimized_image_tag img, variant: :thumb, class: "h-24 w-auto rounded-xl object-cover border border-gray-200/60 shadow-sm" %>
-              <%= button_to admin_article_path(article, remove_image_id: img.id), method: :patch, class: "absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow", data: { turbo_confirm: "Remove this image?" } do %>
+              <%= link_to admin_article_path(article, remove_image_id: img.id), data: { turbo_method: :patch, turbo_confirm: "Remove this image?" }, class: "absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow" do %>
                 &times;
               <% end %>
             </div>

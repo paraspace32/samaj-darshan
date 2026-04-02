@@ -1,5 +1,6 @@
 module Admin
   class RegionsController < BaseController
+    before_action :require_super_admin
     before_action :set_region, only: [ :edit, :update, :destroy, :toggle_active ]
 
     def index

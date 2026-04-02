@@ -9,33 +9,34 @@ module Authorization
 
   private
 
-  # Require the user to have one of the given roles
-  #   require_role :super_admin, :admin
   def require_role(*roles)
     unless current_user && roles.any? { |r| current_user.public_send(:"#{r}?") }
       raise NotAuthorizedError
     end
   end
 
-  # Require the user to pass a named ability check on User model
-  #   authorize :can_publish?
   def authorize(ability)
     raise NotAuthorizedError unless current_user&.public_send(ability)
   end
 
-  # Require super_admin for dangerous operations (user management, etc.)
   def require_super_admin
     require_role :super_admin
   end
 
-  # Require admin or above (admin panel access)
-  def require_admin_access
-    require_role :super_admin, :admin
+  def require_admin_panel_access
+    raise NotAuthorizedError unless current_user&.admin_panel_access?
   end
 
-  # Require editor or above (content moderation)
+  def require_content_creator
+    raise NotAuthorizedError unless current_user&.can_create_articles?
+  end
+
   def require_editor_access
-    require_role :super_admin, :admin, :editor
+    raise NotAuthorizedError unless current_user&.can_review?
+  end
+
+  def require_billboard_access
+    raise NotAuthorizedError unless current_user&.can_manage_billboards?
   end
 
   def handle_not_authorized

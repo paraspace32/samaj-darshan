@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_31_032025) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_02_200002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,6 +63,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_31_032025) do
     t.index ["region_id"], name: "index_articles_on_region_id"
     t.index ["status", "published_at"], name: "index_articles_on_status_and_published_at"
     t.index ["status"], name: "index_articles_on_status"
+  end
+
+  create_table "billboards", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.integer "billboard_type", default: 0, null: false
+    t.integer "clicks_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.date "end_date"
+    t.integer "impressions_count", default: 0, null: false
+    t.string "link_url"
+    t.integer "priority", default: 0, null: false
+    t.date "start_date"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "billboard_type", "priority"], name: "idx_billboards_active_type_priority"
+    t.index ["active"], name: "index_billboards_on_active"
+    t.index ["billboard_type"], name: "index_billboards_on_billboard_type"
   end
 
   create_table "categories", force: :cascade do |t|

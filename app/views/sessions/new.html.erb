@@ -1,10 +1,12 @@
 <%# Mobile logo (hidden on desktop — the left panel shows branding) %>
 <div class="lg:hidden text-center mb-8">
-  <div class="gradient-brand rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200 px-4 py-3">
-    <span class="text-white font-extrabold text-lg leading-none"><%= t("brand.logo_letter") %></span>
-  </div>
-  <h1 class="text-2xl font-extrabold text-gray-900"><%= t("brand.name") %></h1>
-  <p class="text-sm text-gray-400 mt-1"><%= t("brand.tagline") %></p>
+  <img src="/icon-login.png" alt="अंतर्राष्ट्रीय असाटी समाज दर्शन" class="w-32 h-32 mx-auto mb-4" style="filter: drop-shadow(0 4px 20px rgba(220, 50, 50, 0.25));">
+  <% if I18n.locale == :hi %>
+    <h1 class="text-lg font-extrabold text-gray-900 mt-1">अंतर्राष्ट्रीय असाटी समाज दर्शन</h1>
+  <% else %>
+    <h1 class="text-lg font-extrabold text-gray-900 mt-1">Antarrashtriya Asati Samaj Darshan</h1>
+  <% end %>
+  <div class="mt-2 w-16 h-0.5 bg-gradient-to-r from-transparent via-red-400/50 to-transparent rounded-full mx-auto"></div>
 </div>
 
 <%# Login heading %>

@@ -1,7 +1,7 @@
 <% content_for(:page_title, "Dashboard") %>
 
 <%# Welcome banner %>
-<div class="gradient-hero rounded-2xl p-6 sm:p-8 mb-8 relative overflow-hidden">
+<div class="gradient-hero rounded-xl sm:rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative overflow-hidden">
   <div class="absolute inset-0 opacity-10">
     <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-orange-500 blur-3xl"></div>
     <div class="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-purple-500 blur-3xl"></div>
@@ -13,22 +13,23 @@
 </div>
 
 <%# Stats grid %>
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
   <%= render "admin/dashboard/stat_card", label: "Total Articles", value: @stats[:articles_count], color: "blue" %>
   <%= render "admin/dashboard/stat_card", label: "Published", value: @stats[:published_count], color: "emerald" %>
   <%= render "admin/dashboard/stat_card", label: "Pending Review", value: @stats[:pending_count], color: "amber" %>
   <%= render "admin/dashboard/stat_card", label: "Drafts", value: @stats[:draft_count], color: "gray" %>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
   <%= render "admin/dashboard/stat_card", label: "Regions", value: @stats[:regions_count], color: "violet" %>
   <%= render "admin/dashboard/stat_card", label: "Categories", value: @stats[:categories_count], color: "orange" %>
   <%= render "admin/dashboard/stat_card", label: "Users", value: @stats[:users_count], color: "cyan" %>
+  <%= render "admin/dashboard/stat_card", label: "Billboards", value: @stats[:billboards_count], color: "orange" %>
 </div>
 
 <%# Recent articles %>
 <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
-  <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+  <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 flex items-center justify-between">
     <div>
       <h2 class="font-bold text-gray-900">Recent Articles</h2>
       <p class="text-xs text-gray-400 mt-0.5">Latest content across all regions</p>
@@ -42,7 +43,7 @@
   <% if @recent_articles.any? %>
     <div class="divide-y divide-gray-50">
       <% @recent_articles.each do |article| %>
-        <%= link_to admin_article_path(article), class: "flex items-center gap-4 px-6 py-4 hover:bg-gray-50/50 transition-colors" do %>
+        <%= link_to admin_article_path(article), class: "flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50/50 transition-colors" do %>
           <div class="min-w-0 flex-1">
             <p class="font-semibold text-gray-900 text-sm truncate"><%= article.title_en %></p>
             <div class="flex items-center gap-3 mt-1">

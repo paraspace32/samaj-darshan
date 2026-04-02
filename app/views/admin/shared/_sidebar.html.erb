@@ -18,10 +18,21 @@
     <%= admin_nav_link "Dashboard", admin_root_path, "home" %>
     <%= admin_nav_link "Articles", admin_articles_path, "newspaper" %>
 
-    <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>
-    <%= admin_nav_link "Regions", admin_regions_path, "map-pin" %>
-    <%= admin_nav_link "Categories", admin_categories_path, "tag" %>
-    <%= admin_nav_link "Users", admin_users_path, "users" %>
+    <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>
+      <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>
+      <% if current_user.can_manage_regions? %>
+        <%= admin_nav_link "Regions", admin_regions_path, "map-pin" %>
+      <% end %>
+      <% if current_user.can_manage_categories? %>
+        <%= admin_nav_link "Categories", admin_categories_path, "tag" %>
+      <% end %>
+      <% if current_user.can_manage_users? %>
+        <%= admin_nav_link "Users", admin_users_path, "users" %>
+      <% end %>
+      <% if current_user.can_manage_billboards? %>
+        <%= admin_nav_link "Billboards", admin_billboards_path, "billboard" %>
+      <% end %>
+    <% end %>
   </nav>
 
   <%# User info %>

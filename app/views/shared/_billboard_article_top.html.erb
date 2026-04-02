@@ -1,0 +1,14 @@
+<% bb = billboard_for(:article_top) %>
+<% if bb&.image&.attached? %>
+  <% bb.track_impression! %>
+  <div class="mb-8 rounded-2xl overflow-hidden border border-gray-200/60 shadow-sm relative">
+    <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
+    <% if bb.link_url.present? %>
+      <%= link_to billboard_click_path(bb), class: "block" do %>
+        <%= optimized_image_tag bb.image, variant: :banner, class: "w-full h-auto object-cover max-h-40 sm:max-h-52", loading: "eager" %>
+      <% end %>
+    <% else %>
+      <%= optimized_image_tag bb.image, variant: :banner, class: "w-full h-auto object-cover max-h-40 sm:max-h-52", loading: "eager" %>
+    <% end %>
+  </div>
+<% end %>

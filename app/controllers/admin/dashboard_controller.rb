@@ -8,7 +8,8 @@ module Admin
         draft_count: Article.draft.count,
         regions_count: Region.count,
         categories_count: Category.count,
-        users_count: User.count
+        users_count: User.count,
+        billboards_count: Billboard.count
       }
 
       @recent_articles = Article.includes(:region, :category, :author)

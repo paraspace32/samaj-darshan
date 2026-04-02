@@ -3,7 +3,7 @@ module Api
     module Admin
       class BaseController < Api::V1::BaseController
         before_action :require_api_auth
-        before_action :require_admin_access
+        before_action :require_admin_panel_access
       end
     end
   end

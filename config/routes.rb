@@ -33,7 +33,12 @@ Rails.application.routes.draw do
     resources :users, except: [ :show ] do
       member { patch :toggle_status }
     end
+    resources :billboards, except: [ :show ] do
+      member { patch :toggle_active }
+    end
   end
+
+  get "click/:id" => "billboard_clicks#show", as: :billboard_click
 
   # JSON API
   namespace :api do

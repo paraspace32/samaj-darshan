@@ -119,6 +119,19 @@
     filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.5)) brightness(1.08);
     transform: scale(1.04);
   }
+
+  .pwa-install-banner {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  .pwa-install-banner.pwa-banner-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .ios-hide { display: none !important; }
 }
 
 @media print {

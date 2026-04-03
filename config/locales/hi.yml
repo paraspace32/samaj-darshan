@@ -104,6 +104,23 @@ hi:
         one: "1 साल"
         other: "%{count} साल"
 
+  pwa:
+    install_tagline: "बेहतर अनुभव के लिए ऐप इंस्टॉल करें"
+    install_button: "ऐप इंस्टॉल करें"
+    ios_safari_title: "इस ऐप को अपने iPhone पर इंस्टॉल करें"
+    ios_safari_step1: "Safari में नीचे Share बटन पर टैप करें"
+    ios_safari_step2: '"Add to Home Screen" पर टैप करें'
+    ios_safari_step3: 'ऊपर दाईं ओर "Add" पर टैप करें'
+    ios_other_title: "इंस्टॉल करने के लिए Safari में खोलें"
+    ios_other_step1: "यह URL कॉपी करें और Safari में खोलें"
+    android_title: "यह ऐप इंस्टॉल करें"
+    firefox_android_step1: "⋮ मेनू बटन पर टैप करें"
+    firefox_android_step2: '"Install" पर टैप करें'
+    samsung_android_step1: "☰ मेनू बटन पर टैप करें"
+    samsung_android_step2: '"Add page to" → "Home screen" पर टैप करें'
+    opera_android_step1: "⋮ मेनू बटन पर टैप करें"
+    opera_android_step2: '"Home screen" पर टैप करें'
+
   flash:
     login_required: "कृपया जारी रखने के लिए लॉगिन करें।"
     account_blocked: "आपका खाता अवरुद्ध कर दिया गया है। एडमिन से संपर्क करें।"

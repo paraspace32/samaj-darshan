@@ -64,6 +64,23 @@ en:
     submit: "Sign In"
     footer: "Samaj Darshan — Voice of the Community"
 
+  pwa:
+    install_tagline: "Install for a better experience"
+    install_button: "Install App"
+    ios_safari_title: "Install this app on your iPhone"
+    ios_safari_step1: "Tap the Share button at the bottom of Safari"
+    ios_safari_step2: 'Scroll down and tap "Add to Home Screen"'
+    ios_safari_step3: 'Tap "Add" in the top right'
+    ios_other_title: "To install, open in Safari"
+    ios_other_step1: "Copy this URL and open it in Safari"
+    android_title: "Install this app"
+    firefox_android_step1: "Tap the ⋮ menu button"
+    firefox_android_step2: 'Tap "Install"'
+    samsung_android_step1: "Tap the ☰ menu button"
+    samsung_android_step2: 'Tap "Add page to" → "Home screen"'
+    opera_android_step1: "Tap the ⋮ menu button"
+    opera_android_step2: 'Tap "Home screen"'
+
   flash:
     login_required: "Please login to continue."
     account_blocked: "Your account has been blocked. Contact admin."

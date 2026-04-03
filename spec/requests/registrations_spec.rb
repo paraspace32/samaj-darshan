@@ -42,5 +42,21 @@ RSpec.describe "Registrations", type: :request do
       post signup_path, params: valid_params
       expect(response).to have_http_status(:unprocessable_entity)
     end
+
+    it "allows multiple users to sign up without email" do
+      post signup_path, params: valid_params
+      expect(response).to redirect_to(root_path)
+
+      post signup_path, params: {
+        user: {
+          name: "Second User",
+          phone: "8765432109",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+      }
+      expect(response).to redirect_to(root_path)
+      expect(User.where(email: nil).count).to be >= 2
+    end
   end
 end

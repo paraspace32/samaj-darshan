@@ -8,6 +8,8 @@ class User < ApplicationRecord
   enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account
 
+  before_validation { self.email = nil if email.blank? }
+
   validates :name, presence: true
   validates :phone, presence: true, uniqueness: true,
                     format: { with: /\A[6-9]\d{9}\z/, message: "must be a valid 10-digit Indian mobile number" }

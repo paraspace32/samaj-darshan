@@ -62,6 +62,7 @@ en:
     password_label: "Password"
     password_placeholder: "Enter password"
     submit: "Sign In"
+    no_account: "Don't have an account?"
     footer: "Samaj Darshan — Voice of the Community"
 
   pwa:

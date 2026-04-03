@@ -46,7 +46,12 @@
   </button>
 <% end %>
 
-<div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
+<p class="text-center text-sm text-gray-500 mt-6">
+  <%= t("login.no_account", default: "Don't have an account?") %>
+  <%= link_to t("nav.sign_up"), signup_path, class: "font-semibold text-orange-600 hover:text-orange-700 transition-colors" %>
+</p>
+
+<div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
   <%= link_to root_path, class: "text-sm text-gray-400 hover:text-gray-600 transition-colors" do %>
     &larr; <%= t("nav.home") %>
   <% end %>

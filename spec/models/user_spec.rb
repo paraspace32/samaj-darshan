@@ -18,6 +18,18 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_uniqueness_of(:email).allow_blank }
     it { is_expected.to have_secure_password }
 
+    it "normalizes blank email to nil" do
+      user = build(:user, email: "")
+      user.valid?
+      expect(user.email).to be_nil
+    end
+
+    it "allows multiple users with blank email" do
+      create(:user, email: "")
+      user2 = build(:user, email: "")
+      expect(user2).to be_valid
+    end
+
     it "allows valid Indian phone numbers" do
       %w[9876543210 6000000000 7123456789 8999999999].each do |phone|
         subject.phone = phone

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_02_200002) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_054315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -46,9 +46,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_200002) do
     t.integer "article_type", default: 0, null: false
     t.bigint "author_id", null: false
     t.bigint "category_id", null: false
+    t.integer "comments_count", default: 0, null: false
     t.text "content_en", null: false
     t.text "content_hi", null: false
     t.datetime "created_at", null: false
+    t.integer "likes_count", default: 0, null: false
     t.datetime "published_at"
     t.bigint "region_id", null: false
     t.string "rejection_reason"
@@ -96,6 +98,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_200002) do
     t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
+  create_table "comments", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["article_id"], name: "index_comments_on_article_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["article_id", "user_id"], name: "index_likes_on_article_id_and_user_id", unique: true
+    t.index ["article_id"], name: "index_likes_on_article_id"
+    t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
   create_table "regions", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -128,4 +150,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_02_200002) do
   add_foreign_key "articles", "categories"
   add_foreign_key "articles", "regions"
   add_foreign_key "articles", "users", column: "author_id"
+  add_foreign_key "comments", "articles"
+  add_foreign_key "comments", "users"
+  add_foreign_key "likes", "articles"
+  add_foreign_key "likes", "users"
 end

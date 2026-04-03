@@ -105,8 +105,32 @@
 
     <%= render "shared/billboard_article_mid" %>
 
-    <%# Share & actions %>
-    <div class="bg-gray-50 rounded-2xl border border-gray-200/60 p-5 sm:p-6 mb-8">
+    <%# Like & Share actions %>
+    <div id="like-section" class="bg-gray-50 rounded-2xl border border-gray-200/60 p-5 sm:p-6 mb-8">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+        <% if current_user %>
+          <%= button_to toggle_article_like_path(@article), method: :post, class: "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-sm #{@liked ? 'bg-red-50 border border-red-200 text-red-600 hover:bg-red-100' : 'bg-white border border-gray-200 text-gray-600 hover:bg-red-50 hover:border-red-200 hover:text-red-500'}" do %>
+            <svg class="w-5 h-5 <%= 'fill-red-500' if @liked %>" fill="<%= @liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <span><%= @liked ? t("likes.liked") : t("likes.like") %></span>
+            <span class="text-xs opacity-70">(<%= @article.likes_count %>)</span>
+          <% end %>
+        <% else %>
+          <%= link_to login_path, class: "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium bg-white border border-gray-200 text-gray-500 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all shadow-sm" do %>
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <span><%= t("likes.like") %></span>
+            <span class="text-xs opacity-70">(<%= @article.likes_count %>)</span>
+          <% end %>
+        <% end %>
+
+        <span class="text-gray-300">|</span>
+
+        <a href="#comments" class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <span><%= t("comments.title") %></span>
+          <span class="text-xs opacity-70">(<%= @article.comments_count %>)</span>
+        </a>
+      </div>
+
       <p class="text-sm font-semibold text-gray-900 mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
       <div class="flex flex-wrap items-center gap-3">
         <% share_text = "#{@article.display_title}\n#{request.original_url}" %>
@@ -121,6 +145,50 @@
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
           Copy Link
         </button>
+      </div>
+    </div>
+
+    <%# Comments section %>
+    <div id="comments" class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden mb-8 shadow-sm">
+      <div class="px-5 sm:px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+        <svg class="w-4.5 h-4.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <h3 class="text-sm font-bold text-gray-900"><%= t("comments.title") %> (<%= @article.comments_count %>)</h3>
+      </div>
+
+      <div class="px-5 sm:px-6">
+        <% if current_user %>
+          <%= form_with model: Comment.new, url: article_comments_path(@article), class: "py-4 border-b border-gray-100" do |f| %>
+            <div class="flex gap-3">
+              <div class="w-9 h-9 rounded-full gradient-brand flex items-center justify-center shrink-0 shadow-sm">
+                <span class="text-white font-bold text-xs"><%= current_user.name[0].upcase %></span>
+              </div>
+              <div class="flex-1">
+                <%= f.text_area :body, placeholder: t("comments.write_placeholder"), rows: 2,
+                      class: "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:bg-white focus:border-orange-300 focus:ring-2 focus:ring-orange-100 focus:outline-none resize-none transition-all" %>
+                <div class="flex justify-end mt-2">
+                  <%= f.submit t("comments.submit"), class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl gradient-brand text-white text-sm font-semibold shadow-sm shadow-orange-200 hover:shadow-md cursor-pointer transition-all" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="py-5 text-center">
+            <%= link_to login_path, class: "inline-flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors" do %>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+              <%= t("comments.login_to_comment") %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @comments.any? %>
+          <div class="divide-y divide-gray-100">
+            <%= render partial: "comments/comment", collection: @comments %>
+          </div>
+        <% else %>
+          <div class="py-8 text-center">
+            <p class="text-sm text-gray-400"><%= t("comments.no_comments") %></p>
+          </div>
+        <% end %>
       </div>
     </div>
 

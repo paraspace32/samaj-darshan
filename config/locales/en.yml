@@ -37,6 +37,22 @@ en:
     no_related: "No related articles."
     share_whatsapp: "Share on WhatsApp"
 
+  comments:
+    title: "Comments"
+    write_placeholder: "Write a comment..."
+    submit: "Post Comment"
+    posted: "Comment posted!"
+    deleted: "Comment deleted."
+    login_to_comment: "Sign in to comment"
+    no_comments: "No comments yet. Be the first to comment!"
+    delete: "Delete"
+    delete_confirm: "Delete this comment?"
+
+  likes:
+    like: "Like"
+    liked: "Liked"
+    login_to_like: "Sign in to like"
+
   login:
     title: "Sign in to your account"
     phone_label: "Phone Number"

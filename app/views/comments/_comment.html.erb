@@ -1,0 +1,21 @@
+<div id="comment-<%= comment.id %>" class="flex gap-3 py-4">
+  <div class="w-9 h-9 rounded-full gradient-brand flex items-center justify-center shrink-0 shadow-sm">
+    <span class="text-white font-bold text-xs"><%= comment.user.name[0].upcase %></span>
+  </div>
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center gap-2 mb-1">
+      <span class="text-sm font-semibold text-gray-900"><%= comment.user.name %></span>
+      <span class="text-xs text-gray-400"><%= t("feed.ago", time: time_ago_in_words(comment.created_at)) %></span>
+    </div>
+    <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-line"><%= comment.body %></p>
+    <% if current_user && (comment.user_id == current_user.id || current_user.super_admin? || current_user.editor? || current_user.moderator?) %>
+      <div class="mt-2">
+        <%= button_to article_comment_path(comment.article, comment), method: :delete,
+              data: { turbo_confirm: t("comments.delete_confirm") },
+              class: "text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer" do %>
+          <%= t("comments.delete") %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

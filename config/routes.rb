@@ -72,7 +72,12 @@ Rails.application.routes.draw do
   end
 
   # Public news feed
-  resources :articles, only: [ :index, :show ], param: :id
+  resources :articles, only: [ :index, :show ], param: :id do
+    resources :comments, only: [ :create, :destroy ]
+    resource :like, only: [] do
+      post :toggle
+    end
+  end
   get "region/:slug" => "articles#index", as: :region_feed
   get "category/:slug" => "articles#index", as: :category_feed
 

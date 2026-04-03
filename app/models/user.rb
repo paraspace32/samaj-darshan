@@ -2,6 +2,8 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :articles, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
 
   enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account

@@ -31,6 +31,8 @@ class ArticlesController < ApplicationController
 
   def show
     @article = Article.published.find(params[:id])
+    @comments = @article.comments.includes(:user).recent
+    @liked = current_user ? @article.likes.exists?(user: current_user) : false
     @related = Article.published
                       .where(region: @article.region)
                       .where.not(id: @article.id)

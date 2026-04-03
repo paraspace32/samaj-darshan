@@ -37,6 +37,22 @@ hi:
     no_related: "कोई संबंधित लेख नहीं।"
     share_whatsapp: "WhatsApp पर शेयर करें"
 
+  comments:
+    title: "टिप्पणियाँ"
+    write_placeholder: "अपनी टिप्पणी लिखें..."
+    submit: "टिप्पणी करें"
+    posted: "टिप्पणी पोस्ट हो गई!"
+    deleted: "टिप्पणी हटा दी गई।"
+    login_to_comment: "टिप्पणी करने के लिए लॉगिन करें"
+    no_comments: "अभी तक कोई टिप्पणी नहीं। पहले टिप्पणी करें!"
+    delete: "हटाएं"
+    delete_confirm: "क्या आप यह टिप्पणी हटाना चाहते हैं?"
+
+  likes:
+    like: "पसंद करें"
+    liked: "पसंद किया"
+    login_to_like: "पसंद करने के लिए लॉगिन करें"
+
   login:
     title: "अपने खाते में लॉगिन करें"
     phone_label: "फ़ोन नंबर"

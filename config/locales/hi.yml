@@ -1,6 +1,7 @@
 hi:
   brand:
     name: "समाज दर्शन"
+    short_name: "समाज दर्शन"
     tagline: "समाज की आवाज़"
     logo_letter: "असाटी"
 
@@ -13,6 +14,7 @@ hi:
     categories: "श्रेणियाँ"
     users: "उपयोगकर्ता"
     sign_in: "लॉगिन"
+    sign_up: "साइन अप"
     logout: "लॉगआउट"
     language_switch: "English"
 

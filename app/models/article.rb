@@ -6,8 +6,8 @@ class Article < ApplicationRecord
   belongs_to :category
   belongs_to :author, class_name: "User"
 
-  has_many :comments, dependent: :destroy
-  has_many :likes, dependent: :destroy
+  has_many :comments, as: :commentable, dependent: :destroy
+  has_many :likes, as: :likeable, dependent: :destroy
 
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,     resize_to_fill: [1600, 800], format: :webp, saver: { quality: 92 }

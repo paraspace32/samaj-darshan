@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_054315) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_063918) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,22 +99,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_054315) do
   end
 
   create_table "comments", force: :cascade do |t|
-    t.bigint "article_id", null: false
     t.text "body", null: false
+    t.bigint "commentable_id", null: false
+    t.string "commentable_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["article_id"], name: "index_comments_on_article_id"
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
-    t.bigint "article_id", null: false
     t.datetime "created_at", null: false
+    t.bigint "likeable_id", null: false
+    t.string "likeable_type", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["article_id", "user_id"], name: "index_likes_on_article_id_and_user_id", unique: true
-    t.index ["article_id"], name: "index_likes_on_article_id"
+    t.index ["likeable_type", "likeable_id", "user_id"], name: "index_likes_uniqueness", unique: true
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable_type_and_likeable_id"
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
@@ -150,8 +152,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_054315) do
   add_foreign_key "articles", "categories"
   add_foreign_key "articles", "regions"
   add_foreign_key "articles", "users", column: "author_id"
-  add_foreign_key "comments", "articles"
   add_foreign_key "comments", "users"
-  add_foreign_key "likes", "articles"
   add_foreign_key "likes", "users"
 end

@@ -1,6 +1,7 @@
 en:
   brand:
     name: "Samaj Darshan"
+    short_name: "समाज दर्शन"
     tagline: "Voice of the Community"
     logo_letter: "Asati"
 
@@ -13,6 +14,7 @@ en:
     categories: "Categories"
     users: "Users"
     sign_in: "Sign In"
+    sign_up: "Sign Up"
     logout: "Logout"
     language_switch: "हिंदी"
 

@@ -125,6 +125,7 @@
           <%= link_to t("nav.logout"), logout_path, class: "flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 rounded-xl hover:bg-red-50" %>
         <% else %>
           <%= link_to t("nav.sign_in"), login_path, class: "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-semibold text-white gradient-brand rounded-xl" %>
+          <%= link_to t("nav.sign_up", default: "Sign up"), signup_path, class: "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50" %>
         <% end %>
       </div>
     </nav>
@@ -177,7 +178,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('<%= pwa_service_worker_path(format: :js) %>').then(function(reg) {
+          navigator.serviceWorker.register('<%= pwa_service_worker_path %>', { scope: '/' }).then(function(reg) {
             console.log('Service worker registered with scope:', reg.scope);
           }).catch(function(err) {
             console.warn('Service worker registration failed:', err);

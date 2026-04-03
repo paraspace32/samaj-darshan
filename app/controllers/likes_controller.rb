@@ -1,23 +1,23 @@
 class LikesController < ApplicationController
   before_action :require_login
   before_action :require_active_account
-  before_action :set_article
+  before_action :set_likeable
 
   def toggle
-    existing = @article.likes.find_by(user: current_user)
+    existing = @likeable.likes.find_by(user: current_user)
 
     if existing
       existing.destroy
     else
-      @article.likes.create(user: current_user)
+      @likeable.likes.create(user: current_user)
     end
 
-    redirect_to article_path(@article, anchor: "like-section")
+    redirect_to article_path(@likeable, anchor: "like-section")
   end
 
   private
 
-  def set_article
-    @article = Article.published.find(params[:article_id])
+  def set_likeable
+    @likeable = Article.published.find(params[:article_id])
   end
 end

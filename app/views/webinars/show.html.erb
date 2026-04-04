@@ -62,8 +62,8 @@
     </div>
   <% end %>
 
-  <%# Join button — big, prominent, always visible when meeting URL exists %>
-  <% if @webinar.meeting_url.present? && !@webinar.ended? %>
+  <%# Join button — only for non-embedded platforms (Zoom, Google Meet, etc.) %>
+  <% if @webinar.meeting_url.present? && !@webinar.ended? && !@webinar.embeddable? %>
     <div class="text-center mb-8">
       <%= link_to @webinar.meeting_url, target: "_blank", rel: "noopener noreferrer",
           class: "inline-flex items-center gap-3 rounded-2xl #{@webinar.live_now? ? 'bg-red-600 shadow-red-200 hover:bg-red-700' : 'gradient-brand shadow-orange-200'} px-10 py-4 text-lg font-bold text-white shadow-lg hover:shadow-xl transition-all" do %>

@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     end
     resources :magazines do
       member { patch :publish }
-      resources :magazine_articles, except: [:index, :show]
+      resources :magazine_articles, except: [ :index, :show ]
     end
     resources :webinars do
       member do
@@ -92,10 +92,10 @@ Rails.application.routes.draw do
   get "category/:slug" => "news#index", as: :category_feed
 
   # Magazines
-  resources :magazines, only: [:index, :show]
+  resources :magazines, only: [ :index, :show ]
 
   # Webinars
-  resources :webinars, only: [:index, :show]
+  resources :webinars, only: [ :index, :show ]
 
   get "offline" => "pages#offline"
 

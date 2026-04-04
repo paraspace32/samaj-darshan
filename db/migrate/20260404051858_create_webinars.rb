@@ -19,6 +19,6 @@ class CreateWebinars < ActiveRecord::Migration[8.1]
 
     add_index :webinars, :status
     add_index :webinars, :starts_at
-    add_index :webinars, [:status, :starts_at]
+    add_index :webinars, [ :status, :starts_at ]
   end
 end

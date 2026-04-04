@@ -10,7 +10,7 @@ RSpec.describe "Admin::News", type: :request do
 
   describe "GET /admin/news" do
     it "is accessible to all admin-panel users" do
-      [super_admin, editor, co_editor, moderator].each do |u|
+      [ super_admin, editor, co_editor, moderator ].each do |u|
         login_as(u)
         get admin_news_index_path
         expect(response).to have_http_status(:ok), "Failed for #{u.role}"

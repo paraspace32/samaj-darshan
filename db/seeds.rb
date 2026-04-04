@@ -64,16 +64,16 @@ puts "Categories: #{Category.count}"
 # PNG image generator (no external gems)
 # ──────────────────────────────────────────
 COVER_COLORS = [
-  [234, 88,  12],  # orange
-  [37,  99,  235], # blue
-  [5,   150, 105], # green
-  [217, 119, 6],   # amber
-  [124, 58,  237], # purple
-  [3,   105, 161], # sky
-  [190, 18,  60],  # rose
-  [21,  128, 61],  # emerald
-  [30,  58,  95],  # navy
-  [185, 28,  28]   # red
+  [ 234, 88,  12 ],  # orange
+  [ 37,  99,  235 ], # blue
+  [ 5,   150, 105 ], # green
+  [ 217, 119, 6 ],   # amber
+  [ 124, 58,  237 ], # purple
+  [ 3,   105, 161 ], # sky
+  [ 190, 18,  60 ],  # rose
+  [ 21,  128, 61 ],  # emerald
+  [ 30,  58,  95 ],  # navy
+  [ 185, 28,  28 ]   # red
 ].freeze
 
 def generate_png(width, height, r, g, b)
@@ -91,9 +91,9 @@ def generate_png(width, height, r, g, b)
   compressed = Zlib::Deflate.deflate(raw_data)
 
   png = "".b
-  png << [137, 80, 78, 71, 13, 10, 26, 10].pack("C*")
+  png << [ 137, 80, 78, 71, 13, 10, 26, 10 ].pack("C*")
 
-  ihdr_data = [width, height, 8, 2, 0, 0, 0].pack("N2C5")
+  ihdr_data = [ width, height, 8, 2, 0, 0, 0 ].pack("N2C5")
   png << png_chunk("IHDR", ihdr_data)
   png << png_chunk("IDAT", compressed)
   png << png_chunk("IEND", "")
@@ -102,7 +102,7 @@ end
 
 def png_chunk(type, data)
   chunk = type.b + data.b
-  [data.bytesize].pack("N") + chunk + [Zlib.crc32(chunk)].pack("N")
+  [ data.bytesize ].pack("N") + chunk + [ Zlib.crc32(chunk) ].pack("N")
 end
 
 def attach_cover_png(record, idx)

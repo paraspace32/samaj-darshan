@@ -24,7 +24,7 @@ RSpec.describe MagazineArticle, type: :model do
       a2 = create(:magazine_article, magazine: magazine, position: 2)
       a0 = create(:magazine_article, magazine: magazine, position: 0)
       a1 = create(:magazine_article, magazine: magazine, position: 1)
-      expect(MagazineArticle.ordered).to eq([a0, a1, a2])
+      expect(MagazineArticle.ordered).to eq([ a0, a1, a2 ])
     end
   end
 end

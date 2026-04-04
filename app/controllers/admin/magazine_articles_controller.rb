@@ -1,7 +1,7 @@
 module Admin
   class MagazineArticlesController < BaseController
     before_action :set_magazine
-    before_action :set_article, only: [:edit, :update, :destroy]
+    before_action :set_article, only: [ :edit, :update, :destroy ]
 
     def new
       @article = @magazine.magazine_articles.build(position: next_position)

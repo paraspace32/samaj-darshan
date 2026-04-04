@@ -29,7 +29,7 @@ RSpec.describe "Api::V1::Admin::Categories", type: :request do
 
     it "updates a category" do
       login_as(super_admin)
-      patch api_v1_admin_category_path(id: cat.id), params: { category: { name_en: "Updated Cat" } }, as: :json
+      patch api_v1_admin_category_path(cat), params: { category: { name_en: "Updated Cat" } }, as: :json
       expect(response).to have_http_status(:ok)
       expect(cat.reload.name_en).to eq("Updated Cat")
     end
@@ -40,7 +40,7 @@ RSpec.describe "Api::V1::Admin::Categories", type: :request do
 
     it "toggles active" do
       login_as(super_admin)
-      patch toggle_active_api_v1_admin_category_path(id: cat.id), as: :json
+      patch toggle_active_api_v1_admin_category_path(cat), as: :json
       expect(cat.reload.active).to be false
     end
   end

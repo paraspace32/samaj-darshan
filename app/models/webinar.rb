@@ -5,9 +5,9 @@ class Webinar < ApplicationRecord
   belongs_to :host, class_name: "User"
 
   has_one_attached :cover_image do |attachable|
-    attachable.variant :hero,  resize_to_limit: [1600, 800], format: :webp, saver: { quality: 92 }
-    attachable.variant :card,  resize_to_limit: [800, 450],  format: :webp, saver: { quality: 90 }
-    attachable.variant :thumb, resize_to_limit: [200, 140],  format: :webp, saver: { quality: 85 }
+    attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 92 }
+    attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 90 }
+    attachable.variant :thumb, resize_to_limit: [ 200, 140 ],  format: :webp, saver: { quality: 85 }
   end
 
   enum :status, { draft: 0, published: 1, cancelled: 2 }
@@ -53,11 +53,11 @@ class Webinar < ApplicationRecord
     return nil if meeting_url.blank?
 
     video_id = case meeting_url
-               when %r{youtu\.be/([^?&/]+)}          then Regexp.last_match(1)
-               when %r{youtube\.com/live/([^?&/]+)}   then Regexp.last_match(1)
-               when %r{youtube\.com.*[?&]v=([^&]+)}   then Regexp.last_match(1)
-               when %r{youtube\.com/embed/([^?&/]+)}  then Regexp.last_match(1)
-               end
+    when %r{youtu\.be/([^?&/]+)}          then Regexp.last_match(1)
+    when %r{youtube\.com/live/([^?&/]+)}   then Regexp.last_match(1)
+    when %r{youtube\.com.*[?&]v=([^&]+)}   then Regexp.last_match(1)
+    when %r{youtube\.com/embed/([^?&/]+)}  then Regexp.last_match(1)
+    end
 
     "https://www.youtube.com/embed/#{video_id}" if video_id
   end

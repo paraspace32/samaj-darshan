@@ -1,6 +1,6 @@
 module Admin
   class MagazinesController < BaseController
-    before_action :set_magazine, only: [:show, :edit, :update, :destroy, :publish]
+    before_action :set_magazine, only: [ :show, :edit, :update, :destroy, :publish ]
 
     def index
       @magazines = Magazine.order(issue_number: :desc)

@@ -1,7 +1,7 @@
 module Admin
   class BillboardsController < BaseController
     before_action :require_billboard_access
-    before_action :set_billboard, only: [:edit, :update, :destroy, :toggle_active]
+    before_action :set_billboard, only: [ :edit, :update, :destroy, :toggle_active ]
 
     def index
       @billboards = Billboard.order(created_at: :desc).with_attached_image

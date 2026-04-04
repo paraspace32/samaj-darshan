@@ -29,7 +29,7 @@ RSpec.describe "Api::V1::Admin::Regions", type: :request do
 
     it "updates a region" do
       login_as(super_admin)
-      patch api_v1_admin_region_path(id: region.id), params: { region: { name_en: "Updated Region" } }, as: :json
+      patch api_v1_admin_region_path(region), params: { region: { name_en: "Updated Region" } }, as: :json
       expect(response).to have_http_status(:ok)
       expect(region.reload.name_en).to eq("Updated Region")
     end
@@ -40,7 +40,7 @@ RSpec.describe "Api::V1::Admin::Regions", type: :request do
 
     it "toggles active" do
       login_as(super_admin)
-      patch toggle_active_api_v1_admin_region_path(id: region.id), as: :json
+      patch toggle_active_api_v1_admin_region_path(region), as: :json
       expect(region.reload.active).to be false
     end
   end

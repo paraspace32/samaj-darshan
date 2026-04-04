@@ -1,9 +1,9 @@
 class Billboard < ApplicationRecord
   has_one_attached :image do |attachable|
-    attachable.variant :banner, resize_to_limit: [1600, 500], format: :webp, saver: { quality: 92 }
-    attachable.variant :card,   resize_to_limit: [800, 400],  format: :webp, saver: { quality: 90 }
-    attachable.variant :splash, resize_to_limit: [1600, 1200], format: :webp, saver: { quality: 92 }
-    attachable.variant :thumb,  resize_to_limit: [300, 180],   format: :webp, saver: { quality: 85 }
+    attachable.variant :banner, resize_to_limit: [ 1600, 500 ], format: :webp, saver: { quality: 92 }
+    attachable.variant :card,   resize_to_limit: [ 800, 400 ],  format: :webp, saver: { quality: 90 }
+    attachable.variant :splash, resize_to_limit: [ 1600, 1200 ], format: :webp, saver: { quality: 92 }
+    attachable.variant :thumb,  resize_to_limit: [ 300, 180 ],   format: :webp, saver: { quality: 85 }
   end
 
   enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4 }

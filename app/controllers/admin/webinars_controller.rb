@@ -1,7 +1,7 @@
 module Admin
   class WebinarsController < BaseController
     before_action :require_webinar_access
-    before_action :set_webinar, only: [:show, :edit, :update, :destroy, :publish, :cancel]
+    before_action :set_webinar, only: [ :show, :edit, :update, :destroy, :publish, :cancel ]
 
     def index
       @webinars = Webinar.includes(:host).order(starts_at: :desc)
@@ -11,7 +11,7 @@ module Admin
         @webinars = @webinars.where("title_en ILIKE :q OR title_hi ILIKE :q OR speaker_name ILIKE :q", q: q)
       end
       @per_page = 20
-      @page = [params[:page].to_i, 1].max
+      @page = [ params[:page].to_i, 1 ].max
       @total_count = @webinars.count
       @webinars = @webinars.offset((@page - 1) * @per_page).limit(@per_page)
     end

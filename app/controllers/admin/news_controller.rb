@@ -17,7 +17,7 @@ module Admin
         @news_items = @news_items.where("title_en ILIKE :q OR title_hi ILIKE :q", q: q)
       end
       @per_page = 20
-      @page = [params[:page].to_i, 1].max
+      @page = [ params[:page].to_i, 1 ].max
       @total_count = @news_items.count
       @news_items = @news_items.offset((@page - 1) * @per_page).limit(@per_page)
     end

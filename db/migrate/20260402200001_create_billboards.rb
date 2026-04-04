@@ -15,6 +15,6 @@ class CreateBillboards < ActiveRecord::Migration[8.1]
 
     add_index :billboards, :billboard_type
     add_index :billboards, :active
-    add_index :billboards, [:active, :billboard_type, :priority], name: "idx_billboards_active_type_priority"
+    add_index :billboards, [ :active, :billboard_type, :priority ], name: "idx_billboards_active_type_priority"
   end
 end

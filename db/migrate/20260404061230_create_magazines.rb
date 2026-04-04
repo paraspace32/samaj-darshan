@@ -15,6 +15,6 @@ class CreateMagazines < ActiveRecord::Migration[8.1]
 
     add_index :magazines, :issue_number, unique: true
     add_index :magazines, :status
-    add_index :magazines, [:status, :published_at]
+    add_index :magazines, [ :status, :published_at ]
   end
 end

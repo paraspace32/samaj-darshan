@@ -75,9 +75,10 @@
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700">Cancelled</span>
               <% end %>
             </td>
-            <td class="px-6 py-4 text-right">
-              <%= link_to edit_admin_webinar_path(webinar), class: "inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-semibold" do %>
-                Edit
+            <td class="px-6 py-4 text-right space-x-3">
+              <%= link_to "Edit", edit_admin_webinar_path(webinar), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold" %>
+              <%= button_to admin_webinar_path(webinar), method: :delete, data: { turbo_confirm: "Delete this webinar?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } do %>
+                Delete
               <% end %>
             </td>
           </tr>

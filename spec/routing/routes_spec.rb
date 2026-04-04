@@ -26,40 +26,56 @@ RSpec.describe "Routes", type: :routing do
     it { expect(get: "/click/1").to route_to("billboard_clicks#show", id: "1") }
   end
 
-  describe "public articles" do
-    it { expect(get: "/articles").to route_to("articles#index") }
-    it { expect(get: "/articles/1").to route_to("articles#show", id: "1") }
-    it { expect(get: "/").to route_to("articles#index") }
-    it { expect(get: "/region/mumbai").to route_to("articles#index", slug: "mumbai") }
-    it { expect(get: "/category/sports").to route_to("articles#index", slug: "sports") }
+  describe "public news" do
+    it { expect(get: "/news").to route_to("news#index") }
+    it { expect(get: "/news/1").to route_to("news#show", id: "1") }
+    it { expect(get: "/").to route_to("news#index") }
+    it { expect(get: "/region/mumbai").to route_to("news#index", slug: "mumbai") }
+    it { expect(get: "/category/sports").to route_to("news#index", slug: "sports") }
   end
 
   describe "comments" do
-    it { expect(post: "/articles/1/comments").to route_to("comments#create", article_id: "1") }
-    it { expect(delete: "/articles/1/comments/2").to route_to("comments#destroy", article_id: "1", id: "2") }
+    it { expect(post: "/news/1/comments").to route_to("comments#create", news_id: "1") }
+    it { expect(delete: "/news/1/comments/2").to route_to("comments#destroy", news_id: "1", id: "2") }
   end
 
   describe "likes" do
-    it { expect(post: "/articles/1/like/toggle").to route_to("likes#toggle", article_id: "1") }
+    it { expect(post: "/news/1/like/toggle").to route_to("likes#toggle", news_id: "1") }
   end
 
-  describe "magazine" do
-    it { expect(get: "/magazine").to route_to("magazine#index") }
-    it { expect(get: "/magazine/1").to route_to("magazine#show", id: "1") }
+  describe "magazines (public)" do
+    it { expect(get: "/magazines").to route_to("magazines#index") }
+    it { expect(get: "/magazines/1").to route_to("magazines#show", id: "1") }
+  end
+
+  describe "admin magazines" do
+    it { expect(get: "/admin/magazines").to route_to("admin/magazines#index") }
+    it { expect(get: "/admin/magazines/new").to route_to("admin/magazines#new") }
+    it { expect(post: "/admin/magazines").to route_to("admin/magazines#create") }
+    it { expect(get: "/admin/magazines/1").to route_to("admin/magazines#show", id: "1") }
+    it { expect(get: "/admin/magazines/1/edit").to route_to("admin/magazines#edit", id: "1") }
+    it { expect(patch: "/admin/magazines/1").to route_to("admin/magazines#update", id: "1") }
+    it { expect(delete: "/admin/magazines/1").to route_to("admin/magazines#destroy", id: "1") }
+    it { expect(patch: "/admin/magazines/1/publish").to route_to("admin/magazines#publish", id: "1") }
+    it { expect(post: "/admin/magazines/1/magazine_articles").to route_to("admin/magazine_articles#create", magazine_id: "1") }
+    it { expect(get: "/admin/magazines/1/magazine_articles/new").to route_to("admin/magazine_articles#new", magazine_id: "1") }
+    it { expect(get: "/admin/magazines/1/magazine_articles/2/edit").to route_to("admin/magazine_articles#edit", magazine_id: "1", id: "2") }
+    it { expect(patch: "/admin/magazines/1/magazine_articles/2").to route_to("admin/magazine_articles#update", magazine_id: "1", id: "2") }
+    it { expect(delete: "/admin/magazines/1/magazine_articles/2").to route_to("admin/magazine_articles#destroy", magazine_id: "1", id: "2") }
   end
 
   describe "admin" do
     it { expect(get: "/admin").to route_to("admin/dashboard#show") }
-    it { expect(get: "/admin/articles").to route_to("admin/articles#index") }
-    it { expect(post: "/admin/articles").to route_to("admin/articles#create") }
-    it { expect(get: "/admin/articles/1").to route_to("admin/articles#show", id: "1") }
-    it { expect(get: "/admin/articles/1/edit").to route_to("admin/articles#edit", id: "1") }
-    it { expect(patch: "/admin/articles/1").to route_to("admin/articles#update", id: "1") }
-    it { expect(delete: "/admin/articles/1").to route_to("admin/articles#destroy", id: "1") }
-    it { expect(patch: "/admin/articles/1/publish").to route_to("admin/articles#publish", id: "1") }
-    it { expect(patch: "/admin/articles/1/approve").to route_to("admin/articles#approve", id: "1") }
-    it { expect(patch: "/admin/articles/1/reject").to route_to("admin/articles#reject", id: "1") }
-    it { expect(patch: "/admin/articles/1/submit_for_review").to route_to("admin/articles#submit_for_review", id: "1") }
+    it { expect(get: "/admin/news").to route_to("admin/news#index") }
+    it { expect(post: "/admin/news").to route_to("admin/news#create") }
+    it { expect(get: "/admin/news/1").to route_to("admin/news#show", id: "1") }
+    it { expect(get: "/admin/news/1/edit").to route_to("admin/news#edit", id: "1") }
+    it { expect(patch: "/admin/news/1").to route_to("admin/news#update", id: "1") }
+    it { expect(delete: "/admin/news/1").to route_to("admin/news#destroy", id: "1") }
+    it { expect(patch: "/admin/news/1/publish").to route_to("admin/news#publish", id: "1") }
+    it { expect(patch: "/admin/news/1/approve").to route_to("admin/news#approve", id: "1") }
+    it { expect(patch: "/admin/news/1/reject").to route_to("admin/news#reject", id: "1") }
+    it { expect(patch: "/admin/news/1/submit_for_review").to route_to("admin/news#submit_for_review", id: "1") }
 
     it { expect(get: "/admin/users").to route_to("admin/users#index") }
     it { expect(post: "/admin/users").to route_to("admin/users#create") }
@@ -91,8 +107,8 @@ RSpec.describe "Routes", type: :routing do
   end
 
   describe "API v1 public" do
-    it { expect(get: "/api/v1/articles").to route_to("api/v1/articles#index") }
-    it { expect(get: "/api/v1/articles/1").to route_to("api/v1/articles#show", id: "1") }
+    it { expect(get: "/api/v1/news").to route_to("api/v1/news#index") }
+    it { expect(get: "/api/v1/news/1").to route_to("api/v1/news#show", id: "1") }
     it { expect(get: "/api/v1/regions").to route_to("api/v1/regions#index") }
     it { expect(get: "/api/v1/regions/1").to route_to("api/v1/regions#show", id: "1") }
     it { expect(get: "/api/v1/categories").to route_to("api/v1/categories#index") }
@@ -100,15 +116,15 @@ RSpec.describe "Routes", type: :routing do
   end
 
   describe "API v1 admin" do
-    it { expect(get: "/api/v1/admin/articles").to route_to("api/v1/admin/articles#index") }
-    it { expect(post: "/api/v1/admin/articles").to route_to("api/v1/admin/articles#create") }
-    it { expect(get: "/api/v1/admin/articles/1").to route_to("api/v1/admin/articles#show", id: "1") }
-    it { expect(patch: "/api/v1/admin/articles/1").to route_to("api/v1/admin/articles#update", id: "1") }
-    it { expect(delete: "/api/v1/admin/articles/1").to route_to("api/v1/admin/articles#destroy", id: "1") }
-    it { expect(patch: "/api/v1/admin/articles/1/publish").to route_to("api/v1/admin/articles#publish", id: "1") }
-    it { expect(patch: "/api/v1/admin/articles/1/approve").to route_to("api/v1/admin/articles#approve", id: "1") }
-    it { expect(patch: "/api/v1/admin/articles/1/reject").to route_to("api/v1/admin/articles#reject", id: "1") }
-    it { expect(patch: "/api/v1/admin/articles/1/submit_for_review").to route_to("api/v1/admin/articles#submit_for_review", id: "1") }
+    it { expect(get: "/api/v1/admin/news").to route_to("api/v1/admin/news#index") }
+    it { expect(post: "/api/v1/admin/news").to route_to("api/v1/admin/news#create") }
+    it { expect(get: "/api/v1/admin/news/1").to route_to("api/v1/admin/news#show", id: "1") }
+    it { expect(patch: "/api/v1/admin/news/1").to route_to("api/v1/admin/news#update", id: "1") }
+    it { expect(delete: "/api/v1/admin/news/1").to route_to("api/v1/admin/news#destroy", id: "1") }
+    it { expect(patch: "/api/v1/admin/news/1/publish").to route_to("api/v1/admin/news#publish", id: "1") }
+    it { expect(patch: "/api/v1/admin/news/1/approve").to route_to("api/v1/admin/news#approve", id: "1") }
+    it { expect(patch: "/api/v1/admin/news/1/reject").to route_to("api/v1/admin/news#reject", id: "1") }
+    it { expect(patch: "/api/v1/admin/news/1/submit_for_review").to route_to("api/v1/admin/news#submit_for_review", id: "1") }
 
     it { expect(get: "/api/v1/admin/users").to route_to("api/v1/admin/users#index") }
     it { expect(post: "/api/v1/admin/users").to route_to("api/v1/admin/users#create") }

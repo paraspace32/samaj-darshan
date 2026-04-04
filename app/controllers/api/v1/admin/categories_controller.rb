@@ -52,7 +52,7 @@ module Api
             color: category.color,
             position: category.position,
             active: category.active,
-            articles_count: category.articles.count
+            news_count: category.news.count
           }
         end
       end

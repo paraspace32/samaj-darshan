@@ -1,0 +1,130 @@
+<% content_for(:title, "#{@magazine.display_title} — #{t('magazine.title')} — #{t('brand.name')}") %>
+
+<% content_for(:head) do %>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<% end %>
+
+<div class="max-w-3xl mx-auto animate-fade-in">
+  <%# Breadcrumb %>
+  <nav class="flex items-center gap-2 text-sm text-gray-400 mb-6">
+    <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors" %>
+    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+    <%= link_to t("magazine.title"), magazines_path, class: "hover:text-orange-600 transition-colors" %>
+    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+    <span class="text-gray-500 truncate"><%= @magazine.display_issue %></span>
+  </nav>
+
+  <%# Cover image %>
+  <% if @magazine.cover_image.attached? %>
+    <div class="mb-8 -mx-4 sm:mx-0 rounded-none sm:rounded-2xl overflow-hidden shadow-lg">
+      <%= optimized_image_tag @magazine.cover_image, variant: :hero, class: "w-full max-h-[500px] object-cover" %>
+    </div>
+  <% end %>
+
+  <%# Issue header %>
+  <div class="mb-8">
+    <span class="inline-block gradient-brand text-white text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-md shadow-sm mb-3">
+      <%= @magazine.display_issue %>
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight" style="font-family: 'Playfair Display', 'Noto Sans Devanagari', serif;">
+      <%= @magazine.display_title %>
+    </h1>
+    <% if @magazine.display_description.present? %>
+      <p class="text-gray-500 mt-2 leading-relaxed"><%= simple_format(@magazine.display_description) %></p>
+    <% end %>
+    <p class="text-xs text-gray-400 mt-3"><%= @magazine.published_at&.strftime("%d %b %Y") %></p>
+  </div>
+
+  <%# Articles table of contents %>
+  <% if @articles.any? %>
+    <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+      <svg class="w-5 h-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      <%= t("magazine.in_this_issue") %>
+    </h2>
+
+    <div class="space-y-0 mb-10">
+      <% @articles.each_with_index do |article, idx| %>
+        <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
+          <a href="#article-<%= article.id %>" class="group flex gap-4 py-5 <%= 'border-t border-gray-100' if idx > 0 %>">
+            <div class="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center shrink-0 shadow-sm shadow-orange-200">
+              <span class="text-white font-bold text-xs"><%= idx + 1 %></span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-[15px] font-extrabold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug">
+                <%= article.display_title %>
+              </h3>
+              <p class="text-xs text-gray-400 mt-1"><%= article.author.name %></p>
+            </div>
+            <% if article.cover_image.attached? %>
+              <div class="w-16 h-16 rounded-lg shrink-0 overflow-hidden">
+                <%= optimized_image_tag article.cover_image, variant: :thumb, class: "w-full h-full object-cover" %>
+              </div>
+            <% end %>
+          </a>
+        </div>
+      <% end %>
+    </div>
+
+    <hr class="border-gray-200 mb-10">
+
+    <%# Full articles %>
+    <% @articles.each_with_index do |article, idx| %>
+      <article id="article-<%= article.id %>" class="mb-12 scroll-mt-20 animate-fade-in">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-full gradient-brand text-white text-xs font-bold shadow-sm"><%= idx + 1 %></span>
+          <span class="text-xs text-gray-400"><%= article.author.name %></span>
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight mb-4" style="font-family: 'Playfair Display', 'Noto Sans Devanagari', serif;">
+          <%= article.display_title %>
+        </h2>
+
+        <% if article.cover_image.attached? %>
+          <div class="mb-6 -mx-4 sm:mx-0">
+            <%= optimized_image_tag article.cover_image, variant: :card, class: "w-full max-h-[400px] object-cover sm:rounded-2xl shadow-lg" %>
+          </div>
+        <% end %>
+
+        <div class="magazine-prose prose prose-gray prose-lg max-w-none
+                    prose-headings:font-extrabold prose-headings:text-gray-900
+                    prose-p:text-gray-600 prose-p:leading-[1.85]
+                    prose-a:text-orange-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline
+                    prose-blockquote:border-orange-400 prose-blockquote:bg-orange-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-3 prose-blockquote:px-5 prose-blockquote:not-italic prose-blockquote:font-bold prose-blockquote:text-gray-800">
+          <%= simple_format(article.display_content) %>
+        </div>
+
+        <%# Bilingual toggle %>
+        <% other_title = I18n.locale == :hi ? article.title_en : article.title_hi %>
+        <% other_content = I18n.locale == :hi ? article.content_en : article.content_hi %>
+        <% if other_title.present? || other_content.present? %>
+          <details class="bg-gray-50 rounded-2xl border border-gray-200/60 overflow-hidden mt-6">
+            <summary class="px-5 py-3 text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+              <%= t("article.read_other_lang") %>
+            </summary>
+            <div class="px-5 pb-5 pt-2 prose prose-sm prose-gray max-w-none border-t border-gray-100" dir="auto">
+              <% if other_title.present? %><h3 class="text-lg font-bold"><%= other_title %></h3><% end %>
+              <% if other_content.present? %><%= simple_format(other_content) %><% end %>
+            </div>
+          </details>
+        <% end %>
+
+        <% if idx < @articles.size - 1 %>
+          <hr class="border-gray-200 mt-10">
+        <% end %>
+      </article>
+    <% end %>
+  <% else %>
+    <div class="bg-white rounded-2xl border border-gray-200/60 px-6 py-16 text-center">
+      <p class="text-gray-400"><%= t("magazine.no_articles") %></p>
+    </div>
+  <% end %>
+
+  <%# Back link %>
+  <div class="mt-8 mb-4">
+    <%= link_to magazines_path, class: "inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      <%= t("magazine.back_to_magazine") %>
+    <% end %>
+  </div>
+</div>

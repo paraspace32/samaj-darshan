@@ -12,12 +12,12 @@ class LikesController < ApplicationController
       @likeable.likes.create(user: current_user)
     end
 
-    redirect_to article_path(@likeable, anchor: "like-section")
+    redirect_to news_path(@likeable, anchor: "like-section")
   end
 
   private
 
   def set_likeable
-    @likeable = Article.published.find(params[:article_id])
+    @likeable = News.published.find(params[:news_id])
   end
 end

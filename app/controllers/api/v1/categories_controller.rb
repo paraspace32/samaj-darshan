@@ -23,7 +23,7 @@ module Api
           slug: category.slug,
           color: category.color,
           active: category.active,
-          articles_count: category.articles.published.count
+          news_count: category.news.published.count
         }
       end
     end

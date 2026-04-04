@@ -4,7 +4,7 @@ RSpec.describe Category, type: :model do
   subject { build(:category) }
 
   describe "associations" do
-    it { is_expected.to have_many(:articles).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:news).dependent(:restrict_with_error) }
   end
 
   describe "validations" do

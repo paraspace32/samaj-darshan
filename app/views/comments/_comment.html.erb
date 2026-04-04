@@ -10,7 +10,7 @@
     <p class="text-sm text-gray-600 leading-relaxed whitespace-pre-line"><%= comment.body %></p>
     <% if current_user && (comment.user_id == current_user.id || current_user.super_admin? || current_user.editor? || current_user.moderator?) %>
       <div class="mt-2">
-        <%= button_to article_comment_path(comment.commentable, comment), method: :delete,
+        <%= button_to news_comment_path(comment.commentable, comment), method: :delete,
               data: { turbo_confirm: t("comments.delete_confirm") },
               class: "text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer" do %>
           <%= t("comments.delete") %>

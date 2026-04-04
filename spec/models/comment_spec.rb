@@ -15,23 +15,23 @@ RSpec.describe Comment, type: :model do
 
   describe "scopes" do
     it ".recent returns comments in reverse chronological order" do
-      article = create(:article, :published)
-      old = create(:comment, commentable: article, created_at: 2.days.ago)
-      recent = create(:comment, commentable: article, created_at: 1.hour.ago)
-      expect(article.comments.recent).to eq([ recent, old ])
+      news_item = create(:news_item, :published)
+      old = create(:comment, commentable: news_item, created_at: 2.days.ago)
+      recent = create(:comment, commentable: news_item, created_at: 1.hour.ago)
+      expect(news_item.comments.recent).to eq([ recent, old ])
     end
   end
 
   describe "counter cache" do
-    it "increments comments_count on article" do
-      article = create(:article, :published)
-      expect { create(:comment, commentable: article) }.to change { article.reload.comments_count }.by(1)
+    it "increments comments_count on news" do
+      news_item = create(:news_item, :published)
+      expect { create(:comment, commentable: news_item) }.to change { news_item.reload.comments_count }.by(1)
     end
 
-    it "decrements comments_count on article when destroyed" do
+    it "decrements comments_count on news when destroyed" do
       comment = create(:comment)
-      article = comment.commentable
-      expect { comment.destroy }.to change { article.reload.comments_count }.by(-1)
+      news_item = comment.commentable
+      expect { comment.destroy }.to change { news_item.reload.comments_count }.by(-1)
     end
   end
 end

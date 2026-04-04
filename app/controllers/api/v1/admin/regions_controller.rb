@@ -51,7 +51,7 @@ module Api
             slug: region.slug,
             position: region.position,
             active: region.active,
-            articles_count: region.articles.count
+            news_count: region.news.count
           }
         end
       end

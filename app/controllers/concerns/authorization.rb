@@ -28,7 +28,7 @@ module Authorization
   end
 
   def require_content_creator
-    raise NotAuthorizedError unless current_user&.can_create_articles?
+    raise NotAuthorizedError unless current_user&.can_create_news?
   end
 
   def require_editor_access

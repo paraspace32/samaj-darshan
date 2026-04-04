@@ -10,33 +10,33 @@ RSpec.describe Like, type: :model do
 
   describe "validations" do
     it "prevents duplicate likes by the same user on the same resource" do
-      article = create(:article, :published)
+      news_item = create(:news_item, :published)
       user = create(:user)
-      create(:like, likeable: article, user: user)
-      duplicate = build(:like, likeable: article, user: user)
+      create(:like, likeable: news_item, user: user)
+      duplicate = build(:like, likeable: news_item, user: user)
       expect(duplicate).not_to be_valid
     end
 
-    it "allows same user to like different articles" do
+    it "allows same user to like different news items" do
       user = create(:user)
-      article1 = create(:article, :published)
-      article2 = create(:article, :published)
-      create(:like, likeable: article1, user: user)
-      like2 = build(:like, likeable: article2, user: user)
+      news1 = create(:news_item, :published)
+      news2 = create(:news_item, :published)
+      create(:like, likeable: news1, user: user)
+      like2 = build(:like, likeable: news2, user: user)
       expect(like2).to be_valid
     end
   end
 
   describe "counter cache" do
-    it "increments likes_count on article" do
-      article = create(:article, :published)
-      expect { create(:like, likeable: article) }.to change { article.reload.likes_count }.by(1)
+    it "increments likes_count on news" do
+      news_item = create(:news_item, :published)
+      expect { create(:like, likeable: news_item) }.to change { news_item.reload.likes_count }.by(1)
     end
 
-    it "decrements likes_count on article when destroyed" do
+    it "decrements likes_count on news when destroyed" do
       like = create(:like)
-      article = like.likeable
-      expect { like.destroy }.to change { article.reload.likes_count }.by(-1)
+      news_item = like.likeable
+      expect { like.destroy }.to change { news_item.reload.likes_count }.by(-1)
     end
   end
 end

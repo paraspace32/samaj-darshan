@@ -1,8 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
 
-  has_many :articles, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :news, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :webinars, foreign_key: :host_id, dependent: :restrict_with_error
+  has_many :magazine_articles, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
 
@@ -50,16 +51,16 @@ class User < ApplicationRecord
     super_admin? || editor?
   end
 
-  def can_create_articles?
+  def can_create_news?
     super_admin? || editor? || co_editor?
   end
 
-  def can_edit_any_article?
+  def can_edit_any_news?
     super_admin? || editor?
   end
 
-  def can_edit_article?(article)
-    can_edit_any_article? || (co_editor? && article.author_id == id)
+  def can_edit_news?(news_item)
+    can_edit_any_news? || (co_editor? && news_item.author_id == id)
   end
 
   def can_publish?
@@ -70,11 +71,11 @@ class User < ApplicationRecord
     super_admin? || editor?
   end
 
-  def can_delete_articles?
+  def can_delete_news?
     super_admin?
   end
 
-  def can_flag_articles?
+  def can_flag_news?
     super_admin? || editor? || moderator?
   end
 end

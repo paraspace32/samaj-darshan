@@ -1,0 +1,103 @@
+<%= form_with model: [ :admin, news_item ], class: "space-y-6" do |f| %>
+  <% if news_item.errors.any? %>
+    <div class="rounded-2xl bg-red-50 border border-red-200/60 p-5 animate-fade-in">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <h3 class="text-sm font-bold text-red-800"><%= pluralize(news_item.errors.count, "error") %> found:</h3>
+      </div>
+      <ul class="list-disc list-inside text-sm text-red-700 space-y-1 ml-7">
+        <% news_item.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Title (bilingual) %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm">
+    <h2 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+      Title
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <label for="news_title_en" class="block text-sm font-semibold text-gray-600 mb-1.5">English</label>
+        <%= f.text_field :title_en, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "News title in English" %>
+      </div>
+      <div>
+        <label for="news_title_hi" class="block text-sm font-semibold text-gray-600 mb-1.5">हिंदी</label>
+        <%= f.text_field :title_hi, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "लेख का शीर्षक हिंदी में", dir: "auto" %>
+      </div>
+    </div>
+  </div>
+
+  <%# Content (bilingual) %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm">
+    <h2 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Content
+    </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <label for="news_content_en" class="block text-sm font-semibold text-gray-600 mb-1.5">English</label>
+        <%= f.text_area :content_en, rows: 12, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50 resize-y", placeholder: "Write news content in English..." %>
+      </div>
+      <div>
+        <label for="news_content_hi" class="block text-sm font-semibold text-gray-600 mb-1.5">हिंदी</label>
+        <%= f.text_area :content_hi, rows: 12, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50 resize-y", placeholder: "लेख की सामग्री हिंदी में लिखें...", dir: "auto" %>
+      </div>
+    </div>
+  </div>
+
+  <%# Meta: Region, Category, Type, Cover image %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm">
+    <h2 class="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Details
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label for="news_region_id" class="block text-sm font-semibold text-gray-600 mb-1.5">Region</label>
+        <%= f.collection_select :region_id, @regions, :id, :name_en, { prompt: "Select region" }, { class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50" } %>
+      </div>
+      <div>
+        <label for="news_category_id" class="block text-sm font-semibold text-gray-600 mb-1.5">Category</label>
+        <%= f.collection_select :category_id, @categories, :id, :name_en, { prompt: "Select category" }, { class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50" } %>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-5 border-t border-gray-100">
+      <label for="news_cover_image" class="block text-sm font-semibold text-gray-600 mb-2">Cover Image</label>
+      <% if news_item.persisted? && news_item.cover_image.attached? %>
+        <div class="mb-3">
+          <%= optimized_image_tag news_item.cover_image, variant: :thumb, class: "h-32 w-auto rounded-xl object-cover border border-gray-200/60 shadow-sm" %>
+        </div>
+      <% end %>
+      <%= f.file_field :cover_image, accept: "image/*", class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 file:cursor-pointer file:transition-colors" %>
+    </div>
+
+    <div class="mt-5 pt-5 border-t border-gray-100">
+      <label for="news_images" class="block text-sm font-semibold text-gray-600 mb-2">Additional Images</label>
+      <p class="text-xs text-gray-400 mb-3">You can select multiple images (max <%= News::MAX_IMAGES %>). New uploads are added alongside existing ones.<% if news_item.persisted? && news_item.images.attached? %> Currently: <%= news_item.images.count %>/<%= News::MAX_IMAGES %><% end %></p>
+      <% if news_item.persisted? && news_item.images.attached? %>
+        <div class="flex flex-wrap gap-3 mb-3">
+          <% news_item.images.each do |img| %>
+            <div class="relative group">
+              <%= optimized_image_tag img, variant: :thumb, class: "h-24 w-auto rounded-xl object-cover border border-gray-200/60 shadow-sm" %>
+              <%= link_to admin_news_path(news_item, remove_image_id: img.id), data: { turbo_method: :patch, turbo_confirm: "Remove this image?" }, class: "absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow" do %>
+                &times;
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <%= f.file_field :images, accept: "image/*", multiple: true, class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 file:cursor-pointer file:transition-colors" %>
+    </div>
+  </div>
+
+  <%# Actions %>
+  <div class="flex items-center gap-3">
+    <%= f.submit news_item.persisted? ? "Update news item" : "Create news item", class: "rounded-xl gradient-brand px-6 py-3 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all cursor-pointer" %>
+    <%= link_to "Cancel", news_item.persisted? ? admin_news_path(news_item) : admin_news_index_path, class: "rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+  </div>
+<% end %>

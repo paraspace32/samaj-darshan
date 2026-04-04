@@ -4,7 +4,7 @@ RSpec.describe User, type: :model do
   subject { build(:user) }
 
   describe "associations" do
-    it { is_expected.to have_many(:articles).with_foreign_key(:author_id).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:news).with_foreign_key(:author_id).dependent(:restrict_with_error) }
     it { is_expected.to have_many(:comments).dependent(:destroy) }
     it { is_expected.to have_many(:likes).dependent(:destroy) }
   end
@@ -96,30 +96,30 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe "#can_create_articles?" do
+    describe "#can_create_news?" do
       it "returns true for super_admin, editor, co_editor" do
         %i[super_admin editor co_editor].each do |role|
-          expect(build(:user, role: role).can_create_articles?).to be true
+          expect(build(:user, role: role).can_create_news?).to be true
         end
-        expect(build(:user, :moderator).can_create_articles?).to be false
+        expect(build(:user, :moderator).can_create_news?).to be false
       end
     end
 
-    describe "#can_edit_article?" do
+    describe "#can_edit_news?" do
       let(:author) { create(:user, :co_editor) }
-      let(:article) { create(:article, author: author) }
+      let(:news_item) { create(:news_item, author: author) }
 
-      it "returns true for the article's co_editor author" do
-        expect(author.can_edit_article?(article)).to be true
+      it "returns true for the news co_editor author" do
+        expect(author.can_edit_news?(news_item)).to be true
       end
 
       it "returns false for a different co_editor" do
         other = create(:user, :co_editor)
-        expect(other.can_edit_article?(article)).to be false
+        expect(other.can_edit_news?(news_item)).to be false
       end
 
       it "returns true for super_admin regardless" do
-        expect(build(:user, :super_admin).can_edit_article?(article)).to be true
+        expect(build(:user, :super_admin).can_edit_news?(news_item)).to be true
       end
     end
 
@@ -131,19 +131,19 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe "#can_delete_articles?" do
+    describe "#can_delete_news?" do
       it "returns true only for super_admin" do
-        expect(build(:user, :super_admin).can_delete_articles?).to be true
-        expect(build(:user, :editor).can_delete_articles?).to be false
+        expect(build(:user, :super_admin).can_delete_news?).to be true
+        expect(build(:user, :editor).can_delete_news?).to be false
       end
     end
 
-    describe "#can_flag_articles?" do
+    describe "#can_flag_news?" do
       it "returns true for super_admin, editor, moderator" do
         %i[super_admin editor moderator].each do |role|
-          expect(build(:user, role: role).can_flag_articles?).to be true
+          expect(build(:user, role: role).can_flag_news?).to be true
         end
-        expect(build(:user, :co_editor).can_flag_articles?).to be false
+        expect(build(:user, :co_editor).can_flag_news?).to be false
       end
     end
 
@@ -169,11 +169,11 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe "#can_edit_any_article?" do
+    describe "#can_edit_any_news?" do
       it "returns true for super_admin and editor" do
-        expect(build(:user, :super_admin).can_edit_any_article?).to be true
-        expect(build(:user, :editor).can_edit_any_article?).to be true
-        expect(build(:user, :co_editor).can_edit_any_article?).to be false
+        expect(build(:user, :super_admin).can_edit_any_news?).to be true
+        expect(build(:user, :editor).can_edit_any_news?).to be true
+        expect(build(:user, :co_editor).can_edit_any_news?).to be false
       end
     end
 

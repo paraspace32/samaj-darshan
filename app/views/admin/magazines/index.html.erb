@@ -1,0 +1,93 @@
+<% content_for(:page_title, "Magazines") %>
+
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+  <div>
+    <p class="text-sm text-gray-500"><%= @magazines.count %> issue<%= @magazines.count == 1 ? "" : "s" %></p>
+  </div>
+  <%= link_to new_admin_magazine_path, class: "inline-flex items-center gap-2 rounded-xl gradient-brand px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all self-start" do %>
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+    New Issue
+  <% end %>
+</div>
+
+<%# Filters %>
+<%= form_with url: admin_magazines_path, method: :get, class: "bg-white rounded-2xl border border-gray-200/60 p-5 mb-6 shadow-sm", data: { turbo_frame: "_top" } do %>
+  <div class="flex flex-col sm:flex-row gap-3">
+    <div class="flex-1">
+      <input type="text" name="q" value="<%= params[:q] %>" placeholder="Search title..."
+             class="block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50">
+    </div>
+    <div>
+      <select name="status" class="block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50">
+        <option value="">All Statuses</option>
+        <% Magazine.statuses.each_key do |s| %>
+          <option value="<%= s %>" <%= "selected" if params[:status] == s %>><%= s.humanize %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors cursor-pointer">Filter</button>
+      <%= link_to "Clear", admin_magazines_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+  <% if @magazines.any? %>
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[540px]">
+      <thead>
+        <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
+          <th class="px-6 py-3.5 font-semibold">Issue</th>
+          <th class="px-6 py-3.5 font-semibold">Title</th>
+          <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">Articles</th>
+          <th class="px-6 py-3.5 font-semibold">Status</th>
+          <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Published</th>
+          <th class="px-6 py-3.5 font-semibold w-20"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50">
+        <% @magazines.each do |mag| %>
+          <tr class="hover:bg-orange-50/30 transition-colors">
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center gap-1.5 font-mono text-sm font-bold text-orange-600">
+                #<%= mag.issue_number %>
+                <% if mag.volume.present? %>
+                  <span class="text-gray-400 font-normal text-xs">v<%= mag.volume %></span>
+                <% end %>
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <%= link_to admin_magazine_path(mag), class: "font-semibold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1" do %>
+                <%= mag.title_en %>
+              <% end %>
+              <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= mag.title_hi %></p>
+            </td>
+            <td class="px-6 py-4 text-gray-500 hidden sm:table-cell"><%= mag.magazine_articles.count %></td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <%= mag.published? ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' %>">
+                <%= mag.status %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-gray-400 text-xs hidden md:table-cell"><%= mag.published_at&.strftime("%d %b %Y") || "—" %></td>
+            <td class="px-6 py-4 text-right space-x-3">
+              <%= link_to "Edit", edit_admin_magazine_path(mag), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold" %>
+              <%= button_to admin_magazine_path(mag), method: :delete, data: { turbo_confirm: "Delete this magazine issue and all its articles?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } do %>
+                Delete
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    </div>
+  <% else %>
+    <div class="px-6 py-16 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      </div>
+      <p class="text-gray-400 mb-3">No magazines yet.</p>
+      <%= link_to "Create your first issue", new_admin_magazine_path, class: "text-sm text-orange-600 hover:text-orange-700 font-semibold" %>
+    </div>
+  <% end %>
+</div>

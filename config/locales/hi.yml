@@ -10,8 +10,8 @@ hi:
     magazine: "मैगज़ीन"
     webinars: "वेबिनार"
     admin: "एडमिन पैनल"
-    new_article: "नया लेख"
-    articles: "लेख"
+    new_article: "नई ख़बर"
+    news: "समाचार"
     regions: "क्षेत्र"
     categories: "श्रेणियाँ"
     users: "उपयोगकर्ता"
@@ -25,7 +25,7 @@ hi:
     subtitle: "समाज की आवाज़ · Voice of the Community"
     no_articles: "अभी तक कोई समाचार प्रकाशित नहीं हुआ।"
     news_from: "%{name} से समाचार"
-    articles_in: "%{name} लेख"
+    news_in: "%{name} समाचार"
     all_regions: "सभी क्षेत्र"
     regions: "क्षेत्र"
     categories: "श्रेणियाँ"
@@ -36,13 +36,13 @@ hi:
 
   magazine:
     title: "मैगज़ीन"
-    tab_news: "समाचार"
-    tab_magazine: "मैगज़ीन"
-    all_categories: "सभी"
-    featured: "फ़ीचर"
-    latest: "नवीनतम लेख"
-    no_articles: "अभी तक कोई मैगज़ीन लेख प्रकाशित नहीं हुआ।"
-    related: "और पढ़ें"
+    subtitle: "समुदाय की पत्रिका — अंक दर अंक"
+    no_issues: "अभी तक कोई मैगज़ीन अंक प्रकाशित नहीं हुआ।"
+    no_articles: "इस अंक में अभी तक कोई लेख नहीं।"
+    in_this_issue: "इस अंक में"
+    articles_count:
+      one: "%{count} लेख"
+      other: "%{count} लेख"
     back_to_magazine: "← मैगज़ीन पर वापस"
 
   webinar:

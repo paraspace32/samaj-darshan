@@ -22,7 +22,7 @@ module Api
           name_hi: region.name_hi,
           slug: region.slug,
           active: region.active,
-          articles_count: region.articles.published.count
+          news_count: region.news.published.count
         }
       end
     end

@@ -50,7 +50,7 @@
           <th class="px-6 py-3.5 font-semibold">Phone</th>
           <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Email</th>
           <th class="px-6 py-3.5 font-semibold">Role</th>
-          <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">Articles</th>
+          <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">News</th>
           <th class="px-6 py-3.5 font-semibold">Status</th>
           <th class="px-6 py-3.5 font-semibold w-36"></th>
         </tr>
@@ -69,7 +69,7 @@
             <td class="px-6 py-4 text-gray-600 font-mono text-xs"><%= user.phone %></td>
             <td class="px-6 py-4 text-gray-500 text-xs hidden md:table-cell"><%= user.email.presence || "—" %></td>
             <td class="px-6 py-4"><%= user_role_badge(user.role) %></td>
-            <td class="px-6 py-4 text-gray-500 hidden sm:table-cell"><%= user.articles.count %></td>
+            <td class="px-6 py-4 text-gray-500 hidden sm:table-cell"><%= user.news.count %></td>
             <td class="px-6 py-4">
               <% if user.account_active? %>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -85,6 +85,9 @@
               <%= link_to "Edit", edit_admin_user_path(user), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold" %>
               <% unless user == current_user %>
                 <%= button_to user.account_active? ? "Block" : "Unblock", toggle_status_admin_user_path(user), method: :patch, class: "text-xs #{user.account_active? ? 'text-red-500 hover:text-red-700' : 'text-emerald-600 hover:text-emerald-700'} font-medium cursor-pointer", form: { class: "inline" } %>
+                <%= button_to admin_user_path(user), method: :delete, data: { turbo_confirm: "Delete user #{user.name}? This cannot be undone." }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } do %>
+                  Delete
+                <% end %>
               <% end %>
             </td>
           </tr>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_051858) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,31 +40,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_051858) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
-  end
-
-  create_table "articles", force: :cascade do |t|
-    t.integer "article_type", default: 0, null: false
-    t.bigint "author_id", null: false
-    t.bigint "category_id", null: false
-    t.integer "comments_count", default: 0, null: false
-    t.text "content_en", null: false
-    t.text "content_hi", null: false
-    t.datetime "created_at", null: false
-    t.integer "likes_count", default: 0, null: false
-    t.datetime "published_at"
-    t.bigint "region_id", null: false
-    t.string "rejection_reason"
-    t.integer "status", default: 0, null: false
-    t.string "title_en", null: false
-    t.string "title_hi", null: false
-    t.datetime "updated_at", null: false
-    t.index ["article_type"], name: "index_articles_on_article_type"
-    t.index ["author_id"], name: "index_articles_on_author_id"
-    t.index ["category_id"], name: "index_articles_on_category_id"
-    t.index ["published_at"], name: "index_articles_on_published_at"
-    t.index ["region_id"], name: "index_articles_on_region_id"
-    t.index ["status", "published_at"], name: "index_articles_on_status_and_published_at"
-    t.index ["status"], name: "index_articles_on_status"
   end
 
   create_table "billboards", force: :cascade do |t|
@@ -120,6 +95,60 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_051858) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "magazine_articles", force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.text "content_en", null: false
+    t.text "content_hi", null: false
+    t.datetime "created_at", null: false
+    t.bigint "magazine_id", null: false
+    t.integer "position", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_magazine_articles_on_author_id"
+    t.index ["magazine_id", "position"], name: "index_magazine_articles_on_magazine_id_and_position"
+    t.index ["magazine_id"], name: "index_magazine_articles_on_magazine_id"
+  end
+
+  create_table "magazines", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description_en"
+    t.text "description_hi"
+    t.integer "issue_number", null: false
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.string "volume"
+    t.index ["issue_number"], name: "index_magazines_on_issue_number", unique: true
+    t.index ["status", "published_at"], name: "index_magazines_on_status_and_published_at"
+    t.index ["status"], name: "index_magazines_on_status"
+  end
+
+  create_table "news", force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.bigint "category_id", null: false
+    t.integer "comments_count", default: 0, null: false
+    t.text "content_en", null: false
+    t.text "content_hi", null: false
+    t.datetime "created_at", null: false
+    t.integer "likes_count", default: 0, null: false
+    t.datetime "published_at"
+    t.bigint "region_id", null: false
+    t.string "rejection_reason"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_news_on_author_id"
+    t.index ["category_id"], name: "index_news_on_category_id"
+    t.index ["published_at"], name: "index_news_on_published_at"
+    t.index ["region_id"], name: "index_news_on_region_id"
+    t.index ["status", "published_at"], name: "index_news_on_status_and_published_at"
+    t.index ["status"], name: "index_news_on_status"
+  end
+
   create_table "regions", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -170,10 +199,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_051858) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "articles", "categories"
-  add_foreign_key "articles", "regions"
-  add_foreign_key "articles", "users", column: "author_id"
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "users"
+  add_foreign_key "magazine_articles", "magazines"
+  add_foreign_key "magazine_articles", "users", column: "author_id"
+  add_foreign_key "news", "categories"
+  add_foreign_key "news", "regions"
+  add_foreign_key "news", "users", column: "author_id"
   add_foreign_key "webinars", "users", column: "host_id"
 end

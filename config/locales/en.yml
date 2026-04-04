@@ -10,8 +10,8 @@ en:
     magazine: "Magazine"
     webinars: "Webinars"
     admin: "Admin Panel"
-    new_article: "New Article"
-    articles: "Articles"
+    new_article: "New News"
+    news: "News"
     regions: "Regions"
     categories: "Categories"
     users: "Users"
@@ -23,9 +23,9 @@ en:
   feed:
     title: "Samaj Darshan"
     subtitle: "Voice of the Community · समाज की आवाज़"
-    no_articles: "No articles published yet."
+    no_articles: "No news published yet."
     news_from: "News from %{name}"
-    articles_in: "%{name} articles"
+    news_in: "%{name} news"
     all_regions: "All Regions"
     regions: "Regions"
     categories: "Categories"
@@ -36,13 +36,13 @@ en:
 
   magazine:
     title: "Magazine"
-    tab_news: "News"
-    tab_magazine: "Magazine"
-    all_categories: "All"
-    featured: "Featured"
-    latest: "Latest Articles"
-    no_articles: "No magazine articles published yet."
-    related: "More to Read"
+    subtitle: "Community magazine — issue by issue"
+    no_issues: "No magazine issues published yet."
+    no_articles: "No articles in this issue yet."
+    in_this_issue: "In This Issue"
+    articles_count:
+      one: "%{count} article"
+      other: "%{count} articles"
     back_to_magazine: "← Back to Magazine"
 
   webinar:

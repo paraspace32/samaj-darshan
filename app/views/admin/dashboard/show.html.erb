@@ -14,8 +14,8 @@
 
 <%# Stats grid %>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-  <%= render "admin/dashboard/stat_card", label: "News Articles", value: @stats[:news_count], color: "blue" %>
-  <%= render "admin/dashboard/stat_card", label: "Magazine Articles", value: @stats[:magazine_count], color: "violet" %>
+  <%= render "admin/dashboard/stat_card", label: "News", value: @stats[:news_count], color: "blue" %>
+  <%= render "admin/dashboard/stat_card", label: "Magazine Issues", value: @stats[:magazines_count], color: "violet" %>
   <%= render "admin/dashboard/stat_card", label: "Pending Review", value: @stats[:pending_count], color: "amber" %>
   <%= render "admin/dashboard/stat_card", label: "Drafts", value: @stats[:draft_count], color: "gray" %>
 </div>
@@ -28,39 +28,36 @@
   <%= render "admin/dashboard/stat_card", label: "Billboards", value: @stats[:billboards_count], color: "orange" %>
 </div>
 
-<%# Recent articles %>
+<%# Recent news %>
 <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
   <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 flex items-center justify-between">
     <div>
-      <h2 class="font-bold text-gray-900">Recent Articles</h2>
+      <h2 class="font-bold text-gray-900">Recent News</h2>
       <p class="text-xs text-gray-400 mt-0.5">Latest content across all regions</p>
     </div>
-    <%= link_to admin_articles_path, class: "inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700 font-semibold transition-colors" do %>
+    <%= link_to admin_news_index_path, class: "inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700 font-semibold transition-colors" do %>
       View All
       <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
     <% end %>
   </div>
 
-  <% if @recent_articles.any? %>
+  <% if @recent_news.any? %>
     <div class="divide-y divide-gray-50">
-      <% @recent_articles.each do |article| %>
-        <%= link_to admin_article_path(article), class: "flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50/50 transition-colors" do %>
+      <% @recent_news.each do |news_item| %>
+        <%= link_to admin_news_path(news_item), class: "flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50/50 transition-colors" do %>
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2">
-              <p class="font-semibold text-gray-900 text-sm truncate"><%= article.title_en %></p>
-              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider shrink-0 <%= article.type_magazine? ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' %>">
-                <%= article.type_magazine? ? "Mag" : "News" %>
-              </span>
+              <p class="font-semibold text-gray-900 text-sm truncate"><%= news_item.title_en %></p>
             </div>
             <div class="flex items-center gap-3 mt-1">
-              <span class="text-xs text-gray-400"><%= article.region.name_en %></span>
+              <span class="text-xs text-gray-400"><%= news_item.region.name_en %></span>
               <span class="text-xs text-gray-300">&middot;</span>
-              <span class="text-xs text-gray-400"><%= article.author.name %></span>
+              <span class="text-xs text-gray-400"><%= news_item.author.name %></span>
               <span class="text-xs text-gray-300">&middot;</span>
-              <span class="text-xs text-gray-400"><%= article.created_at.strftime("%d %b") %></span>
+              <span class="text-xs text-gray-400"><%= news_item.created_at.strftime("%d %b") %></span>
             </div>
           </div>
-          <div class="shrink-0"><%= article_status_badge(article.status) %></div>
+          <div class="shrink-0"><%= news_status_badge(news_item.status) %></div>
           <svg class="w-4 h-4 text-gray-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
         <% end %>
       <% end %>
@@ -70,8 +67,8 @@
       <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
         <svg class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
       </div>
-      <p class="text-gray-400 text-sm">No articles yet.</p>
-      <%= link_to "Create your first article", new_admin_article_path, class: "text-sm text-orange-600 hover:text-orange-700 font-semibold mt-1 inline-block" %>
+      <p class="text-gray-400 text-sm">No news yet.</p>
+      <%= link_to "Create your first news item", new_admin_news_path, class: "text-sm text-orange-600 hover:text-orange-700 font-semibold mt-1 inline-block" %>
     </div>
   <% end %>
 </div>

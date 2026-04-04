@@ -41,14 +41,14 @@ RSpec.describe "Admin::Categories", type: :request do
   describe "DELETE /admin/categories/:id" do
     before { login_as(super_admin) }
 
-    it "deletes a category without articles" do
+    it "deletes a category without news" do
       target_cat = create(:category)
       expect { delete admin_category_path(id: target_cat.id) }.to change(Category, :count).by(-1)
     end
 
-    it "cannot delete a category with articles" do
+    it "cannot delete a category with news" do
       target_cat = create(:category)
-      create(:article, category: target_cat)
+      create(:news_item, category: target_cat)
       expect { delete admin_category_path(id: target_cat.id) }.not_to change(Category, :count)
     end
   end

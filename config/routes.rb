@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   # Admin
   namespace :admin do
     get "/" => "dashboard#show", as: :root
-    resources :articles do
+    resources :news do
       member do
         patch :publish
         patch :approve
@@ -38,6 +38,10 @@ Rails.application.routes.draw do
     resources :billboards, except: [ :show ] do
       member { patch :toggle_active }
     end
+    resources :magazines do
+      member { patch :publish }
+      resources :magazine_articles, except: [:index, :show]
+    end
     resources :webinars do
       member do
         patch :publish
@@ -51,12 +55,12 @@ Rails.application.routes.draw do
   # JSON API
   namespace :api do
     namespace :v1 do
-      resources :articles, only: [ :index, :show ]
+      resources :news, only: [ :index, :show ]
       resources :regions, only: [ :index, :show ]
       resources :categories, only: [ :index, :show ]
 
       namespace :admin do
-        resources :articles do
+        resources :news do
           member do
             patch :publish
             patch :approve
@@ -78,23 +82,22 @@ Rails.application.routes.draw do
   end
 
   # Public news feed
-  resources :articles, only: [ :index, :show ], param: :id do
+  resources :news, only: [ :index, :show ], param: :id do
     resources :comments, only: [ :create, :destroy ]
     resource :like, only: [] do
       post :toggle
     end
   end
-  get "region/:slug" => "articles#index", as: :region_feed
-  get "category/:slug" => "articles#index", as: :category_feed
+  get "region/:slug" => "news#index", as: :region_feed
+  get "category/:slug" => "news#index", as: :category_feed
 
-  # Magazine
-  get "magazine" => "magazine#index", as: :magazine
-  get "magazine/:id" => "magazine#show", as: :magazine_article
+  # Magazines
+  resources :magazines, only: [:index, :show]
 
   # Webinars
   resources :webinars, only: [:index, :show]
 
   get "offline" => "pages#offline"
 
-  root "articles#index"
+  root "news#index"
 end

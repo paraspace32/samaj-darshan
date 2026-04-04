@@ -2,6 +2,6 @@ FactoryBot.define do
   factory :comment do
     body { Faker::Lorem.sentence(word_count: 10) }
     association :user
-    association :commentable, factory: [ :article, :published ]
+    association :commentable, factory: [ :news_item, :published ]
   end
 end

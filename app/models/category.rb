@@ -2,7 +2,7 @@ class Category < ApplicationRecord
   include Bilingual
   bilingual_field :name
 
-  has_many :articles, dependent: :restrict_with_error
+  has_many :news, dependent: :restrict_with_error
 
   validates :name_en, presence: true, uniqueness: true
   validates :name_hi, presence: true, uniqueness: true

@@ -47,14 +47,14 @@ RSpec.describe "Admin::Regions", type: :request do
   describe "DELETE /admin/regions/:id" do
     before { login_as(super_admin) }
 
-    it "deletes a region without articles" do
+    it "deletes a region without news" do
       target_region = create(:region)
       expect { delete admin_region_path(id: target_region.id) }.to change(Region, :count).by(-1)
     end
 
-    it "cannot delete a region with articles" do
+    it "cannot delete a region with news" do
       target_region = create(:region)
-      create(:article, region: target_region)
+      create(:news_item, region: target_region)
       expect { delete admin_region_path(id: target_region.id) }.not_to change(Region, :count)
     end
   end

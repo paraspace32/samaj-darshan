@@ -13,13 +13,7 @@ module AdminHelper
   end
 
   def admin_nav_link(label, path, icon_name)
-    uri = URI.parse(path)
-    query = Rack::Utils.parse_query(uri.query)
-    active = if query["article_type"].present?
-               request.path == uri.path && params[:article_type].to_s == query["article_type"]
-             else
-               current_page?(path)
-             end
+    active = current_page?(path) || request.path.start_with?(URI.parse(path).path)
 
     base = "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
     classes = active ? "#{base} bg-white/10 text-white shadow-sm" : "#{base} text-gray-400 hover:bg-white/5 hover:text-gray-200"

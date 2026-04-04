@@ -64,7 +64,7 @@ module Api
             email: user.email,
             role: user.role,
             status: user.status,
-            articles_count: user.articles.count,
+            news_count: user.news.count,
             created_at: user.created_at.iso8601
           }
         end

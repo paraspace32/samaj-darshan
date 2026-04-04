@@ -5,9 +5,9 @@ class Webinar < ApplicationRecord
   belongs_to :host, class_name: "User"
 
   has_one_attached :cover_image do |attachable|
-    attachable.variant :hero,  resize_to_fill: [1600, 800], format: :webp, saver: { quality: 92 }
-    attachable.variant :card,  resize_to_fill: [800, 450],  format: :webp, saver: { quality: 90 }
-    attachable.variant :thumb, resize_to_fill: [200, 140],  format: :webp, saver: { quality: 85 }
+    attachable.variant :hero,  resize_to_limit: [1600, 800], format: :webp, saver: { quality: 92 }
+    attachable.variant :card,  resize_to_limit: [800, 450],  format: :webp, saver: { quality: 90 }
+    attachable.variant :thumb, resize_to_limit: [200, 140],  format: :webp, saver: { quality: 85 }
   end
 
   enum :status, { draft: 0, published: 1, cancelled: 2 }

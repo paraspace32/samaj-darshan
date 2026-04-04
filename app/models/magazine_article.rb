@@ -6,8 +6,8 @@ class MagazineArticle < ApplicationRecord
   belongs_to :author, class_name: "User"
 
   has_one_attached :cover_image do |attachable|
-    attachable.variant :card,  resize_to_fill: [800, 450], format: :webp, saver: { quality: 90 }
-    attachable.variant :thumb, resize_to_fill: [200, 140], format: :webp, saver: { quality: 85 }
+    attachable.variant :card,  resize_to_limit: [800, 450], format: :webp, saver: { quality: 90 }
+    attachable.variant :thumb, resize_to_limit: [200, 140], format: :webp, saver: { quality: 85 }
   end
 
   validates :title_en, presence: true

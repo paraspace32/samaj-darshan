@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_063918) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_051858) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -147,6 +147,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_063918) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  create_table "webinars", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description_en", null: false
+    t.text "description_hi", null: false
+    t.integer "duration_minutes", default: 60, null: false
+    t.bigint "host_id", null: false
+    t.string "meeting_url"
+    t.integer "platform", default: 0, null: false
+    t.string "speaker_bio"
+    t.string "speaker_name", null: false
+    t.datetime "starts_at", null: false
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.index ["host_id"], name: "index_webinars_on_host_id"
+    t.index ["starts_at"], name: "index_webinars_on_starts_at"
+    t.index ["status", "starts_at"], name: "index_webinars_on_status_and_starts_at"
+    t.index ["status"], name: "index_webinars_on_status"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "articles", "categories"
@@ -154,4 +175,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_063918) do
   add_foreign_key "articles", "users", column: "author_id"
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "users"
+  add_foreign_key "webinars", "users", column: "host_id"
 end

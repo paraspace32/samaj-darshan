@@ -120,6 +120,17 @@
     transform: scale(1.04);
   }
 
+  .magazine-prose p:first-of-type::first-letter {
+    float: left;
+    font-size: 3.2rem;
+    line-height: 0.85;
+    font-weight: 900;
+    color: #ea580c;
+    margin-right: 0.35rem;
+    margin-top: 0.2rem;
+    font-family: 'Playfair Display', serif;
+  }
+
   .pwa-install-banner {
     opacity: 0;
     transform: translateY(100%);

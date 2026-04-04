@@ -33,7 +33,10 @@ class Article < ApplicationRecord
   scope :recent, -> { order(published_at: :desc, created_at: :desc) }
   scope :by_region, ->(region) { where(region: region) }
   scope :by_category, ->(category) { where(category: category) }
-  scope :feed, -> { published.recent.includes(:region, :category, :author) }
+  scope :news_only, -> { where(article_type: :news) }
+  scope :magazine_only, -> { where(article_type: :magazine) }
+  scope :feed, -> { published.news_only.recent.includes(:region, :category, :author) }
+  scope :magazine_feed, -> { published.magazine_only.recent.includes(:region, :category, :author) }
 
   def publish!
     update!(status: :published, published_at: Time.current)

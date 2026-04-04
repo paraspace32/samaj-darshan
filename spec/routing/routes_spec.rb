@@ -43,6 +43,11 @@ RSpec.describe "Routes", type: :routing do
     it { expect(post: "/articles/1/like/toggle").to route_to("likes#toggle", article_id: "1") }
   end
 
+  describe "magazine" do
+    it { expect(get: "/magazine").to route_to("magazine#index") }
+    it { expect(get: "/magazine/1").to route_to("magazine#show", id: "1") }
+  end
+
   describe "admin" do
     it { expect(get: "/admin").to route_to("admin/dashboard#show") }
     it { expect(get: "/admin/articles").to route_to("admin/articles#index") }
@@ -120,5 +125,22 @@ RSpec.describe "Routes", type: :routing do
     it { expect(post: "/api/v1/admin/categories").to route_to("api/v1/admin/categories#create") }
     it { expect(patch: "/api/v1/admin/categories/1").to route_to("api/v1/admin/categories#update", id: "1") }
     it { expect(patch: "/api/v1/admin/categories/1/toggle_active").to route_to("api/v1/admin/categories#toggle_active", id: "1") }
+  end
+
+  describe "webinars (public)" do
+    it { expect(get: "/webinars").to route_to("webinars#index") }
+    it { expect(get: "/webinars/1").to route_to("webinars#show", id: "1") }
+  end
+
+  describe "admin webinars" do
+    it { expect(get: "/admin/webinars").to route_to("admin/webinars#index") }
+    it { expect(get: "/admin/webinars/new").to route_to("admin/webinars#new") }
+    it { expect(post: "/admin/webinars").to route_to("admin/webinars#create") }
+    it { expect(get: "/admin/webinars/1").to route_to("admin/webinars#show", id: "1") }
+    it { expect(get: "/admin/webinars/1/edit").to route_to("admin/webinars#edit", id: "1") }
+    it { expect(patch: "/admin/webinars/1").to route_to("admin/webinars#update", id: "1") }
+    it { expect(delete: "/admin/webinars/1").to route_to("admin/webinars#destroy", id: "1") }
+    it { expect(patch: "/admin/webinars/1/publish").to route_to("admin/webinars#publish", id: "1") }
+    it { expect(patch: "/admin/webinars/1/cancel").to route_to("admin/webinars#cancel", id: "1") }
   end
 end

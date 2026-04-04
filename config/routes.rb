@@ -38,6 +38,12 @@ Rails.application.routes.draw do
     resources :billboards, except: [ :show ] do
       member { patch :toggle_active }
     end
+    resources :webinars do
+      member do
+        patch :publish
+        patch :cancel
+      end
+    end
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -80,6 +86,13 @@ Rails.application.routes.draw do
   end
   get "region/:slug" => "articles#index", as: :region_feed
   get "category/:slug" => "articles#index", as: :category_feed
+
+  # Magazine
+  get "magazine" => "magazine#index", as: :magazine
+  get "magazine/:id" => "magazine#show", as: :magazine_article
+
+  # Webinars
+  resources :webinars, only: [:index, :show]
 
   get "offline" => "pages#offline"
 

@@ -8,7 +8,8 @@ module Admin
     before_action :authorize_delete, only: [ :destroy ]
 
     def index
-      @articles = Article.includes(:region, :category, :author).order(created_at: :desc)
+      @article_type = params[:article_type].presence || "news"
+      @articles = Article.includes(:region, :category, :author).where(article_type: @article_type).order(created_at: :desc)
       @articles = @articles.where(status: params[:status]) if params[:status].present?
       @articles = @articles.where(region_id: params[:region_id]) if params[:region_id].present?
       @articles = @articles.where(category_id: params[:category_id]) if params[:category_id].present?
@@ -17,7 +18,7 @@ module Admin
         @articles = @articles.where("title_en ILIKE :q OR title_hi ILIKE :q", q: q)
       end
       @per_page = 20
-      @page = [ params[:page].to_i, 1 ].max
+      @page = [params[:page].to_i, 1].max
       @total_count = @articles.count
       @articles = @articles.offset((@page - 1) * @per_page).limit(@per_page)
     end
@@ -26,7 +27,7 @@ module Admin
     end
 
     def new
-      @article = Article.new(status: :draft, article_type: :news)
+      @article = Article.new(status: :draft, article_type: params[:article_type] || :news)
     end
 
     def create
@@ -59,8 +60,9 @@ module Admin
     end
 
     def destroy
+      type = @article.article_type
       @article.destroy
-      redirect_to admin_articles_path, notice: "Article deleted."
+      redirect_to admin_articles_path(article_type: type), notice: "Article deleted."
     end
 
     def publish

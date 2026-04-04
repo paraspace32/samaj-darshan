@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_secure_password
 
   has_many :articles, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :webinars, foreign_key: :host_id, dependent: :restrict_with_error
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
 
@@ -42,6 +43,10 @@ class User < ApplicationRecord
   end
 
   def can_manage_live_streams?
+    super_admin? || editor?
+  end
+
+  def can_manage_webinars?
     super_admin? || editor?
   end
 

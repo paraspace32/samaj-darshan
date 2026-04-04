@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magazine Design Options — Samaj Darshan</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; background: #111; }
+  .phone { width: 375px; min-height: 750px; border-radius: 44px; border: 8px solid #2a2a2a; overflow: hidden; overflow-y: auto; background: #f8f9fa; position: relative; box-shadow: 0 30px 80px -15px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.05); }
+  .phone::-webkit-scrollbar { display: none; }
+  .notch { width: 126px; height: 30px; background: #2a2a2a; border-radius: 0 0 20px 20px; position: sticky; top: 0; z-index: 100; margin: 0 auto; }
+  .gradient-brand { background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%); }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .mag-card { transition: transform 120ms ease; cursor: pointer; }
+  .mag-card:active { transform: scale(0.97); }
+  .dropcap::first-letter { float: left; font-size: 3.2rem; line-height: 0.85; font-weight: 900; color: #ea580c; margin-right: 0.35rem; margin-top: 0.2rem; font-family: 'Playfair Display', serif; }
+  .serif { font-family: 'Playfair Display', 'Noto Sans Devanagari', serif; }
+  .tab-active { color: #ea580c; font-weight: 700; }
+  .tab-active::after { content: ''; display: block; height: 2.5px; background: #ea580c; border-radius: 2px; margin-top: 6px; }
+  .tab-inactive::after { content: ''; display: block; height: 2.5px; background: transparent; margin-top: 6px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp 0.4s ease-out forwards; }
+  .section-label { display: inline-block; background: #ea580c; color: white; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; }
+
+  /* Nav pills */
+  .pill { padding: 8px 20px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; }
+  .pill.active { background: #fff7ed; color: #c2410c; box-shadow: 0 0 0 2px #fdba74; }
+  .pill:not(.active) { background: #27272a; color: #a1a1aa; }
+  .pill:not(.active):hover { background: #3f3f46; color: #e4e4e7; }
+
+  .designs-grid { display: flex; gap: 40px; overflow-x: auto; padding: 20px 0 40px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .designs-grid::-webkit-scrollbar { display: none; }
+  .design-col { scroll-snap-align: center; flex-shrink: 0; }
+  .label-tag { position: absolute; top: -14px; left: 20px; background: #18181b; color: #fafafa; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 8px; z-index: 10; letter-spacing: 0.02em; }
+</style>
+</head>
+<body class="min-h-screen text-white">
+
+<!-- Top bar -->
+<div class="sticky top-0 z-[200] bg-[#18181b]/95 backdrop-blur-xl border-b border-white/5">
+  <div class="max-w-[1600px] mx-auto px-6 py-4">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h1 class="text-lg font-black">समाज दर्शन — Magazine Designs</h1>
+        <p class="text-xs text-zinc-500 mt-0.5">Mobile-first layouts · Scroll horizontally to compare</p>
+      </div>
+    </div>
+    <div class="flex gap-2 overflow-x-auto pb-1">
+      <button onclick="show('feeds')" id="btn-feeds" class="pill active">Feed Layouts (3)</button>
+      <button onclick="show('articles')" id="btn-articles" class="pill">Article Layouts (3)</button>
+      <button onclick="show('cards')" id="btn-cards" class="pill">Card Styles (4)</button>
+      <button onclick="show('writer')" id="btn-writer" class="pill">Writer Experience</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== FEED LAYOUTS ======================== -->
+<div id="view-feeds" class="max-w-[1600px] mx-auto px-6">
+  <p class="text-zinc-500 text-sm mt-6 mb-2">← Scroll horizontally to compare feed designs →</p>
+  <div class="designs-grid">
+
+    <!-- FEED A: Story-first (like Apple News) -->
+    <div class="design-col relative">
+      <div class="label-tag">A · Story-First Feed</div>
+      <div class="phone mt-6">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+          <div class="flex items-center justify-between px-4 h-11">
+            <span class="text-sm font-extrabold text-gray-900">समाज दर्शन</span>
+            <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+          </div>
+          <div class="flex px-4">
+            <span class="flex-1 text-center py-2.5 text-[11px] text-gray-400 tab-inactive">समाचार</span>
+            <span class="flex-1 text-center py-2.5 text-[11px] tab-active">मैगज़ीन</span>
+          </div>
+        </div>
+        <div class="px-4 pt-4 pb-24">
+          <!-- Full viewport featured -->
+          <div class="rounded-2xl overflow-hidden shadow-lg mb-4 mag-card">
+            <div class="aspect-[3/4] relative" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80') center/cover; background-color: #1e1b4b;">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/20"></div>
+              <div class="absolute top-4 left-4"><span class="section-label">फ़ीचर</span></div>
+              <div class="absolute bottom-0 p-5">
+                <h2 class="text-[17px] font-black text-white leading-tight mb-1.5">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h2>
+                <p class="text-[11px] text-white/60 line-clamp-2 mb-3">समाज की प्रगति के लिए शिक्षा, संस्कृति और एकता का महत्व...</p>
+                <div class="flex items-center gap-2">
+                  <div class="w-5 h-5 rounded-full bg-white/25 flex items-center justify-center"><span class="text-white text-[8px] font-bold">A</span></div>
+                  <span class="text-[10px] text-white/50">Admin · 15 मि.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Stacked full-width cards -->
+          <div class="space-y-3">
+            <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+              <div class="h-44 relative" style="background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&q=80') center/cover; background-color: #f59e0b;">
+                <div class="absolute top-3 left-3"><span class="section-label">शिक्षा</span></div>
+              </div>
+              <div class="p-4">
+                <h3 class="text-sm font-extrabold text-gray-900 line-clamp-2 leading-snug">शिक्षा में नवाचार: समाज के युवाओं की नई दिशा</h3>
+                <p class="text-[11px] text-gray-400 mt-1.5">Rajesh · 8 मि. पढ़ें</p>
+              </div>
+            </div>
+            <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+              <div class="h-44 relative" style="background: url('https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=600&q=80') center/cover; background-color: #059669;">
+                <div class="absolute top-3 left-3"><span class="section-label">सामाजिक</span></div>
+              </div>
+              <div class="p-4">
+                <h3 class="text-sm font-extrabold text-gray-900 line-clamp-2 leading-snug">सागर में सामाजिक बदलाव की लहर</h3>
+                <p class="text-[11px] text-gray-400 mt-1.5">Sunita · 12 मि. पढ़ें</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEED B: Pinterest / Explore style -->
+    <div class="design-col relative">
+      <div class="label-tag">B · Explore Grid</div>
+      <div class="phone mt-6">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+          <div class="flex items-center justify-between px-4 h-11">
+            <span class="text-sm font-extrabold text-gray-900">मैगज़ीन</span>
+            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <!-- Category chips -->
+          <div class="flex gap-2 px-4 pb-3 overflow-x-auto" style="-webkit-overflow-scrolling: touch;">
+            <span class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold gradient-brand text-white">सभी</span>
+            <span class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600">शिक्षा</span>
+            <span class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600">धार्मिक</span>
+            <span class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600">सामाजिक</span>
+            <span class="shrink-0 px-3 py-1.5 rounded-full text-[10px] font-semibold bg-gray-100 text-gray-600">व्यापार</span>
+          </div>
+        </div>
+        <div class="px-3 pt-3 pb-24">
+          <!-- 2-column masonry-ish grid -->
+          <div class="flex gap-3">
+            <div class="flex-1 space-y-3">
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-48" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&q=80') center/cover; background-color: #4c1d95;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">असाटी समाज की उन्नति</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">15 मि. · Admin</p>
+                </div>
+              </div>
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-32" style="background: url('https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=400&q=80') center/cover; background-color: #059669;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">सामाजिक बदलाव</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">12 मि. · Sunita</p>
+                </div>
+              </div>
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-40" style="background: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80') center/cover; background-color: #e11d48;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">सम्मान समारोह</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">11 मि. · Renu</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-3 mt-8">
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-36" style="background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&q=80') center/cover; background-color: #f59e0b;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">शिक्षा में नवाचार</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">8 मि. · Rajesh</p>
+                </div>
+              </div>
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-44" style="background: url('https://images.unsplash.com/photo-1604881991720-f91add269bed?w=400&q=80') center/cover; background-color: #dc2626;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">नवरात्रि विशेष</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">10 मि. · Meera</p>
+                </div>
+              </div>
+              <div class="mag-card rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                <div class="h-32" style="background: url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&q=80') center/cover; background-color: #6366f1;"></div>
+                <div class="p-3">
+                  <h4 class="text-xs font-extrabold text-gray-900 line-clamp-2 leading-snug">व्यापार की नई सोच</h4>
+                  <p class="text-[9px] text-gray-400 mt-1">6 मि. · Vijay</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEED C: Clean List (like Medium) -->
+    <div class="design-col relative">
+      <div class="label-tag">C · Clean List (Medium-style)</div>
+      <div class="phone mt-6">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50 bg-white border-b border-gray-100">
+          <div class="flex items-center justify-between px-4 h-11">
+            <span class="text-sm font-extrabold text-gray-900">मैगज़ीन</span>
+            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </div>
+        </div>
+        <div class="px-4 pt-5 pb-24 bg-white min-h-full">
+          <!-- Minimal text-first hero -->
+          <div class="mb-6 pb-6 border-b border-gray-100 mag-card">
+            <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">फ़ीचर · 15 मिनट</span>
+            <h2 class="text-xl font-black text-gray-900 leading-tight mt-1.5 mb-2 serif">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h2>
+            <p class="text-sm text-gray-500 line-clamp-3 leading-relaxed mb-3">समाज की प्रगति के लिए शिक्षा, संस्कृति और एकता का महत्व — एक गहन विश्लेषण जो समाज के हर पहलू को छूता है और भविष्य की दिशा दर्शाता है।</p>
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center"><span class="text-orange-700 text-[9px] font-bold">A</span></div>
+              <span class="text-[11px] text-gray-400">Admin · 28 Mar</span>
+            </div>
+          </div>
+
+          <!-- List items: thumbnail right -->
+          <div class="space-y-5">
+            <div class="flex gap-4 mag-card">
+              <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">शिक्षा · 8 मि.</span>
+                <h3 class="text-[13px] font-extrabold text-gray-900 line-clamp-2 leading-snug mt-0.5">शिक्षा में नवाचार: समाज के युवाओं की नई दिशा</h3>
+                <p class="text-[11px] text-gray-400 mt-1">Rajesh Kumar</p>
+              </div>
+              <div class="w-20 h-20 rounded-lg shrink-0" style="background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=200&q=80') center/cover; background-color: #f59e0b;"></div>
+            </div>
+
+            <div class="h-px bg-gray-100"></div>
+
+            <div class="flex gap-4 mag-card">
+              <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">सामाजिक · 12 मि.</span>
+                <h3 class="text-[13px] font-extrabold text-gray-900 line-clamp-2 leading-snug mt-0.5">सागर में सामाजिक बदलाव की लहर</h3>
+                <p class="text-[11px] text-gray-400 mt-1">Sunita Devi</p>
+              </div>
+              <div class="w-20 h-20 rounded-lg shrink-0" style="background: url('https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=200&q=80') center/cover; background-color: #059669;"></div>
+            </div>
+
+            <div class="h-px bg-gray-100"></div>
+
+            <div class="flex gap-4 mag-card">
+              <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">धार्मिक · 10 मि.</span>
+                <h3 class="text-[13px] font-extrabold text-gray-900 line-clamp-2 leading-snug mt-0.5">नवरात्रि विशेष: परंपरा और आधुनिकता का मिलन</h3>
+                <p class="text-[11px] text-gray-400 mt-1">Meera Joshi</p>
+              </div>
+              <div class="w-20 h-20 rounded-lg shrink-0" style="background: url('https://images.unsplash.com/photo-1604881991720-f91add269bed?w=200&q=80') center/cover; background-color: #dc2626;"></div>
+            </div>
+
+            <div class="h-px bg-gray-100"></div>
+
+            <div class="flex gap-4 mag-card">
+              <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">व्यापार · 6 मि.</span>
+                <h3 class="text-[13px] font-extrabold text-gray-900 line-clamp-2 leading-snug mt-0.5">महिला सशक्तिकरण: समाज की रीढ़</h3>
+                <p class="text-[11px] text-gray-400 mt-1">Priya Sharma</p>
+              </div>
+              <div class="w-20 h-20 rounded-lg shrink-0" style="background: url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=200&q=80') center/cover; background-color: #6366f1;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== ARTICLE LAYOUTS ======================== -->
+<div id="view-articles" class="hidden max-w-[1600px] mx-auto px-6">
+  <p class="text-zinc-500 text-sm mt-6 mb-2">← Scroll horizontally to compare article views →</p>
+  <div class="designs-grid">
+
+    <!-- ARTICLE A: Immersive (image-first) -->
+    <div class="design-col relative">
+      <div class="label-tag">A · Immersive</div>
+      <div class="phone mt-6">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50">
+          <div class="flex items-center justify-between px-4 h-11 bg-black/30 backdrop-blur-xl">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+            <div class="flex gap-4">
+              <svg class="w-4.5 h-4.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              <svg class="w-4.5 h-4.5 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="pb-20" style="margin-top: -41px;">
+          <!-- Full bleed hero -->
+          <div class="aspect-[3/4] relative" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80') center/cover; background-color: #1e1b4b;">
+            <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-black/30"></div>
+            <div class="absolute bottom-0 p-5">
+              <span class="section-label mb-3 inline-block">फ़ीचर · 15 मि.</span>
+              <h1 class="text-xl font-black text-gray-900 leading-tight">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h1>
+            </div>
+          </div>
+          <!-- Author -->
+          <div class="flex items-center gap-3 px-5 py-4 bg-white">
+            <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center"><span class="text-white font-bold text-sm">A</span></div>
+            <div><p class="text-sm font-bold text-gray-900">Admin</p><p class="text-[10px] text-gray-400">दमोह · 28 Mar 2026</p></div>
+          </div>
+          <!-- Body -->
+          <div class="px-5 py-6 bg-white">
+            <p class="dropcap text-[15px] leading-[1.85] text-gray-600 mb-5">असाटी समाज की उन्नति के लिए शिक्षा सबसे महत्वपूर्ण स्तंभ है। आज जब हम पीछे मुड़कर देखते हैं तो पाते हैं कि समाज ने अभूतपूर्व प्रगति की है।</p>
+            <div class="my-6 py-4 pl-4 border-l-[3px] border-orange-400 bg-orange-50/50 rounded-r-xl">
+              <p class="text-[14px] font-bold text-gray-800 italic leading-snug">"शिक्षा वह शक्ति है जो पूरे समाज को बदल सकती है।"</p>
+            </div>
+            <p class="text-[15px] leading-[1.85] text-gray-600">पिछले एक दशक में शिक्षित युवाओं की संख्या में उल्लेखनीय वृद्धि हुई है। यह केवल संख्या नहीं बल्कि गुणवत्ता में भी सुधार है।</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICLE B: Clean Editorial -->
+    <div class="design-col relative">
+      <div class="label-tag">B · Clean Editorial</div>
+      <div class="phone mt-6">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50 bg-white border-b border-gray-100">
+          <div class="flex items-center justify-between px-4 h-11">
+            <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+            <span class="text-[11px] font-semibold text-gray-400">मैगज़ीन</span>
+            <svg class="w-4.5 h-4.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+          </div>
+        </div>
+        <div class="px-5 pt-6 pb-20 bg-white min-h-full">
+          <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">फ़ीचर · दमोह · 15 मिनट पढ़ने में</span>
+          <h1 class="text-[22px] font-black text-gray-900 leading-tight mt-2 mb-3 serif">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h1>
+          <!-- Author inline -->
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-7 h-7 rounded-full gradient-brand flex items-center justify-center"><span class="text-white font-bold text-[10px]">A</span></div>
+            <span class="text-xs text-gray-500">Admin · 28 Mar</span>
+          </div>
+          <!-- Image below title -->
+          <div class="rounded-2xl overflow-hidden mb-6 -mx-1" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80') center/cover; background-color: #1e1b4b; height: 220px;"></div>
+          <!-- Body -->
+          <p class="dropcap text-[15px] leading-[1.85] text-gray-600 mb-5">असाटी समाज की उन्नति के लिए शिक्षा सबसे महत्वपूर्ण स्तंभ है। पिछले एक दशक में समाज ने शिक्षा के क्षेत्र में अभूतपूर्व प्रगति की है।</p>
+          <h2 class="text-lg font-black text-gray-900 mt-8 mb-3 serif">संस्कृति और एकता</h2>
+          <p class="text-[15px] leading-[1.85] text-gray-600">हमारी संस्कृति हमारी पहचान है। असाटी समाज की समृद्ध विरासत को संरक्षित करते हुए आधुनिकता को अपनाना — यही सच्ची प्रगति है।</p>
+          <!-- Centered pull quote -->
+          <div class="my-8 text-center py-6 border-y-2 border-gray-100">
+            <p class="text-lg font-black text-gray-900 italic serif leading-snug">"शिक्षा वह शक्ति है जो पूरे समाज को बदल सकती है।"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICLE C: Dark Mode / Night Read -->
+    <div class="design-col relative">
+      <div class="label-tag">C · Dark / Night Mode</div>
+      <div class="phone mt-6" style="background: #0f0f0f;">
+        <div class="notch"></div>
+        <div class="sticky top-[30px] z-50 bg-[#0f0f0f]/95 backdrop-blur border-b border-white/5">
+          <div class="flex items-center justify-between px-4 h-11">
+            <svg class="w-5 h-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+            <span class="text-[11px] font-semibold text-zinc-600">मैगज़ीन</span>
+            <svg class="w-4 h-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </div>
+        </div>
+        <div class="px-5 pt-6 pb-20">
+          <span class="text-[9px] font-bold text-orange-500 uppercase tracking-wider">फ़ीचर · 15 मिनट</span>
+          <h1 class="text-[22px] font-black text-zinc-100 leading-tight mt-2 mb-4 serif">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h1>
+          <div class="flex items-center gap-2 mb-6">
+            <div class="w-7 h-7 rounded-full bg-orange-900/40 flex items-center justify-center"><span class="text-orange-400 font-bold text-[10px]">A</span></div>
+            <span class="text-xs text-zinc-600">Admin · 28 Mar</span>
+          </div>
+          <div class="rounded-2xl overflow-hidden mb-6 -mx-1" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80') center/cover; background-color: #1e1b4b; height: 200px;"></div>
+          <p class="text-[15px] leading-[1.9] text-zinc-400 mb-5">असाटी समाज की उन्नति के लिए शिक्षा सबसे महत्वपूर्ण स्तंभ है। पिछले एक दशक में समाज ने शिक्षा के क्षेत्र में अभूतपूर्व प्रगति की है।</p>
+          <div class="my-6 py-4 pl-4 border-l-[3px] border-orange-500/60 bg-orange-950/20 rounded-r-xl">
+            <p class="text-[14px] font-bold text-zinc-300 italic leading-snug">"शिक्षा वह शक्ति है जो पूरे समाज को बदल सकती है।"</p>
+          </div>
+          <p class="text-[15px] leading-[1.9] text-zinc-400">हमारी संस्कृति हमारी पहचान है। असाटी समाज की समृद्ध विरासत को संरक्षित करते हुए आधुनिकता को अपनाना — यही सच्ची प्रगति है।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== CARD STYLES ======================== -->
+<div id="view-cards" class="hidden max-w-[1600px] mx-auto px-6">
+  <p class="text-zinc-500 text-sm mt-6 mb-2">Card variations that can be mixed in the feed</p>
+  <div class="designs-grid items-start">
+
+    <div class="design-col">
+      <div class="w-[340px] space-y-5">
+        <!-- Card 1: Large image top -->
+        <div class="relative"><div class="label-tag">Image-Top Card</div></div>
+        <div class="mt-6 mag-card rounded-2xl overflow-hidden bg-white border border-gray-200/60 shadow-md">
+          <div class="h-52 relative" style="background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80') center/cover; background-color: #4c1d95;">
+            <div class="absolute top-3 left-3"><span class="section-label">फ़ीचर</span></div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[9px] font-bold text-indigo-600">मैगज़ीन</span>
+              <span class="text-[9px] text-gray-300">·</span>
+              <span class="text-[9px] text-gray-400">15 मि. पढ़ें</span>
+            </div>
+            <h3 class="text-sm font-extrabold text-gray-900 line-clamp-2 leading-snug">असाटी समाज की उन्नति: एक विस्तृत दृष्टिकोण</h3>
+            <p class="text-xs text-gray-500 line-clamp-2 mt-1.5 leading-relaxed">समाज की प्रगति के लिए शिक्षा और एकता का महत्व...</p>
+            <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+              <div class="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center"><span class="text-orange-700 text-[8px] font-bold">A</span></div>
+              <span class="text-[10px] text-gray-400">Admin · 28 Mar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-col">
+      <div class="w-[340px] space-y-5">
+        <!-- Card 2: Horizontal / Compact -->
+        <div class="relative"><div class="label-tag">Compact Horizontal</div></div>
+        <div class="mt-6 mag-card flex gap-3 bg-white rounded-xl border border-gray-200/60 p-3 shadow-md">
+          <div class="w-24 h-24 rounded-lg shrink-0" style="background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=200&q=80') center/cover; background-color: #f59e0b;"></div>
+          <div class="flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <span class="text-[9px] font-bold text-indigo-600">मैगज़ीन · 8 मि.</span>
+              <h4 class="text-[13px] font-extrabold text-gray-900 line-clamp-2 leading-snug mt-0.5">शिक्षा में नवाचार: युवाओं की नई दिशा</h4>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-4 h-4 rounded-full bg-amber-100 flex items-center justify-center"><span class="text-amber-700 text-[7px] font-bold">R</span></div>
+              <span class="text-[10px] text-gray-400">Rajesh</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-col">
+      <div class="w-[340px] space-y-5">
+        <!-- Card 3: Text-first (Medium style) -->
+        <div class="relative"><div class="label-tag">Text-First (Medium)</div></div>
+        <div class="mt-6 mag-card bg-white rounded-xl border border-gray-200/60 p-4 shadow-md">
+          <div class="flex gap-4">
+            <div class="flex-1 min-w-0">
+              <span class="text-[9px] font-bold text-orange-600 uppercase tracking-wider">सामाजिक · 12 मि.</span>
+              <h3 class="text-sm font-extrabold text-gray-900 line-clamp-2 leading-snug mt-1">सागर में सामाजिक बदलाव की लहर</h3>
+              <p class="text-xs text-gray-500 line-clamp-2 mt-1 leading-relaxed">सागर जिले में असाटी समाज द्वारा किए गए कार्यों का विवरण...</p>
+              <div class="flex items-center gap-1.5 mt-2">
+                <div class="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center"><span class="text-emerald-700 text-[7px] font-bold">S</span></div>
+                <span class="text-[10px] text-gray-400">Sunita · 22 Mar</span>
+              </div>
+            </div>
+            <div class="w-20 h-20 rounded-lg shrink-0 self-center" style="background: url('https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=200&q=80') center/cover; background-color: #059669;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="design-col">
+      <div class="w-[340px] space-y-5">
+        <!-- Card 4: Full-bleed overlay -->
+        <div class="relative"><div class="label-tag">Full-Bleed Overlay</div></div>
+        <div class="mt-6 mag-card rounded-2xl overflow-hidden shadow-md">
+          <div class="aspect-[4/5] relative" style="background: url('https://images.unsplash.com/photo-1604881991720-f91add269bed?w=600&q=80') center/cover; background-color: #dc2626;">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div class="absolute top-4 left-4"><span class="section-label">धार्मिक</span></div>
+            <div class="absolute bottom-0 p-5">
+              <h3 class="text-[15px] font-black text-white line-clamp-2 leading-snug mb-1.5">नवरात्रि विशेष: परंपरा और आधुनिकता का मिलन</h3>
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center"><span class="text-white text-[8px] font-bold">M</span></div>
+                <span class="text-[10px] text-white/60">Meera · 10 मि.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== WRITER ======================== -->
+<div id="view-writer" class="hidden py-8 flex justify-center">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sticky top-[30px] z-50 bg-white border-b border-gray-100">
+      <div class="flex items-center justify-between px-4 h-12">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          <span class="text-sm font-bold text-gray-900">नया लेख</span>
+        </div>
+        <button class="px-4 py-1.5 rounded-full gradient-brand text-white text-[11px] font-bold shadow-sm">प्रकाशित करें</button>
+      </div>
+    </div>
+    <div class="px-4 py-5 space-y-5 pb-24">
+      <!-- Type toggle -->
+      <div class="flex bg-gray-100 rounded-xl p-1 gap-1">
+        <span class="flex-1 text-center py-2.5 rounded-lg text-xs font-medium text-gray-500">📰 समाचार</span>
+        <span class="flex-1 text-center py-2.5 rounded-lg text-xs font-bold bg-white text-gray-900 shadow-sm">📖 मैगज़ीन</span>
+      </div>
+      <!-- Photo upload -->
+      <div class="aspect-[16/9] rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center">
+        <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-xs text-gray-400 font-medium">कवर फ़ोटो जोड़ें</span>
+      </div>
+      <!-- Title -->
+      <div>
+        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">शीर्षक</label>
+        <input type="text" placeholder="लेख का शीर्षक..." class="w-full rounded-xl border border-gray-200 px-4 py-3.5 text-sm font-semibold placeholder:text-gray-300 outline-none bg-white" dir="auto">
+      </div>
+      <!-- Content -->
+      <div>
+        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">सामग्री</label>
+        <textarea rows="8" placeholder="अपना लेख यहाँ लिखें..." class="w-full rounded-xl border border-gray-200 px-4 py-3.5 text-sm placeholder:text-gray-300 outline-none bg-white resize-none leading-relaxed" dir="auto"></textarea>
+      </div>
+      <!-- Region / Category stacked -->
+      <div>
+        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">क्षेत्र</label>
+        <select class="w-full rounded-xl border border-gray-200 px-4 py-3.5 text-sm bg-white outline-none"><option>क्षेत्र चुनें</option></select>
+      </div>
+      <div>
+        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">श्रेणी</label>
+        <select class="w-full rounded-xl border border-gray-200 px-4 py-3.5 text-sm bg-white outline-none"><option>श्रेणी चुनें</option></select>
+      </div>
+      <!-- Additional photos -->
+      <div>
+        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">और फ़ोटो</label>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <div class="w-16 h-16 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center shrink-0"><svg class="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg></div>
+          <div class="w-16 h-16 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center shrink-0"><svg class="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg></div>
+          <div class="w-16 h-16 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center shrink-0"><svg class="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg></div>
+        </div>
+      </div>
+      <button class="w-full py-3.5 rounded-xl gradient-brand text-white text-sm font-bold shadow-lg shadow-orange-200/50">समीक्षा के लिए भेजें →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(name) {
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.remove('hidden');
+  document.getElementById('btn-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>

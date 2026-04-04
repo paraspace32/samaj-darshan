@@ -14,13 +14,14 @@
 
 <%# Stats grid %>
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-  <%= render "admin/dashboard/stat_card", label: "Total Articles", value: @stats[:articles_count], color: "blue" %>
-  <%= render "admin/dashboard/stat_card", label: "Published", value: @stats[:published_count], color: "emerald" %>
+  <%= render "admin/dashboard/stat_card", label: "News Articles", value: @stats[:news_count], color: "blue" %>
+  <%= render "admin/dashboard/stat_card", label: "Magazine Articles", value: @stats[:magazine_count], color: "violet" %>
   <%= render "admin/dashboard/stat_card", label: "Pending Review", value: @stats[:pending_count], color: "amber" %>
   <%= render "admin/dashboard/stat_card", label: "Drafts", value: @stats[:draft_count], color: "gray" %>
 </div>
 
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <%= render "admin/dashboard/stat_card", label: "Webinars", value: @stats[:webinars_count], color: "rose" %>
   <%= render "admin/dashboard/stat_card", label: "Regions", value: @stats[:regions_count], color: "violet" %>
   <%= render "admin/dashboard/stat_card", label: "Categories", value: @stats[:categories_count], color: "orange" %>
   <%= render "admin/dashboard/stat_card", label: "Users", value: @stats[:users_count], color: "cyan" %>
@@ -45,7 +46,12 @@
       <% @recent_articles.each do |article| %>
         <%= link_to admin_article_path(article), class: "flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 sm:py-4 hover:bg-gray-50/50 transition-colors" do %>
           <div class="min-w-0 flex-1">
-            <p class="font-semibold text-gray-900 text-sm truncate"><%= article.title_en %></p>
+            <div class="flex items-center gap-2">
+              <p class="font-semibold text-gray-900 text-sm truncate"><%= article.title_en %></p>
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider shrink-0 <%= article.type_magazine? ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' %>">
+                <%= article.type_magazine? ? "Mag" : "News" %>
+              </span>
+            </div>
             <div class="flex items-center gap-3 mt-1">
               <span class="text-xs text-gray-400"><%= article.region.name_en %></span>
               <span class="text-xs text-gray-300">&middot;</span>

@@ -102,6 +102,6 @@
   <%# Actions %>
   <div class="flex items-center gap-3">
     <%= f.submit article.persisted? ? "Update Article" : "Create Article", class: "rounded-xl gradient-brand px-6 py-3 text-sm font-bold text-white shadow-sm shadow-orange-200 hover:shadow-md hover:shadow-orange-200 transition-all cursor-pointer" %>
-    <%= link_to "Cancel", article.persisted? ? admin_article_path(article) : admin_articles_path, class: "rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
+    <%= link_to "Cancel", article.persisted? ? admin_article_path(article) : admin_articles_path(article_type: article.article_type), class: "rounded-xl bg-gray-100 px-5 py-3 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors" %>
   </div>
 <% end %>

@@ -16,7 +16,11 @@
   <nav class="flex-1 px-3 py-5 space-y-1">
     <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Main</p>
     <%= admin_nav_link "Dashboard", admin_root_path, "home" %>
-    <%= admin_nav_link "Articles", admin_articles_path, "newspaper" %>
+    <%= admin_nav_link "News", admin_articles_path(article_type: "news"), "newspaper" %>
+    <%= admin_nav_link "Magazine", admin_articles_path(article_type: "magazine"), "book-open" %>
+    <% if current_user.can_manage_webinars? %>
+      <%= admin_nav_link "Webinars", admin_webinars_path, "video" %>
+    <% end %>
 
     <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>
       <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>

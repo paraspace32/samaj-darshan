@@ -7,6 +7,8 @@ hi:
 
   nav:
     home: "होम"
+    magazine: "मैगज़ीन"
+    webinars: "वेबिनार"
     admin: "एडमिन पैनल"
     new_article: "नया लेख"
     articles: "लेख"
@@ -31,6 +33,41 @@ hi:
     next: "अगला →"
     page_info: "पृष्ठ %{current} / %{total}"
     ago: "%{time} पहले"
+
+  magazine:
+    title: "मैगज़ीन"
+    tab_news: "समाचार"
+    tab_magazine: "मैगज़ीन"
+    all_categories: "सभी"
+    featured: "फ़ीचर"
+    latest: "नवीनतम लेख"
+    no_articles: "अभी तक कोई मैगज़ीन लेख प्रकाशित नहीं हुआ।"
+    related: "और पढ़ें"
+    back_to_magazine: "← मैगज़ीन पर वापस"
+
+  webinar:
+    title: "वेबिनार"
+    subtitle: "हमारे समुदाय के विशेषज्ञों से सीखें"
+    upcoming: "आगामी वेबिनार"
+    past: "पिछले वेबिनार"
+    upcoming_badge: "आगामी"
+    live: "लाइव"
+    ended: "समाप्त"
+    no_webinars: "अभी तक कोई वेबिनार निर्धारित नहीं है।"
+    back_to_webinars: "← वेबिनार पर वापस"
+    join_webinar: "वेबिनार में शामिल हों"
+    join_now: "अभी शामिल हों — लाइव"
+    about_speaker: "वक्ता के बारे में"
+    happening_now: "यह वेबिनार अभी चल रहा है!"
+    starting_soon: "जल्द शुरू हो रहा है!"
+    scheduled: "वेबिनार निर्धारित"
+    webinar_ended: "यह वेबिनार समाप्त हो गया है"
+    join_on_platform: "%{platform} पर शामिल हों"
+    will_be_on_platform: "यह वेबिनार %{platform} पर होगा"
+    join_available_before: "शुरू होने से 15 मिनट पहले जॉइन बटन दिखेगा"
+    ended_on: "%{date} को समाप्त हुआ"
+    meeting_link: "मीटिंग लिंक"
+    copy_link: "कॉपी"
 
   article:
     read_other_lang: "Read in English"

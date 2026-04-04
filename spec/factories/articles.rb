@@ -27,5 +27,9 @@ FactoryBot.define do
       status { :rejected }
       rejection_reason { "Does not meet guidelines" }
     end
+
+    trait :magazine do
+      article_type { :magazine }
+    end
   end
 end

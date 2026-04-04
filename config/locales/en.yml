@@ -7,6 +7,8 @@ en:
 
   nav:
     home: "Home"
+    magazine: "Magazine"
+    webinars: "Webinars"
     admin: "Admin Panel"
     new_article: "New Article"
     articles: "Articles"
@@ -31,6 +33,41 @@ en:
     next: "Next →"
     page_info: "Page %{current} of %{total}"
     ago: "%{time} ago"
+
+  magazine:
+    title: "Magazine"
+    tab_news: "News"
+    tab_magazine: "Magazine"
+    all_categories: "All"
+    featured: "Featured"
+    latest: "Latest Articles"
+    no_articles: "No magazine articles published yet."
+    related: "More to Read"
+    back_to_magazine: "← Back to Magazine"
+
+  webinar:
+    title: "Webinars"
+    subtitle: "Learn from experts in our community"
+    upcoming: "Upcoming Webinars"
+    past: "Past Webinars"
+    upcoming_badge: "Upcoming"
+    live: "LIVE"
+    ended: "Ended"
+    no_webinars: "No webinars scheduled yet."
+    back_to_webinars: "← Back to Webinars"
+    join_webinar: "Join Webinar"
+    join_now: "Join Now — Live"
+    about_speaker: "About the Speaker"
+    happening_now: "This webinar is happening now!"
+    starting_soon: "Starting soon!"
+    scheduled: "Webinar Scheduled"
+    webinar_ended: "This webinar has ended"
+    join_on_platform: "Join via %{platform}"
+    will_be_on_platform: "This webinar will be hosted on %{platform}"
+    join_available_before: "Join button will appear 15 minutes before start time"
+    ended_on: "Ended on %{date}"
+    meeting_link: "Meeting Link"
+    copy_link: "Copy"
 
   article:
     read_other_lang: "हिंदी में पढ़ें"

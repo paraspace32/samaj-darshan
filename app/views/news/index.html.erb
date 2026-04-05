@@ -3,15 +3,15 @@
       TRENDING TICKER — Aaj Tak-style horizontal scrolling topics
       ═══════════════════════════════════════════════════════════════════ %>
   <% if @trending.present? %>
-    <div class="ticker-strip -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-6" data-controller="ticker" data-action="mouseenter->ticker#pause mouseleave->ticker#resume touchstart->ticker#touchStart touchend->ticker#touchEnd">
+    <div class="ticker-strip -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-6">
       <div class="flex items-center gap-3">
         <span class="shrink-0 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-orange-400">
           <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
           <%= t("feed.trending") %>
         </span>
         <div class="w-px h-4 bg-white/20 shrink-0"></div>
-        <div class="overflow-hidden flex-1" data-ticker-target="track">
-          <div class="flex items-center gap-4">
+        <div class="overflow-hidden flex-1">
+          <div class="ticker-scroll flex items-center gap-4">
             <% @trending.each do |item| %>
               <%= link_to item.display_title, news_path(item), class: "text-xs font-medium text-white/80 shrink-0 whitespace-nowrap" %>
               <span class="text-white/20 shrink-0">&bull;</span>

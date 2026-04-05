@@ -441,6 +441,19 @@
     color: #fb923c;
   }
 
+  .ticker-scroll {
+    animation: tickerScroll 25s linear infinite;
+    width: max-content;
+  }
+  .ticker-scroll:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes tickerScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
   /* ── Compact list card (mobile news row) ─────────────── */
   .news-list-row {
     display: flex;

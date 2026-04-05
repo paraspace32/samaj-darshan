@@ -6,87 +6,93 @@
   <% content_for(:og_image, rails_storage_proxy_url(@news_item.cover_image)) %>
 <% end %>
 
-<div class="flex flex-col lg:flex-row gap-10">
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">
   <%# Main content %>
   <article class="flex-1 min-w-0 animate-fade-in">
     <%# Breadcrumb %>
-    <nav class="flex items-center gap-2 text-sm text-gray-400 mb-6">
-      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors" %>
-      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-      <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors" %>
-      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-      <span class="text-gray-500 truncate"><%= truncate(@news_item.display_title, length: 40) %></span>
+    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-8 animate-fade-up">
+      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>
+      <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+      <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors font-medium" %>
+      <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+      <span class="text-stone-600 truncate font-medium"><%= truncate(@news_item.display_title, length: 40) %></span>
     </nav>
 
     <%# Category & meta %>
-    <div class="flex flex-wrap items-center gap-3 mb-4">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-gray-200/60 shadow-sm">
-        <span class="w-2 h-2 rounded-full" style="background-color: <%= @news_item.category.color %>"></span>
-        <%= link_to @news_item.category.display_name, category_feed_path(slug: @news_item.category.slug), class: "text-gray-700 hover:text-orange-600 transition-colors" %>
+    <div class="flex flex-wrap items-center gap-3 mb-6 animate-fade-up">
+      <span class="badge badge-category border border-gray-200/40 shadow-md">
+        <span class="w-2 h-2 rounded-full ring-2 ring-white/80 shrink-0" style="background-color: <%= @news_item.category.color %>"></span>
+        <%= link_to @news_item.category.display_name, category_feed_path(slug: @news_item.category.slug), class: "text-stone-700 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 transition-all" %>
       </span>
-      <span class="text-xs text-gray-400"><%= @news_item.published_at.strftime("%d %b %Y") %></span>
+      <span class="text-xs text-stone-500 tracking-wide font-medium tabular-nums"><%= @news_item.published_at.strftime("%d %b %Y") %></span>
     </div>
 
     <%# Title %>
-    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3"><%= @news_item.display_title %></h1>
+    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-gradient leading-[1.08] mb-4"><%= @news_item.display_title %></h1>
 
     <% other_title = I18n.locale == :hi ? @news_item.title_en : @news_item.title_hi %>
 
     <%# Author card %>
-    <div class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-200/60">
-      <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-sm shadow-orange-200">
-        <span class="text-white font-bold text-sm"><%= @news_item.author.name[0] %></span>
-      </div>
-      <div>
-        <p class="text-sm font-semibold text-gray-900"><%= @news_item.author.name %></p>
-        <p class="text-xs text-gray-400">
-          <%= @news_item.region.display_name %> &middot; <%= t("feed.ago", time: time_ago_in_words(@news_item.published_at)) %>
-        </p>
+    <div class="surface-raised rounded-3xl border border-gray-200/40 p-6 sm:p-7 mb-10 shadow-xl shadow-stone-900/[0.07]">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl gradient-brand flex items-center justify-center shadow-lg shadow-orange-500/30 ring-2 ring-white/60">
+          <span class="text-white font-bold text-base"><%= @news_item.author.name[0] %></span>
+        </div>
+        <div class="min-w-0">
+          <p class="text-base font-bold text-stone-900 tracking-tight"><%= @news_item.author.name %></p>
+          <p class="text-sm text-stone-500 mt-0.5">
+            <%= @news_item.region.display_name %> &middot; <%= t("feed.ago", time: time_ago_in_words(@news_item.published_at)) %>
+          </p>
+        </div>
       </div>
     </div>
+
+    <div class="section-divider mb-10"></div>
 
     <%= render "shared/billboard_article_top" %>
 
     <%# Image carousel (cover + additional images) %>
     <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
     <% if gallery_images.size == 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0">
-        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full max-h-[480px] object-cover sm:rounded-2xl shadow-lg" %>
+      <div class="mb-10 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full max-h-[520px] object-cover img-zoom" %>
       </div>
     <% elsif gallery_images.size > 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0 relative rounded-none sm:rounded-2xl overflow-hidden shadow-lg group"
+      <div class="mb-10 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
            data-controller="carousel" data-carousel-autoplay-value="true">
         <div class="relative">
           <div class="overflow-hidden">
             <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
               <% gallery_images.each do |img| %>
-                <div class="w-full shrink-0" data-carousel-target="slide">
-                  <%= optimized_image_tag img, variant: :carousel, class: "w-full h-64 sm:h-96 object-cover", loading: "lazy" %>
+                <div class="w-full shrink-0 group" data-carousel-target="slide">
+                  <%= optimized_image_tag img, variant: :carousel, class: "w-full h-64 sm:h-96 object-cover img-zoom", loading: "lazy" %>
                 </div>
               <% end %>
             </div>
           </div>
 
+          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-32 gradient-dark-strong opacity-90"></div>
+
           <%# Prev / Next arrows %>
           <button data-action="carousel#prev"
-                  class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/50 cursor-pointer">
+                  class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
           </button>
           <button data-action="carousel#next"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/50 cursor-pointer">
+                  class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
           </button>
 
           <%# Dot indicators %>
-          <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+          <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
             <% gallery_images.each_with_index do |_, i| %>
               <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                      class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-6' : 'bg-white/40 w-2' %>"></button>
+                      class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-7 shadow-md' : 'bg-white/45 w-2 hover:bg-white/70' %>"></button>
             <% end %>
           </div>
 
           <%# Counter %>
-          <div class="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-full"
+          <div class="absolute top-5 right-5 z-10 rounded-2xl bg-black/45 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 border border-white/15 shadow-lg"
                data-carousel-target="counter">
             1 / <%= gallery_images.size %>
           </div>
@@ -95,53 +101,53 @@
     <% end %>
 
     <%# News body %>
-    <div class="prose prose-gray prose-lg max-w-none mb-10
-                prose-headings:font-extrabold prose-headings:text-gray-900
-                prose-p:text-gray-600 prose-p:leading-relaxed
-                prose-a:text-orange-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline
-                prose-blockquote:border-orange-400 prose-blockquote:bg-orange-50/50 prose-blockquote:rounded-r-xl prose-blockquote:py-2">
+    <div class="prose prose-stone prose-lg max-w-none mb-12 animate-fade-up
+                prose-headings:font-black prose-headings:tracking-tight prose-headings:text-stone-900
+                prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-[1.05rem]
+                prose-a:text-orange-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline prose-a:decoration-orange-300/80
+                prose-blockquote:border-orange-500 prose-blockquote:border-l-4 prose-blockquote:bg-orange-50/60 prose-blockquote:rounded-r-2xl prose-blockquote:py-3 prose-blockquote:px-2 prose-blockquote:text-stone-700">
       <%= simple_format(@news_item.display_content) %>
     </div>
 
     <%= render "shared/billboard_article_mid" %>
 
     <%# Like & Share actions %>
-    <div id="like-section" class="bg-gray-50 rounded-2xl border border-gray-200/60 p-5 sm:p-6 mb-8">
-      <div class="flex flex-wrap items-center gap-3 mb-5">
+    <div id="like-section" class="surface-elevated rounded-3xl border border-gray-200/40 p-6 sm:p-8 mb-10 shadow-xl shadow-stone-900/[0.06]">
+      <div class="flex flex-wrap items-center gap-3 mb-6">
         <% if current_user %>
-          <%= button_to toggle_news_like_path(@news_item), method: :post, class: "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-sm #{@liked ? 'bg-red-50 border border-red-200 text-red-600 hover:bg-red-100' : 'bg-white border border-gray-200 text-gray-600 hover:bg-red-50 hover:border-red-200 hover:text-red-500'}" do %>
+          <%= button_to toggle_news_like_path(@news_item), method: :post, class: "inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-md #{@liked ? 'bg-red-50 border border-red-200/80 text-red-600 hover:bg-red-100' : 'bg-white border border-gray-200/40 text-stone-600 hover:bg-red-50/90 hover:border-red-200/60 hover:text-red-500'}" do %>
             <svg class="w-5 h-5 <%= 'fill-red-500' if @liked %>" fill="<%= @liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             <span><%= @liked ? t("likes.liked") : t("likes.like") %></span>
             <span class="text-xs opacity-70">(<%= @news_item.likes_count %>)</span>
           <% end %>
         <% else %>
-          <%= link_to login_path, class: "inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium bg-white border border-gray-200 text-gray-500 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-all shadow-sm" do %>
+          <%= link_to login_path, class: "btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-stone-500 hover:text-red-600" do %>
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             <span><%= t("likes.like") %></span>
             <span class="text-xs opacity-70">(<%= @news_item.likes_count %>)</span>
           <% end %>
         <% end %>
 
-        <span class="text-gray-300">|</span>
+        <span class="text-stone-300 font-light select-none">|</span>
 
-        <a href="#comments" class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium bg-white border border-gray-200 text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all shadow-sm">
+        <a href="#comments" class="btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-stone-600 hover:text-blue-700 hover:border-blue-200/80 hover:bg-blue-50/80">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
           <span><%= t("comments.title") %></span>
           <span class="text-xs opacity-70">(<%= @news_item.comments_count %>)</span>
         </a>
       </div>
 
-      <p class="text-sm font-semibold text-gray-900 mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
+      <p class="text-sm font-bold text-stone-900 tracking-tight mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
       <div class="flex flex-wrap items-center gap-3">
         <% share_text = "#{@news_item.display_title}\n#{request.original_url}" %>
         <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
            target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700 shadow-sm hover:shadow-md transition-all">
+           class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 shadow-lg shadow-emerald-900/15 hover:shadow-xl transition-all">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           WhatsApp
         </a>
         <button data-controller="copy-link" data-copy-link-url-value="<%= request.original_url %>" data-action="copy-link#copy"
-                class="inline-flex items-center gap-2 rounded-xl bg-white border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all cursor-pointer">
+                class="btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
           Copy Link
         </button>
@@ -149,31 +155,33 @@
     </div>
 
     <%# Comments section %>
-    <div id="comments" class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden mb-8 shadow-sm">
-      <div class="px-5 sm:px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-        <svg class="w-4.5 h-4.5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        <h3 class="text-sm font-bold text-gray-900"><%= t("comments.title") %> (<%= @news_item.comments_count %>)</h3>
+    <div id="comments" class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-xl shadow-stone-900/[0.06]">
+      <div class="px-6 sm:px-8 py-5 border-b border-stone-100/90 flex items-center gap-3 bg-gradient-to-r from-stone-50/80 via-white to-orange-50/30">
+        <span class="flex h-9 w-9 items-center justify-center rounded-2xl gradient-brand shadow-md shadow-orange-500/25">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </span>
+        <h3 class="text-base font-black text-stone-900 tracking-tight"><%= t("comments.title") %> (<%= @news_item.comments_count %>)</h3>
       </div>
 
-      <div class="px-5 sm:px-6">
+      <div class="px-6 sm:px-8">
         <% if current_user %>
-          <%= form_with model: Comment.new, url: news_comments_path(@news_item), class: "py-4 border-b border-gray-100" do |f| %>
-            <div class="flex gap-3">
-              <div class="w-9 h-9 rounded-full gradient-brand flex items-center justify-center shrink-0 shadow-sm">
-                <span class="text-white font-bold text-xs"><%= current_user.name[0].upcase %></span>
+          <%= form_with model: Comment.new, url: news_comments_path(@news_item), class: "py-6 border-b border-stone-100/90" do |f| %>
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/25 ring-2 ring-white/70">
+                <span class="text-white font-bold text-sm"><%= current_user.name[0].upcase %></span>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-0">
                 <%= f.text_area :body, placeholder: t("comments.write_placeholder"), rows: 2,
-                      class: "w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:bg-white focus:border-orange-300 focus:ring-2 focus:ring-orange-100 focus:outline-none resize-none transition-all" %>
-                <div class="flex justify-end mt-2">
-                  <%= f.submit t("comments.submit"), class: "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl gradient-brand text-white text-sm font-semibold shadow-sm shadow-orange-200 hover:shadow-md cursor-pointer transition-all" %>
+                      class: "input-premium w-full rounded-2xl border border-gray-200/60 bg-stone-50/80 px-4 py-3.5 text-sm text-stone-800 placeholder-stone-400 focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100/80 focus:outline-none resize-none transition-all shadow-inner shadow-stone-900/5" %>
+                <div class="flex justify-end mt-3">
+                  <%= f.submit t("comments.submit"), class: "btn-primary cursor-pointer" %>
                 </div>
               </div>
             </div>
           <% end %>
         <% else %>
-          <div class="py-5 text-center">
-            <%= link_to login_path, class: "inline-flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors" do %>
+          <div class="py-8 text-center">
+            <%= link_to login_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-semibold" do %>
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
               <%= t("comments.login_to_comment") %>
             <% end %>
@@ -181,12 +189,12 @@
         <% end %>
 
         <% if @comments.any? %>
-          <div class="divide-y divide-gray-100">
+          <div class="divide-y divide-stone-100/90">
             <%= render partial: "comments/comment", collection: @comments %>
           </div>
         <% else %>
-          <div class="py-8 text-center">
-            <p class="text-sm text-gray-400"><%= t("comments.no_comments") %></p>
+          <div class="py-12 text-center">
+            <p class="text-sm text-stone-500"><%= t("comments.no_comments") %></p>
           </div>
         <% end %>
       </div>
@@ -195,21 +203,23 @@
     <%# Bilingual toggle (only if other language has content) %>
     <% other_content = I18n.locale == :hi ? @news_item.content_en : @news_item.content_hi %>
     <% if other_title.present? || other_content.present? %>
-      <details class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden mb-8 shadow-sm">
-        <summary class="px-5 sm:px-6 py-4 text-sm font-semibold text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors flex items-center gap-2">
-          <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+      <details class="surface-raised rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-lg shadow-stone-900/[0.05] open:shadow-xl open:ring-1 open:ring-orange-200/40 transition-shadow">
+        <summary class="px-6 sm:px-8 py-5 text-sm font-bold text-stone-800 cursor-pointer hover:bg-stone-50/80 transition-colors flex items-center gap-3 list-none [&::-webkit-details-marker]:hidden">
+          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-stone-100 text-stone-500 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          </span>
           <%= t("article.read_other_lang") %>
         </summary>
-        <div class="px-5 sm:px-6 pb-6 pt-2 prose prose-sm prose-gray max-w-none border-t border-gray-100" dir="auto">
-          <% if other_title.present? %><h3 class="text-lg font-bold"><%= other_title %></h3><% end %>
+        <div class="px-6 sm:px-8 pb-8 pt-2 prose prose-sm prose-stone max-w-none border-t border-stone-100/90" dir="auto">
+          <% if other_title.present? %><h3 class="text-lg font-black tracking-tight text-stone-900"><%= other_title %></h3><% end %>
           <% if other_content.present? %><%= simple_format(other_content) %><% end %>
         </div>
       </details>
     <% end %>
 
     <%# Back link %>
-    <div class="mt-8">
-      <%= link_to root_path, class: "inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors" do %>
+    <div class="mt-10 mb-2 animate-fade-up">
+      <%= link_to root_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-bold text-stone-700 hover:text-orange-700" do %>
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         <%= t("article.back_to_news") %>
       <% end %>
@@ -217,32 +227,36 @@
   </article>
 
   <%# Sidebar — related news %>
-  <aside class="lg:w-80 shrink-0">
-    <div class="lg:sticky lg:top-24">
-      <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
-        <div class="px-5 py-4 border-b border-gray-100">
-          <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
-            <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+  <aside class="lg:w-80 shrink-0 animate-fade-in">
+    <div class="lg:sticky lg:top-28">
+      <div class="card-premium !rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <div class="px-6 py-5 border-b border-stone-100/90 bg-gradient-to-br from-white via-stone-50/50 to-orange-50/20">
+          <h3 class="text-sm font-black text-stone-900 tracking-tight flex items-center gap-3">
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl gradient-brand shadow-md shadow-orange-500/20">
+              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            </span>
             <%= t("article.more_from", name: @news_item.region.display_name) %>
           </h3>
         </div>
         <% if @related.any? %>
-          <div class="divide-y divide-gray-50">
+          <div class="divide-y divide-stone-100/80">
             <% @related.each do |rel| %>
-              <%= link_to news_path(rel), class: "block px-5 py-4 hover:bg-orange-50/50 transition-colors group" do %>
-                <div class="flex gap-3">
+              <%= link_to news_path(rel), class: "block px-5 py-5 hover:bg-gradient-to-r hover:from-orange-50/60 hover:to-amber-50/40 transition-colors group border-b-0 last:border-0" do %>
+                <div class="flex gap-4">
                   <% if rel.cover_image.attached? %>
-                    <%= optimized_image_tag rel.cover_image, variant: :thumb, class: "w-20 h-14 object-cover rounded-lg shrink-0", loading: "lazy" %>
+                    <div class="shrink-0 overflow-hidden rounded-2xl border border-gray-200/40 shadow-md">
+                      <%= optimized_image_tag rel.cover_image, variant: :thumb, class: "w-[5.25rem] h-14 object-cover img-zoom", loading: "lazy" %>
+                    </div>
                   <% else %>
-                    <div class="w-20 h-14 rounded-lg bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center shrink-0">
-                      <span class="text-orange-200 font-bold text-[10px]"><%= t("brand.logo_letter") %></span>
+                    <div class="w-[5.25rem] h-14 rounded-2xl gradient-brand-soft border border-orange-100/60 flex items-center justify-center shrink-0 shadow-inner">
+                      <span class="text-orange-300 font-black text-xs"><%= t("brand.logo_letter") %></span>
                     </div>
                   <% end %>
                   <div class="min-w-0">
-                    <p class="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors leading-snug"><%= rel.display_title %></p>
-                    <div class="flex items-center gap-2 mt-1.5">
-                      <span class="inline-flex items-center gap-1 text-xs text-gray-400">
-                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: <%= rel.category.color %>"></span>
+                    <p class="text-sm font-bold text-stone-900 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-red-600 transition-all leading-snug tracking-tight"><%= rel.display_title %></p>
+                    <div class="flex items-center gap-2 mt-2">
+                      <span class="badge badge-category border border-gray-200/40 !py-0.5 !text-[0.65rem] text-stone-500">
+                        <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: <%= rel.category.color %>"></span>
                         <%= rel.category.display_name %>
                       </span>
                     </div>
@@ -252,8 +266,8 @@
             <% end %>
           </div>
         <% else %>
-          <div class="px-5 py-8 text-center">
-            <p class="text-sm text-gray-400"><%= t("article.no_related") %></p>
+          <div class="px-6 py-10 text-center">
+            <p class="text-sm text-stone-500"><%= t("article.no_related") %></p>
           </div>
         <% end %>
       </div>

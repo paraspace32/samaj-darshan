@@ -1,41 +1,49 @@
 <% content_for(:title, t("magazine.title") + " — " + t("brand.name")) %>
 
-<div class="mb-8 animate-fade-in">
-  <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900"><%= t("magazine.title") %></h1>
-  <p class="text-gray-500 mt-1"><%= t("magazine.subtitle") %></p>
+<div class="mb-12 sm:mb-14 animate-fade-in">
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight leading-[1.1]">
+    <span class="text-gradient"><%= t("magazine.title") %></span>
+  </h1>
+  <p class="text-stone-500 mt-4 text-base sm:text-lg max-w-2xl leading-relaxed"><%= t("magazine.subtitle") %></p>
+  <div class="section-divider mt-8 max-w-md"></div>
 </div>
 
 <% if @magazines.any? %>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
     <% @magazines.each_with_index do |mag, idx| %>
-      <div class="animate-fade-in" style="animation-delay: <%= idx * 60 %>ms">
-        <%= link_to magazine_path(mag), class: "group block bg-white rounded-2xl border border-gray-200/60 overflow-hidden card-hover shadow-sm" do %>
-          <div class="aspect-[3/4] relative overflow-hidden">
+      <div class="animate-fade-up" style="animation-delay: <%= idx * 60 %>ms">
+        <%= link_to magazine_path(mag), class: "group block card-premium rounded-3xl ring-1 ring-black/[0.04]" do %>
+          <div class="aspect-[3/4] relative overflow-hidden bg-stone-100">
             <% if mag.cover_image.attached? %>
-              <%= optimized_image_tag mag.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500", loading: idx < 3 ? "eager" : "lazy" %>
+              <%= optimized_image_tag mag.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: idx < 3 ? "eager" : "lazy" %>
             <% else %>
-              <div class="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-200 flex flex-col items-center justify-center">
-                <span class="text-6xl text-orange-300/50 font-black">#<%= mag.issue_number %></span>
+              <div class="w-full h-full gradient-brand-soft flex flex-col items-center justify-center relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-orange-200/40 via-amber-100/30 to-rose-100/40"></div>
+                <span class="relative text-6xl sm:text-7xl text-orange-400/40 font-black tracking-tight">#<%= mag.issue_number %></span>
               </div>
             <% end %>
-            <div class="absolute top-3 left-3">
-              <span class="inline-block bg-white/90 backdrop-blur-sm text-orange-700 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-sm">
+            <%# Rich overlays %>
+            <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-900/25 to-orange-950/15 pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-orange-900/20 pointer-events-none"></div>
+            <div class="absolute inset-0 gradient-shine opacity-60 pointer-events-none"></div>
+            <div class="absolute top-4 left-4 z-10">
+              <span class="badge gradient-brand text-white shadow-lg shadow-orange-900/20 ring-1 ring-white/20 uppercase tracking-wider">
                 <%= mag.display_issue %>
               </span>
             </div>
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent h-24"></div>
+            <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
           </div>
-          <div class="p-4 sm:p-5">
-            <h2 class="text-lg font-extrabold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug">
+          <div class="p-6 sm:p-7 bg-white">
+            <h2 class="text-lg sm:text-xl font-black tracking-tight text-stone-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug">
               <%= mag.display_title %>
             </h2>
             <% if mag.display_description.present? %>
-              <p class="text-sm text-gray-500 mt-1.5 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(mag.display_description), length: 120) %></p>
+              <p class="text-sm text-stone-500 mt-3 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(mag.display_description), length: 120) %></p>
             <% end %>
-            <div class="flex items-center gap-2 mt-3">
-              <span class="text-xs text-gray-400"><%= mag.published_at&.strftime("%d %b %Y") %></span>
-              <span class="text-gray-300">&middot;</span>
-              <span class="text-xs text-gray-400"><%= t("magazine.articles_count", count: mag.magazine_articles.size) %></span>
+            <div class="flex items-center gap-3 mt-5 pt-5 border-t border-stone-100">
+              <span class="text-xs font-medium text-stone-400"><%= mag.published_at&.strftime("%d %b %Y") %></span>
+              <span class="text-stone-300">&middot;</span>
+              <span class="text-xs font-medium text-stone-400"><%= t("magazine.articles_count", count: mag.magazine_articles.size) %></span>
             </div>
           </div>
         <% end %>
@@ -43,10 +51,10 @@
     <% end %>
   </div>
 <% else %>
-  <div class="bg-white rounded-2xl border border-gray-200/60 px-6 py-20 text-center">
-    <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-      <svg class="w-7 h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+  <div class="surface-elevated rounded-3xl px-8 py-24 sm:py-28 text-center max-w-lg mx-auto">
+    <div class="w-20 h-20 rounded-3xl gradient-brand-soft flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-orange-100/80">
+      <svg class="w-9 h-9 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
     </div>
-    <p class="text-gray-400"><%= t("magazine.no_issues") %></p>
+    <p class="text-stone-500 font-medium"><%= t("magazine.no_issues") %></p>
   </div>
 <% end %>

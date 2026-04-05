@@ -1,7 +1,7 @@
 class WebinarsController < ApplicationController
   def index
-    @upcoming = Webinar.upcoming.includes(:host).limit(20)
-    @past = Webinar.past.order(starts_at: :desc).includes(:host).limit(20)
+    @upcoming = Webinar.upcoming.includes(:host).with_attached_cover_image.limit(20)
+    @past = Webinar.past.order(starts_at: :desc).includes(:host).with_attached_cover_image.limit(20)
   end
 
   def show

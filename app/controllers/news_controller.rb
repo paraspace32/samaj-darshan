@@ -27,16 +27,30 @@ class NewsController < ApplicationController
       @total_count = @news_items.count
       @news_items = @news_items.offset((@page - 1) * @per_page).limit(@per_page)
     end
+
+    fresh_when etag: cache_key_for_index, public: !logged_in?
   end
 
   def show
     @news_item = News.published.find(params[:id])
+
+    fresh_when @news_item, public: !logged_in? if !logged_in?
+
     @comments = @news_item.comments.includes(:user).recent
     @liked = current_user ? @news_item.likes.exists?(user: current_user) : false
     @related = News.published
                    .where(region: @news_item.region)
                    .where.not(id: @news_item.id)
+                   .includes(:region, :category, :author)
+                   .with_attached_cover_image
                    .order(published_at: :desc)
                    .limit(5)
+  end
+
+  private
+
+  def cache_key_for_index
+    latest = News.published.maximum(:updated_at)
+    "news/index/#{@page}/#{params[:slug]}/#{latest&.to_i}/#{I18n.locale}"
   end
 end

@@ -5,9 +5,9 @@ class Magazine < ApplicationRecord
   has_many :magazine_articles, -> { order(position: :asc) }, dependent: :destroy
 
   has_one_attached :cover_image do |attachable|
-    attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 92 }
-    attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 90 }
-    attachable.variant :thumb, resize_to_limit: [ 300, 400 ],  format: :webp, saver: { quality: 85 }
+    attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
+    attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 80 }
+    attachable.variant :thumb, resize_to_limit: [ 300, 400 ],  format: :webp, saver: { quality: 75 }
   end
 
   enum :status, { draft: 0, published: 1 }

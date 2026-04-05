@@ -8,7 +8,7 @@ module Admin
     before_action :authorize_delete, only: [ :destroy ]
 
     def index
-      @news_items = News.includes(:region, :category, :author).order(created_at: :desc)
+      @news_items = News.includes(:region, :category, :author).with_attached_cover_image.order(created_at: :desc)
       @news_items = @news_items.where(status: params[:status]) if params[:status].present?
       @news_items = @news_items.where(region_id: params[:region_id]) if params[:region_id].present?
       @news_items = @news_items.where(category_id: params[:category_id]) if params[:category_id].present?

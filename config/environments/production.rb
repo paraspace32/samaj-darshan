@@ -24,6 +24,13 @@ Rails.application.configure do
   # Store uploaded files on Google Cloud Storage in production, fall back to local disk.
   config.active_storage.service = ENV["GCS_BUCKET"].present? ? :google : :local
 
+  # Serve images via proxy route (/rails/active_storage/blobs/proxy/...) instead of
+  # redirect-to-GCS. This avoids an extra redirect hop and lets Thruster / nginx cache them.
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
+  # Signed URLs are valid for 30 minutes (only matters when using redirect mode).
+  config.active_storage.service_urls_expire_in = 30.minutes
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = ENV.fetch("RAILS_ASSUME_SSL", "true") == "true"
 

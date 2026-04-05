@@ -31,6 +31,11 @@ threads threads_count, threads_count
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT", 3000)
 
+# Use forked workers in production for better throughput.
+# "auto" = one worker per available CPU core.
+workers ENV.fetch("WEB_CONCURRENCY", "auto") if ENV.fetch("RAILS_ENV", "development") == "production"
+preload_app! if ENV.fetch("RAILS_ENV", "development") == "production"
+
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 

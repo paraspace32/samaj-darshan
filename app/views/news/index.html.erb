@@ -1,4 +1,6 @@
-<%# Category pills — horizontal scroll on mobile %>
+<%# ═══════════════════════════════════════════════════════════════════
+    Category pills — horizontal scroll on mobile
+    ═══════════════════════════════════════════════════════════════════ %>
 <div class="mb-8">
   <div class="flex items-center gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
     <%= link_to root_path, class: "shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all #{ @region.nil? && @category.nil? ? 'gradient-brand text-white shadow-sm shadow-orange-200/60' : 'bg-white text-gray-600 border border-gray-200/60 hover:border-orange-200 hover:text-orange-600 shadow-sm shadow-gray-100' }" do %>
@@ -13,7 +15,9 @@
   </div>
 </div>
 
-<%# Page header for filtered views %>
+<%# ═══════════════════════════════════════════════════════════════════
+    Filtered view header (region / category)
+    ═══════════════════════════════════════════════════════════════════ %>
 <% if @region || @category %>
   <div class="mb-8 animate-fade-in">
     <nav class="flex items-center gap-2 text-sm text-gray-400 mb-2">
@@ -32,24 +36,26 @@
   </div>
 <% end %>
 
-<div class="flex flex-col lg:flex-row gap-8">
-  <%# Main content %>
-  <div class="flex-1 min-w-0">
-    <% if @featured.present? && @region.nil? && @category.nil? %>
-      <%# Hero featured news item %>
-      <div class="mb-10 animate-fade-up">
-        <%= link_to news_path(@featured), class: "group block relative rounded-2xl overflow-hidden shadow-xl shadow-gray-300/30" do %>
-          <div class="aspect-[16/8] sm:aspect-[2/1]">
+<% if @is_home %>
+  <%# ═════════════════════════════════════════════════════════════════
+      HOME PAGE — multi-section layout
+      ═════════════════════════════════════════════════════════════════ %>
+
+  <%# ── HERO + Top stories 2-column layout ────────────────────────── %>
+  <% if @featured.present? %>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-12">
+      <%# Main hero (takes 3 cols) %>
+      <div class="lg:col-span-3 animate-fade-up">
+        <%= link_to news_path(@featured), class: "group block relative rounded-2xl overflow-hidden shadow-xl shadow-gray-300/30 h-full min-h-[320px] sm:min-h-[400px]" do %>
+          <div class="absolute inset-0">
             <% if @featured.cover_image.attached? %>
               <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
             <% else %>
-              <div class="w-full h-full gradient-hero flex items-center justify-center">
-                <span class="text-6xl text-white/10 font-black"><%= t("brand.logo_letter") %></span>
-              </div>
+              <div class="w-full h-full gradient-hero"></div>
             <% end %>
             <div class="absolute inset-0 gradient-dark-strong"></div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-10">
+          <div class="relative h-full flex flex-col justify-end p-6 sm:p-8">
             <div class="flex items-center gap-2.5 mb-3">
               <span class="badge badge-category !bg-white/20 !text-white !backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full" style="background-color: <%= @featured.category.color %>"></span>
@@ -57,7 +63,7 @@
               </span>
               <span class="text-xs text-white/60 font-medium"><%= @featured.region.display_name %></span>
             </div>
-            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight group-hover:text-orange-200 transition-colors line-clamp-2 tracking-tight">
+            <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-white leading-tight group-hover:text-orange-200 transition-colors line-clamp-3 tracking-tight">
               <%= @featured.display_title %>
             </h2>
             <p class="text-sm text-white/60 mt-3 line-clamp-2 hidden sm:block max-w-2xl"><%= truncate(strip_tags(@featured.display_content), length: 180) %></p>
@@ -75,145 +81,368 @@
         <% end %>
       </div>
 
-      <% unless @region || @category %>
-        <div class="flex items-center gap-3 mb-6">
-          <h2 class="text-lg font-bold text-gray-900"><%= t("feed.title") %></h2>
-          <div class="flex-1 section-divider"></div>
-        </div>
-      <% end %>
-    <% elsif @news_items.empty? && @featured.blank? %>
-      <div class="surface-elevated rounded-2xl px-6 py-20 text-center">
-        <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-          <svg class="w-7 h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-        </div>
-        <p class="text-gray-400 font-medium"><%= t("feed.no_articles") %></p>
-      </div>
-    <% end %>
-
-    <% if @news_items.any? %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <% @news_items.each_with_index do |news_item, idx| %>
-          <% if idx == 4 %>
-            <%= render "shared/billboard_feed" %>
-          <% end %>
-          <% cache [ news_item, I18n.locale ] do %>
-            <div class="animate-fade-in" style="animation-delay: <%= idx * 60 %>ms">
-              <%= link_to news_path(news_item), class: "group block card-premium" do %>
-                <div class="relative overflow-hidden">
-                  <% if news_item.cover_image.attached? %>
-                    <%= optimized_image_tag news_item.cover_image, variant: :card, class: "w-full h-48 sm:h-44 object-cover img-zoom", loading: "lazy" %>
-                  <% else %>
-                    <div class="w-full h-48 sm:h-44 gradient-brand-soft flex items-center justify-center">
-                      <span class="text-3xl text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
-                    </div>
-                  <% end %>
-                  <div class="absolute top-3 left-3">
-                    <span class="badge badge-category">
-                      <span class="w-2 h-2 rounded-full" style="background-color: <%= news_item.category.color %>"></span>
-                      <%= news_item.category.display_name %>
-                    </span>
+      <%# Side stack — next 3 stories (takes 2 cols) %>
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <% @news_items.first(3).each_with_index do |item, idx| %>
+          <div class="animate-fade-in stagger-<%= idx + 1 %>">
+            <%= link_to news_path(item), class: "group flex gap-4 p-3 rounded-xl surface-raised hover:shadow-md transition-all" do %>
+              <div class="w-24 h-20 sm:w-28 sm:h-[5.5rem] rounded-lg overflow-hidden shrink-0">
+                <% if item.cover_image.attached? %>
+                  <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+                <% else %>
+                  <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                    <span class="text-lg text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
                   </div>
+                <% end %>
+              </div>
+              <div class="flex-1 min-w-0 flex flex-col justify-center">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[11px] font-bold text-orange-600"><%= item.category.display_name %></span>
+                  <span class="text-[11px] text-gray-300">&middot;</span>
+                  <span class="text-[11px] text-gray-400"><%= t("feed.ago", time: time_ago_in_words(item.published_at)) %></span>
                 </div>
-
-                <div class="p-5">
-                  <div class="flex items-center gap-2 mb-2.5">
-                    <span class="text-xs font-bold text-orange-600"><%= news_item.region.display_name %></span>
-                    <span class="text-xs text-gray-300">&middot;</span>
-                    <span class="text-xs text-gray-400"><%= t("feed.ago", time: time_ago_in_words(news_item.published_at)) %></span>
-                  </div>
-
-                  <h2 class="font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 mb-2 text-[15px] leading-snug tracking-tight">
-                    <%= news_item.display_title %>
-                  </h2>
-
-                  <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(news_item.display_content), length: 120) %></p>
-
-                  <div class="flex items-center justify-between mt-4 pt-3.5 border-t border-gray-100/80">
-                    <div class="flex items-center gap-2.5">
-                      <div class="w-6 h-6 rounded-full gradient-brand flex items-center justify-center">
-                        <span class="text-white font-bold text-[9px]"><%= news_item.author.name[0] %></span>
-                      </div>
-                      <span class="text-xs text-gray-500 font-medium"><%= news_item.author.name %></span>
-                    </div>
-                    <div class="flex items-center gap-3 text-xs text-gray-400">
-                      <span class="inline-flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                        <%= news_item.likes_count %>
-                      </span>
-                      <span class="inline-flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                        <%= news_item.comments_count %>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+                <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                <span class="text-xs text-gray-400 mt-1.5"><%= item.region.display_name %></span>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
+    </div>
+  <% end %>
 
-      <%# Pagination %>
-      <% total_pages = (@total_count.to_f / @per_page).ceil %>
-      <% if total_pages > 1 %>
-        <div class="flex items-center justify-center gap-3 mt-12">
-          <% if @page > 1 %>
-            <%= link_to url_for(request.query_parameters.merge(page: @page - 1)), class: "btn-ghost" do %>
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
-              <%= t("feed.previous") %>
-            <% end %>
-          <% end %>
-          <span class="px-4 py-2.5 text-sm text-gray-400 font-semibold"><%= t("feed.page_info", current: @page, total: total_pages) %></span>
-          <% if @page < total_pages %>
-            <%= link_to url_for(request.query_parameters.merge(page: @page + 1)), class: "btn-primary" do %>
-              <%= t("feed.next") %>
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+  <%# ── TRENDING + SIDEBAR ────────────────────────────────────────── %>
+  <% if @trending.present? %>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-14">
+      <div class="lg:col-span-2">
+        <div class="section-heading mb-6">
+          <div>
+            <h2 class="text-lg font-black text-gray-900 tracking-tight"><%= t("feed.trending") %></h2>
+            <p class="text-xs text-gray-400 mt-0.5"><%= t("feed.trending_subtitle") %></p>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <% @trending.each_with_index do |item, idx| %>
+            <%= link_to news_path(item), class: "group flex items-center gap-4 px-4 py-3.5 rounded-xl hover:bg-white hover:shadow-sm transition-all" do %>
+              <span class="trending-rank"><%= "%02d" % (idx + 1) %></span>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                <div class="flex items-center gap-3 mt-1.5">
+                  <span class="text-[11px] font-semibold text-orange-600"><%= item.category.display_name %></span>
+                  <span class="flex items-center gap-1 text-[11px] text-gray-400">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <%= item.likes_count %>
+                  </span>
+                  <span class="flex items-center gap-1 text-[11px] text-gray-400">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <%= item.comments_count %>
+                  </span>
+                </div>
+              </div>
+              <% if item.cover_image.attached? %>
+                <div class="w-16 h-16 rounded-lg overflow-hidden shrink-0 hidden sm:block">
+                  <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
+                </div>
+              <% end %>
             <% end %>
           <% end %>
         </div>
+      </div>
+
+      <%# Sidebar — Webinar + Magazine promos %>
+      <aside class="space-y-5">
+        <% if @upcoming_webinar %>
+          <div class="promo-card gradient-hero text-white p-6">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="badge badge-upcoming !text-[10px]"><%= t("webinar.upcoming_badge") %></span>
+            </div>
+            <h3 class="font-bold text-base leading-snug line-clamp-2 mb-2"><%= @upcoming_webinar.display_title %></h3>
+            <p class="text-sm text-white/60 mb-1"><%= @upcoming_webinar.speaker_name %></p>
+            <p class="text-xs text-white/40 mb-4">
+              <svg class="w-3.5 h-3.5 inline -mt-0.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <%= I18n.l(@upcoming_webinar.starts_at, format: :long) rescue @upcoming_webinar.starts_at.strftime("%b %d, %Y · %I:%M %p") %>
+            </p>
+            <%= link_to webinar_path(@upcoming_webinar), class: "inline-flex items-center gap-2 text-sm font-bold text-white/90 hover:text-white transition-colors group" do %>
+              <%= t("feed.read_more") %>
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @latest_magazine %>
+          <div class="promo-card surface-elevated p-0">
+            <% if @latest_magazine.cover_image.attached? %>
+              <div class="h-40 overflow-hidden">
+                <%= optimized_image_tag @latest_magazine.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
+              </div>
+            <% else %>
+              <div class="h-40 gradient-brand-soft flex items-center justify-center">
+                <span class="text-5xl text-orange-200/40 font-black"><%= t("brand.logo_letter") %></span>
+              </div>
+            <% end %>
+            <div class="p-5">
+              <span class="badge gradient-brand text-white !text-[10px] mb-2"><%= @latest_magazine.display_issue %></span>
+              <h3 class="font-bold text-gray-900 text-sm leading-snug line-clamp-2 mb-2"><%= @latest_magazine.display_title %></h3>
+              <%= link_to magazine_path(@latest_magazine), class: "inline-flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors group" do %>
+                <%= t("feed.read_more") %>
+                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%# Explore categories %>
+        <div class="surface-raised rounded-2xl p-5">
+          <h3 class="text-[13px] font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            <%= t("feed.explore_categories") %>
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <% @categories.each do |c| %>
+              <%= link_to category_feed_path(slug: c.slug), class: "category-chip" do %>
+                <span class="w-2 h-2 rounded-full" style="background-color: <%= c.color %>"></span>
+                <%= c.display_name %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </aside>
+    </div>
+  <% end %>
+
+  <%# ── LATEST NEWS section heading ───────────────────────────────── %>
+  <% if @news_items.any? %>
+    <div class="flex items-center justify-between mb-6">
+      <div class="section-heading">
+        <h2 class="text-lg font-black text-gray-900 tracking-tight"><%= t("feed.latest_news") %></h2>
+      </div>
+      <div class="flex-1 section-divider mx-4"></div>
+    </div>
+  <% end %>
+
+<% else %>
+  <%# ═════════════════════════════════════════════════════════════════
+      FILTERED / PAGED view — standard layout with sidebar
+      ═════════════════════════════════════════════════════════════════ %>
+<% end %>
+
+<%# ═══════════════════════════════════════════════════════════════════
+    NEWS GRID + SIDEBAR (shared between home page 1 and filtered views)
+    ═══════════════════════════════════════════════════════════════════ %>
+<% if @news_items.any? || (@featured.present? && !@is_home) %>
+  <div class="flex flex-col lg:flex-row gap-8">
+    <%# Main content %>
+    <div class="flex-1 min-w-0">
+      <% if @featured.present? && !@is_home %>
+        <%# Standard hero for filtered pages %>
+        <div class="mb-10 animate-fade-up">
+          <%= link_to news_path(@featured), class: "group block relative rounded-2xl overflow-hidden shadow-xl shadow-gray-300/30" do %>
+            <div class="aspect-[16/8] sm:aspect-[2/1]">
+              <% if @featured.cover_image.attached? %>
+                <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+              <% else %>
+                <div class="w-full h-full gradient-hero flex items-center justify-center">
+                  <span class="text-6xl text-white/10 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+              <div class="absolute inset-0 gradient-dark-strong"></div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <h2 class="text-xl sm:text-2xl font-black text-white leading-tight group-hover:text-orange-200 transition-colors line-clamp-2 tracking-tight"><%= @featured.display_title %></h2>
+              <p class="text-sm text-white/60 mt-2 line-clamp-2 hidden sm:block"><%= truncate(strip_tags(@featured.display_content), length: 180) %></p>
+            </div>
+          <% end %>
+        </div>
       <% end %>
+
+      <% if @news_items.empty? && @featured.blank? %>
+        <div class="surface-elevated rounded-2xl px-6 py-20 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+          </div>
+          <p class="text-gray-400 font-medium"><%= t("feed.no_articles") %></p>
+        </div>
+      <% end %>
+
+      <% if @news_items.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <% start_idx = @is_home ? 3 : 0 %>
+          <% @news_items.drop(start_idx).each_with_index do |news_item, idx| %>
+            <% if idx == 4 %>
+              <%= render "shared/billboard_feed" %>
+            <% end %>
+            <% cache [ news_item, I18n.locale ] do %>
+              <div class="animate-fade-in" style="animation-delay: <%= idx * 60 %>ms">
+                <%= link_to news_path(news_item), class: "group block card-premium" do %>
+                  <div class="relative overflow-hidden">
+                    <% if news_item.cover_image.attached? %>
+                      <%= optimized_image_tag news_item.cover_image, variant: :card, class: "w-full h-48 sm:h-44 object-cover img-zoom", loading: "lazy" %>
+                    <% else %>
+                      <div class="w-full h-48 sm:h-44 gradient-brand-soft flex items-center justify-center">
+                        <span class="text-3xl text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                      </div>
+                    <% end %>
+                    <div class="absolute top-3 left-3">
+                      <span class="badge badge-category">
+                        <span class="w-2 h-2 rounded-full" style="background-color: <%= news_item.category.color %>"></span>
+                        <%= news_item.category.display_name %>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2.5">
+                      <span class="text-xs font-bold text-orange-600"><%= news_item.region.display_name %></span>
+                      <span class="text-xs text-gray-300">&middot;</span>
+                      <span class="text-xs text-gray-400"><%= t("feed.ago", time: time_ago_in_words(news_item.published_at)) %></span>
+                    </div>
+
+                    <h2 class="font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 mb-2 text-[15px] leading-snug tracking-tight">
+                      <%= news_item.display_title %>
+                    </h2>
+
+                    <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(news_item.display_content), length: 120) %></p>
+
+                    <div class="flex items-center justify-between mt-4 pt-3.5 border-t border-gray-100/80">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-6 h-6 rounded-full gradient-brand flex items-center justify-center">
+                          <span class="text-white font-bold text-[9px]"><%= news_item.author.name[0] %></span>
+                        </div>
+                        <span class="text-xs text-gray-500 font-medium"><%= news_item.author.name %></span>
+                      </div>
+                      <div class="flex items-center gap-3 text-xs text-gray-400">
+                        <span class="inline-flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                          <%= news_item.likes_count %>
+                        </span>
+                        <span class="inline-flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                          <%= news_item.comments_count %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# Pagination %>
+        <% total_pages = (@total_count.to_f / @per_page).ceil %>
+        <% if total_pages > 1 %>
+          <div class="flex items-center justify-center gap-3 mt-12">
+            <% if @page > 1 %>
+              <%= link_to url_for(request.query_parameters.merge(page: @page - 1)), class: "btn-ghost" do %>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+                <%= t("feed.previous") %>
+              <% end %>
+            <% end %>
+            <span class="px-4 py-2.5 text-sm text-gray-400 font-semibold"><%= t("feed.page_info", current: @page, total: total_pages) %></span>
+            <% if @page < total_pages %>
+              <%= link_to url_for(request.query_parameters.merge(page: @page + 1)), class: "btn-primary" do %>
+                <%= t("feed.next") %>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Sidebar — only on non-home pages (home has its own sidebar in trending section) %>
+    <% unless @is_home %>
+      <aside class="lg:w-72 shrink-0 space-y-6">
+        <div class="surface-raised rounded-2xl p-5">
+          <h3 class="text-[13px] font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <%= t("feed.regions") %>
+          </h3>
+          <ul class="space-y-0.5">
+            <li>
+              <%= link_to root_path, class: "flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all #{@region.nil? && @category.nil? ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" do %>
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                <%= t("feed.all_regions") %>
+              <% end %>
+            </li>
+            <% @regions.each do |r| %>
+              <li>
+                <%= link_to r.display_name, region_feed_path(slug: r.slug), class: "block px-3 py-2 text-sm rounded-lg transition-all #{@region&.id == r.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+
+        <div class="hidden lg:block surface-raised rounded-2xl p-5">
+          <h3 class="text-[13px] font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            <%= t("feed.categories") %>
+          </h3>
+          <ul class="space-y-0.5">
+            <% @categories.each do |c| %>
+              <li>
+                <%= link_to category_feed_path(slug: c.slug), class: "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all #{@category&.id == c.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" do %>
+                  <span class="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-white shadow-sm" style="background-color: <%= c.color %>"></span>
+                  <%= c.display_name %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </aside>
+    <% end %>
+  </div>
+<% elsif @news_items.empty? && @featured.blank? && !@is_home %>
+  <div class="surface-elevated rounded-2xl px-6 py-20 text-center">
+    <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+      <svg class="w-7 h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+    </div>
+    <p class="text-gray-400 font-medium"><%= t("feed.no_articles") %></p>
+  </div>
+<% end %>
+
+<%# ═══════════════════════════════════════════════════════════════════
+    HOME: Quick links to Webinars & Magazine pages
+    ═══════════════════════════════════════════════════════════════════ %>
+<% if @is_home %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-14 mb-4">
+    <%= link_to webinars_path, class: "group promo-card gradient-hero text-white p-6 flex items-center gap-5" do %>
+      <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-base"><%= t("feed.view_all_webinars") %></h3>
+        <p class="text-sm text-white/50 mt-0.5"><%= t("webinar.subtitle") %></p>
+      </div>
+      <svg class="w-5 h-5 text-white/30 ml-auto group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+    <% end %>
+
+    <%= link_to magazines_path, class: "group promo-card gradient-brand text-white p-6 flex items-center gap-5" do %>
+      <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-base"><%= t("feed.view_all_magazines") %></h3>
+        <p class="text-sm text-white/50 mt-0.5"><%= t("magazine.subtitle") %></p>
+      </div>
+      <svg class="w-5 h-5 text-white/30 ml-auto group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
     <% end %>
   </div>
 
-  <%# Sidebar %>
-  <aside class="lg:w-72 shrink-0 space-y-6">
-    <%# Regions %>
-    <div class="surface-raised rounded-2xl p-5">
-      <h3 class="text-[13px] font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        <%= t("feed.regions") %>
-      </h3>
-      <ul class="space-y-0.5">
-        <li>
-          <%= link_to root_path, class: "flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all #{@region.nil? && @category.nil? ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" do %>
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-            <%= t("feed.all_regions") %>
-          <% end %>
-        </li>
-        <% @regions.each do |r| %>
-          <li>
-            <%= link_to r.display_name, region_feed_path(slug: r.slug), class: "block px-3 py-2 text-sm rounded-lg transition-all #{@region&.id == r.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" %>
-          </li>
-        <% end %>
-      </ul>
+  <%# Regions quick grid %>
+  <div class="mt-10 mb-4">
+    <div class="section-heading mb-5">
+      <h2 class="text-lg font-black text-gray-900 tracking-tight"><%= t("feed.regions") %></h2>
     </div>
-
-    <%# Categories — visible on desktop only (pills are mobile-friendly) %>
-    <div class="hidden lg:block surface-raised rounded-2xl p-5">
-      <h3 class="text-[13px] font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <svg class="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
-        <%= t("feed.categories") %>
-      </h3>
-      <ul class="space-y-0.5">
-        <% @categories.each do |c| %>
-          <li>
-            <%= link_to category_feed_path(slug: c.slug), class: "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all #{@category&.id == c.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}" do %>
-              <span class="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-white shadow-sm" style="background-color: <%= c.color %>"></span>
-              <%= c.display_name %>
-            <% end %>
-          </li>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <% @regions.each do |r| %>
+        <%= link_to region_feed_path(slug: r.slug), class: "group flex items-center gap-3 p-3.5 rounded-xl surface-raised hover:shadow-md hover:border-orange-200/60 transition-all" do %>
+          <div class="w-9 h-9 rounded-lg gradient-brand-soft flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-orange-600 transition-colors truncate"><%= r.display_name %></span>
         <% end %>
-      </ul>
+      <% end %>
     </div>
-  </aside>
-</div>
+  </div>
+<% end %>

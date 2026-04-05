@@ -343,6 +343,89 @@
     0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
     50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
   }
+
+  /* ── Trending rank number ────────────────────────────── */
+  .trending-rank {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    background: linear-gradient(180deg, #d4d4d8 0%, #e5e7eb 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    min-width: 2rem;
+    text-align: center;
+  }
+
+  /* ── Promo banner / CTA cards ────────────────────────── */
+  .promo-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .promo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.15);
+  }
+  .promo-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.12) 48%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.12) 52%, transparent 65%);
+    transition: left 600ms ease;
+    pointer-events: none;
+  }
+  .promo-card:hover::after {
+    left: 150%;
+  }
+
+  /* ── Category explore chips ──────────────────────────── */
+  .category-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 200ms ease;
+    cursor: pointer;
+  }
+  .category-chip:hover {
+    border-color: rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
+    transform: translateY(-1px);
+  }
+
+  /* ── Section heading with accent bar ─────────────────── */
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-heading::before {
+    content: '';
+    width: 4px;
+    height: 1.5rem;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #f97316, #dc2626);
+    flex-shrink: 0;
+  }
+
+  /* ── Stagger animation delay utility ─────────────────── */
+  .stagger-1 { animation-delay: 80ms; }
+  .stagger-2 { animation-delay: 160ms; }
+  .stagger-3 { animation-delay: 240ms; }
+  .stagger-4 { animation-delay: 320ms; }
+  .stagger-5 { animation-delay: 400ms; }
 }
 
 @supports (-webkit-touch-callout: none) {

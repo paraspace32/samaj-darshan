@@ -18,11 +18,19 @@ class NewsController < ApplicationController
     @per_page = 12
     @page = [ params[:page].to_i, 1 ].max
 
-    if @page == 1 && @region.nil? && @category.nil?
+    @is_home = @page == 1 && @region.nil? && @category.nil?
+
+    if @is_home
       @featured = @news_items.first
       remaining = @news_items.where.not(id: @featured&.id)
       @total_count = remaining.count
       @news_items = remaining.offset(0).limit(@per_page)
+
+      @trending = News.published.order(likes_count: :desc, comments_count: :desc)
+                      .includes(:region, :category, :author).with_attached_cover_image
+                      .limit(5)
+      @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
+      @latest_magazine = Magazine.visible.includes(cover_image_attachment: :blob).first
     else
       @total_count = @news_items.count
       @news_items = @news_items.offset((@page - 1) * @per_page).limit(@per_page)
@@ -50,7 +58,8 @@ class NewsController < ApplicationController
   private
 
   def cache_key_for_index
-    latest = News.published.maximum(:updated_at)
-    "news/index/#{@page}/#{params[:slug]}/#{latest&.to_i}/#{I18n.locale}"
+    latest_news = News.published.maximum(:updated_at)
+    latest_webinar = Webinar.published.maximum(:updated_at) if @is_home
+    "news/index/#{@page}/#{params[:slug]}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{I18n.locale}"
   end
 end

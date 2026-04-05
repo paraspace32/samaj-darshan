@@ -6,11 +6,8 @@ export default class extends Controller {
   connect() {
     this.paused = false
     this.speed = 0.5
-    this.mobile = window.matchMedia("(max-width: 639px)").matches
-
-    if (!this.mobile) {
-      this.start()
-    }
+    this.touching = false
+    this.start()
   }
 
   disconnect() {
@@ -26,7 +23,7 @@ export default class extends Controller {
   }
 
   tick() {
-    if (!this.paused) {
+    if (!this.paused && !this.touching) {
       const track = this.trackTarget
       track.scrollLeft += this.speed
       if (track.scrollLeft >= track.scrollWidth - track.clientWidth) {
@@ -38,4 +35,9 @@ export default class extends Controller {
 
   pause() { this.paused = true }
   resume() { this.paused = false }
+
+  touchStart() { this.touching = true }
+  touchEnd() {
+    this.touching = false
+  }
 }

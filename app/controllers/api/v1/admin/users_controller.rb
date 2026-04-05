@@ -53,7 +53,9 @@ module Api
         end
 
         def user_params
-          params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status)
+          allowed = [ :name, :phone, :email, :password, :password_confirmation ]
+          allowed += [ :role, :status ] if current_user.super_admin?
+          params.require(:user).permit(*allowed)
         end
 
         def user_json(user)

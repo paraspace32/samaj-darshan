@@ -85,7 +85,7 @@
     <% if @webinar.meeting_url.present? %>
       <div>
         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Meeting URL</p>
-        <%= link_to truncate(@webinar.meeting_url, length: 40), @webinar.meeting_url, target: "_blank", class: "text-sm text-orange-600 hover:text-orange-700 font-medium break-all" %>
+        <%= link_to truncate(@webinar.meeting_url, length: 40), sanitize_url(@webinar.meeting_url), target: "_blank", rel: "noopener noreferrer", class: "text-sm text-orange-600 hover:text-orange-700 font-medium break-all" %>
       </div>
     <% end %>
   </div>

@@ -22,4 +22,11 @@ module ApplicationHelper
 
     image_tag source, **html_opts
   end
+
+  def sanitize_url(url)
+    uri = URI.parse(url.to_s)
+    uri.scheme.in?(%w[http https]) ? url : "#"
+  rescue URI::InvalidURIError
+    "#"
+  end
 end

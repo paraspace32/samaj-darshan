@@ -35,7 +35,7 @@ hi:
     ago: "%{time} पहले"
     latest_news: "ताज़ा समाचार"
     trending: "ट्रेंडिंग"
-    trending_subtitle: "समुदाय में सबसे चर्चित कहानियाँ"
+    trending_subtitle: "समाज में सबसे चर्चित खबरें"
     upcoming_webinar: "आगामी वेबिनार"
     latest_magazine: "नवीनतम अंक"
     view_all_webinars: "सभी वेबिनार"

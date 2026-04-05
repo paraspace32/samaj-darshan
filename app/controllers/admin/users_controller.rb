@@ -68,9 +68,11 @@ module Admin
     end
 
     def user_params
-      allowed = [ :name, :phone, :email, :password, :password_confirmation ]
-      allowed += [ :role, :status ] if current_user.super_admin?
-      params.require(:user).permit(*allowed)
+      if current_user.super_admin?
+        params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status)
+      else
+        params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation)
+      end
     end
   end
 end

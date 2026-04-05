@@ -6,7 +6,11 @@ export default class extends Controller {
   connect() {
     this.paused = false
     this.speed = 0.5
-    this.start()
+    this.mobile = window.matchMedia("(max-width: 639px)").matches
+
+    if (!this.mobile) {
+      this.start()
+    }
   }
 
   disconnect() {

@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :magazine do
     sequence(:title_en) { |n| "Community Voices Issue #{n}" }
-    sequence(:title_hi) { |n| "समुदाय की आवाज़ अंक #{n}" }
+    sequence(:title_hi) { |n| "समाज की आवाज़ अंक #{n}" }
     description_en { "A collection of stories from the community" }
-    description_hi { "समुदाय की कहानियों का संग्रह" }
+    description_hi { "समाज की कहानियों का संग्रह" }
     sequence(:issue_number) { |n| n }
     volume { "1" }
     status { :draft }

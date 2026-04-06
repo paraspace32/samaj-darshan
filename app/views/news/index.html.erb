@@ -201,7 +201,8 @@
             </div>
           <% end %>
 
-          <% if @latest_magazine %>
+          <%# Magazine promo — hidden for now %>
+          <% if false # @latest_magazine %>
             <div class="promo-card surface-elevated p-0 min-w-[240px] lg:min-w-0 shrink-0 lg:shrink">
               <% if @latest_magazine.cover_image.attached? %>
                 <div class="h-32 sm:h-40 overflow-hidden">
@@ -497,6 +498,8 @@
       <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white/30 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
     <% end %>
 
+    <%# Magazine quick-link — hidden for now %>
+    <% if false %>
     <%= link_to magazines_path, class: "group promo-card gradient-brand text-white p-5 sm:p-6 flex items-center gap-4 sm:gap-5" do %>
       <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
         <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
@@ -506,6 +509,7 @@
         <p class="text-[11px] sm:text-sm text-white/50 mt-0.5 truncate"><%= t("magazine.subtitle") %></p>
       </div>
       <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white/30 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+    <% end %>
     <% end %>
   </div>
 <% end %>

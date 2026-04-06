@@ -52,9 +52,6 @@ class NewsController < ApplicationController
 
   def show
     @news_item = News.published.find(params[:id])
-
-    fresh_when @news_item, public: !logged_in? if !logged_in?
-
     @comments = @news_item.comments.includes(:user).recent
     @liked = current_user ? @news_item.likes.exists?(user: current_user) : false
     @related = News.published
@@ -64,6 +61,9 @@ class NewsController < ApplicationController
                    .with_attached_cover_image
                    .order(published_at: :desc)
                    .limit(5)
+
+    latest_comment_at = @comments.first&.created_at
+    fresh_when etag: [ @news_item, latest_comment_at ], last_modified: @news_item.updated_at, public: !logged_in? unless logged_in?
   end
 
   private

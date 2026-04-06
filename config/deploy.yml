@@ -36,6 +36,7 @@ env:
     DB_HOST: samaj-darshan-db
     RAILS_ASSUME_SSL: "false"
     RAILS_FORCE_SSL: "false"
+    GA_MEASUREMENT_ID: "G-KJBW0359PV"
 
 aliases:
   console: app exec --interactive --reuse "bin/rails console"

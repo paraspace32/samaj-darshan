@@ -31,6 +31,17 @@ class NewsController < ApplicationController
                       .limit(5)
       @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
       @latest_magazine = Magazine.visible.includes(cover_image_attachment: :blob).first
+
+      shown_ids = [ @featured&.id, *@news_items.first(3).map(&:id), *@trending.map(&:id) ].compact.uniq
+      @category_sections = @categories.filter_map do |cat|
+        items = News.published.where(category: cat).where.not(id: shown_ids)
+                    .includes(:region, :category, :author).with_attached_cover_image
+                    .order(published_at: :desc).limit(6)
+        next if items.empty?
+
+        shown_ids.concat(items.map(&:id))
+        { category: cat, items: items.to_a }
+      end
     else
       @total_count = @news_items.count
       @news_items = @news_items.offset((@page - 1) * @per_page).limit(@per_page)

@@ -43,6 +43,7 @@ hi:
     read_more: "और पढ़ें"
     explore_categories: "श्रेणियाँ देखें"
     view_all: "सभी देखें"
+    more_in_category: "%{name} में और"
 
   magazine:
     title: "मैगज़ीन"

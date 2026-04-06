@@ -43,6 +43,7 @@ en:
     read_more: "Read more"
     explore_categories: "Explore Categories"
     view_all: "View All"
+    more_in_category: "More in %{name}"
 
   magazine:
     title: "Magazine"

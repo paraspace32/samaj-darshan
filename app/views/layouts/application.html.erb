@@ -191,7 +191,7 @@
             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Links</p>
             <ul class="space-y-2">
               <li><%= link_to t("nav.home"), root_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <%# <li><%= link_to t("nav.magazine"), magazines_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li> %>
+              <% if false %><li><%= link_to t("nav.magazine"), magazines_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li><% end %>
               <li><%= link_to t("nav.webinars"), webinars_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
             </ul>
           </div>

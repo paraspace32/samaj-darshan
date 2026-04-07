@@ -1,51 +1,56 @@
 import { Controller } from "@hotwired/stimulus"
 
 const SNOOZE_KEY = "pwa-install-remind-at"
-const SNOOZE_MS = 3 * 24 * 60 * 60 * 1000
+const SNOOZE_MS = 60 * 60 * 1000
 
 export default class extends Controller {
   static targets = ["stickyBar", "overlay", "instructions"]
 
   connect() {
-    if (this.isStandalone()) return
+    if (this.isStandalone()) {
+      this.hideNavButtons()
+      return
+    }
 
     localStorage.removeItem("pwa-install-dismissed")
 
     if (this.isSnoozed()) return
 
-    this.deferredPrompt = null
     this.platform = this.detectPlatform()
 
+    // If beforeinstallprompt already fired (captured globally in <head>), show bar now
+    if (window.__pwaPrompt) {
+      this.showStickyBar()
+    }
+
+    // Also listen for late-firing beforeinstallprompt
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault()
-      this.deferredPrompt = e
+      window.__pwaPrompt = e
       this.showStickyBar()
     })
 
     window.addEventListener("appinstalled", () => {
-      this.deferredPrompt = null
+      window.__pwaPrompt = null
       this.hideStickyBar()
       this.hideNavButtons()
     })
 
-    // On browsers without beforeinstallprompt (iOS, Firefox),
-    // show the sticky bar after a short delay
+    // On browsers without beforeinstallprompt (iOS, Firefox), show bar after delay
     setTimeout(() => {
-      if (!this.deferredPrompt) {
+      if (!window.__pwaPrompt) {
         this.showStickyBar()
       }
     }, 2000)
   }
 
   install() {
-    if (this.deferredPrompt) {
-      // Android Chrome — directly trigger native install
-      this.deferredPrompt.prompt()
-      this.deferredPrompt.userChoice.then(() => {
-        this.deferredPrompt = null
+    if (window.__pwaPrompt) {
+      window.__pwaPrompt.prompt()
+      window.__pwaPrompt.userChoice.then(() => {
+        window.__pwaPrompt = null
       })
     } else {
-      // iOS / other — show instructions overlay
       this.showInstructions()
     }
   }
@@ -88,8 +93,6 @@ export default class extends Controller {
   stopPropagation(e) {
     e.stopPropagation()
   }
-
-  // ── Helpers ──────────────────────────────────────────────
 
   isSnoozed() {
     const t = localStorage.getItem(SNOOZE_KEY)

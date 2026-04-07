@@ -236,6 +236,11 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* ── Safe area for bottom bar (iPhone notch) ──────────── */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
   /* ── Image overlays ─────────────────────────────────── */
   .img-overlay-bottom::after {
     content: '';

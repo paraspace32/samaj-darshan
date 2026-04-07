@@ -114,6 +114,7 @@ en:
     footer: "Samaj Darshan — Voice of the Community"
 
   pwa:
+    download_app: "Download App"
     simple_tagline: "News right on your phone"
     install_now: "Add to Phone"
     remind_later: "Maybe later"

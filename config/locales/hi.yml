@@ -154,6 +154,7 @@ hi:
         other: "%{count} साल"
 
   pwa:
+    download_app: "ऐप डाउनलोड करें"
     simple_tagline: "खबरें अब आपके फोन में"
     install_now: "फोन में रखें"
     remind_later: "बाद में देखेंगे"

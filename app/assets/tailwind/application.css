@@ -226,6 +226,15 @@
     to { opacity: 1; transform: scale(1); }
   }
 
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Image overlays ─────────────────────────────────── */
   .img-overlay-bottom::after {
     content: '';

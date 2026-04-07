@@ -1,11 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
+const REMIND_DELAY_MS = 3 * 24 * 60 * 60 * 1000 // 3 days
+const DISMISS_KEY = "pwa-install-remind-at"
+
 export default class extends Controller {
   static targets = ["banner", "instructions", "nativeButton"]
 
   connect() {
     if (this.isStandalone()) return
-    if (localStorage.getItem("pwa-install-dismissed")) return
+
+    // Clear legacy permanent-dismiss key from previous version
+    localStorage.removeItem("pwa-install-dismissed")
+
+    if (this.isSnoozed()) return
 
     this.deferredPrompt = null
 
@@ -17,19 +24,20 @@ export default class extends Controller {
 
     window.addEventListener("appinstalled", () => this.hideBanner())
 
-    setTimeout(() => this.showBanner(), 2000)
+    setTimeout(() => this.showBanner(), 3000)
   }
 
   showBanner() {
     if (this.isStandalone()) return
-    if (localStorage.getItem("pwa-install-dismissed")) return
+    if (this.isSnoozed()) return
 
     const info = this.detectBrowser()
     this.populateInstructions(info)
 
     this.bannerTarget.classList.remove("hidden")
     requestAnimationFrame(() => {
-      this.bannerTarget.classList.add("pwa-banner-visible")
+      this.bannerTarget.classList.add("opacity-100")
+      this.bannerTarget.classList.remove("opacity-0")
     })
   }
 
@@ -53,14 +61,32 @@ export default class extends Controller {
     }
   }
 
-  dismiss() {
-    localStorage.setItem("pwa-install-dismissed", "1")
+  remindLater() {
+    const remindAt = Date.now() + REMIND_DELAY_MS
+    localStorage.setItem(DISMISS_KEY, remindAt.toString())
     this.hideBanner()
   }
 
+  dismissOverlay(e) {
+    if (e.target === this.bannerTarget) {
+      this.remindLater()
+    }
+  }
+
+  stopPropagation(e) {
+    e.stopPropagation()
+  }
+
   hideBanner() {
-    this.bannerTarget.classList.remove("pwa-banner-visible")
+    this.bannerTarget.classList.add("opacity-0")
+    this.bannerTarget.classList.remove("opacity-100")
     setTimeout(() => this.bannerTarget.classList.add("hidden"), 300)
+  }
+
+  isSnoozed() {
+    const remindAt = localStorage.getItem(DISMISS_KEY)
+    if (!remindAt) return false
+    return Date.now() < parseInt(remindAt, 10)
   }
 
   detectBrowser() {
@@ -117,10 +143,7 @@ export default class extends Controller {
       return {
         title: t("iosOtherTitle"),
         items: [
-          { icon: null, text: t("iosOther1") },
-          { icon: "share", text: t("iosSafari1") },
-          { icon: null, text: t("iosSafari2") },
-          { icon: null, text: t("iosSafari3") }
+          { icon: null, text: t("iosOther1") }
         ]
       }
     }
@@ -159,21 +182,21 @@ export default class extends Controller {
   }
 
   buildStepsHTML(title, items) {
-    const shareIcon = `<svg class="inline-block w-4 h-4 -mt-0.5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>`
-    const menuIcon = `<svg class="inline-block w-4 h-4 -mt-0.5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>`
+    const shareIcon = `<span class="text-lg">⬆️</span>`
+    const menuIcon = `<span class="text-lg">⋮</span>`
 
     const stepsHTML = items.map((item, i) => {
       let icon = ""
       if (item.icon === "share") icon = ` ${shareIcon} `
       if (item.icon === "menu") icon = ` ${menuIcon} `
-      return `<div class="flex items-start gap-2">
-        <span class="shrink-0 w-5 h-5 rounded-full bg-orange-200 text-orange-700 flex items-center justify-center text-[10px] font-bold mt-0.5">${i + 1}</span>
-        <p class="text-xs text-orange-700">${icon}${item.text}</p>
+      return `<div class="flex items-center gap-3">
+        <span class="shrink-0 w-7 h-7 rounded-full gradient-brand text-white flex items-center justify-center text-xs font-bold">${i + 1}</span>
+        <p class="text-sm text-gray-700 font-medium">${icon}${item.text}</p>
       </div>`
     }).join("")
 
-    return `<div class="bg-orange-50 rounded-xl p-3 space-y-2">
-      <p class="text-xs font-semibold text-orange-800">${title}</p>
+    return `<div class="bg-orange-50/80 rounded-2xl p-4 space-y-3 border border-orange-100/60">
+      <p class="text-sm font-bold text-orange-800">${title}</p>
       ${stepsHTML}
     </div>`
   }

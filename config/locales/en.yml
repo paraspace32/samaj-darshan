@@ -114,21 +114,25 @@ en:
     footer: "Samaj Darshan — Voice of the Community"
 
   pwa:
-    install_tagline: "Install for a better experience"
-    install_button: "Install App"
-    ios_safari_title: "Install this app on your iPhone"
-    ios_safari_step1: "Tap the Share button at the bottom of Safari"
-    ios_safari_step2: 'Scroll down and tap "Add to Home Screen"'
-    ios_safari_step3: 'Tap "Add" in the top right'
-    ios_other_title: "To install, open in Safari"
-    ios_other_step1: "Copy this URL and open it in Safari"
-    android_title: "Install this app"
-    firefox_android_step1: "Tap the ⋮ menu button"
+    simple_tagline: "News right on your phone"
+    install_now: "Add to Phone"
+    remind_later: "Maybe later"
+    benefit_fast: "Opens fast — even with slow internet"
+    benefit_homescreen: "Icon appears on your phone screen"
+    benefit_notification: "Get notified when new stories arrive"
+    ios_safari_title: "How to add:"
+    ios_safari_step1: "Tap the ⬆️ button at the bottom"
+    ios_safari_step2: 'Tap "Add to Home Screen"'
+    ios_safari_step3: 'Tap "Add" — done!'
+    ios_other_title: "Open in Safari browser"
+    ios_other_step1: "Open this link in Safari, then follow the steps above"
+    android_title: "How to add:"
+    firefox_android_step1: "Tap the ⋮ three dots at the top"
     firefox_android_step2: 'Tap "Install"'
-    samsung_android_step1: "Tap the ☰ menu button"
-    samsung_android_step2: 'Tap "Add page to" → "Home screen"'
-    opera_android_step1: "Tap the ⋮ menu button"
-    opera_android_step2: 'Tap "Home screen"'
+    samsung_android_step1: "Tap the ☰ button at the bottom"
+    samsung_android_step2: 'Tap "Add to Home Screen"'
+    opera_android_step1: "Tap the ⋮ three dots at the top"
+    opera_android_step2: 'Tap "Home Screen"'
 
   flash:
     login_required: "Please login to continue."

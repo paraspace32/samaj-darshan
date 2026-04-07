@@ -145,7 +145,7 @@
     </div>
     <div class="p-6">
       <h2 class="text-xl font-extrabold text-gray-900 mb-4"><%= @news_item.title_en %></h2>
-      <div class="prose prose-sm text-gray-600 max-w-none"><%= simple_format(@news_item.content_en) %></div>
+      <div class="prose prose-sm text-gray-600 max-w-none"><%= simple_format(@news_item.content_en.to_s.gsub(/\n{3,}/, "\n\n").strip) %></div>
     </div>
   </div>
 
@@ -156,7 +156,7 @@
     </div>
     <div class="p-6">
       <h2 class="text-xl font-extrabold text-gray-900 mb-4"><%= @news_item.title_hi %></h2>
-      <div class="prose prose-sm text-gray-600 max-w-none"><%= simple_format(@news_item.content_hi) %></div>
+      <div class="prose prose-sm text-gray-600 max-w-none"><%= simple_format(@news_item.content_hi.to_s.gsub(/\n{3,}/, "\n\n").strip) %></div>
     </div>
   </div>
 </div>

@@ -52,5 +52,17 @@ RSpec.describe "News", type: :request do
       get news_path(news_item), params: { locale: :en }
       expect(response.body).to include("Comments")
     end
+
+    it "preserves paragraph breaks and blank lines in rendered content" do
+      formatted_news = create(:news_item, :published, region: region, category: category,
+        content_en: "First paragraph.\n\nSecond paragraph.\n\n\n\nThird after blanks.",
+        content_hi: "पहला।\n\nदूसरा।")
+
+      get news_path(formatted_news), params: { locale: :en }
+
+      expect(response.body).to include("<p>First paragraph.</p>")
+      expect(response.body).to include("<p>Second paragraph.</p>")
+      expect(response.body).to include("<p>Third after blanks.</p>")
+    end
   end
 end

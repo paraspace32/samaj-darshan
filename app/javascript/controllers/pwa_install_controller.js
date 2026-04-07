@@ -42,23 +42,27 @@ export default class extends Controller {
   }
 
   showNativeInstall() {
-    if (this.hasNativeButtonTarget) {
+    if (this.hasNativeButtonTarget && this.isSecureContext()) {
       this.nativeButtonTarget.classList.remove("hidden")
-    }
-    if (this.hasInstructionsTarget) {
-      this.instructionsTarget.classList.add("hidden")
+      if (this.hasInstructionsTarget) {
+        this.instructionsTarget.classList.add("hidden")
+      }
     }
     this.showBanner()
   }
 
   install() {
-    if (this.deferredPrompt) {
+    if (this.deferredPrompt && this.isSecureContext()) {
       this.deferredPrompt.prompt()
       this.deferredPrompt.userChoice.then(() => {
         this.deferredPrompt = null
         this.hideBanner()
       })
     }
+  }
+
+  isSecureContext() {
+    return window.isSecureContext || location.protocol === "https:"
   }
 
   remindLater() {

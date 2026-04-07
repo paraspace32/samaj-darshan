@@ -59,6 +59,27 @@ RSpec.describe "Admin::News", type: :request do
       }.to change(News, :count).by(1)
       expect(News.last.author).to eq(editor)
     end
+
+    it "preserves blank lines and spacing in content" do
+      formatted_content_en = "First paragraph.\n\nSecond paragraph after blank line.\n\n\n\nThird paragraph after multiple blank lines.\n\n  Indented line."
+      formatted_content_hi = "पहला पैराग्राफ।\n\nदूसरा पैराग्राफ।\n\n\n\nतीसरा पैराग्राफ।\n\n  इंडेंटेड लाइन।"
+
+      login_as(editor)
+      post admin_news_index_path, params: {
+        news: {
+          title_en: "Formatting Test",
+          title_hi: "फॉर्मेटिंग टेस्ट",
+          content_en: formatted_content_en,
+          content_hi: formatted_content_hi,
+          region_id: region.id,
+          category_id: category.id
+        }
+      }
+
+      news = News.last
+      expect(news.content_en).to eq(formatted_content_en)
+      expect(news.content_hi).to eq(formatted_content_hi)
+    end
   end
 
   describe "PATCH /admin/news/:id/publish" do
@@ -100,6 +121,18 @@ RSpec.describe "Admin::News", type: :request do
       get admin_news_path(news_item)
       expect(response).to have_http_status(:ok)
     end
+
+    it "renders content with preserved paragraph breaks" do
+      formatted_news = create(:news_item, author: editor,
+        content_en: "Para one.\n\nPara two.\n\n\n\nPara three.",
+        content_hi: "पैरा एक।\n\nपैरा दो।")
+      login_as(editor)
+      get admin_news_path(formatted_news)
+
+      expect(response.body).to include("<p>Para one.</p>")
+      expect(response.body).to include("<p>Para two.</p>")
+      expect(response.body).to include("<p>Para three.</p>")
+    end
   end
 
   describe "PATCH /admin/news/:id (update)" do
@@ -115,6 +148,13 @@ RSpec.describe "Admin::News", type: :request do
       login_as(editor)
       patch admin_news_path(news_item), params: { news: { title_en: "", title_hi: "" } }
       expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "preserves blank lines and spacing on update" do
+      formatted = "Updated first paragraph.\n\nUpdated second paragraph.\n\n\n\nAfter multiple blanks.\n\n  Indented."
+      login_as(editor)
+      patch admin_news_path(news_item), params: { news: { content_en: formatted } }
+      expect(news_item.reload.content_en).to eq(formatted)
     end
   end
 

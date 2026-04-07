@@ -90,12 +90,14 @@ export default class extends Controller {
 
     this.instructionsTarget.innerHTML = this.buildStepsHTML(steps.title, steps.items)
     this.overlayTarget.classList.remove("hidden")
+    document.body.style.overflow = "hidden"
   }
 
   closeOverlay() {
     if (this.hasOverlayTarget) {
       this.overlayTarget.classList.add("hidden")
     }
+    document.body.style.overflow = ""
   }
 
   remindLater() {
@@ -124,10 +126,14 @@ export default class extends Controller {
 
   detectPlatform() {
     const ua = navigator.userAgent
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+
+    const isIOS = /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
 
     if (isIOS) {
-      if (/CriOS|FxiOS/.test(ua)) return { platform: "ios", browser: "other" }
+      if (this.isInAppBrowser(ua)) return { platform: "ios", browser: "inapp" }
+      if (/CriOS/.test(ua)) return { platform: "ios", browser: "chrome" }
+      if (/FxiOS/.test(ua)) return { platform: "ios", browser: "firefox" }
       return { platform: "ios", browser: "safari" }
     }
 
@@ -135,6 +141,10 @@ export default class extends Controller {
     if (/OPR|Opera/.test(ua)) return { platform: "android", browser: "opera" }
     if (/Firefox/.test(ua)) return { platform: "android", browser: "firefox" }
     return { platform: "android", browser: "chrome" }
+  }
+
+  isInAppBrowser(ua) {
+    return /FBAN|FBAV|Instagram|Line\/|Twitter|WhatsApp|Snapchat|Telegram/i.test(ua)
   }
 
   getSteps({ platform, browser }) {
@@ -151,9 +161,15 @@ export default class extends Controller {
           ]
         }
       }
+      // Chrome, Firefox, in-app browsers on iOS all need Safari
       return {
         title: t("iosOtherTitle"),
-        items: [{ emoji: "🌐", text: t("iosOther1") }]
+        items: [
+          { emoji: "🔗", text: t("iosOtherCopy") },
+          { emoji: "🌐", text: t("iosOtherOpen") },
+          { emoji: "⬆️", text: t("iosSafari1") },
+          { emoji: "➕", text: t("iosSafari2") }
+        ]
       }
     }
 
@@ -204,14 +220,23 @@ export default class extends Controller {
   }
 
   buildStepsHTML(title, items) {
+    const copyBtn = (this.platform.platform === "ios" && this.platform.browser !== "safari")
+      ? `<button onclick="navigator.clipboard.writeText(location.href).then(function(){this.textContent='✅ कॉपी हो गया!'}.bind(this))"
+          class="w-full mt-2 mb-1 py-2 rounded-lg bg-orange-50 text-orange-600 text-sm font-bold active:scale-95 transition-transform cursor-pointer border border-orange-200">
+          📋 लिंक कॉपी करें
+        </button>`
+      : ""
+
     const rows = items.map((item, i) =>
-      `<div class="flex items-center gap-3 py-2">
+      `<div class="flex items-start gap-3 py-2">
         <span class="shrink-0 w-8 h-8 rounded-full gradient-brand text-white flex items-center justify-center text-sm font-bold">${i + 1}</span>
-        <span class="text-lg mr-1">${item.emoji}</span>
-        <p class="text-sm text-gray-700 font-medium">${item.text}</p>
+        <div class="flex items-center gap-2 pt-1">
+          <span class="text-lg">${item.emoji}</span>
+          <p class="text-sm text-gray-700 font-medium">${item.text}</p>
+        </div>
       </div>`
     ).join("")
 
-    return `<p class="text-sm font-bold text-gray-900 mb-2">${title}</p>${rows}`
+    return `<p class="text-sm font-bold text-gray-900 mb-2">${title}</p>${copyBtn}${rows}`
   }
 }

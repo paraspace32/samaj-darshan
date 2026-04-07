@@ -125,8 +125,9 @@ en:
     ios_safari_step1: "Tap the ⬆️ button at the bottom"
     ios_safari_step2: 'Tap "Add to Home Screen"'
     ios_safari_step3: 'Tap "Add" — done!'
-    ios_other_title: "Open in Safari browser"
-    ios_other_step1: "Open this link in Safari, then follow the steps above"
+    ios_other_title: "Open in Safari to install"
+    ios_other_copy: "Copy this page link (button below)"
+    ios_other_open: "Open Safari and paste the link"
     android_title: "How to add:"
     firefox_android_step1: "Tap the ⋮ three dots at the top"
     firefox_android_step2: 'Tap "Install"'

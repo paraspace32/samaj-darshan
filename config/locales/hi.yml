@@ -165,8 +165,9 @@ hi:
     ios_safari_step1: "नीचे ⬆️ बटन दबाएं"
     ios_safari_step2: '"होम स्क्रीन में जोड़ें" दबाएं'
     ios_safari_step3: '"जोड़ें" दबाएं — बस हो गया!'
-    ios_other_title: "Safari ब्राउज़र में खोलें"
-    ios_other_step1: "यह लिंक Safari में खोलें, फिर ऊपर बताए तरीके से रखें"
+    ios_other_title: "Safari में खोलें और रखें"
+    ios_other_copy: "नीचे बटन से लिंक कॉपी करें"
+    ios_other_open: "Safari खोलें और लिंक पेस्ट करें"
     android_title: "ऐसे रखें फोन में:"
     firefox_android_step1: "ऊपर ⋮ तीन बिंदु दबाएं"
     firefox_android_step2: '"इंस्टॉल करें" दबाएं'

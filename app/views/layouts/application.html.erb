@@ -266,13 +266,8 @@
           window.__pwaPrompt.userChoice.then(function(choice) {
             if (choice.outcome === 'accepted') window.__pwaPrompt = null;
           });
-        } else {
-          // iOS / non-Chrome: show sticky bar + instructions overlay
-          var bar = document.querySelector('[data-pwa-install-target=stickyBar]');
-          if (bar) bar.classList.remove('hidden');
-          // Trigger Stimulus install() for overlay
-          var installBtn = document.querySelector('[data-action="pwa-install#install"]');
-          if (installBtn) installBtn.click();
+        } else if (window.__pwaController) {
+          window.__pwaController.install();
         }
       }
 

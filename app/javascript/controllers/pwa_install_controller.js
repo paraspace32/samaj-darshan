@@ -7,6 +7,8 @@ export default class extends Controller {
   static targets = ["stickyBar", "overlay", "instructions"]
 
   connect() {
+    this.platform = this.detectPlatform()
+
     if (this.isStandalone()) {
       this.hideNavButtons()
       return
@@ -14,34 +16,46 @@ export default class extends Controller {
 
     localStorage.removeItem("pwa-install-dismissed")
 
-    if (this.isSnoozed()) return
+    window.__pwaController = this
 
-    this.platform = this.detectPlatform()
+    this._onBeforeInstall = (e) => {
+      e.preventDefault()
+      window.__pwaPrompt = e
+      this.showStickyBar()
+    }
 
-    // If beforeinstallprompt already fired (captured globally in <head>), show bar now
+    this._onAppInstalled = () => {
+      window.__pwaPrompt = null
+      this.hideStickyBar()
+      this.hideNavButtons()
+    }
+
+    window.addEventListener("beforeinstallprompt", this._onBeforeInstall)
+    window.addEventListener("appinstalled", this._onAppInstalled)
+
     if (window.__pwaPrompt) {
       this.showStickyBar()
     }
 
-    // Also listen for late-firing beforeinstallprompt
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault()
-      window.__pwaPrompt = e
-      this.showStickyBar()
-    })
+    if (!this.isSnoozed()) {
+      this._fallbackTimer = setTimeout(() => {
+        if (!window.__pwaPrompt) {
+          this.showStickyBar()
+        }
+      }, 2000)
+    }
+  }
 
-    window.addEventListener("appinstalled", () => {
-      window.__pwaPrompt = null
-      this.hideStickyBar()
-      this.hideNavButtons()
-    })
-
-    // On browsers without beforeinstallprompt (iOS, Firefox), show bar after delay
-    setTimeout(() => {
-      if (!window.__pwaPrompt) {
-        this.showStickyBar()
-      }
-    }, 2000)
+  disconnect() {
+    if (this._onBeforeInstall) {
+      window.removeEventListener("beforeinstallprompt", this._onBeforeInstall)
+    }
+    if (this._onAppInstalled) {
+      window.removeEventListener("appinstalled", this._onAppInstalled)
+    }
+    if (this._fallbackTimer) {
+      clearTimeout(this._fallbackTimer)
+    }
   }
 
   install() {
@@ -171,9 +185,22 @@ export default class extends Controller {
           ]
         }
       }
+      return {
+        title: t("androidTitle"),
+        items: [
+          { emoji: "⋮", text: t("chromeAndroid1") },
+          { emoji: "📲", text: t("chromeAndroid2") }
+        ]
+      }
     }
 
-    return null
+    return {
+      title: t("androidTitle"),
+      items: [
+        { emoji: "⋮", text: t("chromeAndroid1") },
+        { emoji: "📲", text: t("chromeAndroid2") }
+      ]
+    }
   }
 
   buildStepsHTML(title, items) {

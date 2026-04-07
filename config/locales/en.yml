@@ -134,6 +134,8 @@ en:
     samsung_android_step2: 'Tap "Add to Home Screen"'
     opera_android_step1: "Tap the ⋮ three dots at the top"
     opera_android_step2: 'Tap "Home Screen"'
+    chrome_android_step1: "Tap the ⋮ three dots at the top-right"
+    chrome_android_step2: '"Add to Home Screen" or "Install App"'
 
   flash:
     login_required: "Please login to continue."

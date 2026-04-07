@@ -106,7 +106,7 @@
                 prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-[1.05rem]
                 prose-a:text-orange-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline prose-a:decoration-orange-300/80
                 prose-blockquote:border-orange-500 prose-blockquote:border-l-4 prose-blockquote:bg-orange-50/60 prose-blockquote:rounded-r-2xl prose-blockquote:py-3 prose-blockquote:px-2 prose-blockquote:text-stone-700">
-      <%= simple_format(@news_item.display_content.to_s.gsub(/\n{3,}/, "\n\n").strip) %>
+      <%= simple_format(@news_item.display_content) %>
     </div>
 
     <%= render "shared/billboard_article_mid" %>

@@ -22,17 +22,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      # expose to public for direct access
-      - "3000:3000"
     environment:
       RAILS_ENV: production
+      PORT: "80"
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       RAILS_SERVE_STATIC_FILES: "true"
       RAILS_LOG_LEVEL: info
       SOLID_QUEUE_IN_PUMA: "true"
-      RAILS_ASSUME_SSL: "false"
-      RAILS_FORCE_SSL: "false"
+      RAILS_ASSUME_SSL: "true"
+      RAILS_FORCE_SSL: "true"
       DB_HOST: db
       SAMAJ_DARSHAN_DATABASE_PASSWORD: ${SAMAJ_DARSHAN_DATABASE_PASSWORD}
       GCS_PROJECT_ID: ${GCS_PROJECT_ID}
@@ -42,6 +40,21 @@ services:
     volumes:
       - storage:/rails/storage
 
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   pgdata:
   storage:
+  caddy_data:
+  caddy_config:

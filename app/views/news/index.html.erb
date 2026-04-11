@@ -410,7 +410,7 @@
             <% if idx == 4 %>
               <%= render "shared/billboard_feed" %>
             <% end %>
-            <% cache [ news_item, I18n.locale, "list" ] do %>
+            <% cache [ news_item, I18n.locale, "list", ENV.fetch("CACHE_VERSION", "v1") ] do %>
               <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
                 <%= link_to news_path(news_item), class: "group news-list-row" do %>
                   <div class="w-24 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
@@ -454,7 +454,7 @@
             <% if idx == 4 %>
               <%= render "shared/billboard_feed" %>
             <% end %>
-            <% cache [ news_item, I18n.locale, "card" ] do %>
+            <% cache [ news_item, I18n.locale, "card", ENV.fetch("CACHE_VERSION", "v1") ] do %>
               <div class="animate-fade-in" style="animation-delay: <%= idx * 60 %>ms">
                 <%= link_to news_path(news_item), class: "group block card-premium" do %>
                   <div class="relative overflow-hidden">

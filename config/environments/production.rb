@@ -65,7 +65,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "asatisamaj.in" }
+  config.action_mailer.default_url_options = { host: "www.samaj-darshan.com" }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
@@ -87,9 +87,10 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # Allow all hosts to support Cloudflare Tunnel and other temporary hostnames.
-  # For stricter security, replace with a list of allowed hostnames.
-  config.hosts.clear
+  # Allow specific domains and IP addresses
+  config.hosts << "www.samaj-darshan.com"
+  config.hosts << "samaj-darshan.com"
+  config.hosts << "34.14.172.86"
 
   # If needed, remove the Host Authorization middleware (useful for tunnels and temporary hostnames).
   # Be cautious: removing this disables one protection against Host header attacks.

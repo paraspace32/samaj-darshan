@@ -1,0 +1,3 @@
+www.samaj-darshan.com {
+    reverse_proxy web:80
+}

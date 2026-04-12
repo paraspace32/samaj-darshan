@@ -1,0 +1,85 @@
+<% content_for(:title, t("education.title")) %>
+
+<%# Header %>
+<div class="mb-10 sm:mb-12 animate-fade-in">
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900"><span class="text-gradient"><%= t("education.title") %></span></h1>
+  <p class="text-sm sm:text-base text-gray-500 mt-3 max-w-2xl leading-relaxed"><%= t("education.subtitle") %></p>
+</div>
+
+<%# Category filter %>
+<div class="mb-8 animate-fade-up">
+  <div class="flex flex-wrap gap-2">
+    <%= link_to t("education.all_categories"), education_index_path, class: "inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold transition-all #{params[:category].blank? ? 'gradient-brand text-white shadow-sm' : 'bg-white border border-gray-200/60 text-gray-600 hover:bg-gray-50'}" %>
+    <% EducationPost.categories.each_key do |cat| %>
+      <%= link_to cat.humanize, education_index_path(category: cat), class: "inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold transition-all #{params[:category] == cat ? 'gradient-brand text-white shadow-sm' : 'bg-white border border-gray-200/60 text-gray-600 hover:bg-gray-50'}" %>
+    <% end %>
+  </div>
+  <div class="section-divider mt-5"></div>
+</div>
+
+<%# Posts grid %>
+<% if @education_posts.any? %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 animate-fade-up">
+    <% @education_posts.each do |post| %>
+      <%= link_to education_path(post), class: "group card-premium rounded-3xl border border-gray-200/40 block" do %>
+        <%# Cover image %>
+        <div class="aspect-video bg-gradient-to-br from-indigo-100/90 via-blue-50 to-violet-100/80 relative overflow-hidden rounded-t-3xl">
+          <% if post.cover_image.attached? %>
+            <%= optimized_image_tag post.cover_image, variant: :card, class: "img-zoom w-full h-full object-cover", loading: "lazy" %>
+          <% else %>
+            <div class="w-full h-full flex items-center justify-center">
+              <svg class="w-14 h-14 text-indigo-300/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+            </div>
+          <% end %>
+          <span class="absolute top-4 left-4 badge badge-category bg-indigo-600/90 text-white border-0 shadow-lg"><%= post.category_label %></span>
+        </div>
+
+        <div class="p-5 sm:p-6">
+          <h3 class="font-black tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 mb-3 text-base sm:text-lg leading-snug"><%= post.display_title %></h3>
+          <% if post.organization_name.present? %>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              <span class="font-semibold text-gray-600"><%= post.organization_name %></span>
+            </div>
+          <% end %>
+          <% if post.exam_date.present? %>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span><%= t("education.exam_date") %>: <%= post.exam_date.strftime("%d %b %Y") %></span>
+            </div>
+          <% end %>
+          <% if post.registration_deadline.present? %>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span><%= t("education.deadline") %>: <%= post.registration_deadline.strftime("%d %b %Y") %></span>
+            </div>
+          <% end %>
+          <div class="text-xs text-gray-400 pt-2 border-t border-gray-100">
+            <%= post.published_at&.strftime("%d %b %Y") %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Pagination %>
+  <% total_pages = (@total_count.to_f / @per_page).ceil %>
+  <% if total_pages > 1 %>
+    <div class="flex items-center justify-center gap-4 mt-12">
+      <% if @page > 1 %>
+        <%= link_to t("feed.previous"), education_index_path(request.query_parameters.merge(page: @page - 1)), class: "btn-ghost" %>
+      <% end %>
+      <span class="text-sm text-gray-500 font-medium"><%= t("feed.page_info", current: @page, total: total_pages) %></span>
+      <% if @page < total_pages %>
+        <%= link_to t("feed.next"), education_index_path(request.query_parameters.merge(page: @page + 1)), class: "btn-ghost" %>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="surface-elevated rounded-3xl border border-gray-200/40 px-8 py-20 sm:py-24 text-center shadow-xl animate-fade-in">
+    <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center mx-auto mb-6 border border-gray-200/40 shadow-inner">
+      <svg class="w-10 h-10 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+    </div>
+    <p class="text-gray-500 font-medium"><%= t("education.no_posts") %></p>
+  </div>
+<% end %>

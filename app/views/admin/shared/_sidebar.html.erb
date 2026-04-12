@@ -21,6 +21,12 @@
     <% if current_user.can_manage_webinars? %>
       <%= admin_nav_link "Webinars", admin_webinars_path, "video" %>
     <% end %>
+    <% if current_user.can_manage_education? %>
+      <%= admin_nav_link "Education", admin_education_posts_path, "academic-cap" %>
+    <% end %>
+    <% if current_user.can_manage_jobs? %>
+      <%= admin_nav_link "Jobs", admin_job_posts_path, "briefcase" %>
+    <% end %>
 
     <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>
       <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>

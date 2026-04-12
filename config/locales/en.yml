@@ -9,6 +9,8 @@ en:
     home: "Home"
     magazine: "Magazine"
     webinars: "Webinars"
+    education: "Education"
+    jobs: "Jobs"
     admin: "Admin Panel"
     new_article: "New News"
     news: "News"
@@ -146,3 +148,24 @@ en:
     welcome_back: "Welcome back, %{name}!"
     logged_out: "Logged out successfully."
     not_authorized: "You are not authorized to perform this action."
+
+  education:
+    title: "Education"
+    subtitle: "Exam updates, results, educational resources, and degree news for our community"
+    all_categories: "All"
+    no_posts: "No education posts published yet."
+    back: "← Back to Education"
+    exam_date: "Exam Date"
+    deadline: "Registration Deadline"
+    visit_official: "Visit Official Website"
+
+  jobs:
+    title: "Jobs & Internships"
+    subtitle: "Career opportunities, internships, job openings, and new job announcements for our community"
+    all_categories: "All"
+    no_posts: "No job posts published yet."
+    back: "← Back to Jobs"
+    deadline: "Deadline"
+    apply_now: "Apply Now"
+    closed: "Closed"
+    deadline_passed: "Application deadline has passed"

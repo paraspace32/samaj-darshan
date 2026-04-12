@@ -27,9 +27,11 @@ module ApplicationHelper
   # Social media crawlers (WhatsApp, Facebook, Twitter) require absolute URLs
   # and respond best to properly-sized JPEG images.
   def og_image_url(attachment)
+    return nil unless attachment.attached?
+
     variant = attachment.variant(:og)
     path = polymorphic_path(variant)
-    "#{request.base_url}#{path}"
+    URI.join(request.base_url, path).to_s
   end
 
   def sanitize_url(url)

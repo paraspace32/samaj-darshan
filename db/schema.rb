@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,6 +71,52 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
     t.index ["active"], name: "index_categories_on_active"
     t.index ["position"], name: "index_categories_on_position"
     t.index ["slug"], name: "index_categories_on_slug", unique: true
+  end
+
+  create_table "education_posts", force: :cascade do |t|
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.text "content_en", null: false
+    t.text "content_hi", null: false
+    t.integer "category", default: 0, null: false
+    t.string "organization_name"
+    t.date "exam_date"
+    t.date "registration_deadline"
+    t.string "official_url"
+    t.integer "status", default: 0, null: false
+    t.datetime "published_at"
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_education_posts_on_author_id"
+    t.index ["category"], name: "index_education_posts_on_category"
+    t.index ["published_at"], name: "index_education_posts_on_published_at"
+    t.index ["status", "category"], name: "index_education_posts_on_status_and_category"
+    t.index ["status", "published_at"], name: "index_education_posts_on_status_and_published_at"
+    t.index ["status"], name: "index_education_posts_on_status"
+  end
+
+  create_table "job_posts", force: :cascade do |t|
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.text "description_en", null: false
+    t.text "description_hi", null: false
+    t.integer "category", default: 0, null: false
+    t.string "company_name", null: false
+    t.string "location"
+    t.date "deadline"
+    t.string "application_url"
+    t.integer "status", default: 0, null: false
+    t.datetime "published_at"
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_job_posts_on_author_id"
+    t.index ["category"], name: "index_job_posts_on_category"
+    t.index ["published_at"], name: "index_job_posts_on_published_at"
+    t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
+    t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
+    t.index ["status"], name: "index_job_posts_on_status"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -200,6 +246,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "users"
+  add_foreign_key "education_posts", "users", column: "author_id"
+  add_foreign_key "job_posts", "users", column: "author_id"
   add_foreign_key "likes", "users"
   add_foreign_key "magazine_articles", "magazines"
   add_foreign_key "magazine_articles", "users", column: "author_id"

@@ -96,7 +96,7 @@ module Admin
     end
 
     def require_news_access
-      raise Authorization::NotAuthorizedError unless current_user.has_section_access?("news") || current_user.co_editor? || current_user.moderator?
+      raise Authorization::NotAuthorizedError unless current_user.can_access_news_section?
     end
 
     def authorize_edit

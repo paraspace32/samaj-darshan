@@ -36,6 +36,10 @@ class User < ApplicationRecord
     super_admin? || editor? || co_editor? || moderator?
   end
 
+  def can_access_news_section?
+    has_section_access?("news") || co_editor? || moderator?
+  end
+
   def can_manage_users?
     super_admin?
   end

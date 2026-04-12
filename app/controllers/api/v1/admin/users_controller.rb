@@ -58,6 +58,10 @@ module Api
           else
             params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation)
           end
+          sanitize_allowed_sections(permitted)
+        end
+
+        def sanitize_allowed_sections(permitted)
           permitted[:allowed_sections] = permitted[:allowed_sections]&.reject(&:blank?) || [] if permitted.key?(:allowed_sections)
           permitted
         end

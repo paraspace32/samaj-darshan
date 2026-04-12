@@ -104,7 +104,12 @@ Rails.application.routes.draw do
   resources :webinars, only: [ :index, :show ]
 
   # Education
-  resources :education, only: [ :index, :show ], controller: "education"
+  resources :education, only: [ :index, :show ], controller: "education" do
+    resources :comments, only: [ :create, :destroy ], controller: "comments"
+    resource :like, only: [], controller: "likes" do
+      post :toggle
+    end
+  end
 
   # Jobs
   resources :jobs, only: [ :index, :show ]

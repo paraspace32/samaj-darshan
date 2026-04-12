@@ -11,6 +11,7 @@ class EducationPost < ApplicationRecord
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
     attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 80 }
     attachable.variant :thumb, resize_to_limit: [ 200, 140 ],  format: :webp, saver: { quality: 75 }
+    attachable.variant :og,    resize_to_limit: [ 1200, 630 ], format: :jpeg, saver: { quality: 80 }
   end
 
   enum :status, { draft: 0, published: 1 }

@@ -126,8 +126,7 @@
 
       <p class="text-sm font-bold text-stone-900 tracking-tight mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
       <div class="flex flex-wrap items-center gap-3">
-        <% image_url = @news_item.cover_image.attached? ? rails_storage_proxy_url(@news_item.cover_image) : nil %>
-        <% share_text = "#{@news_item.display_title}\n#{image_url ? "#{image_url}\n" : ""}#{request.original_url}" %>
+        <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
         <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
            target="_blank" rel="noopener"
            class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 shadow-lg shadow-emerald-900/15 hover:shadow-xl transition-all">

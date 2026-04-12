@@ -3,7 +3,7 @@
 <% content_for(:og_type, "article") %>
 <% content_for(:description, truncate(strip_tags(@news_item.display_content), length: 200)) %>
 <% if @news_item.cover_image.attached? %>
-  <% content_for(:og_image, rails_storage_proxy_url(@news_item.cover_image)) %>
+  <% content_for(:og_image, og_image_url(@news_item.cover_image)) %>
 <% end %>
 
 <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">

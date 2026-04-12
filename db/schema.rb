@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_12_063219) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_12_075100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -87,10 +87,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_12_063219) do
   create_table "education_posts", force: :cascade do |t|
     t.bigint "author_id", null: false
     t.integer "category", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
     t.text "content_en", null: false
     t.text "content_hi", null: false
     t.datetime "created_at", null: false
     t.date "exam_date"
+    t.integer "likes_count", default: 0, null: false
     t.string "official_url"
     t.string "organization_name"
     t.datetime "published_at"

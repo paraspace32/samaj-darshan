@@ -164,6 +164,8 @@ en:
     exam_date: "Exam Date"
     deadline: "Registration Deadline"
     visit_official: "Visit Official Website"
+    more_in_category: "Related Education Posts"
+    no_related: "No related education posts."
 
   jobs:
     title: "Jobs & Internships"

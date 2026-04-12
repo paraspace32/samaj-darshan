@@ -4,6 +4,9 @@ class EducationPost < ApplicationRecord
 
   belongs_to :author, class_name: "User"
 
+  has_many :comments, as: :commentable, dependent: :destroy
+  has_many :likes, as: :likeable, dependent: :destroy
+
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
     attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 80 }

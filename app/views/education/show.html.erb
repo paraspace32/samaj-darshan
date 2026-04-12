@@ -73,7 +73,7 @@
     <%# Cover image %>
     <% if @education_post.cover_image.attached? %>
       <div class="mb-10 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full max-h-[520px] object-cover img-zoom" %>
+        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
       </div>
     <% end %>
 

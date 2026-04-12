@@ -51,7 +51,7 @@
     <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
     <% if gallery_images.size == 1 %>
       <div class="mb-10 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full max-h-[520px] object-cover img-zoom" %>
+        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
       </div>
     <% elsif gallery_images.size > 1 %>
       <div class="mb-10 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"

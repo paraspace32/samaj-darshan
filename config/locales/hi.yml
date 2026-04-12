@@ -46,6 +46,12 @@ hi:
     explore_categories: "श्रेणियाँ देखें"
     view_all: "सभी देखें"
     more_in_category: "%{name} में और"
+    education_news: "शिक्षा समाचार"
+    education_news_subtitle: "परीक्षा अपडेट, परिणाम और शैक्षिक संसाधन"
+    view_all_education: "सभी शिक्षा समाचार"
+    job_news: "नौकरी समाचार"
+    job_news_subtitle: "करियर के अवसर और नौकरी की खबरें"
+    view_all_jobs: "सभी नौकरी समाचार"
 
   magazine:
     title: "मैगज़ीन"

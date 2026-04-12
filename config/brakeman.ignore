@@ -1,22 +1,22 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "0ad95a3d455419b8976ea3fe443777e34b17cd274a2c7b617b9858f2be682f2c",
-      "code": "params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status)",
+      "fingerprint": "ae817bdc9b486077048a2de2f37a4e2fcf54f38052eeed3db7ef1e7f3ebcf66b",
+      "code": "params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status, :allowed_sections => ([]))",
       "message": "Potentially dangerous key allowed for mass assignment",
       "file": "app/controllers/admin/users_controller.rb",
       "line": 72,
       "note": "Safe: only the super_admin branch permits :role and :status; controller requires super_admin before_action"
     },
     {
-      "fingerprint": "b08700d83eb30dc323c64ea06d0bb5d91bf7e0b8b656f3ae445151b1801f4e2d",
-      "code": "params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status)",
+      "fingerprint": "e09f30e289ac4bc66e8c25af45524fce571d0d87821ecea27f80da97c5250456",
+      "code": "params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status, :allowed_sections => ([]))",
       "message": "Potentially dangerous key allowed for mass assignment",
       "file": "app/controllers/api/v1/admin/users_controller.rb",
       "line": 57,
       "note": "Safe: only the super_admin branch permits :role and :status; controller requires super_admin before_action"
     }
   ],
-  "updated": "2026-04-05",
+  "updated": "2026-04-12",
   "brakeman_version": "8.0.4"
 }

@@ -10,7 +10,7 @@
   <%# Main content %>
   <article class="flex-1 min-w-0 animate-fade-in">
     <%# Breadcrumb %>
-    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-8 animate-fade-up">
+    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-4 animate-fade-up">
       <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
       <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors font-medium" %>
@@ -19,12 +19,12 @@
     </nav>
 
     <%# Title %>
-    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-4"><%= @news_item.display_title %></h1>
+    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-3"><%= @news_item.display_title %></h1>
 
     <% other_title = I18n.locale == :hi ? @news_item.title_en : @news_item.title_hi %>
 
     <%# Author line %>
-    <div class="flex items-center gap-2.5 mb-6">
+    <div class="flex items-center gap-2.5 mb-4">
       <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-sm">
         <span class="text-white font-bold text-xs"><%= @news_item.author.name[0] %></span>
       </div>
@@ -34,18 +34,18 @@
       </div>
     </div>
 
-    <div class="section-divider mb-10"></div>
+    <div class="section-divider mb-6"></div>
 
     <%= render "shared/billboard_article_top" %>
 
     <%# Image carousel (cover + additional images) %>
     <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
     <% if gallery_images.size == 1 %>
-      <div class="mb-10 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
         <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
       </div>
     <% elsif gallery_images.size > 1 %>
-      <div class="mb-10 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
+      <div class="mb-8 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
            data-controller="carousel" data-carousel-autoplay-value="true">
         <div class="relative">
           <div class="overflow-hidden">

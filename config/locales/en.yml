@@ -46,6 +46,12 @@ en:
     explore_categories: "Explore Categories"
     view_all: "View All"
     more_in_category: "More in %{name}"
+    education_news: "Education News"
+    education_news_subtitle: "Exam updates, results & educational resources"
+    view_all_education: "All Education News"
+    job_news: "Job News"
+    job_news_subtitle: "Career opportunities & job openings"
+    view_all_jobs: "All Job News"
 
   magazine:
     title: "Magazine"

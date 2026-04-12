@@ -17,7 +17,8 @@ class JobPost < ApplicationRecord
     part_time: 2,
     contract: 3,
     government: 4,
-    other_job: 5
+    other_job: 5,
+    new_job_news: 6
   }, prefix: :category
 
   validates :title_en, presence: true

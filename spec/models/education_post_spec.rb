@@ -17,7 +17,7 @@ RSpec.describe EducationPost, type: :model do
     it {
       is_expected.to define_enum_for(:category).with_values(
         competitive_exam: 0, board_exam: 1, entrance_exam: 2,
-        scholarship: 3, result: 4, other_education: 5
+        scholarship: 3, result: 4, other_education: 5, degree_news: 6
       ).with_prefix(:category)
     }
   end

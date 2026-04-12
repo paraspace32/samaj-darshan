@@ -30,5 +30,9 @@ FactoryBot.define do
       published_at { 2.months.ago }
       deadline { 1.week.ago.to_date }
     end
+
+    trait :new_job_news do
+      category { :new_job_news }
+    end
   end
 end

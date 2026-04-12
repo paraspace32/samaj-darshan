@@ -151,7 +151,7 @@ en:
 
   education:
     title: "Education"
-    subtitle: "Exam updates, results, and educational resources for our community"
+    subtitle: "Exam updates, results, educational resources, and degree achievements for our community"
     all_categories: "All"
     no_posts: "No education posts published yet."
     back: "← Back to Education"
@@ -161,7 +161,7 @@ en:
 
   jobs:
     title: "Jobs & Internships"
-    subtitle: "Career opportunities, internships, and job openings for our community"
+    subtitle: "Career opportunities, internships, job openings, and job achievement news for our community"
     all_categories: "All"
     no_posts: "No job posts published yet."
     back: "← Back to Jobs"

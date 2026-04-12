@@ -26,5 +26,10 @@ FactoryBot.define do
       category { :entrance_exam }
       organization_name { "NTA" }
     end
+
+    trait :degree_news do
+      category { :degree_news }
+      organization_name { nil }
+    end
   end
 end

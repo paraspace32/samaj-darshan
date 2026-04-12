@@ -17,7 +17,8 @@ class EducationPost < ApplicationRecord
     entrance_exam: 2,
     scholarship: 3,
     result: 4,
-    other_education: 5
+    other_education: 5,
+    degree_news: 6
   }, prefix: :category
 
   validates :title_en, presence: true

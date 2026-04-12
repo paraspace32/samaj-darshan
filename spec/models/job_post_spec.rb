@@ -18,7 +18,7 @@ RSpec.describe JobPost, type: :model do
     it {
       is_expected.to define_enum_for(:category).with_values(
         internship: 0, full_time: 1, part_time: 2,
-        contract: 3, government: 4, other_job: 5
+        contract: 3, government: 4, other_job: 5, new_job_news: 6
       ).with_prefix(:category)
     }
   end

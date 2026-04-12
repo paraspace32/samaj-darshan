@@ -97,11 +97,15 @@ RSpec.describe User, type: :model do
     end
 
     describe "#can_create_news?" do
-      it "returns true for super_admin, editor, co_editor" do
-        %i[super_admin editor co_editor].each do |role|
-          expect(build(:user, role: role).can_create_news?).to be true
-        end
+      it "returns true for super_admin, editor with news section, co_editor" do
+        expect(build(:user, :super_admin).can_create_news?).to be true
+        expect(build(:user, :editor).can_create_news?).to be true
+        expect(build(:user, :co_editor).can_create_news?).to be true
         expect(build(:user, :moderator).can_create_news?).to be false
+      end
+
+      it "returns false for editor without news section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[jobs]).can_create_news?).to be false
       end
     end
 
@@ -139,11 +143,15 @@ RSpec.describe User, type: :model do
     end
 
     describe "#can_flag_news?" do
-      it "returns true for super_admin, editor, moderator" do
-        %i[super_admin editor moderator].each do |role|
-          expect(build(:user, role: role).can_flag_news?).to be true
-        end
+      it "returns true for super_admin, editor with news section, moderator" do
+        expect(build(:user, :super_admin).can_flag_news?).to be true
+        expect(build(:user, :editor).can_flag_news?).to be true
+        expect(build(:user, :moderator).can_flag_news?).to be true
         expect(build(:user, :co_editor).can_flag_news?).to be false
+      end
+
+      it "returns false for editor without news section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[jobs]).can_flag_news?).to be false
       end
     end
 
@@ -178,10 +186,94 @@ RSpec.describe User, type: :model do
     end
 
     describe "#can_review?" do
-      it "returns true for super_admin and editor" do
+      it "returns true for super_admin and editor with news section" do
         expect(build(:user, :super_admin).can_review?).to be true
         expect(build(:user, :editor).can_review?).to be true
         expect(build(:user, :co_editor).can_review?).to be false
+      end
+
+      it "returns false for editor without news section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[jobs]).can_review?).to be false
+      end
+    end
+
+    describe "#has_section_access?" do
+      it "always returns true for super_admin" do
+        admin = build(:user, :super_admin)
+        User::SECTIONS.each do |section|
+          expect(admin.has_section_access?(section)).to be true
+        end
+      end
+
+      it "returns true for editor with matching section" do
+        editor = build(:user, role: :editor, allowed_sections: %w[news webinars])
+        expect(editor.has_section_access?("news")).to be true
+        expect(editor.has_section_access?("webinars")).to be true
+        expect(editor.has_section_access?("jobs")).to be false
+      end
+
+      it "returns false for editor with no sections" do
+        editor = build(:user, role: :editor, allowed_sections: [])
+        expect(editor.has_section_access?("news")).to be false
+      end
+    end
+
+    describe "section-based permissions for editor" do
+      let(:editor_news_only) { build(:user, role: :editor, allowed_sections: %w[news]) }
+      let(:editor_jobs_only) { build(:user, role: :editor, allowed_sections: %w[jobs]) }
+      let(:editor_all) { build(:user, :editor) }
+
+      it "restricts billboard access by section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[billboards]).can_manage_billboards?).to be true
+        expect(editor_news_only.can_manage_billboards?).to be false
+      end
+
+      it "restricts webinar access by section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[webinars]).can_manage_webinars?).to be true
+        expect(editor_jobs_only.can_manage_webinars?).to be false
+      end
+
+      it "restricts magazine access by section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[magazines]).can_manage_magazines?).to be true
+        expect(editor_jobs_only.can_manage_magazines?).to be false
+      end
+
+      it "restricts education access by section" do
+        expect(build(:user, role: :editor, allowed_sections: %w[education]).can_manage_education?).to be true
+        expect(editor_news_only.can_manage_education?).to be false
+      end
+
+      it "restricts jobs access by section" do
+        expect(editor_jobs_only.can_manage_jobs?).to be true
+        expect(editor_news_only.can_manage_jobs?).to be false
+      end
+
+      it "restricts news publishing by section" do
+        expect(editor_news_only.can_publish?).to be true
+        expect(editor_jobs_only.can_publish?).to be false
+      end
+
+      it "restricts news editing by section" do
+        expect(editor_news_only.can_edit_any_news?).to be true
+        expect(editor_jobs_only.can_edit_any_news?).to be false
+      end
+    end
+
+    describe "allowed_sections validation" do
+      it "allows valid sections" do
+        user = build(:user, role: :editor, allowed_sections: %w[news jobs webinars])
+        expect(user).to be_valid
+      end
+
+      it "rejects invalid sections" do
+        user = build(:user, role: :editor, allowed_sections: %w[news invalid_section])
+        expect(user).not_to be_valid
+        expect(user.errors[:allowed_sections]).to be_present
+      end
+
+      it "allows empty sections" do
+        user = build(:user, role: :editor, allowed_sections: [])
+        expect(user).to be_valid
       end
     end
   end

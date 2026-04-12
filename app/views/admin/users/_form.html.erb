@@ -47,6 +47,24 @@
     </div>
   </div>
 
+  <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm space-y-5" data-controller="sections-toggle" data-sections-toggle-editor-roles-value='["editor"]'>
+    <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      Section Access
+    </h2>
+    <p class="text-xs text-gray-400">Select which sections this editor can manage. Applies only to editor role. Super admins always have full access.</p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <% User::SECTIONS.each do |section| %>
+        <label class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-gray-200 hover:border-orange-300 hover:bg-orange-50/30 transition-colors cursor-pointer">
+          <%= check_box_tag "user[allowed_sections][]", section, user.allowed_sections.include?(section), id: "user_allowed_sections_#{section}", class: "rounded border-gray-300 text-orange-600 focus:ring-orange-500/20" %>
+          <span class="text-sm font-medium text-gray-700"><%= section.humanize %></span>
+        </label>
+      <% end %>
+    </div>
+    <%= hidden_field_tag "user[allowed_sections][]", "" %>
+  </div>
+
   <div class="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm space-y-5">
     <div>
       <h2 class="text-sm font-bold text-gray-900 flex items-center gap-2">

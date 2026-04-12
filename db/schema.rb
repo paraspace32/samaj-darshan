@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_12_063219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -73,20 +73,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
     t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
+  create_table "comments", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "commentable_id", null: false
+    t.string "commentable_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
   create_table "education_posts", force: :cascade do |t|
-    t.string "title_en", null: false
-    t.string "title_hi", null: false
+    t.bigint "author_id", null: false
+    t.integer "category", default: 0, null: false
     t.text "content_en", null: false
     t.text "content_hi", null: false
-    t.integer "category", default: 0, null: false
-    t.string "organization_name"
-    t.date "exam_date"
-    t.date "registration_deadline"
-    t.string "official_url"
-    t.integer "status", default: 0, null: false
-    t.datetime "published_at"
-    t.bigint "author_id", null: false
     t.datetime "created_at", null: false
+    t.date "exam_date"
+    t.string "official_url"
+    t.string "organization_name"
+    t.datetime "published_at"
+    t.date "registration_deadline"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_education_posts_on_author_id"
     t.index ["category"], name: "index_education_posts_on_category"
@@ -97,19 +108,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
   end
 
   create_table "job_posts", force: :cascade do |t|
-    t.string "title_en", null: false
-    t.string "title_hi", null: false
-    t.text "description_en", null: false
-    t.text "description_hi", null: false
+    t.string "application_url"
+    t.bigint "author_id", null: false
     t.integer "category", default: 0, null: false
     t.string "company_name", null: false
-    t.string "location"
-    t.date "deadline"
-    t.string "application_url"
-    t.integer "status", default: 0, null: false
-    t.datetime "published_at"
-    t.bigint "author_id", null: false
     t.datetime "created_at", null: false
+    t.date "deadline"
+    t.text "description_en", null: false
+    t.text "description_hi", null: false
+    t.string "location"
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_job_posts_on_author_id"
     t.index ["category"], name: "index_job_posts_on_category"
@@ -117,17 +128,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
     t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
     t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
     t.index ["status"], name: "index_job_posts_on_status"
-  end
-
-  create_table "comments", force: :cascade do |t|
-    t.text "body", null: false
-    t.bigint "commentable_id", null: false
-    t.string "commentable_type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
-    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -209,6 +209,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_12_050002) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.jsonb "allowed_sections", default: [], null: false
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name", null: false

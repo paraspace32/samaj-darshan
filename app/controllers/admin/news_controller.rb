@@ -1,5 +1,6 @@
 module Admin
   class NewsController < BaseController
+    before_action :require_news_access
     before_action :set_news_item, only: [ :show, :edit, :update, :destroy, :publish, :approve, :reject, :submit_for_review ]
     before_action :set_form_collections, only: [ :new, :create, :edit, :update ]
     before_action :require_content_creator, only: [ :new, :create ]
@@ -92,6 +93,10 @@ module Admin
     def set_form_collections
       @regions = Region.active.ordered
       @categories = Category.active.ordered
+    end
+
+    def require_news_access
+      raise Authorization::NotAuthorizedError unless current_user.can_access_news_section?
     end
 
     def authorize_edit

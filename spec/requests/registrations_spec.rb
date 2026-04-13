@@ -65,7 +65,7 @@ RSpec.describe "Registrations", type: :request do
                       password: "password123", password_confirmation: "password123")
       end
 
-      it "rejects registration with the same phone number" do
+      it "rejects registration with the same phone number and shows error message" do
         expect {
           post signup_path, params: {
             user: {
@@ -77,9 +77,10 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("Phone has already been taken")
       end
 
-      it "rejects registration with the same email" do
+      it "rejects registration with the same email and shows error message" do
         expect {
           post signup_path, params: {
             user: {
@@ -92,9 +93,10 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("Email has already been taken")
       end
 
-      it "rejects registration with the same phone and email" do
+      it "rejects registration with the same phone and email and shows both error messages" do
         expect {
           post signup_path, params: {
             user: {
@@ -107,6 +109,8 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to include("Phone has already been taken")
+        expect(response.body).to include("Email has already been taken")
       end
 
       it "does not alter the existing user's data" do

@@ -167,7 +167,7 @@ RSpec.describe "Hindi locale translations", type: :model do
   private
 
   def flatten_keys(hash, prefix = "")
-    return [prefix] unless hash.is_a?(Hash)
+    return [ prefix ] unless hash.is_a?(Hash)
 
     hash.flat_map do |k, v|
       new_prefix = prefix.empty? ? k.to_s : "#{prefix}.#{k}"

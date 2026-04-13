@@ -62,37 +62,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-      - name: Debug network connectivity
-        env:
-          HOST: ${{ secrets.DEPLOY_HOST }}
-        run: |
-          echo "=== Runner public IP ==="
-          curl -sf https://api.ipify.org || echo "(could not determine public IP)"
-          echo ""
-
-          echo "=== SSH client version ==="
-          ssh -V 2>&1
-
-          echo "=== ssh-agent loaded keys ==="
-          ssh-add -l 2>&1 || echo "(no keys loaded or agent not running)"
-
-          echo "=== DNS resolution for DEPLOY_HOST ==="
-          if [ -z "$HOST" ]; then
-            echo "::error::DEPLOY_HOST secret is not set or is empty"
-            exit 1
-          fi
-          host "$HOST" 2>&1 || dig "$HOST" +short 2>&1 || nslookup "$HOST" 2>&1 || echo "::warning::All DNS lookups failed -- HOST may be a raw IP"
-          echo "Resolved HOST value length: ${#HOST} characters"
-
-          echo "=== TCP connectivity to port 22 ==="
-          nc -zv -w 10 "$HOST" 22 2>&1 || echo "::warning::TCP connection to $HOST:22 failed"
-
-          echo "=== TCP connectivity to port 443 (control test) ==="
-          nc -zv -w 10 "$HOST" 443 2>&1 || echo "(port 443 not open — informational only)"
-
       - name: Add VM to known_hosts
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
+          HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
           if [ -z "$HOST" ]; then
             echo "::error::DEPLOY_HOST secret is not set or is empty"
@@ -100,35 +73,43 @@ jobs:
           fi
 
           mkdir -p ~/.ssh
-          max_attempts=5
+          chmod 700 ~/.ssh
+
+          # Fast-path: use the pre-shared host key when available.
+          # Set the DEPLOY_HOST_KEY secret to the output of:
+          #   ssh-keyscan -H <your-vm-ip>
+          if [ -n "$HOST_KEY" ]; then
+            echo "$HOST_KEY" > ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+            echo "known_hosts populated from DEPLOY_HOST_KEY secret"
+            exit 0
+          fi
+
+          echo "DEPLOY_HOST_KEY secret is not set — falling back to ssh-keyscan"
+
+          max_attempts=3
           for i in $(seq 1 $max_attempts); do
             echo "ssh-keyscan attempt $i of $max_attempts..."
             scan_exit=0
-            ssh-keyscan -v -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log || scan_exit=$?
-            echo "ssh-keyscan exit code: $scan_exit"
-            echo "--- ssh-keyscan stderr (attempt $i) ---"
-            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
-            echo "--- end stderr ---"
-            echo "known_hosts size: $(wc -c < ~/.ssh/known_hosts 2>/dev/null || echo 0) bytes"
-            if [ $scan_exit -eq 0 ] && [ -s ~/.ssh/known_hosts ]; then
-              echo "Successfully obtained host key on attempt $i"
-              break
+            ssh-keyscan -T 30 -H "$HOST" > /tmp/keyscan_out 2>/tmp/keyscan_err || scan_exit=$?
+            if [ $scan_exit -eq 0 ] && [ -s /tmp/keyscan_out ]; then
+              cat /tmp/keyscan_out >> ~/.ssh/known_hosts
+              chmod 644 ~/.ssh/known_hosts
+              echo "Host key obtained on attempt $i"
+              exit 0
             fi
             echo "::warning::ssh-keyscan attempt $i failed (exit=$scan_exit)"
+            cat /tmp/keyscan_err 2>/dev/null || true
             if [ "$i" -lt "$max_attempts" ]; then
-              delay=$((i * 5))
-              echo "Retrying in ${delay}s..."
-              sleep "$delay"
-              > ~/.ssh/known_hosts
+              sleep $((i * 5))
             fi
           done
 
-          if [ ! -s ~/.ssh/known_hosts ]; then
-            echo "::error::Failed to fetch host key for DEPLOY_HOST after $max_attempts attempts"
-            echo "Troubleshooting: verify the VM is running, SSH (port 22) is open to GitHub Actions IPs, and DEPLOY_HOST secret is correct."
-            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
-            exit 1
-          fi
+          echo "::error::Failed to fetch host key after $max_attempts attempts"
+          echo "Fix: set the DEPLOY_HOST_KEY repo secret to the output of"
+          echo "  ssh-keyscan -H <vm-ip>  (run from a machine with SSH access to the VM),"
+          echo "or open port 22 on the VM to GitHub Actions runner IPs."
+          exit 1
 
       - name: Deploy (pull image & restart)
         env:
@@ -136,7 +117,7 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
           echo "=== Attempting SSH connection to ${USER}@${HOST} ==="
-          ssh -vvv -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
+          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
             set -e;\
             echo '=== Remote: connection established ===';\
             cd /home/paras/samaj-darshan;\

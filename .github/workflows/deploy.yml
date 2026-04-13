@@ -81,7 +81,7 @@ jobs:
             echo "::error::DEPLOY_HOST secret is not set or is empty"
             exit 1
           fi
-          host "$HOST" 2>&1 || dig "$HOST" +short 2>&1 || nslookup "$HOST" 2>&1 || echo "::warning::All DNS lookups failed — HOST may be a raw IP"
+          host "$HOST" 2>&1 || dig "$HOST" +short 2>&1 || nslookup "$HOST" 2>&1 || echo "::warning::All DNS lookups failed -- HOST may be a raw IP"
           echo "Resolved HOST value length: ${#HOST} characters"
 
           echo "=== TCP connectivity to port 22 ==="

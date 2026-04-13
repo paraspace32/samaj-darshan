@@ -58,7 +58,13 @@ jobs:
           ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
             set -e;\
             cd /home/paras/samaj-darshan;\
-            git fetch --all;\
+            fetch_ok=0; \
+            for i in 1 2 3 4 5; do \
+              if git fetch --all; then fetch_ok=1; break; fi; \
+              echo \"git fetch attempt \$i failed, retrying in \${i}0s...\"; \
+              sleep \"\${i}0\"; \
+            done;\
+            if [ \"\$fetch_ok\" -ne 1 ]; then echo 'git fetch failed after 5 attempts'; exit 1; fi;\
             git reset --hard origin/main;\
             sudo systemctl stop nginx 2>/dev/null || true;\
             sudo systemctl disable nginx 2>/dev/null || true;\

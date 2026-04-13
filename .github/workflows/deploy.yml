@@ -19,7 +19,15 @@ jobs:
       - name: Add VM to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          for i in 1 2 3; do
+            ssh-keyscan -T 10 -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts && break
+            echo "ssh-keyscan attempt $i failed, retrying in 5s..."
+            sleep 5
+          done
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::Failed to fetch host key for DEPLOY_HOST after 3 attempts"
+            exit 1
+          fi
 
       - name: Deploy (git pull, build & restart)
         env:

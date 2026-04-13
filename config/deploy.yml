@@ -9,7 +9,7 @@ ssh:
 
 servers:
   web:
-    - 34.14.172.86
+    - 34.14.167.110
 
 proxy:
   ssl: true

@@ -62,6 +62,34 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
+      - name: Debug network connectivity
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          echo "=== Runner public IP ==="
+          curl -sf https://api.ipify.org || echo "(could not determine public IP)"
+          echo ""
+
+          echo "=== SSH client version ==="
+          ssh -V 2>&1
+
+          echo "=== ssh-agent loaded keys ==="
+          ssh-add -l 2>&1 || echo "(no keys loaded or agent not running)"
+
+          echo "=== DNS resolution for DEPLOY_HOST ==="
+          if [ -z "$HOST" ]; then
+            echo "::error::DEPLOY_HOST secret is not set or is empty"
+            exit 1
+          fi
+          host "$HOST" 2>&1 || dig "$HOST" +short 2>&1 || nslookup "$HOST" 2>&1 || echo "::warning::All DNS lookups failed — HOST may be a raw IP"
+          echo "Resolved HOST value length: ${#HOST} characters"
+
+          echo "=== TCP connectivity to port 22 ==="
+          nc -zv -w 10 "$HOST" 22 2>&1 || echo "::warning::TCP connection to $HOST:22 failed"
+
+          echo "=== TCP connectivity to port 443 (control test) ==="
+          nc -zv -w 10 "$HOST" 443 2>&1 || echo "(port 443 not open — informational only)"
+
       - name: Add VM to known_hosts
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
@@ -75,12 +103,18 @@ jobs:
           max_attempts=5
           for i in $(seq 1 $max_attempts); do
             echo "ssh-keyscan attempt $i of $max_attempts..."
-            if ssh-keyscan -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log && [ -s ~/.ssh/known_hosts ]; then
+            ssh-keyscan -v -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log
+            scan_exit=$?
+            echo "ssh-keyscan exit code: $scan_exit"
+            echo "--- ssh-keyscan stderr (attempt $i) ---"
+            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
+            echo "--- end stderr ---"
+            echo "known_hosts size: $(wc -c < ~/.ssh/known_hosts 2>/dev/null || echo 0) bytes"
+            if [ $scan_exit -eq 0 ] && [ -s ~/.ssh/known_hosts ]; then
               echo "Successfully obtained host key on attempt $i"
               break
             fi
-            echo "::warning::ssh-keyscan attempt $i failed"
-            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
+            echo "::warning::ssh-keyscan attempt $i failed (exit=$scan_exit)"
             if [ "$i" -lt "$max_attempts" ]; then
               delay=$((i * 5))
               echo "Retrying in ${delay}s..."
@@ -101,20 +135,29 @@ jobs:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
+          echo "=== Attempting SSH connection to ${USER}@${HOST} ==="
+          ssh -vvv -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
             set -e;\
+            echo '=== Remote: connection established ===';\
             cd /home/paras/samaj-darshan;\
             fetch_ok=0; \
             for i in 1 2 3 4 5; do \
+              echo \"git fetch attempt \$i...\";\
               if git fetch --all; then fetch_ok=1; break; fi; \
               echo \"git fetch attempt \$i failed, retrying in \${i}0s...\"; \
               sleep \"\${i}0\"; \
             done;\
             if [ \"\$fetch_ok\" -ne 1 ]; then echo 'git fetch failed after 5 attempts'; exit 1; fi;\
+            echo 'git reset --hard origin/main';\
             git reset --hard origin/main;\
+            echo 'Stopping nginx...';\
             sudo systemctl stop nginx 2>/dev/null || true;\
             sudo systemctl disable nginx 2>/dev/null || true;\
+            echo 'Pulling docker image...';\
             docker compose -f docker-compose.production.yml pull web;\
+            echo 'Starting containers...';\
             docker compose -f docker-compose.production.yml --env-file .env up -d;\
+            echo 'Running migrations...';\
             docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production || true;\
+            echo '=== Deploy complete ===';\
           "

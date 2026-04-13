@@ -15,7 +15,9 @@ services:
       retries: 5
 
   web:
-    image: ghcr.io/paraspace32/samaj-darshan:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       db:
@@ -35,7 +37,6 @@ services:
       GCS_BUCKET: ${GCS_BUCKET}
       GCS_CREDENTIALS: ${GCS_CREDENTIALS}
       GA_MEASUREMENT_ID: "G-KJBW0359PV"
-      CACHE_VERSION: ${CACHE_VERSION:-v1}
     volumes:
       - storage:/rails/storage
 
@@ -51,12 +52,6 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:2019/config/"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
 
 volumes:
   pgdata:

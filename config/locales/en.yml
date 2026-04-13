@@ -146,6 +146,12 @@ en:
     chrome_android_step1: "Tap the ⋮ three dots at the top-right"
     chrome_android_step2: '"Add to Home Screen" or "Install App"'
 
+  signup:
+    title: "Create an account"
+    header: "Sign up"
+    sub: "Create your account with phone and password"
+    success: "Welcome! Your account has been created."
+
   flash:
     login_required: "Please login to continue."
     account_blocked: "Your account has been blocked. Contact admin."

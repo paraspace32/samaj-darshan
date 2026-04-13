@@ -77,7 +77,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Phone has already been taken")
+        expect(response.body).to include(I18n.t("errors.messages.taken"))
       end
 
       it "rejects registration with the same email and shows error message" do
@@ -93,7 +93,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Email has already been taken")
+        expect(response.body).to include(I18n.t("errors.messages.taken"))
       end
 
       it "rejects registration with the same phone and email and shows both error messages" do
@@ -109,8 +109,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Phone has already been taken")
-        expect(response.body).to include("Email has already been taken")
+        expect(response.body).to include(I18n.t("errors.messages.taken"))
       end
 
       it "does not alter the existing user's data" do

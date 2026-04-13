@@ -12,7 +12,7 @@ class RegistrationsController < ApplicationController
 
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_path, notice: t("signup.success", default: "Welcome! Your account has been created.")
+      redirect_to root_path, notice: t("signup.success")
     else
       render :new, status: :unprocessable_entity
     end

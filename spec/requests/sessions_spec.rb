@@ -34,12 +34,14 @@ RSpec.describe "Sessions", type: :request do
     it "rejects invalid credentials" do
       post login_path, params: { phone: user.phone, password: "wrong" }
       expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include(I18n.t("flash.invalid_credentials"))
     end
 
     it "rejects blocked users" do
       user.update!(status: :blocked)
       post login_path, params: { phone: user.phone, password: "password123" }
       expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include(I18n.t("flash.blocked_login"))
     end
   end
 

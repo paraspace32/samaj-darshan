@@ -68,6 +68,9 @@ jobs:
           HOST: ${{ secrets.DEPLOY_HOST }}
           HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
         run: |
+          # Default: host key not verified (deploy step will use accept-new)
+          echo "host_key_verified=false" >> "$GITHUB_OUTPUT"
+
           if [ -z "$HOST" ]; then
             echo "::error::DEPLOY_HOST secret is not set or is empty"
             exit 1
@@ -110,7 +113,6 @@ jobs:
 
           echo "::warning::Failed to fetch host key after $max_attempts attempts — will use accept-new"
           echo "::warning::For better security, set the DEPLOY_HOST_KEY repo secret to the output of: ssh-keyscan -H $HOST"
-          echo "host_key_verified=false" >> "$GITHUB_OUTPUT"
 
       - name: Deploy (pull image & restart)
         env:

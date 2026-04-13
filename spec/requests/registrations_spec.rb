@@ -78,6 +78,7 @@ RSpec.describe "Registrations", type: :request do
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include(I18n.t("errors.messages.taken"))
+        expect(response.body).to include(I18n.t("signup.already_registered"))
       end
 
       it "rejects registration with the same email and shows error message" do

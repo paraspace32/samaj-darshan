@@ -151,6 +151,7 @@ en:
     header: "Sign up"
     sub: "Create your account with phone and password"
     success: "Welcome! Your account has been created."
+    already_registered: "You are already registered. Please sign in."
 
   flash:
     login_required: "Please login to continue."

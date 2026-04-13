@@ -14,6 +14,9 @@ class RegistrationsController < ApplicationController
       session[:user_id] = @user.id
       redirect_to root_path, notice: t("signup.success")
     else
+      if @user.errors[:phone].any? && User.exists?(phone: @user.phone)
+        flash.now[:alert] = t("signup.already_registered")
+      end
       render :new, status: :unprocessable_entity
     end
   end

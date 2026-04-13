@@ -106,8 +106,9 @@ jobs:
           done
 
           echo "::error::Failed to fetch host key after $max_attempts attempts"
-          echo "Fix: either open port 22 on the VM to GitHub Actions IPs,"
-          echo "or set the DEPLOY_HOST_KEY secret (ssh-keyscan -H <vm-ip>)."
+          echo "Fix: set the DEPLOY_HOST_KEY repo secret to the output of"
+          echo "  ssh-keyscan -H <vm-ip>  (run from a machine with SSH access to the VM),"
+          echo "or open port 22 on the VM to GitHub Actions runner IPs."
           exit 1
 
       - name: Deploy (pull image & restart)

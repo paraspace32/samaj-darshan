@@ -103,8 +103,8 @@ jobs:
           max_attempts=5
           for i in $(seq 1 $max_attempts); do
             echo "ssh-keyscan attempt $i of $max_attempts..."
-            ssh-keyscan -v -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log
-            scan_exit=$?
+            scan_exit=0
+            ssh-keyscan -v -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log || scan_exit=$?
             echo "ssh-keyscan exit code: $scan_exit"
             echo "--- ssh-keyscan stderr (attempt $i) ---"
             cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true

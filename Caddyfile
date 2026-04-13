@@ -1,7 +1,10 @@
 samaj-darshan.com {
-    redir https://www.samaj-darshan.com{uri} permanent
+	redir https://www.samaj-darshan.com{uri} permanent
 }
 
 www.samaj-darshan.com {
-    reverse_proxy web:80
+	reverse_proxy web:80 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Real-IP {remote_host}
+	}
 }

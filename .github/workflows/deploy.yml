@@ -3,6 +3,11 @@ name: Deploy to GCP VM
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 env:
   REGISTRY: ghcr.io

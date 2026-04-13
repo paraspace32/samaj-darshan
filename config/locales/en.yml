@@ -152,6 +152,15 @@ en:
     sub: "Create your account with phone and password"
     success: "Welcome! Your account has been created."
     already_registered: "You are already registered. Please sign in."
+    name_label: "Full name"
+    phone_label: "Phone"
+    email_label: "Email (optional)"
+    password_label: "Password"
+    password_confirm_label: "Confirm Password"
+    submit: "Create account"
+    error_singular: "error"
+    errors_plural: "errors"
+    errors_found: "found:"
 
   flash:
     login_required: "Please login to continue."

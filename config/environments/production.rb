@@ -90,7 +90,7 @@ Rails.application.configure do
   # Allow specific domains and IP addresses
   config.hosts << "www.samaj-darshan.com"
   config.hosts << "samaj-darshan.com"
-  config.hosts << "34.14.172.86"
+  config.hosts << "34.14.167.110"
 
   # If needed, remove the Host Authorization middleware (useful for tunnels and temporary hostnames).
   # Be cautious: removing this disables one protection against Host header attacks.

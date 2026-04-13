@@ -17,15 +17,36 @@ jobs:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
       - name: Add VM to known_hosts
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
+          if [ -z "$HOST" ]; then
+            echo "::error::DEPLOY_HOST secret is not set or is empty"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
-          for i in 1 2 3; do
-            ssh-keyscan -T 10 -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts && break
-            echo "ssh-keyscan attempt $i failed, retrying in 5s..."
-            sleep 5
+          max_attempts=5
+          for i in $(seq 1 $max_attempts); do
+            echo "ssh-keyscan attempt $i of $max_attempts..."
+            if ssh-keyscan -T 30 -H "$HOST" >> ~/.ssh/known_hosts 2>/tmp/ssh-keyscan-stderr.log && [ -s ~/.ssh/known_hosts ]; then
+              echo "Successfully obtained host key on attempt $i"
+              break
+            fi
+            echo "::warning::ssh-keyscan attempt $i failed"
+            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
+            if [ "$i" -lt "$max_attempts" ]; then
+              delay=$((i * 5))
+              echo "Retrying in ${delay}s..."
+              sleep "$delay"
+              > ~/.ssh/known_hosts
+            fi
           done
+
           if [ ! -s ~/.ssh/known_hosts ]; then
-            echo "::error::Failed to fetch host key for DEPLOY_HOST after 3 attempts"
+            echo "::error::Failed to fetch host key for DEPLOY_HOST after $max_attempts attempts"
+            echo "Troubleshooting: verify the VM is running, SSH (port 22) is open to GitHub Actions IPs, and DEPLOY_HOST secret is correct."
+            cat /tmp/ssh-keyscan-stderr.log 2>/dev/null || true
             exit 1
           fi
 

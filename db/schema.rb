@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -57,6 +57,44 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
     t.index ["active", "billboard_type", "priority"], name: "idx_billboards_active_type_priority"
     t.index ["active"], name: "index_billboards_on_active"
     t.index ["billboard_type"], name: "index_billboards_on_billboard_type"
+  end
+
+  create_table "biodatas", force: :cascade do |t|
+    t.text "about_en"
+    t.text "about_hi"
+    t.string "annual_income"
+    t.string "caste"
+    t.string "city", null: false
+    t.string "complexion"
+    t.string "contact_email"
+    t.string "contact_phone"
+    t.string "country", default: "India"
+    t.datetime "created_at", null: false
+    t.date "date_of_birth", null: false
+    t.string "education", null: false
+    t.string "father_occupation"
+    t.string "full_name", null: false
+    t.string "full_name_hi"
+    t.integer "gender", default: 0, null: false
+    t.integer "height_cm"
+    t.string "mother_occupation"
+    t.string "mother_tongue"
+    t.string "occupation"
+    t.datetime "published_at"
+    t.text "rejection_reason"
+    t.string "religion"
+    t.integer "siblings_count", default: 0
+    t.string "state"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["city"], name: "index_biodatas_on_city"
+    t.index ["date_of_birth"], name: "index_biodatas_on_date_of_birth"
+    t.index ["gender", "status"], name: "index_biodatas_on_gender_and_status"
+    t.index ["gender"], name: "index_biodatas_on_gender"
+    t.index ["status", "published_at"], name: "index_biodatas_on_status_and_published_at"
+    t.index ["status"], name: "index_biodatas_on_status"
+    t.index ["user_id"], name: "index_biodatas_on_user_id", unique: true
   end
 
   create_table "categories", force: :cascade do |t|
@@ -199,6 +237,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_094337) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "biodatas", "users"
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magazine_articles", "magazines"

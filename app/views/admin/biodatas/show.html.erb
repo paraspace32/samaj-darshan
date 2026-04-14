@@ -1,0 +1,165 @@
+<% content_for(:page_title, "Biodata Review") %>
+
+<div class="mb-6 flex items-center justify-between gap-4 flex-wrap">
+  <%= link_to "← Back to Biodatas", admin_biodatas_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors font-medium" %>
+  <div class="flex items-center gap-2">
+    <% badge_class = case @biodata.status
+      when "published"      then "bg-emerald-100 text-emerald-700 border border-emerald-200/60"
+      when "pending_review" then "bg-amber-100 text-amber-700 border border-amber-200/60"
+      when "rejected"       then "bg-red-100 text-red-700 border border-red-200/60"
+      else                       "bg-gray-100 text-gray-600 border border-gray-200/60"
+      end %>
+    <span class="badge <%= badge_class %>"><%= @biodata.status.humanize %></span>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <%# Main info %>
+  <div class="lg:col-span-2 space-y-6">
+    <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+      <div class="flex flex-col sm:flex-row">
+        <%# Photo %>
+        <div class="sm:w-44 shrink-0">
+          <div class="aspect-[4/5] sm:aspect-auto sm:h-full bg-gradient-to-br from-orange-100/90 via-amber-50 to-rose-100/80 min-h-44 flex items-center justify-center overflow-hidden">
+            <% if @biodata.photo.attached? %>
+              <%= optimized_image_tag @biodata.photo, variant: :profile, class: "w-full h-full object-cover" %>
+            <% else %>
+              <div class="w-16 h-16 rounded-full gradient-brand flex items-center justify-center">
+                <span class="text-white font-black text-2xl"><%= @biodata.full_name[0].upcase %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <div class="p-6 flex-1">
+          <h1 class="text-xl font-black tracking-tight text-gray-900 mb-0.5"><%= @biodata.full_name %></h1>
+          <p class="text-sm text-gray-500 mb-4"><%= @biodata.full_name_hi %></p>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div><span class="text-xs text-gray-400 block">Gender</span><span class="font-medium text-gray-800 capitalize"><%= @biodata.gender %></span></div>
+            <div><span class="text-xs text-gray-400 block">Age</span><span class="font-medium text-gray-800"><%= @biodata.age %> years</span></div>
+            <div><span class="text-xs text-gray-400 block">DOB</span><span class="font-medium text-gray-800"><%= @biodata.date_of_birth.strftime("%d %b %Y") %></span></div>
+            <div><span class="text-xs text-gray-400 block">Height</span><span class="font-medium text-gray-800"><%= @biodata.height_display || "—" %></span></div>
+            <div><span class="text-xs text-gray-400 block">Complexion</span><span class="font-medium text-gray-800"><%= @biodata.complexion || "—" %></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%# Location & Education %>
+    <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+      <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-4">Location & Education</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+        <div><span class="text-xs text-gray-400 block">City</span><span class="font-medium text-gray-800"><%= @biodata.city %></span></div>
+        <div><span class="text-xs text-gray-400 block">State</span><span class="font-medium text-gray-800"><%= @biodata.state || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Country</span><span class="font-medium text-gray-800"><%= @biodata.country || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Religion</span><span class="font-medium text-gray-800"><%= @biodata.religion || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Caste</span><span class="font-medium text-gray-800"><%= @biodata.caste || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Mother Tongue</span><span class="font-medium text-gray-800"><%= @biodata.mother_tongue || "—" %></span></div>
+        <div class="col-span-2 sm:col-span-3"><span class="text-xs text-gray-400 block">Education</span><span class="font-medium text-gray-800"><%= @biodata.education %></span></div>
+        <div><span class="text-xs text-gray-400 block">Occupation</span><span class="font-medium text-gray-800"><%= @biodata.occupation || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Annual Income</span><span class="font-medium text-gray-800"><%= @biodata.annual_income || "—" %></span></div>
+      </div>
+    </div>
+
+    <%# Family %>
+    <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+      <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-4">Family</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+        <div><span class="text-xs text-gray-400 block">Father's Occupation</span><span class="font-medium text-gray-800"><%= @biodata.father_occupation || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Mother's Occupation</span><span class="font-medium text-gray-800"><%= @biodata.mother_occupation || "—" %></span></div>
+        <div><span class="text-xs text-gray-400 block">Siblings</span><span class="font-medium text-gray-800"><%= @biodata.siblings_count || 0 %></span></div>
+      </div>
+    </div>
+
+    <%# About %>
+    <% if @biodata.about_en.present? || @biodata.about_hi.present? %>
+      <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+        <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-4">About</p>
+        <% if @biodata.about_en.present? %>
+          <div class="mb-4">
+            <p class="text-xs text-gray-400 mb-1">English</p>
+            <p class="text-sm text-gray-700 leading-relaxed"><%= @biodata.about_en %></p>
+          </div>
+        <% end %>
+        <% if @biodata.about_hi.present? %>
+          <div>
+            <p class="text-xs text-gray-400 mb-1">Hindi</p>
+            <p class="text-sm text-gray-700 leading-relaxed"><%= @biodata.about_hi %></p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Contact %>
+    <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+      <p class="text-xs font-black text-orange-600 uppercase tracking-widest mb-4">Contact Details</p>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 w-16 shrink-0">Phone</span>
+          <span class="font-medium text-gray-800"><%= @biodata.contact_phone || "—" %></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 w-16 shrink-0">Email</span>
+          <span class="font-medium text-gray-800"><%= @biodata.contact_email || "—" %></span>
+        </div>
+        <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+          <span class="text-xs text-gray-400 w-16 shrink-0">User</span>
+          <span class="font-medium text-gray-800"><%= @biodata.user.name %> (<%= @biodata.user.phone %>)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Sidebar — actions %>
+  <div class="space-y-4">
+    <%# Rejection reason if any %>
+    <% if @biodata.rejected? && @biodata.rejection_reason.present? %>
+      <div class="bg-red-50 rounded-2xl border border-red-200/60 p-5">
+        <p class="text-xs font-black text-red-600 uppercase tracking-widest mb-2">Rejection Reason</p>
+        <p class="text-sm text-red-700"><%= @biodata.rejection_reason %></p>
+      </div>
+    <% end %>
+
+    <%# Publish action %>
+    <% unless @biodata.published? %>
+      <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+        <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Approve & Publish</p>
+        <p class="text-xs text-gray-500 mb-4">This will make the biodata publicly visible in the marriage section.</p>
+        <%= button_to publish_admin_biodata_path(@biodata), method: :patch, data: { turbo_confirm: "Publish this biodata?" }, class: "w-full rounded-xl gradient-brand px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:shadow-md transition-all cursor-pointer" do %>
+          Publish Biodata
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Reject action %>
+    <% unless @biodata.rejected? %>
+      <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+        <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Reject</p>
+        <%= form_with url: reject_admin_biodata_path(@biodata), method: :patch do |f| %>
+          <div class="mb-3">
+            <%= f.text_area :rejection_reason, rows: 3,
+                placeholder: "Reason for rejection (visible to user)...",
+                class: "block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 focus:outline-none bg-gray-50/50" %>
+          </div>
+          <%= f.submit "Reject Biodata", class: "w-full rounded-xl bg-red-50 border border-red-200 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-colors cursor-pointer" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Delete action %>
+    <div class="bg-white rounded-2xl border border-gray-200/60 p-5 shadow-sm">
+      <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">Delete</p>
+      <%= button_to admin_biodata_path(@biodata), method: :delete, data: { turbo_confirm: "Permanently delete this biodata? This cannot be undone." }, class: "w-full rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 border border-gray-200 transition-all cursor-pointer" do %>
+        Delete Permanently
+      <% end %>
+    </div>
+
+    <%# Metadata %>
+    <div class="bg-gray-50/80 rounded-2xl border border-gray-200/60 p-5 text-xs text-gray-400 space-y-1.5">
+      <div class="flex justify-between"><span>Submitted</span><span class="text-gray-600 font-medium"><%= @biodata.created_at.strftime("%d %b %Y %H:%M") %></span></div>
+      <div class="flex justify-between"><span>Updated</span><span class="text-gray-600 font-medium"><%= @biodata.updated_at.strftime("%d %b %Y %H:%M") %></span></div>
+      <% if @biodata.published_at.present? %>
+        <div class="flex justify-between"><span>Published</span><span class="text-gray-600 font-medium"><%= @biodata.published_at.strftime("%d %b %Y") %></span></div>
+      <% end %>
+    </div>
+  </div>
+</div>

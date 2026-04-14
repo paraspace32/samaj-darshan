@@ -1,0 +1,195 @@
+<%= form_with model: @biodata, url: url, class: "space-y-8" do |f| %>
+  <%# Error messages %>
+  <% if @biodata.errors.any? %>
+    <div class="rounded-2xl border border-red-200/60 bg-red-50 px-5 py-4">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <div>
+          <p class="text-sm font-bold text-red-700 mb-2"><%= t("biodata.form_errors", count: @biodata.errors.count) %></p>
+          <ul class="list-disc list-inside space-y-1">
+            <% @biodata.errors.full_messages.each do |msg| %>
+              <li class="text-xs text-red-600"><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Section 1: Personal Info %>
+  <div class="card-premium rounded-3xl border border-gray-200/40 p-6 sm:p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center shrink-0">
+        <span class="text-white font-black text-sm">1</span>
+      </div>
+      <h2 class="text-lg font-black tracking-tight text-gray-900"><%= t("biodata.section_personal") %></h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :full_name, t("biodata.full_name"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :full_name, class: "input-premium block w-full", placeholder: t("biodata.full_name_placeholder"), required: true %>
+      </div>
+      <div>
+        <%= f.label :full_name_hi, t("biodata.full_name_hi"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :full_name_hi, class: "input-premium block w-full", placeholder: t("biodata.full_name_hi_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :gender, t("biodata.gender"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.select :gender, [
+          [t("biodata.gender_male"), "male"],
+          [t("biodata.gender_female"), "female"],
+          [t("biodata.gender_other"), "other"]
+        ], { include_blank: t("biodata.select_gender") }, class: "input-premium block w-full" %>
+      </div>
+
+      <div>
+        <%= f.label :date_of_birth, t("biodata.date_of_birth"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.date_field :date_of_birth, class: "input-premium block w-full", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :religion, t("biodata.religion"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :religion, class: "input-premium block w-full", placeholder: t("biodata.religion_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :caste, t("biodata.caste"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :caste, class: "input-premium block w-full", placeholder: t("biodata.caste_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :mother_tongue, t("biodata.mother_tongue"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :mother_tongue, class: "input-premium block w-full", placeholder: t("biodata.mother_tongue_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :height_cm, t("biodata.height_cm"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.number_field :height_cm, class: "input-premium block w-full", placeholder: "170", min: 100, max: 250 %>
+      </div>
+
+      <div>
+        <%= f.label :complexion, t("biodata.complexion"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :complexion, class: "input-premium block w-full", placeholder: t("biodata.complexion_placeholder") %>
+      </div>
+    </div>
+  </div>
+
+  <%# Section 2: Location & Education %>
+  <div class="card-premium rounded-3xl border border-gray-200/40 p-6 sm:p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center shrink-0">
+        <span class="text-white font-black text-sm">2</span>
+      </div>
+      <h2 class="text-lg font-black tracking-tight text-gray-900"><%= t("biodata.section_location_education") %></h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :city, t("biodata.city"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :city, class: "input-premium block w-full", placeholder: t("biodata.city_placeholder"), required: true %>
+      </div>
+
+      <div>
+        <%= f.label :state, t("biodata.state"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :state, class: "input-premium block w-full", placeholder: t("biodata.state_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :country, t("biodata.country"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :country, class: "input-premium block w-full" %>
+      </div>
+
+      <div>
+        <%= f.label :education, t("biodata.education"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :education, class: "input-premium block w-full", placeholder: t("biodata.education_placeholder"), required: true %>
+      </div>
+
+      <div>
+        <%= f.label :occupation, t("biodata.occupation"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :occupation, class: "input-premium block w-full", placeholder: t("biodata.occupation_placeholder") %>
+      </div>
+
+      <div>
+        <%= f.label :annual_income, t("biodata.annual_income"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :annual_income, class: "input-premium block w-full", placeholder: t("biodata.annual_income_placeholder") %>
+      </div>
+    </div>
+  </div>
+
+  <%# Section 3: About, Family & Contact %>
+  <div class="card-premium rounded-3xl border border-gray-200/40 p-6 sm:p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center shrink-0">
+        <span class="text-white font-black text-sm">3</span>
+      </div>
+      <h2 class="text-lg font-black tracking-tight text-gray-900"><%= t("biodata.section_about_contact") %></h2>
+    </div>
+
+    <div class="space-y-5">
+      <%# Family %>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div>
+          <%= f.label :father_occupation, t("biodata.father_occupation"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.text_field :father_occupation, class: "input-premium block w-full", placeholder: t("biodata.father_occupation_placeholder") %>
+        </div>
+        <div>
+          <%= f.label :mother_occupation, t("biodata.mother_occupation"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.text_field :mother_occupation, class: "input-premium block w-full", placeholder: t("biodata.mother_occupation_placeholder") %>
+        </div>
+        <div>
+          <%= f.label :siblings_count, t("biodata.siblings_count"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.number_field :siblings_count, class: "input-premium block w-full", min: 0, max: 20 %>
+        </div>
+      </div>
+
+      <%# About English %>
+      <div>
+        <%= f.label :about_en, t("biodata.about_en"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_area :about_en, rows: 4, class: "input-premium block w-full", placeholder: t("biodata.about_en_placeholder") %>
+      </div>
+
+      <%# About Hindi %>
+      <div>
+        <%= f.label :about_hi, t("biodata.about_hi"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_area :about_hi, rows: 4, class: "input-premium block w-full", placeholder: t("biodata.about_hi_placeholder") %>
+      </div>
+
+      <%# Contact %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <%= f.label :contact_phone, t("biodata.contact_phone"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.telephone_field :contact_phone, class: "input-premium block w-full", placeholder: "9876543210" %>
+        </div>
+        <div>
+          <%= f.label :contact_email, t("biodata.contact_email"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.email_field :contact_email, class: "input-premium block w-full", placeholder: "name@example.com" %>
+        </div>
+      </div>
+
+      <%# Photo upload %>
+      <div>
+        <%= f.label :photo, t("biodata.photo"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <% if @biodata.photo.attached? %>
+          <div class="mb-3 flex items-center gap-4">
+            <div class="w-16 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <%= optimized_image_tag @biodata.photo, variant: :thumb, class: "w-full h-full object-cover" %>
+            </div>
+            <p class="text-xs text-gray-500"><%= t("biodata.photo_current") %></p>
+          </div>
+        <% end %>
+        <%= f.file_field :photo, accept: "image/*", class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:gradient-brand file:text-white hover:file:opacity-90 cursor-pointer" %>
+        <p class="mt-1.5 text-xs text-gray-400"><%= t("biodata.photo_hint") %></p>
+      </div>
+    </div>
+  </div>
+
+  <%# Submit %>
+  <div class="flex items-center justify-between gap-4">
+    <%= link_to my_biodata_path, class: "btn-ghost" do %>
+      <%= t("biodata.cancel") %>
+    <% end %>
+    <%= f.submit submit_label, class: "btn-primary cursor-pointer" %>
+  </div>
+<% end %>

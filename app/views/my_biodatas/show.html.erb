@@ -1,0 +1,121 @@
+<% content_for(:title, t("biodata.my_biodata")) %>
+
+<div class="max-w-3xl mx-auto animate-fade-in">
+  <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
+    <div>
+      <h1 class="text-3xl font-black tracking-tight text-gray-900">
+        <span class="text-gradient"><%= t("biodata.my_biodata") %></span>
+      </h1>
+      <p class="text-sm text-gray-500 mt-1"><%= t("biodata.my_biodata_subtitle") %></p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <%= link_to edit_my_biodata_path, class: "btn-ghost !py-2 !px-4 !text-sm" do %>
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        <%= t("biodata.edit") %>
+      <% end %>
+      <% if @biodata.published? %>
+        <%= link_to biodata_path(@biodata), class: "btn-ghost !py-2 !px-4 !text-sm" do %>
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <%= t("biodata.view_public") %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Status Banner %>
+  <% status_config = case @biodata.status
+    when "draft"           then { bg: "bg-gray-50",   border: "border-gray-200/60",   icon_color: "text-gray-400",   text_color: "text-gray-600",   label: t("biodata.status_draft"),    hint: t("biodata.status_draft_hint") }
+    when "pending_review"  then { bg: "bg-amber-50",  border: "border-amber-200/60",  icon_color: "text-amber-500",  text_color: "text-amber-700",  label: t("biodata.status_pending"),  hint: t("biodata.status_pending_hint") }
+    when "published"       then { bg: "bg-emerald-50",border: "border-emerald-200/60",icon_color: "text-emerald-500",text_color: "text-emerald-700",label: t("biodata.status_published"),hint: t("biodata.status_published_hint") }
+    when "rejected"        then { bg: "bg-red-50",    border: "border-red-200/60",    icon_color: "text-red-500",    text_color: "text-red-700",    label: t("biodata.status_rejected"),  hint: t("biodata.status_rejected_hint") }
+    end %>
+
+  <div class="rounded-2xl border <%= status_config[:border] %> <%= status_config[:bg] %> p-5 mb-6 flex items-start gap-4">
+    <div class="w-10 h-10 rounded-xl <%= status_config[:bg] %> border <%= status_config[:border] %> flex items-center justify-center shrink-0">
+      <% if @biodata.published? %>
+        <svg class="w-5 h-5 <%= status_config[:icon_color] %>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
+      <% elsif @biodata.pending_review? %>
+        <svg class="w-5 h-5 <%= status_config[:icon_color] %>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <% elsif @biodata.rejected? %>
+        <svg class="w-5 h-5 <%= status_config[:icon_color] %>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      <% else %>
+        <svg class="w-5 h-5 <%= status_config[:icon_color] %>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      <% end %>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="font-bold <%= status_config[:text_color] %>"><%= status_config[:label] %></p>
+      <p class="text-xs <%= status_config[:text_color] %> opacity-80 mt-0.5"><%= status_config[:hint] %></p>
+      <% if @biodata.rejected? && @biodata.rejection_reason.present? %>
+        <div class="mt-2 rounded-lg bg-red-100/80 px-3 py-2">
+          <p class="text-xs font-bold text-red-700 mb-0.5"><%= t("biodata.rejection_reason") %></p>
+          <p class="text-xs text-red-600"><%= @biodata.rejection_reason %></p>
+        </div>
+      <% end %>
+    </div>
+    <% if @biodata.draft? %>
+      <%= button_to submit_for_review_my_biodata_path, method: :patch, class: "btn-primary !py-2 !px-4 !text-xs !rounded-lg shrink-0 cursor-pointer" do %>
+        <%= t("biodata.submit_for_review") %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Preview Card %>
+  <div class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden shadow-xl">
+    <div class="sm:flex">
+      <%# Photo %>
+      <div class="sm:w-48 shrink-0">
+        <div class="aspect-[4/5] sm:aspect-auto sm:h-full bg-gradient-to-br from-orange-100/90 via-amber-50 to-rose-100/80 min-h-48 flex items-center justify-center relative overflow-hidden">
+          <% if @biodata.photo.attached? %>
+            <%= optimized_image_tag @biodata.photo, variant: :profile, class: "w-full h-full object-cover", loading: "lazy" %>
+          <% else %>
+            <div class="w-20 h-20 rounded-full gradient-brand flex items-center justify-center shadow-xl">
+              <span class="text-white font-black text-3xl"><%= @biodata.full_name[0].upcase %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Details %>
+      <div class="flex-1 p-6 sm:p-8">
+        <h2 class="text-xl font-black tracking-tight text-gray-900 mb-1"><%= @biodata.display_name %></h2>
+        <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-4">
+          <span><%= @biodata.age %> <%= t("biodata.years") %></span>
+          <span class="text-gray-300">&middot;</span>
+          <span><%= t("biodata.gender_#{@biodata.gender}") %></span>
+          <span class="text-gray-300">&middot;</span>
+          <span><%= @biodata.city %><%= @biodata.state.present? ? ", #{@biodata.state}" : "" %></span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <% if @biodata.education.present? %>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.education") %></p>
+              <p class="text-gray-700 font-medium"><%= @biodata.education %></p>
+            </div>
+          <% end %>
+          <% if @biodata.occupation.present? %>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.occupation") %></p>
+              <p class="text-gray-700 font-medium"><%= @biodata.occupation %></p>
+            </div>
+          <% end %>
+          <% if @biodata.religion.present? %>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.religion") %></p>
+              <p class="text-gray-700 font-medium"><%= @biodata.religion %></p>
+            </div>
+          <% end %>
+          <% if @biodata.height_display.present? %>
+            <div>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.height") %></p>
+              <p class="text-gray-700 font-medium"><%= @biodata.height_display %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Created date %>
+  <p class="mt-4 text-center text-xs text-gray-400"><%= t("biodata.created_on", date: @biodata.created_at.strftime("%d %b %Y")) %></p>
+</div>

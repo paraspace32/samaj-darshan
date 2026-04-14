@@ -1,0 +1,144 @@
+<% content_for(:page_title, "Marriage Biodatas") %>
+
+<%# Header %>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+  <div>
+    <p class="text-sm text-gray-500"><%= @total_count %> biodata<%= @total_count == 1 ? "" : "s" %> total</p>
+    <% if @pending_count > 0 %>
+      <p class="text-xs font-bold text-amber-600 mt-0.5"><%= @pending_count %> pending review</p>
+    <% end %>
+  </div>
+</div>
+
+<%# Status Tabs %>
+<div class="flex items-center gap-1 mb-5 border-b border-gray-200/60">
+  <% [
+    ["", "All"],
+    ["pending_review", "Pending Review"],
+    ["published", "Published"],
+    ["rejected", "Rejected"],
+    ["draft", "Draft"]
+  ].each do |value, label| %>
+    <%= link_to admin_biodatas_path(request.query_parameters.merge(status: value, page: nil)),
+        class: "px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors #{params[:status].to_s == value.to_s ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700'}" do %>
+      <%= label %>
+      <% if value == "pending_review" && @pending_count > 0 %>
+        <span class="ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-black"><%= @pending_count %></span>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Filters %>
+<%= form_with url: admin_biodatas_path, method: :get, class: "bg-white rounded-2xl border border-gray-200/60 p-5 mb-6 shadow-sm", data: { turbo_frame: "_top" } do %>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+    <input type="hidden" name="status" value="<%= params[:status] %>">
+    <div>
+      <input type="text" name="q" value="<%= params[:q] %>" placeholder="Search name or city..."
+             class="block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50">
+    </div>
+    <div>
+      <select name="gender" class="block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50">
+        <option value="">All Genders</option>
+        <option value="male"   <%= "selected" if params[:gender] == "male"   %>>Male</option>
+        <option value="female" <%= "selected" if params[:gender] == "female" %>>Female</option>
+        <option value="other"  <%= "selected" if params[:gender] == "other"  %>>Other</option>
+      </select>
+    </div>
+    <div class="col-span-2 sm:col-span-1 flex gap-2">
+      <button type="submit" class="flex-1 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors cursor-pointer">Filter</button>
+      <%= link_to "Clear", admin_biodatas_path(status: params[:status]), class: "flex-1 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
+    </div>
+  </div>
+<% end %>
+
+<%# Table %>
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+  <% if @biodatas.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[640px]">
+        <thead>
+          <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50/50">
+            <th class="px-6 py-3.5 font-semibold">Name</th>
+            <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">Gender / Age</th>
+            <th class="px-6 py-3.5 font-semibold hidden md:table-cell">City</th>
+            <th class="px-6 py-3.5 font-semibold hidden lg:table-cell">Education</th>
+            <th class="px-6 py-3.5 font-semibold">Status</th>
+            <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Date</th>
+            <th class="px-6 py-3.5 font-semibold w-24"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          <% @biodatas.each do |biodata| %>
+            <tr class="hover:bg-orange-50/30 transition-colors <%= biodata.pending_review? ? 'bg-amber-50/40' : '' %>">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <%# Thumbnail %>
+                  <div class="w-10 h-12 rounded-lg overflow-hidden shrink-0 bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center border border-gray-200/40">
+                    <% if biodata.photo.attached? %>
+                      <%= optimized_image_tag biodata.photo, variant: :thumb, class: "w-full h-full object-cover" %>
+                    <% else %>
+                      <span class="text-orange-500 font-black text-sm"><%= biodata.full_name[0].upcase %></span>
+                    <% end %>
+                  </div>
+                  <div>
+                    <%= link_to admin_biodata_path(biodata), class: "font-semibold text-gray-900 hover:text-orange-600 transition-colors line-clamp-1" do %>
+                      <%= biodata.full_name %>
+                    <% end %>
+                    <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= biodata.full_name_hi %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-gray-600 hidden sm:table-cell">
+                <span class="capitalize"><%= biodata.gender %></span>
+                <span class="text-gray-400">&middot;</span>
+                <span><%= biodata.age %> yrs</span>
+              </td>
+              <td class="px-6 py-4 text-gray-500 hidden md:table-cell"><%= biodata.city %></td>
+              <td class="px-6 py-4 text-gray-500 hidden lg:table-cell line-clamp-1"><%= biodata.education %></td>
+              <td class="px-6 py-4">
+                <% badge_class = case biodata.status
+                  when "published"      then "bg-emerald-100 text-emerald-700 border border-emerald-200/60"
+                  when "pending_review" then "bg-amber-100 text-amber-700 border border-amber-200/60"
+                  when "rejected"       then "bg-red-100 text-red-700 border border-red-200/60"
+                  else                       "bg-gray-100 text-gray-600 border border-gray-200/60"
+                  end %>
+                <span class="badge <%= badge_class %>"><%= biodata.status.humanize %></span>
+              </td>
+              <td class="px-6 py-4 text-gray-400 text-xs hidden md:table-cell"><%= biodata.created_at.strftime("%d %b %Y") %></td>
+              <td class="px-6 py-4 text-right">
+                <%= link_to "Review", admin_biodata_path(biodata), class: "text-xs text-orange-600 hover:text-orange-700 font-semibold mr-3" %>
+                <%= button_to admin_biodata_path(biodata), method: :delete, data: { turbo_confirm: "Delete this biodata permanently?" }, class: "text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer", form: { class: "inline" } do %>
+                  Delete
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%# Pagination %>
+    <% total_pages = (@total_count.to_f / @per_page).ceil %>
+    <% if total_pages > 1 %>
+      <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
+        <p class="text-xs text-gray-500 font-medium">Page <%= @page %> of <%= total_pages %></p>
+        <div class="flex gap-2">
+          <% if @page > 1 %>
+            <%= link_to "Previous", admin_biodatas_path(request.query_parameters.merge(page: @page - 1)), class: "px-3.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors" %>
+          <% end %>
+          <% if @page < total_pages %>
+            <%= link_to "Next", admin_biodatas_path(request.query_parameters.merge(page: @page + 1)), class: "px-3.5 py-1.5 text-xs font-medium rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="px-6 py-16 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-6 h-6 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      </div>
+      <p class="text-gray-400">No biodatas found.</p>
+    </div>
+  <% end %>
+</div>

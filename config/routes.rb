@@ -48,6 +48,12 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
+    resources :biodatas, only: [ :index, :show, :destroy ] do
+      member do
+        patch :publish
+        patch :reject
+      end
+    end
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -96,6 +102,12 @@ Rails.application.routes.draw do
 
   # Webinars
   resources :webinars, only: [ :index, :show ]
+
+  # Marriage Section / Biodata
+  resources :biodatas, only: [ :index, :show ]
+  resource  :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
+    member { patch :submit_for_review }
+  end
 
   get "offline" => "pages#offline"
 

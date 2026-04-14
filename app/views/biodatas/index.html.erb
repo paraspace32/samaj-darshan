@@ -1,0 +1,136 @@
+<% content_for(:title, t("biodata.title")) %>
+
+<%# Header %>
+<div class="mb-8 sm:mb-10 animate-fade-in">
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900">
+    <span class="text-gradient"><%= t("biodata.title") %></span>
+  </h1>
+  <p class="text-sm sm:text-base text-gray-500 mt-3 max-w-2xl leading-relaxed"><%= t("biodata.subtitle") %></p>
+  <% if logged_in? && current_user.biodata.nil? %>
+    <%= link_to new_my_biodata_path, class: "mt-4 btn-primary !inline-flex" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+      <%= t("biodata.create_my_biodata") %>
+    <% end %>
+  <% elsif logged_in? && current_user.biodata.present? %>
+    <%= link_to my_biodata_path, class: "mt-4 btn-ghost !inline-flex" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <%= t("biodata.my_biodata") %>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Filters %>
+<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-5 mb-8 shadow-sm", data: { turbo_frame: "biodata_grid" } do |f| %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <%# Gender %>
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_gender") %></label>
+      <select name="gender" class="input-premium block w-full">
+        <option value=""><%= t("biodata.all_genders") %></option>
+        <option value="male"   <%= "selected" if params[:gender] == "male"   %>><%= t("biodata.gender_male") %></option>
+        <option value="female" <%= "selected" if params[:gender] == "female" %>><%= t("biodata.gender_female") %></option>
+        <option value="other"  <%= "selected" if params[:gender] == "other"  %>><%= t("biodata.gender_other") %></option>
+      </select>
+    </div>
+
+    <%# Age Range %>
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_age") %></label>
+      <div class="flex items-center gap-2">
+        <input type="number" name="age_min" value="<%= params[:age_min] %>" placeholder="18"
+               min="18" max="60" class="input-premium block w-full text-center">
+        <span class="text-gray-400 text-sm shrink-0">–</span>
+        <input type="number" name="age_max" value="<%= params[:age_max] %>" placeholder="45"
+               min="18" max="60" class="input-premium block w-full text-center">
+      </div>
+    </div>
+
+    <%# City %>
+    <div>
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_city") %></label>
+      <input type="text" name="city" value="<%= params[:city] %>" placeholder="<%= t('biodata.city_placeholder') %>"
+             class="input-premium block w-full">
+    </div>
+
+    <%# Actions %>
+    <div class="flex flex-col justify-end gap-2">
+      <button type="submit" class="rounded-xl gradient-brand px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:shadow-md transition-all cursor-pointer"><%= t("biodata.filter_apply") %></button>
+      <%= link_to t("biodata.filter_clear"), biodatas_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
+    </div>
+  </div>
+<% end %>
+
+<%# Results count %>
+<% if @total_count > 0 %>
+  <p class="text-sm text-gray-500 mb-6 font-medium">
+    <%= t("biodata.results_count", count: @total_count) %>
+  </p>
+<% end %>
+
+<%# Biodata Grid %>
+<%= turbo_frame_tag "biodata_grid" do %>
+  <% if @biodatas.any? %>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-fade-up">
+      <% @biodatas.each do |biodata| %>
+        <%= link_to biodata_path(biodata), class: "group card-premium rounded-3xl border border-gray-200/40 block" do %>
+          <%# Photo %>
+          <div class="aspect-[4/5] bg-gradient-to-br from-orange-100/90 via-amber-50 to-rose-100/80 relative overflow-hidden">
+            <% if biodata.photo.attached? %>
+              <%= optimized_image_tag biodata.photo, variant: :card, class: "img-zoom w-full h-full object-cover", loading: "lazy" %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full gradient-brand flex items-center justify-center shadow-lg">
+                  <span class="text-white font-black text-2xl sm:text-3xl"><%= biodata.full_name[0].upcase %></span>
+                </div>
+              </div>
+            <% end %>
+            <%# Gender badge %>
+            <span class="absolute top-3 left-3 badge <%= biodata.female? ? 'bg-pink-100 text-pink-700 border border-pink-200/60' : biodata.male? ? 'bg-blue-100 text-blue-700 border border-blue-200/60' : 'bg-gray-100 text-gray-600 border border-gray-200/60' %>">
+              <%= t("biodata.gender_#{biodata.gender}") %>
+            </span>
+          </div>
+
+          <div class="p-4">
+            <h3 class="font-black tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-1 text-base leading-snug mb-1">
+              <%= biodata.display_name %>
+            </h3>
+            <div class="flex items-center gap-1.5 text-xs text-gray-500 mb-1.5">
+              <svg class="w-3 h-3 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span class="truncate"><%= biodata.city %><%= biodata.state.present? ? ", #{biodata.state}" : "" %></span>
+            </div>
+            <div class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
+              <span class="font-semibold text-gray-600"><%= biodata.age %> yrs</span>
+              <span class="truncate ml-2 text-right line-clamp-1"><%= biodata.education %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Pagination %>
+    <% total_pages = (@total_count.to_f / @per_page).ceil %>
+    <% if total_pages > 1 %>
+      <div class="mt-10 flex items-center justify-between">
+        <p class="text-sm text-gray-500"><%= t("feed.page_info", current: @page, total: total_pages) %></p>
+        <div class="flex gap-2">
+          <% if @page > 1 %>
+            <%= link_to t("feed.previous"), biodatas_path(request.query_parameters.merge(page: @page - 1)), class: "btn-ghost !py-2 !px-4 !text-sm" %>
+          <% end %>
+          <% if @page < total_pages %>
+            <%= link_to t("feed.next"), biodatas_path(request.query_parameters.merge(page: @page + 1)), class: "btn-primary !py-2 !px-4 !text-sm" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="surface-elevated rounded-3xl border border-gray-200/40 px-8 py-20 sm:py-24 text-center shadow-xl animate-fade-in">
+      <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center mx-auto mb-6 border border-orange-200/40 shadow-inner">
+        <svg class="w-10 h-10 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      </div>
+      <p class="text-gray-500 font-medium mb-4"><%= t("biodata.no_biodatas") %></p>
+      <% if logged_in? && current_user.biodata.nil? %>
+        <%= link_to t("biodata.create_my_biodata"), new_my_biodata_path, class: "btn-primary !inline-flex" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

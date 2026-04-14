@@ -1,0 +1,88 @@
+<% content_for(:title, t("jobs.title")) %>
+
+<%# Header %>
+<div class="mb-10 sm:mb-12 animate-fade-in">
+  <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900"><span class="text-gradient"><%= t("jobs.title") %></span></h1>
+  <p class="text-sm sm:text-base text-gray-500 mt-3 max-w-2xl leading-relaxed"><%= t("jobs.subtitle") %></p>
+</div>
+
+<%# Category filter %>
+<div class="mb-8 animate-fade-up">
+  <div class="flex flex-wrap gap-2">
+    <%= link_to t("jobs.all_categories"), jobs_path, class: "inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold transition-all #{params[:category].blank? ? 'gradient-brand text-white shadow-sm' : 'bg-white border border-gray-200/60 text-gray-600 hover:bg-gray-50'}" %>
+    <% JobPost.categories.each_key do |cat| %>
+      <%= link_to cat.humanize, jobs_path(category: cat), class: "inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold transition-all #{params[:category] == cat ? 'gradient-brand text-white shadow-sm' : 'bg-white border border-gray-200/60 text-gray-600 hover:bg-gray-50'}" %>
+    <% end %>
+  </div>
+  <div class="section-divider mt-5"></div>
+</div>
+
+<%# Posts grid %>
+<% if @job_posts.any? %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 animate-fade-up">
+    <% @job_posts.each do |post| %>
+      <%= link_to job_path(post), class: "group card-premium rounded-3xl border border-gray-200/40 block" do %>
+        <%# Cover image %>
+        <div class="aspect-video bg-gradient-to-br from-blue-100/90 via-sky-50 to-cyan-100/80 relative overflow-hidden rounded-t-3xl">
+          <% if post.cover_image.attached? %>
+            <%= optimized_image_tag post.cover_image, variant: :card, class: "img-zoom w-full h-full object-cover", loading: "lazy" %>
+          <% else %>
+            <div class="w-full h-full flex items-center justify-center">
+              <svg class="w-14 h-14 text-blue-300/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="p-5 sm:p-6">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="badge badge-category bg-blue-600/90 text-white border-0 shadow-lg"><%= post.category_label %></span>
+            <% if post.deadline_passed? %>
+              <span class="badge bg-red-600/90 text-white border-0 shadow-lg text-[10px]"><%= t("jobs.closed") %></span>
+            <% end %>
+          </div>
+          <h3 class="font-black tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 mb-3 text-base sm:text-lg leading-snug"><%= post.display_title %></h3>
+          <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+            <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <span class="font-semibold text-gray-600"><%= post.company_name %></span>
+          </div>
+          <% if post.location.present? %>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span><%= post.location %></span>
+            </div>
+          <% end %>
+          <% if post.deadline.present? %>
+            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+              <svg class="w-3.5 h-3.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span><%= t("jobs.deadline") %>: <%= post.deadline.strftime("%d %b %Y") %></span>
+            </div>
+          <% end %>
+          <div class="text-xs text-gray-400 pt-2 border-t border-gray-100">
+            <%= post.published_at&.strftime("%d %b %Y") %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Pagination %>
+  <% total_pages = (@total_count.to_f / @per_page).ceil %>
+  <% if total_pages > 1 %>
+    <div class="flex items-center justify-center gap-4 mt-12">
+      <% if @page > 1 %>
+        <%= link_to t("feed.previous"), jobs_path(request.query_parameters.merge(page: @page - 1)), class: "btn-ghost" %>
+      <% end %>
+      <span class="text-sm text-gray-500 font-medium"><%= t("feed.page_info", current: @page, total: total_pages) %></span>
+      <% if @page < total_pages %>
+        <%= link_to t("feed.next"), jobs_path(request.query_parameters.merge(page: @page + 1)), class: "btn-ghost" %>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="surface-elevated rounded-3xl border border-gray-200/40 px-8 py-20 sm:py-24 text-center shadow-xl animate-fade-in">
+    <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center mx-auto mb-6 border border-gray-200/40 shadow-inner">
+      <svg class="w-10 h-10 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    </div>
+    <p class="text-gray-500 font-medium"><%= t("jobs.no_posts") %></p>
+  </div>
+<% end %>

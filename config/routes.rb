@@ -53,6 +53,11 @@ Rails.application.routes.draw do
         patch :publish
         patch :reject
       end
+    resources :education_posts do
+      member { patch :publish }
+    end
+    resources :job_posts do
+      member { patch :publish }
     end
   end
 
@@ -117,6 +122,17 @@ Rails.application.routes.draw do
       get   :download_pdf
     end
   end
+
+  # Education
+  resources :education, only: [ :index, :show ], controller: "education" do
+    resources :comments, only: [ :create, :destroy ], controller: "comments"
+    resource :like, only: [], controller: "likes" do
+      post :toggle
+    end
+  end
+
+  # Jobs
+  resources :jobs, only: [ :index, :show ]
 
   get "offline" => "pages#offline"
 

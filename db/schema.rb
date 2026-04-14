@@ -122,6 +122,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "education_posts", force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.integer "category", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
+    t.text "content_en", null: false
+    t.text "content_hi", null: false
+    t.datetime "created_at", null: false
+    t.date "exam_date"
+    t.integer "likes_count", default: 0, null: false
+    t.string "official_url"
+    t.string "organization_name"
+    t.datetime "published_at"
+    t.date "registration_deadline"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_education_posts_on_author_id"
+    t.index ["category"], name: "index_education_posts_on_category"
+    t.index ["published_at"], name: "index_education_posts_on_published_at"
+    t.index ["status", "category"], name: "index_education_posts_on_status_and_category"
+    t.index ["status", "published_at"], name: "index_education_posts_on_status_and_published_at"
+    t.index ["status"], name: "index_education_posts_on_status"
+  end
+
+  create_table "job_posts", force: :cascade do |t|
+    t.string "application_url"
+    t.bigint "author_id", null: false
+    t.integer "category", default: 0, null: false
+    t.string "company_name", null: false
+    t.datetime "created_at", null: false
+    t.date "deadline"
+    t.text "description_en", null: false
+    t.text "description_hi", null: false
+    t.string "location"
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title_en", null: false
+    t.string "title_hi", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_job_posts_on_author_id"
+    t.index ["category"], name: "index_job_posts_on_category"
+    t.index ["published_at"], name: "index_job_posts_on_published_at"
+    t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
+    t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
+    t.index ["status"], name: "index_job_posts_on_status"
+  end
+
   create_table "likes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "likeable_id", null: false
@@ -201,6 +249,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.jsonb "allowed_sections", default: [], null: false
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name", null: false
@@ -239,6 +288,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "biodatas", "users"
   add_foreign_key "comments", "users"
+  add_foreign_key "education_posts", "users", column: "author_id"
+  add_foreign_key "job_posts", "users", column: "author_id"
   add_foreign_key "likes", "users"
   add_foreign_key "magazine_articles", "magazines"
   add_foreign_key "magazine_articles", "users", column: "author_id"

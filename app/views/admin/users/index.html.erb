@@ -50,6 +50,7 @@
           <th class="px-6 py-3.5 font-semibold">Phone</th>
           <th class="px-6 py-3.5 font-semibold hidden md:table-cell">Email</th>
           <th class="px-6 py-3.5 font-semibold">Role</th>
+          <th class="px-6 py-3.5 font-semibold hidden lg:table-cell">Sections</th>
           <th class="px-6 py-3.5 font-semibold hidden sm:table-cell">News</th>
           <th class="px-6 py-3.5 font-semibold">Status</th>
           <th class="px-6 py-3.5 font-semibold w-36"></th>
@@ -69,6 +70,21 @@
             <td class="px-6 py-4 text-gray-600 font-mono text-xs"><%= user.phone %></td>
             <td class="px-6 py-4 text-gray-500 text-xs hidden md:table-cell"><%= user.email.presence || "—" %></td>
             <td class="px-6 py-4"><%= user_role_badge(user.role) %></td>
+            <td class="px-6 py-4 hidden lg:table-cell">
+              <% if user.super_admin? %>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">All</span>
+              <% elsif user.editor? && user.allowed_sections.any? %>
+                <div class="flex flex-wrap gap-1">
+                  <% user.allowed_sections.each do |section| %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200"><%= section.humanize %></span>
+                  <% end %>
+                </div>
+              <% elsif user.editor? %>
+                <span class="text-xs text-gray-400">None assigned</span>
+              <% else %>
+                <span class="text-xs text-gray-400">—</span>
+              <% end %>
+            </td>
             <td class="px-6 py-4 text-gray-500 hidden sm:table-cell"><%= user.news.count %></td>
             <td class="px-6 py-4">
               <% if user.account_active? %>

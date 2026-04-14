@@ -49,6 +49,8 @@ module Authorization
 
   def require_biodata_delete
     raise NotAuthorizedError unless current_user&.can_delete_biodatas?
+  def require_magazine_access
+    raise NotAuthorizedError unless current_user&.can_manage_magazines?
   end
 
   def handle_not_authorized

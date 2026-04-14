@@ -1,0 +1,23 @@
+class EducationController < ApplicationController
+  def index
+    @education_posts = EducationPost.visible.with_attached_cover_image
+    @education_posts = @education_posts.by_category(params[:category]) if params[:category].present?
+
+    @per_page = 12
+    @page = [ params[:page].to_i, 1 ].max
+    @total_count = @education_posts.count
+    @education_posts = @education_posts.offset((@page - 1) * @per_page).limit(@per_page)
+  end
+
+  def show
+    @education_post = EducationPost.published.find(params[:id])
+    @comments = @education_post.comments.includes(:user).recent
+    @liked = current_user ? @education_post.likes.exists?(user: current_user) : false
+    @related = EducationPost.published
+                            .where(category: @education_post.category)
+                            .where.not(id: @education_post.id)
+                            .with_attached_cover_image
+                            .order(published_at: :desc)
+                            .limit(5)
+  end
+end

@@ -1,9 +1,13 @@
 class User < ApplicationRecord
   has_secure_password
 
+  SECTIONS = %w[news magazines webinars education jobs billboards].freeze
+
   has_many :news, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :webinars, foreign_key: :host_id, dependent: :restrict_with_error
   has_many :magazine_articles, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :education_posts, foreign_key: :author_id, dependent: :restrict_with_error
+  has_many :job_posts, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_one  :biodata, dependent: :destroy
@@ -20,12 +24,21 @@ class User < ApplicationRecord
                     format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email" }
   validates :role, presence: true
   validates :status, presence: true
+  validate :allowed_sections_must_be_valid
 
   scope :by_role, ->(role) { where(role: role) }
   scope :active_users, -> { where(status: :active) }
 
+  def has_section_access?(section)
+    super_admin? || allowed_sections.include?(section.to_s)
+  end
+
   def admin_panel_access?
     super_admin? || editor? || co_editor? || moderator?
+  end
+
+  def can_access_news_section?
+    has_section_access?("news") || co_editor? || moderator?
   end
 
   def can_manage_users?
@@ -41,15 +54,27 @@ class User < ApplicationRecord
   end
 
   def can_manage_billboards?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("billboards"))
   end
 
   def can_manage_live_streams?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("news"))
   end
 
   def can_manage_webinars?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("webinars"))
+  end
+
+  def can_manage_magazines?
+    super_admin? || (editor? && has_section_access?("magazines"))
+  end
+
+  def can_manage_education?
+    super_admin? || (editor? && has_section_access?("education"))
+  end
+
+  def can_manage_jobs?
+    super_admin? || (editor? && has_section_access?("jobs"))
   end
 
   def can_manage_biodatas?
@@ -65,11 +90,11 @@ class User < ApplicationRecord
   end
 
   def can_create_news?
-    super_admin? || editor? || co_editor?
+    super_admin? || (editor? && has_section_access?("news")) || co_editor?
   end
 
   def can_edit_any_news?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("news"))
   end
 
   def can_edit_news?(news_item)
@@ -77,11 +102,11 @@ class User < ApplicationRecord
   end
 
   def can_publish?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("news"))
   end
 
   def can_review?
-    super_admin? || editor?
+    super_admin? || (editor? && has_section_access?("news"))
   end
 
   def can_delete_news?
@@ -89,6 +114,17 @@ class User < ApplicationRecord
   end
 
   def can_flag_news?
-    super_admin? || editor? || moderator?
+    super_admin? || (editor? && has_section_access?("news")) || moderator?
+  end
+
+  private
+
+  def allowed_sections_must_be_valid
+    return if allowed_sections.blank?
+
+    invalid = allowed_sections - SECTIONS
+    if invalid.any?
+      errors.add(:allowed_sections, "contains invalid sections: #{invalid.join(', ')}")
+    end
   end
 end

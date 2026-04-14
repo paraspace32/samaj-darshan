@@ -86,14 +86,8 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # Allow specific domains and IP addresses
-  config.hosts << "www.samaj-darshan.com"
-  config.hosts << "samaj-darshan.com"
-  config.hosts << "34.14.167.110"
-
-  # If needed, remove the Host Authorization middleware (useful for tunnels and temporary hostnames).
-  # Be cautious: removing this disables one protection against Host header attacks.
+  # Disable host authorization — Caddy handles routing and only forwards
+  # traffic for our domain, so this middleware adds no value here.
   config.middleware.delete ActionDispatch::HostAuthorization
 
   # Skip DNS rebinding protection for the default health check endpoint.

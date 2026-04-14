@@ -208,61 +208,49 @@
 
     <%# Footer %>
     <footer class="bg-gray-950 mt-16 no-print">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-8">
 
-        <%# Top row: brand + links %>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-12 pb-10 border-b border-white/8">
-
-          <%# Brand %>
-          <div class="sm:col-span-1">
-            <div class="flex items-center gap-2.5 mb-4">
-              <div class="w-9 h-9 gradient-brand rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30 shrink-0">
-                <span class="text-white font-extrabold text-base">स</span>
-              </div>
-              <span class="text-white font-black text-base tracking-tight"><%= t("brand.short_name") %></span>
-            </div>
-            <p class="text-sm text-gray-400 leading-relaxed"><%= t("brand.tagline") %></p>
-          </div>
-
-          <%# Links %>
-          <div>
-            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Links</p>
-            <ul class="space-y-2.5">
-              <li><%= link_to t("nav.home"),      root_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-              <li><%= link_to t("nav.webinars"),  webinars_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-              <li><%= link_to t("nav.marriage"),  biodatas_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-              <li><%= link_to t("nav.education"), education_index_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-              <li><%= link_to t("nav.jobs"),      jobs_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-            </ul>
-          </div>
-
-          <%# Account %>
-          <div>
-            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Account</p>
-            <% if logged_in? %>
-              <div class="flex items-center gap-3 mb-4 bg-white/5 rounded-xl px-3 py-2.5">
-                <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shrink-0">
-                  <span class="text-white font-bold text-xs"><%= current_user.name[0] %></span>
-                </div>
-                <div class="min-w-0">
-                  <p class="text-sm font-semibold text-white truncate"><%= current_user.name %></p>
-                  <p class="text-xs text-gray-500"><%= current_user.role.humanize %></p>
-                </div>
-              </div>
-              <ul class="space-y-2.5">
-                <% if current_user.admin_panel_access? %>
-                  <li><%= link_to "Dashboard", admin_root_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-                <% end %>
-                <li><%= link_to t("nav.logout"), logout_path, class: "text-sm text-red-500 hover:text-red-400 transition-colors" %></li>
-              </ul>
-            <% else %>
-              <ul class="space-y-2.5">
-                <li><%= link_to t("nav.sign_in"), login_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-                <li><%= link_to t("nav.sign_up"), signup_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
-              </ul>
-            <% end %>
+        <%# Links — 2-col grid on mobile, 5-col on desktop %>
+        <div class="mb-8">
+          <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3">Links</p>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-x-4 gap-y-3">
+            <%= link_to t("nav.home"),      root_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %>
+            <%= link_to t("nav.webinars"),  webinars_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %>
+            <%= link_to t("nav.marriage"),  biodatas_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %>
+            <%= link_to t("nav.education"), education_index_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %>
+            <%= link_to t("nav.jobs"),      jobs_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %>
           </div>
         </div>
+
+        <%# Account — profile chip with inline actions %>
+        <div class="mb-8">
+          <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-3">Account</p>
+          <% if logged_in? %>
+            <div class="flex items-center gap-3 bg-white/5 rounded-2xl px-4 py-3">
+              <div class="w-9 h-9 rounded-full gradient-brand flex items-center justify-center shrink-0">
+                <span class="text-white font-bold text-sm"><%= current_user.name[0] %></span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-white truncate"><%= current_user.name %></p>
+                <p class="text-xs text-gray-500"><%= current_user.role.humanize %></p>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <% if current_user.admin_panel_access? %>
+                  <%= link_to "Dashboard", admin_root_path, class: "text-xs font-semibold text-orange-400 hover:text-orange-300 transition-colors" %>
+                <% end %>
+                <%= link_to t("nav.logout"), logout_path, class: "text-xs font-semibold text-red-500 hover:text-red-400 transition-colors" %>
+              </div>
+            </div>
+          <% else %>
+            <div class="flex items-center gap-3">
+              <%= link_to t("nav.sign_in"), login_path, class: "text-sm font-semibold text-orange-400 hover:text-orange-300 transition-colors" %>
+              <span class="text-gray-700 text-xs">·</span>
+              <%= link_to t("nav.sign_up"), signup_path, class: "text-sm text-gray-400 hover:text-gray-300 transition-colors" %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="border-t border-white/8"></div>
 
         <%# Bottom bar %>
         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-6">

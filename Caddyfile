@@ -1,3 +1,7 @@
+samaj-darshan.com {
+    redir https://www.samaj-darshan.com{uri} permanent
+}
+
 www.samaj-darshan.com {
     reverse_proxy web:80
 }

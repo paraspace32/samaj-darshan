@@ -9,7 +9,7 @@
 </div>
 
 <%# Filters %>
-<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-5 mb-8 shadow-sm", data: { turbo_frame: "biodata_grid" } do |f| %>
+<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-5 mb-8 shadow-sm", data: { turbo_frame: "biodata_grid", controller: "filter", filter_target: "form" } do |f| %>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <%# Gender %>
     <div>
@@ -38,7 +38,8 @@
     <div>
       <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_city") %></label>
       <input type="text" name="city" value="<%= params[:city] %>" placeholder="<%= t('biodata.city_placeholder') %>"
-             class="input-premium block w-full">
+             class="input-premium block w-full"
+             data-filter-target="city" data-action="input->filter#cityInput">
     </div>
 
     <%# Actions %>

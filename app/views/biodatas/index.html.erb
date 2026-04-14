@@ -9,12 +9,12 @@
 </div>
 
 <%# Filters %>
-<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-5 mb-8 shadow-sm", data: { turbo_frame: "biodata_grid", controller: "filter", filter_target: "form" } do |f| %>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-4 sm:p-5 mb-6 shadow-sm", data: { turbo_frame: "biodata_grid", controller: "filter", filter_target: "form" } do |f| %>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
     <%# Gender %>
     <div>
-      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_gender") %></label>
-      <select name="gender" class="input-premium block w-full">
+      <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_gender") %></label>
+      <select name="gender" class="input-premium block w-full !py-2 !text-sm">
         <option value=""><%= t("biodata.all_genders") %></option>
         <option value="male"   <%= "selected" if params[:gender] == "male"   %>><%= t("biodata.gender_male") %></option>
         <option value="female" <%= "selected" if params[:gender] == "female" %>><%= t("biodata.gender_female") %></option>
@@ -24,28 +24,28 @@
 
     <%# Age Range %>
     <div>
-      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_age") %></label>
-      <div class="flex items-center gap-2">
+      <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_age") %></label>
+      <div class="flex items-center gap-1.5">
         <input type="number" name="age_min" value="<%= params[:age_min] %>" placeholder="18"
-               min="18" max="60" class="input-premium block w-full text-center">
-        <span class="text-gray-400 text-sm shrink-0">–</span>
+               min="18" max="60" class="input-premium block w-full !py-2 !text-sm text-center">
+        <span class="text-gray-300 text-xs shrink-0">–</span>
         <input type="number" name="age_max" value="<%= params[:age_max] %>" placeholder="45"
-               min="18" max="60" class="input-premium block w-full text-center">
+               min="18" max="60" class="input-premium block w-full !py-2 !text-sm text-center">
       </div>
     </div>
 
-    <%# City %>
-    <div>
-      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2"><%= t("biodata.filter_city") %></label>
+    <%# City — full width on mobile %>
+    <div class="col-span-2 lg:col-span-1">
+      <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_city") %></label>
       <input type="text" name="city" value="<%= params[:city] %>" placeholder="<%= t('biodata.city_placeholder') %>"
-             class="input-premium block w-full"
+             class="input-premium block w-full !py-2 !text-sm"
              data-filter-target="city" data-action="input->filter#cityInput">
     </div>
 
-    <%# Actions %>
-    <div class="flex flex-col justify-end gap-2">
-      <button type="submit" class="rounded-xl gradient-brand px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:shadow-md transition-all cursor-pointer"><%= t("biodata.filter_apply") %></button>
-      <%= link_to t("biodata.filter_clear"), biodatas_path, class: "rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
+    <%# Actions — full width on mobile %>
+    <div class="col-span-2 lg:col-span-1 flex gap-2 items-end">
+      <button type="submit" class="flex-1 rounded-xl gradient-brand px-3 py-2 text-sm font-bold text-white shadow-sm hover:shadow-md transition-all cursor-pointer"><%= t("biodata.filter_apply") %></button>
+      <%= link_to t("biodata.filter_clear"), biodatas_path, class: "flex-1 rounded-xl bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
     </div>
   </div>
 <% end %>

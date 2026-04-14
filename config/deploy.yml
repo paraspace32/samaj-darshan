@@ -12,8 +12,8 @@ servers:
     - 34.14.167.110
 
 proxy:
-  ssl: true
-  host: www.samaj-darshan.com
+  ssl: false
+  host: 34.14.167.110
   app_port: 3000
 
 registry:

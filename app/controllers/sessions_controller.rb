@@ -15,7 +15,8 @@ class SessionsController < ApplicationController
         render :new, status: :unprocessable_entity
       else
         session[:user_id] = user.id
-        redirect_to root_path, notice: t("flash.welcome_back", name: user.name)
+        return_to = session.delete(:return_to)
+        redirect_to return_to || (user.admin_panel_access? ? admin_root_path : root_path), notice: t("flash.welcome_back", name: user.name)
       end
     else
       flash.now[:alert] = t("flash.invalid_credentials")

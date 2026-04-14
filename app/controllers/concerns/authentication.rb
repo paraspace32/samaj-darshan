@@ -17,6 +17,7 @@ module Authentication
 
   def require_login
     unless logged_in?
+      session[:return_to] = request.fullpath
       redirect_to login_path, alert: I18n.t("flash.login_required")
     end
   end

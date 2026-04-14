@@ -13,6 +13,7 @@ FactoryBot.define do
 
     trait :editor do
       role { :editor }
+      allowed_sections { User::SECTIONS }
     end
 
     trait :co_editor do

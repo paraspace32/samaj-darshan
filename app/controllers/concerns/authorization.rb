@@ -39,6 +39,10 @@ module Authorization
     raise NotAuthorizedError unless current_user&.can_manage_billboards?
   end
 
+  def require_magazine_access
+    raise NotAuthorizedError unless current_user&.can_manage_magazines?
+  end
+
   def handle_not_authorized
     if request.format.json?
       render json: { error: "Not authorized" }, status: :forbidden

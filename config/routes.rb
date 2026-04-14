@@ -48,6 +48,12 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
+    resources :education_posts do
+      member { patch :publish }
+    end
+    resources :job_posts do
+      member { patch :publish }
+    end
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -96,6 +102,17 @@ Rails.application.routes.draw do
 
   # Webinars
   resources :webinars, only: [ :index, :show ]
+
+  # Education
+  resources :education, only: [ :index, :show ], controller: "education" do
+    resources :comments, only: [ :create, :destroy ], controller: "comments"
+    resource :like, only: [], controller: "likes" do
+      post :toggle
+    end
+  end
+
+  # Jobs
+  resources :jobs, only: [ :index, :show ]
 
   get "offline" => "pages#offline"
 

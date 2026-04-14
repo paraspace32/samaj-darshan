@@ -1,5 +1,6 @@
 module Admin
   class MagazinesController < BaseController
+    before_action :require_magazine_access
     before_action :set_magazine, only: [ :show, :edit, :update, :destroy, :publish ]
 
     def index
@@ -53,6 +54,10 @@ module Admin
 
     def set_magazine
       @magazine = Magazine.find(params[:id])
+    end
+
+    def require_magazine_access
+      raise Authorization::NotAuthorizedError unless current_user.can_manage_magazines?
     end
 
     def magazine_params

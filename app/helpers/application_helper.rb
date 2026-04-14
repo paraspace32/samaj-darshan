@@ -23,10 +23,50 @@ module ApplicationHelper
     image_tag source, **html_opts
   end
 
+  # Generate an absolute URL for an attachment's OG image variant.
+  # Social media crawlers (WhatsApp, Facebook, Twitter) require absolute URLs
+  # and respond best to properly-sized JPEG images.
+  def og_image_url(attachment)
+    return nil unless attachment.attached?
+
+    variant = attachment.variant(:og)
+    path = polymorphic_path(variant)
+    URI.join(request.base_url, path).to_s
+  end
+
   def sanitize_url(url)
     uri = URI.parse(url.to_s)
     uri.scheme.in?(%w[http https]) ? url : "#"
   rescue URI::InvalidURIError
     "#"
+  end
+
+  # Route helpers for polymorphic commentable/likeable models
+  def commentable_path(record, **opts)
+    case record
+    when News then news_path(record, **opts)
+    when EducationPost then education_path(record, **opts)
+    end
+  end
+
+  def commentable_comments_path(record, **opts)
+    case record
+    when News then news_comments_path(record, **opts)
+    when EducationPost then education_comments_path(record, **opts)
+    end
+  end
+
+  def commentable_comment_path(record, comment, **opts)
+    case record
+    when News then news_comment_path(record, comment, **opts)
+    when EducationPost then education_comment_path(record, comment, **opts)
+    end
+  end
+
+  def toggle_likeable_like_path(record, **opts)
+    case record
+    when News then toggle_news_like_path(record, **opts)
+    when EducationPost then toggle_education_like_path(record, **opts)
+    end
   end
 end

@@ -34,8 +34,8 @@ env:
     RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_LEVEL: info
     DB_HOST: samaj-darshan-db
-    RAILS_ASSUME_SSL: "false"
-    RAILS_FORCE_SSL: "false"
+    RAILS_ASSUME_SSL: "true"
+    RAILS_FORCE_SSL: "true"
     GA_MEASUREMENT_ID: "G-KJBW0359PV"
 
 aliases:

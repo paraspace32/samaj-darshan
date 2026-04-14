@@ -1,4 +1,63 @@
 hi:
+  activerecord:
+    errors:
+      messages:
+        taken: "पहले से उपयोग में है"
+        blank: "खाली नहीं हो सकता"
+        invalid: "अमान्य है"
+        too_short: "%{count} अक्षरों से कम नहीं हो सकता"
+        too_long: "%{count} अक्षरों से अधिक नहीं हो सकता"
+        not_a_number: "एक संख्या होनी चाहिए"
+        confirmation: "पुष्टि से मेल नहीं खाता"
+        present: "खाली होना चाहिए"
+        inclusion: "सूची में शामिल नहीं है"
+        exclusion: "आरक्षित है"
+        record_invalid: "सत्यापन विफल: %{errors}"
+      models:
+        user:
+          attributes:
+            phone:
+              taken: "यह फ़ोन नंबर पहले से पंजीकृत है"
+              blank: "फ़ोन नंबर आवश्यक है"
+              invalid: "एक मान्य 10 अंकों का भारतीय मोबाइल नंबर होना चाहिए"
+            email:
+              taken: "यह ईमेल पहले से पंजीकृत है"
+              invalid: "एक मान्य ईमेल होना चाहिए"
+            name:
+              blank: "नाम आवश्यक है"
+            password:
+              blank: "पासवर्ड आवश्यक है"
+              too_short: "%{count} अक्षरों से कम नहीं हो सकता"
+            password_confirmation:
+              confirmation: "पासवर्ड से मेल नहीं खाता"
+    attributes:
+      user:
+        name: "नाम"
+        phone: "फ़ोन नंबर"
+        email: "ईमेल"
+        password: "पासवर्ड"
+        password_confirmation: "पासवर्ड पुष्टि"
+        role: "भूमिका"
+        status: "स्थिति"
+    models:
+      user:
+        one: "उपयोगकर्ता"
+        other: "उपयोगकर्ता"
+
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      taken: "पहले से उपयोग में है"
+      blank: "खाली नहीं हो सकता"
+      invalid: "अमान्य है"
+      too_short: "%{count} अक्षरों से कम नहीं हो सकता"
+      too_long: "%{count} अक्षरों से अधिक नहीं हो सकता"
+      confirmation: "पुष्टि से मेल नहीं खाता"
+      not_a_number: "एक संख्या होनी चाहिए"
+      present: "खाली होना चाहिए"
+      inclusion: "सूची में शामिल नहीं है"
+      exclusion: "आरक्षित है"
+
   brand:
     name: "समाज दर्शन"
     short_name: "समाज दर्शन"
@@ -9,6 +68,8 @@ hi:
     home: "होम"
     magazine: "मैगज़ीन"
     webinars: "वेबिनार"
+    education: "शिक्षा"
+    jobs: "नौकरियाँ"
     admin: "एडमिन पैनल"
     new_article: "नई ख़बर"
     news: "समाचार"
@@ -44,6 +105,12 @@ hi:
     explore_categories: "श्रेणियाँ देखें"
     view_all: "सभी देखें"
     more_in_category: "%{name} में और"
+    education_news: "शिक्षा समाचार"
+    education_news_subtitle: "परीक्षा अपडेट, परिणाम और शैक्षिक संसाधन"
+    view_all_education: "सभी शिक्षा समाचार"
+    job_news: "नौकरी समाचार"
+    job_news_subtitle: "करियर के अवसर और नौकरी की खबरें"
+    view_all_jobs: "सभी नौकरी समाचार"
 
   magazine:
     title: "मैगज़ीन"
@@ -178,6 +245,22 @@ hi:
     chrome_android_step1: "ऊपर दाईं तरफ ⋮ तीन बिंदु दबाएं"
     chrome_android_step2: '"होम स्क्रीन में जोड़ें" या "ऐप इंस्टॉल करें" दबाएं'
 
+  signup:
+    title: "खाता बनाएं"
+    header: "साइन अप"
+    sub: "फ़ोन और पासवर्ड से अपना खाता बनाएं"
+    success: "स्वागत है! आपका खाता बन गया है।"
+    already_registered: "आप पहले से पंजीकृत हैं। कृपया लॉगिन करें।"
+    name_label: "पूरा नाम"
+    phone_label: "फ़ोन नंबर"
+    email_label: "ईमेल (वैकल्पिक)"
+    password_label: "पासवर्ड"
+    password_confirm_label: "पासवर्ड पुष्टि"
+    submit: "खाता बनाएं"
+    error_singular: "त्रुटि"
+    errors_plural: "त्रुटियाँ"
+    errors_found: "पाई गईं:"
+
   flash:
     login_required: "कृपया जारी रखने के लिए लॉगिन करें।"
     account_blocked: "आपका खाता अवरुद्ध कर दिया गया है। एडमिन से संपर्क करें।"
@@ -186,3 +269,26 @@ hi:
     welcome_back: "वापस स्वागत है, %{name}!"
     logged_out: "सफलतापूर्वक लॉगआउट हो गए।"
     not_authorized: "आप यह कार्य करने के लिए अधिकृत नहीं हैं।"
+
+  education:
+    title: "शिक्षा"
+    subtitle: "परीक्षा अपडेट, परिणाम, शैक्षिक संसाधन और हमारे समाज के लिए डिग्री समाचार"
+    all_categories: "सभी"
+    no_posts: "अभी तक कोई शिक्षा पोस्ट प्रकाशित नहीं हुई।"
+    back: "← शिक्षा पर वापस"
+    exam_date: "परीक्षा तिथि"
+    deadline: "पंजीकरण अंतिम तिथि"
+    visit_official: "आधिकारिक वेबसाइट पर जाएं"
+    more_in_category: "संबंधित शिक्षा पोस्ट"
+    no_related: "कोई संबंधित शिक्षा पोस्ट नहीं।"
+
+  jobs:
+    title: "नौकरियाँ और इंटर्नशिप"
+    subtitle: "करियर के अवसर, इंटर्नशिप, नौकरियाँ और हमारे समाज के लिए नई नौकरी की खबरें"
+    all_categories: "सभी"
+    no_posts: "अभी तक कोई नौकरी पोस्ट प्रकाशित नहीं हुई।"
+    back: "← नौकरियों पर वापस"
+    deadline: "अंतिम तिथि"
+    apply_now: "अभी आवेदन करें"
+    closed: "बंद"
+    deadline_passed: "आवेदन की अंतिम तिथि बीत चुकी है"

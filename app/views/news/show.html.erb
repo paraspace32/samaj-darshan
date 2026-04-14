@@ -3,14 +3,14 @@
 <% content_for(:og_type, "article") %>
 <% content_for(:description, truncate(strip_tags(@news_item.display_content), length: 200)) %>
 <% if @news_item.cover_image.attached? %>
-  <% content_for(:og_image, rails_storage_proxy_url(@news_item.cover_image)) %>
+  <% content_for(:og_image, og_image_url(@news_item.cover_image)) %>
 <% end %>
 
 <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">
   <%# Main content %>
   <article class="flex-1 min-w-0 animate-fade-in">
     <%# Breadcrumb %>
-    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-8 animate-fade-up">
+    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-4 animate-fade-up">
       <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
       <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors font-medium" %>
@@ -18,43 +18,34 @@
       <span class="text-stone-600 truncate font-medium"><%= truncate(@news_item.display_title, length: 40) %></span>
     </nav>
 
-    <%# Category & meta %>
-    <div class="flex flex-wrap items-center gap-3 mb-6 animate-fade-up">
-      <span class="badge badge-category border border-gray-200/40 shadow-md">
-        <span class="w-2 h-2 rounded-full ring-2 ring-white/80 shrink-0" style="background-color: <%= @news_item.category.color %>"></span>
-        <%= link_to @news_item.category.display_name, category_feed_path(slug: @news_item.category.slug), class: "text-stone-700 hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 transition-all" %>
-      </span>
-      <span class="text-xs text-stone-500 tracking-wide font-medium tabular-nums"><%= @news_item.published_at.strftime("%d %b %Y") %></span>
-    </div>
-
     <%# Title %>
-    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-4"><%= @news_item.display_title %></h1>
+    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-3"><%= @news_item.display_title %></h1>
 
     <% other_title = I18n.locale == :hi ? @news_item.title_en : @news_item.title_hi %>
 
     <%# Author line %>
-    <div class="flex items-center gap-2.5 mb-6">
+    <div class="flex items-center gap-2.5 mb-4">
       <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-sm">
         <span class="text-white font-bold text-xs"><%= @news_item.author.name[0] %></span>
       </div>
       <div class="min-w-0">
         <p class="text-sm font-semibold text-stone-800"><%= @news_item.author.name %></p>
-        <p class="text-xs text-stone-400"><%= @news_item.region.display_name %> · <%= t("feed.ago", time: time_ago_in_words(@news_item.published_at)) %></p>
+        <p class="text-xs text-stone-400"><%= @news_item.region.display_name %> · <%= @news_item.published_at.strftime("%d %b %Y") %> · <%= t("feed.ago", time: time_ago_in_words(@news_item.published_at)) %></p>
       </div>
     </div>
 
-    <div class="section-divider mb-10"></div>
+    <div class="section-divider mb-6"></div>
 
     <%= render "shared/billboard_article_top" %>
 
     <%# Image carousel (cover + additional images) %>
     <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
     <% if gallery_images.size == 1 %>
-      <div class="mb-10 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full max-h-[520px] object-cover img-zoom" %>
+      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
       </div>
     <% elsif gallery_images.size > 1 %>
-      <div class="mb-10 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
+      <div class="mb-8 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
            data-controller="carousel" data-carousel-autoplay-value="true">
         <div class="relative">
           <div class="overflow-hidden">
@@ -135,7 +126,7 @@
 
       <p class="text-sm font-bold text-stone-900 tracking-tight mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
       <div class="flex flex-wrap items-center gap-3">
-        <% share_text = "#{@news_item.display_title}\n#{request.original_url}" %>
+        <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
         <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
            target="_blank" rel="noopener"
            class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 shadow-lg shadow-emerald-900/15 hover:shadow-xl transition-all">

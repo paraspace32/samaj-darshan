@@ -53,11 +53,17 @@ module Api
         end
 
         def user_params
-          if current_user.super_admin?
-            params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status)
+          permitted = if current_user.super_admin?
+            params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation, :role, :status, allowed_sections: [])
           else
             params.require(:user).permit(:name, :phone, :email, :password, :password_confirmation)
           end
+          sanitize_allowed_sections(permitted)
+        end
+
+        def sanitize_allowed_sections(permitted)
+          permitted[:allowed_sections] = permitted[:allowed_sections]&.reject(&:blank?) || [] if permitted.key?(:allowed_sections)
+          permitted
         end
 
         def user_json(user)
@@ -68,6 +74,7 @@ module Api
             email: user.email,
             role: user.role,
             status: user.status,
+            allowed_sections: user.allowed_sections,
             news_count: user.news.count,
             created_at: user.created_at.iso8601
           }

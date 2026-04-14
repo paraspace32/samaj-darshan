@@ -9,6 +9,8 @@ en:
     home: "Home"
     magazine: "Magazine"
     webinars: "Webinars"
+    education: "Education"
+    jobs: "Jobs"
     admin: "Admin Panel"
     new_article: "New News"
     news: "News"
@@ -44,6 +46,12 @@ en:
     explore_categories: "Explore Categories"
     view_all: "View All"
     more_in_category: "More in %{name}"
+    education_news: "Education News"
+    education_news_subtitle: "Exam updates, results & educational resources"
+    view_all_education: "All Education News"
+    job_news: "Job News"
+    job_news_subtitle: "Career opportunities & job openings"
+    view_all_jobs: "All Job News"
 
   magazine:
     title: "Magazine"
@@ -138,6 +146,22 @@ en:
     chrome_android_step1: "Tap the ⋮ three dots at the top-right"
     chrome_android_step2: '"Add to Home Screen" or "Install App"'
 
+  signup:
+    title: "Create an account"
+    header: "Sign up"
+    sub: "Create your account with phone and password"
+    success: "Welcome! Your account has been created."
+    already_registered: "You are already registered. Please sign in."
+    name_label: "Full name"
+    phone_label: "Phone"
+    email_label: "Email (optional)"
+    password_label: "Password"
+    password_confirm_label: "Confirm Password"
+    submit: "Create account"
+    error_singular: "error"
+    errors_plural: "errors"
+    errors_found: "found:"
+
   flash:
     login_required: "Please login to continue."
     account_blocked: "Your account has been blocked. Contact admin."
@@ -146,3 +170,26 @@ en:
     welcome_back: "Welcome back, %{name}!"
     logged_out: "Logged out successfully."
     not_authorized: "You are not authorized to perform this action."
+
+  education:
+    title: "Education"
+    subtitle: "Exam updates, results, educational resources, and degree news for our community"
+    all_categories: "All"
+    no_posts: "No education posts published yet."
+    back: "← Back to Education"
+    exam_date: "Exam Date"
+    deadline: "Registration Deadline"
+    visit_official: "Visit Official Website"
+    more_in_category: "Related Education Posts"
+    no_related: "No related education posts."
+
+  jobs:
+    title: "Jobs & Internships"
+    subtitle: "Career opportunities, internships, job openings, and new job announcements for our community"
+    all_categories: "All"
+    no_posts: "No job posts published yet."
+    back: "← Back to Jobs"
+    deadline: "Deadline"
+    apply_now: "Apply Now"
+    closed: "Closed"
+    deadline_passed: "Application deadline has passed"

@@ -14,6 +14,7 @@ class News < ApplicationRecord
     attachable.variant :card,     resize_to_limit: [ 800, 450 ],   format: :webp, saver: { quality: 80 }
     attachable.variant :thumb,    resize_to_limit: [ 200, 140 ],   format: :webp, saver: { quality: 75 }
     attachable.variant :carousel, resize_to_limit: [ 1600, 1000 ], format: :webp, saver: { quality: 85 }
+    attachable.variant :og,       resize_to_limit: [ 1200, 630 ],  format: :jpeg, saver: { quality: 80 }
   end
 
   has_many_attached :images do |attachable|

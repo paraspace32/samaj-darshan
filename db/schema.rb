@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,6 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
     t.string "annual_income"
     t.string "caste"
     t.string "city", null: false
+    t.string "city_hi"
     t.string "complexion"
     t.string "contact_email"
     t.string "contact_phone"
@@ -72,17 +73,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_144447) do
     t.datetime "created_at", null: false
     t.date "date_of_birth", null: false
     t.string "education", null: false
+    t.string "father_name"
     t.string "father_occupation"
     t.string "full_name", null: false
     t.string "full_name_hi"
     t.integer "gender", default: 0, null: false
     t.integer "height_cm"
+    t.string "job_location"
+    t.string "mother_name"
     t.string "mother_occupation"
     t.string "mother_tongue"
     t.string "occupation"
     t.datetime "published_at"
     t.text "rejection_reason"
-    t.string "religion"
     t.integer "siblings_count", default: 0
     t.string "state"
     t.integer "status", default: 0, null: false

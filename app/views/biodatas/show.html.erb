@@ -46,7 +46,7 @@
           <span class="w-1 h-1 rounded-full bg-gray-300"></span>
           <span class="inline-flex items-center gap-1.5 text-sm text-gray-600">
             <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-            <%= @biodata.city %><%= @biodata.state.present? ? ", #{@biodata.state}" : "" %><%= @biodata.country.present? && @biodata.country != "India" ? ", #{@biodata.country}" : "" %>
+            <%= @biodata.city %><%= @biodata.city_hi.present? ? " / #{@biodata.city_hi}" : "" %><%= @biodata.state.present? ? ", #{@biodata.state}" : "" %><%= @biodata.country.present? && @biodata.country != "India" ? ", #{@biodata.country}" : "" %>
           </span>
           <% if @biodata.height_display.present? %>
             <span class="w-1 h-1 rounded-full bg-gray-300"></span>
@@ -68,10 +68,10 @@
               <p class="text-sm text-gray-800 font-medium"><%= @biodata.occupation %></p>
             </div>
           <% end %>
-          <% if @biodata.religion.present? %>
+          <% if @biodata.job_location.present? %>
             <div>
-              <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-1"><%= t("biodata.religion") %></p>
-              <p class="text-sm text-gray-800 font-medium"><%= @biodata.religion %></p>
+              <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-1"><%= t("biodata.job_location") %></p>
+              <p class="text-sm text-gray-800 font-medium"><%= @biodata.job_location %></p>
             </div>
           <% end %>
           <% if @biodata.caste.present? %>
@@ -101,14 +101,26 @@
         </div>
 
         <%# Family Details %>
-        <% if @biodata.father_occupation.present? || @biodata.mother_occupation.present? || @biodata.siblings_count.to_i > 0 %>
+        <% if @biodata.father_name.present? || @biodata.father_occupation.present? || @biodata.mother_name.present? || @biodata.mother_occupation.present? || @biodata.siblings_count.to_i > 0 %>
           <div class="card-premium rounded-2xl p-5 mb-6 bg-gradient-to-br from-white via-orange-50/20 to-amber-50/10">
             <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-3"><%= t("biodata.family_details") %></p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <% if @biodata.father_name.present? %>
+                <div>
+                  <p class="text-xs text-gray-500 mb-0.5"><%= t("biodata.father_name") %></p>
+                  <p class="text-sm font-semibold text-gray-800"><%= @biodata.father_name %></p>
+                </div>
+              <% end %>
               <% if @biodata.father_occupation.present? %>
                 <div>
                   <p class="text-xs text-gray-500 mb-0.5"><%= t("biodata.father_occupation") %></p>
                   <p class="text-sm font-semibold text-gray-800"><%= @biodata.father_occupation %></p>
+                </div>
+              <% end %>
+              <% if @biodata.mother_name.present? %>
+                <div>
+                  <p class="text-xs text-gray-500 mb-0.5"><%= t("biodata.mother_name") %></p>
+                  <p class="text-sm font-semibold text-gray-800"><%= @biodata.mother_name %></p>
                 </div>
               <% end %>
               <% if @biodata.mother_occupation.present? %>

@@ -207,44 +207,69 @@
     </main>
 
     <%# Footer %>
-    <footer class="bg-white border-t border-gray-200/40 mt-16 no-print">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <img src="/icon-navbar.png" alt="<%= t('brand.name') %>" class="h-7 w-auto rounded-md">
+    <footer class="bg-gray-950 mt-16 no-print">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-8">
+
+        <%# Top row: brand + links %>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-12 pb-10 border-b border-white/8">
+
+          <%# Brand %>
+          <div class="sm:col-span-1">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="w-9 h-9 gradient-brand rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30 shrink-0">
+                <span class="text-white font-extrabold text-base">स</span>
+              </div>
+              <span class="text-white font-black text-base tracking-tight"><%= t("brand.short_name") %></span>
             </div>
             <p class="text-sm text-gray-400 leading-relaxed"><%= t("brand.tagline") %></p>
           </div>
+
+          <%# Links %>
           <div>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Links</p>
-            <ul class="space-y-2">
-              <li><%= link_to t("nav.home"), root_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <% if false %><li><%= link_to t("nav.magazine"), magazines_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li><% end %>
-              <li><%= link_to t("nav.webinars"), webinars_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <li><%= link_to t("nav.marriage"), biodatas_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <li><%= link_to t("nav.education"), education_index_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <li><%= link_to t("nav.jobs"), jobs_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Links</p>
+            <ul class="space-y-2.5">
+              <li><%= link_to t("nav.home"),      root_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+              <li><%= link_to t("nav.webinars"),  webinars_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+              <li><%= link_to t("nav.marriage"),  biodatas_path,        class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+              <li><%= link_to t("nav.education"), education_index_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+              <li><%= link_to t("nav.jobs"),      jobs_path,            class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
             </ul>
           </div>
+
+          <%# Account %>
           <div>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Account</p>
-            <ul class="space-y-2">
-              <% if logged_in? %>
-                <li><%= link_to "Dashboard", admin_root_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" if current_user.admin_panel_access? %></li>
-                <li><%= link_to t("nav.logout"), logout_path, class: "text-sm text-gray-500 hover:text-red-500 transition-colors" %></li>
-              <% else %>
-                <li><%= link_to t("nav.sign_in"), login_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-                <li><%= link_to t("nav.sign_up"), signup_path, class: "text-sm text-gray-500 hover:text-orange-600 transition-colors" %></li>
-              <% end %>
-            </ul>
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Account</p>
+            <% if logged_in? %>
+              <div class="flex items-center gap-3 mb-4 bg-white/5 rounded-xl px-3 py-2.5">
+                <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shrink-0">
+                  <span class="text-white font-bold text-xs"><%= current_user.name[0] %></span>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-white truncate"><%= current_user.name %></p>
+                  <p class="text-xs text-gray-500"><%= current_user.role.humanize %></p>
+                </div>
+              </div>
+              <ul class="space-y-2.5">
+                <% if current_user.admin_panel_access? %>
+                  <li><%= link_to "Dashboard", admin_root_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+                <% end %>
+                <li><%= link_to t("nav.logout"), logout_path, class: "text-sm text-red-500 hover:text-red-400 transition-colors" %></li>
+              </ul>
+            <% else %>
+              <ul class="space-y-2.5">
+                <li><%= link_to t("nav.sign_in"), login_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+                <li><%= link_to t("nav.sign_up"), signup_path, class: "text-sm text-gray-400 hover:text-orange-400 transition-colors" %></li>
+              </ul>
+            <% end %>
           </div>
         </div>
-        <div class="section-divider mt-8 mb-6"></div>
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p class="text-xs text-gray-400">&copy; <%= Date.current.year %> <%= t("brand.name") %></p>
-          <p class="text-xs text-gray-300">Powered by Ambe Software</p>
+
+        <%# Bottom bar %>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-6">
+          <p class="text-xs text-gray-600">&copy; <%= Date.current.year %> <%= t("brand.name") %>. All rights reserved.</p>
+          <p class="text-xs text-gray-700">Powered by Ambe Software</p>
         </div>
+
       </div>
     </footer>
 

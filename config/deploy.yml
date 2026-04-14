@@ -9,11 +9,11 @@ ssh:
 
 servers:
   web:
-    - 34.14.167.110
+    - www.samaj-darshan.com
 
 proxy:
   ssl: false
-  host: 34.14.167.110
+  host: www.samaj-darshan.com
   app_port: 3000
 
 registry:

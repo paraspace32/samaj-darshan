@@ -31,6 +31,9 @@
     <% if current_user.can_manage_jobs? %>
       <%= admin_nav_link "Jobs", admin_job_posts_path, "briefcase" %>
     <% end %>
+    <% if current_user.can_review_biodatas? %>
+      <%= admin_nav_link "Marriage", admin_biodatas_path, "heart" %>
+    <% end %>
 
     <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>
       <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>

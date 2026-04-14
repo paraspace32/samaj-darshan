@@ -1,4 +1,6 @@
 class BiodatasController < ApplicationController
+  before_action :require_login
+
   def index
     @biodatas = Biodata.visible
                        .with_attached_photo

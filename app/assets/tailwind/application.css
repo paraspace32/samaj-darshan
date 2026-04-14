@@ -519,7 +519,7 @@
   }
 
   .ticker-scroll {
-    animation: tickerScroll 25s linear infinite;
+    animation: tickerScroll 40s linear infinite;
     width: max-content;
   }
   .ticker-scroll:hover {

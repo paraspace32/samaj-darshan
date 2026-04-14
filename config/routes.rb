@@ -53,6 +53,7 @@ Rails.application.routes.draw do
         patch :publish
         patch :reject
       end
+    end
     resources :education_posts do
       member { patch :publish }
     end

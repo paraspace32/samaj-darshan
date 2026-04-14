@@ -52,6 +52,18 @@ class User < ApplicationRecord
     super_admin? || editor?
   end
 
+  def can_manage_biodatas?
+    super_admin? || editor?
+  end
+
+  def can_review_biodatas?
+    super_admin? || editor? || moderator?
+  end
+
+  def can_delete_biodatas?
+    super_admin?
+  end
+
   def can_create_news?
     super_admin? || editor? || co_editor?
   end

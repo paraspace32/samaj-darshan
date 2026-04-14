@@ -1,5 +1,8 @@
 module Admin
   class BiodatasController < Admin::BaseController
+    before_action :require_biodata_reviewer, only: [ :index, :show ]
+    before_action :require_biodata_manager,  only: [ :publish, :reject ]
+    before_action :require_biodata_delete,   only: [ :destroy ]
     before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
 
     def index

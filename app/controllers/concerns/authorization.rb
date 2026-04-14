@@ -39,6 +39,18 @@ module Authorization
     raise NotAuthorizedError unless current_user&.can_manage_billboards?
   end
 
+  def require_biodata_manager
+    raise NotAuthorizedError unless current_user&.can_manage_biodatas?
+  end
+
+  def require_biodata_reviewer
+    raise NotAuthorizedError unless current_user&.can_review_biodatas?
+  end
+
+  def require_biodata_delete
+    raise NotAuthorizedError unless current_user&.can_delete_biodatas?
+  end
+
   def handle_not_authorized
     if request.format.json?
       render json: { error: "Not authorized" }, status: :forbidden

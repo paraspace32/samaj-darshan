@@ -10,6 +10,12 @@
 #   inflect.uncountable %w( fish sheep )
 # end
 
+# "biodata" ends in "data" which Rails treats as uncountable (Latin plural).
+# Register it as a regular word so Biodata -> biodatas.
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.irregular "biodata", "biodatas"
+end
+
 # These inflection rules are supported but not enabled by default:
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"

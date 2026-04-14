@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :job_posts, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
+  has_one  :biodata, dependent: :destroy
 
   enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account
@@ -74,6 +75,18 @@ class User < ApplicationRecord
 
   def can_manage_jobs?
     super_admin? || (editor? && has_section_access?("jobs"))
+  end
+
+  def can_manage_biodatas?
+    super_admin? || editor?
+  end
+
+  def can_review_biodatas?
+    super_admin? || editor? || moderator?
+  end
+
+  def can_delete_biodatas?
+    super_admin?
   end
 
   def can_create_news?

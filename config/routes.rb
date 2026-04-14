@@ -48,6 +48,11 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
+    resources :biodatas, only: [ :index, :show, :destroy ] do
+      member do
+        patch :publish
+        patch :reject
+      end
     resources :education_posts do
       member { patch :publish }
     end
@@ -102,6 +107,21 @@ Rails.application.routes.draw do
 
   # Webinars
   resources :webinars, only: [ :index, :show ]
+
+  # Marriage Section / Biodata
+  resources :biodatas, only: [ :index, :show ] do
+    member do
+      get :template
+      get :download_pdf
+    end
+  end
+  resource  :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
+    member do
+      patch :submit_for_review
+      get   :template
+      get   :download_pdf
+    end
+  end
 
   # Education
   resources :education, only: [ :index, :show ], controller: "education" do

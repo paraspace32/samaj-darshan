@@ -1,0 +1,14 @@
+<% content_for(:title, t("biodata.create_my_biodata")) %>
+
+<div class="max-w-3xl mx-auto animate-fade-in">
+  <div class="mb-8">
+    <h1 class="text-3xl font-black tracking-tight text-gray-900">
+      <span class="text-gradient"><%= t("biodata.create_my_biodata") %></span>
+    </h1>
+    <p class="text-sm text-gray-500 mt-2"><%= t("biodata.create_subtitle") %></p>
+  </div>
+
+  <% url = my_biodata_path %>
+  <% submit_label = t("biodata.save_biodata") %>
+  <%= render "form", biodata: @biodata, url: url, submit_label: submit_label %>
+</div>

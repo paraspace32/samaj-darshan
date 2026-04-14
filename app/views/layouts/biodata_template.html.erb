@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= @biodata.display_name %> — <%= t("biodata.template_title") %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background: #f1ece4; min-height: 100vh; }
+    @media print {
+      body { background: white; }
+      .no-print { display: none !important; }
+      .biodata-card { box-shadow: none !important; border: 2px solid #d97706 !important; }
+      @page { margin: 0.5cm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+  <%# Toolbar — hidden on print %>
+  <div class="no-print bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+    <div class="flex items-center gap-3">
+      <%= link_to root_path, class: "text-base font-black tracking-tight text-gradient" do %>
+        <%= t("brand.short_name") %>
+      <% end %>
+      <span class="text-gray-300">|</span>
+      <span class="text-sm font-semibold text-gray-600"><%= t("biodata.biodata_card") %></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to :back, class: "btn-ghost !py-1.5 !px-3 !text-sm" do %>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+        <%= t("nav.back") %>
+      <% end %>
+      <% if @pdf_download_path.present? %>
+        <%= link_to @pdf_download_path, class: "btn-primary !py-1.5 !px-4 !text-sm gap-1.5" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <%= t("biodata.download_pdf") %>
+        <% end %>
+      <% end %>
+      <button onclick="window.print()" class="btn-ghost !py-1.5 !px-4 !text-sm cursor-pointer">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        <%= t("biodata.print_save") %>
+      </button>
+    </div>
+  </div>
+
+  <div class="py-8 px-4">
+    <%= yield %>
+  </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 class MyBiodatasController < ApplicationController
   before_action :require_login
-  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :template ]
+  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :template, :download_pdf ]
 
   def show; end
 
@@ -40,7 +40,20 @@ class MyBiodatasController < ApplicationController
   end
 
   def template
+    @pdf_download_path = download_pdf_my_biodata_path
     render layout: "biodata_template"
+  end
+
+  def download_pdf
+    filename = "biodata_#{@biodata.full_name.parameterize}_#{@biodata.id}.pdf"
+    render pdf: filename,
+           template: "biodatas/template",
+           layout: "biodata_pdf",
+           page_size: "A4",
+           margin: { top: 0, bottom: 0, left: 0, right: 0 },
+           disable_smart_shrinking: true,
+           print_media_type: true,
+           disposition: "attachment"
   end
 
   private

@@ -464,6 +464,10 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    wicked_pdf (2.8.2)
+      activesupport
+      ostruct
+    wkhtmltopdf-binary (0.12.6.10)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -507,6 +511,8 @@ DEPENDENCIES
   turbo-rails
   tzinfo-data
   web-console
+  wicked_pdf
+  wkhtmltopdf-binary
 
 BUNDLED WITH
    2.7.2

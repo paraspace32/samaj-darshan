@@ -105,12 +105,16 @@ Rails.application.routes.draw do
 
   # Marriage Section / Biodata
   resources :biodatas, only: [ :index, :show ] do
-    member { get :template }
+    member do
+      get :template
+      get :download_pdf
+    end
   end
   resource  :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
     member do
       patch :submit_for_review
       get   :template
+      get   :download_pdf
     end
   end
 

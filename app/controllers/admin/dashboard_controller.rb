@@ -13,7 +13,10 @@ module Admin
         users_count: User.count,
         billboards_count: Billboard.count,
         webinars_count: Webinar.count,
-        upcoming_webinars_count: Webinar.upcoming.count
+        upcoming_webinars_count: Webinar.upcoming.count,
+        biodatas_total: Biodata.count,
+        biodatas_pending: Biodata.pending_review.count,
+        biodatas_published: Biodata.published.count
       }
 
       @recent_news = News.includes(:region, :category, :author)

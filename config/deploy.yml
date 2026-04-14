@@ -9,11 +9,11 @@ ssh:
 
 servers:
   web:
-    - 34.14.172.86
+    - 34.14.167.110
 
 proxy:
   ssl: false
-  host: 34.14.172.86
+  host: 34.14.167.110
   app_port: 3000
 
 registry:

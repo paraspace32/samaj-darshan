@@ -39,19 +39,13 @@
         <%= f.label :gender, t("biodata.gender"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
         <%= f.select :gender, [
           [t("biodata.gender_male"), "male"],
-          [t("biodata.gender_female"), "female"],
-          [t("biodata.gender_other"), "other"]
+          [t("biodata.gender_female"), "female"]
         ], { include_blank: t("biodata.select_gender") }, class: "input-premium block w-full" %>
       </div>
 
       <div>
         <%= f.label :date_of_birth, t("biodata.date_of_birth"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
         <%= f.date_field :date_of_birth, class: "input-premium block w-full", required: true %>
-      </div>
-
-      <div>
-        <%= f.label :religion, t("biodata.religion"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
-        <%= f.text_field :religion, class: "input-premium block w-full", placeholder: t("biodata.religion_placeholder") %>
       </div>
 
       <div>
@@ -92,6 +86,11 @@
       </div>
 
       <div>
+        <%= f.label :city_hi, t("biodata.city_hi"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :city_hi, class: "input-premium block w-full", placeholder: t("biodata.city_hi_placeholder") %>
+      </div>
+
+      <div>
         <%= f.label :state, t("biodata.state"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
         <%= f.text_field :state, class: "input-premium block w-full", placeholder: t("biodata.state_placeholder") %>
       </div>
@@ -112,6 +111,11 @@
       </div>
 
       <div>
+        <%= f.label :job_location, t("biodata.job_location"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.text_field :job_location, class: "input-premium block w-full", placeholder: t("biodata.job_location_placeholder") %>
+      </div>
+
+      <div>
         <%= f.label :annual_income, t("biodata.annual_income"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
         <%= f.text_field :annual_income, class: "input-premium block w-full", placeholder: t("biodata.annual_income_placeholder") %>
       </div>
@@ -129,10 +133,18 @@
 
     <div class="space-y-5">
       <%# Family %>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <%= f.label :father_name, t("biodata.father_name"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.text_field :father_name, class: "input-premium block w-full", placeholder: t("biodata.father_name_placeholder") %>
+        </div>
         <div>
           <%= f.label :father_occupation, t("biodata.father_occupation"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
           <%= f.text_field :father_occupation, class: "input-premium block w-full", placeholder: t("biodata.father_occupation_placeholder") %>
+        </div>
+        <div>
+          <%= f.label :mother_name, t("biodata.mother_name"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+          <%= f.text_field :mother_name, class: "input-premium block w-full", placeholder: t("biodata.mother_name_placeholder") %>
         </div>
         <div>
           <%= f.label :mother_occupation, t("biodata.mother_occupation"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>

@@ -7,7 +7,7 @@ class Biodata < ApplicationRecord
     attachable.variant :thumb,   resize_to_fill: [ 80, 80 ],   format: :webp, saver: { quality: 75 }
   end
 
-  enum :gender, { male: 0, female: 1, other: 2 }
+  enum :gender, { male: 0, female: 1 }
   enum :status, { draft: 0, pending_review: 1, published: 2, rejected: 3 }
 
   validates :full_name,     presence: true
@@ -21,7 +21,8 @@ class Biodata < ApplicationRecord
   scope :visible,       -> { published.order(published_at: :desc) }
   scope :for_gender,    ->(g)        { where(gender: g) if g.present? }
   scope :for_city,      ->(c)        { where("city ILIKE ?", "%#{c}%") if c.present? }
-  scope :for_education, ->(e)        { where("education ILIKE ?", "%#{e}%") if e.present? }
+  scope :for_education,   ->(e) { where("education ILIKE ?", "%#{e}%") if e.present? }
+  scope :for_occupation,  ->(o) { where("occupation ILIKE ?", "%#{o}%") if o.present? }
   scope :for_age_range, ->(min, max) {
     return all unless min.present? || max.present?
     max_dob = min.present? ? Date.today - min.to_i.years : nil

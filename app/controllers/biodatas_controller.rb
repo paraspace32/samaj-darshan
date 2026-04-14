@@ -8,6 +8,7 @@ class BiodatasController < ApplicationController
                        .for_age_range(params[:age_min], params[:age_max])
                        .for_city(params[:city])
                        .for_education(params[:education])
+                       .for_occupation(params[:occupation])
     @per_page = 24
     @page = [ params[:page].to_i, 1 ].max
     @total_count = @biodatas.count

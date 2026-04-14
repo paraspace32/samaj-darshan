@@ -66,12 +66,12 @@ class MyBiodatasController < ApplicationController
   def biodata_params
     params.require(:biodata).permit(
       :full_name, :full_name_hi, :gender, :date_of_birth,
-      :religion, :caste, :mother_tongue,
-      :city, :state, :country,
-      :education, :occupation, :annual_income,
+      :caste, :mother_tongue,
+      :city, :city_hi, :state, :country,
+      :education, :occupation, :job_location, :annual_income,
       :height_cm, :complexion,
       :about_en, :about_hi,
-      :father_occupation, :mother_occupation, :siblings_count,
+      :father_name, :father_occupation, :mother_name, :mother_occupation, :siblings_count,
       :contact_phone, :contact_email,
       :photo
     )

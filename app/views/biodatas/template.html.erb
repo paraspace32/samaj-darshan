@@ -76,10 +76,9 @@
           [t("biodata.age"),           "#{@biodata.age} #{t('biodata.years')}"],
           [t("biodata.height"),        @biodata.height_display],
           [t("biodata.complexion"),    @biodata.complexion],
-          [t("biodata.religion"),      @biodata.religion],
           [t("biodata.caste"),         @biodata.caste],
           [t("biodata.mother_tongue"), @biodata.mother_tongue],
-          [t("biodata.city"),          [@biodata.city, @biodata.state, @biodata.country].compact.join(", ")],
+          [t("biodata.city"),          [@biodata.city, @biodata.city_hi, @biodata.state, @biodata.country].compact.reject(&:blank?).join(", ")],
         ].reject { |_, v| v.blank? } %>
 
         <table style="width:100%;border-collapse:collapse;">
@@ -105,6 +104,7 @@
           <% [
             [t("biodata.education"),     @biodata.education],
             [t("biodata.occupation"),    @biodata.occupation],
+            [t("biodata.job_location"),  @biodata.job_location],
             [t("biodata.annual_income"), @biodata.annual_income],
           ].reject { |_, v| v.blank? }.each_with_index do |(label, value), i| %>
             <tr style="background:<%= i.even? ? '#fffbeb' : 'white' %>;">
@@ -117,12 +117,14 @@
     <% end %>
 
     <%# ── Section: Family Details ────────────────────────────────── %>
-    <% if @biodata.father_occupation.present? || @biodata.mother_occupation.present? || @biodata.siblings_count.to_i > 0 %>
+    <% if @biodata.father_name.present? || @biodata.father_occupation.present? || @biodata.mother_name.present? || @biodata.mother_occupation.present? || @biodata.siblings_count.to_i > 0 %>
       <div style="margin-bottom:20px;">
         <%= render "biodatas/template_section_header", title: t("biodata.family_details") %>
         <table style="width:100%;border-collapse:collapse;">
           <% [
+            [t("biodata.father_name"),       @biodata.father_name],
             [t("biodata.father_occupation"), @biodata.father_occupation],
+            [t("biodata.mother_name"),       @biodata.mother_name],
             [t("biodata.mother_occupation"), @biodata.mother_occupation],
             [t("biodata.siblings"),          @biodata.siblings_count.to_i > 0 ? @biodata.siblings_count.to_s : nil],
           ].reject { |_, v| v.blank? }.each_with_index do |(label, value), i| %>

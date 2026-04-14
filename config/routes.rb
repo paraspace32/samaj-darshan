@@ -9,8 +9,8 @@ Rails.application.routes.draw do
   get "locale/:locale" => "locales#update", as: :set_locale
 
   # Authentication
-  get  "login"  => "sessions#new",     as: :login
-  post "login"  => "sessions#create"
+  get  "login" => "sessions#new",     as: :login
+  post "login" => "sessions#create"
   get  "logout" => "sessions#destroy", as: :logout
   get  "signup" => "registrations#new", as: :signup
   post "signup" => "registrations#create"
@@ -116,11 +116,11 @@ Rails.application.routes.draw do
       get :download_pdf
     end
   end
-  resource  :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
+  resource :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
     member do
       patch :submit_for_review
-      get   :template
-      get   :download_pdf
+      get :template
+      get :download_pdf
     end
   end
 

@@ -16,7 +16,7 @@ class Biodata < ApplicationRecord
   validates :city,          presence: true
   validates :education,     presence: true
   validates :user_id,       uniqueness: true
-  validate  :age_must_be_reasonable
+  validate :age_must_be_reasonable
 
   scope :visible,       -> { published.order(published_at: :desc) }
   scope :for_gender,    ->(g)        { where(gender: g) if g.present? }

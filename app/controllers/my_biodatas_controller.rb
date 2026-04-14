@@ -1,6 +1,6 @@
 class MyBiodatasController < ApplicationController
   before_action :require_login
-  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review ]
+  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :template ]
 
   def show; end
 
@@ -37,6 +37,10 @@ class MyBiodatasController < ApplicationController
   def submit_for_review
     @biodata.submit_for_review!
     redirect_to my_biodata_path, notice: t("biodata.submitted")
+  end
+
+  def template
+    render layout: "biodata_template"
   end
 
   private

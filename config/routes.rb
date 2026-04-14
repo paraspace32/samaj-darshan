@@ -104,9 +104,14 @@ Rails.application.routes.draw do
   resources :webinars, only: [ :index, :show ]
 
   # Marriage Section / Biodata
-  resources :biodatas, only: [ :index, :show ]
+  resources :biodatas, only: [ :index, :show ] do
+    member { get :template }
+  end
   resource  :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
-    member { patch :submit_for_review }
+    member do
+      patch :submit_for_review
+      get   :template
+    end
   end
 
   get "offline" => "pages#offline"

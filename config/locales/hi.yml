@@ -277,6 +277,14 @@ hi:
     status_published_hint: "आपका परिचय सार्वजनिक है।"
     status_rejected: "अस्वीकृत"
     status_rejected_hint: "आपका परिचय अस्वीकृत किया गया। कारण देखें और संपादित कर दोबारा भेजें।"
+    view_card: "बायोडेटा कार्ड देखें"
+    print_save: "प्रिंट / PDF सेव करें"
+    biodata_card: "बायोडेटा कार्ड"
+    template_title: "विवाह परिचय"
+    template_heading: "विवाह परिचय"
+    template_subheading: "Vivah Parichay — Marriage Profile"
+    education_career: "शिक्षा एवं व्यवसाय"
+    age: "आयु"
 
   flash:
     login_required: "कृपया जारी रखने के लिए लॉगिन करें।"

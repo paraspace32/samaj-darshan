@@ -15,4 +15,9 @@ class BiodatasController < ApplicationController
   def show
     @biodata = Biodata.published.find(params[:id])
   end
+
+  def template
+    @biodata = Biodata.published.find(params[:id])
+    render layout: "biodata_template"
+  end
 end

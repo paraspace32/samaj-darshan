@@ -94,7 +94,7 @@ function stepAge(id, delta) {
   <% if @biodatas.any? %>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 animate-fade-up">
       <% @biodatas.each do |biodata| %>
-        <%= link_to biodata_path(biodata), class: "group card-premium rounded-2xl border border-gray-200/40 block overflow-hidden" do %>
+        <%= link_to biodata_path(biodata), class: "group card-premium rounded-2xl border border-gray-200/40 block overflow-hidden", data: { turbo_frame: "_top" } do %>
           <%# Photo — square on mobile %>
           <div class="aspect-square sm:aspect-[4/5] bg-gradient-to-br from-orange-100/90 via-amber-50 to-rose-100/80 relative overflow-hidden">
             <% if biodata.photo.attached? %>

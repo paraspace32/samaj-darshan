@@ -78,7 +78,7 @@
                     <% if biodata.photo.attached? %>
                       <%= optimized_image_tag biodata.photo, variant: :thumb, class: "w-full h-full object-cover" %>
                     <% else %>
-                      <span class="text-orange-500 font-black text-sm"><%= biodata.full_name[0].upcase %></span>
+                      <span class="text-orange-500 font-black text-sm"><%= biodata.avatar_initial %></span>
                     <% end %>
                   </div>
                   <div>

@@ -22,7 +22,7 @@
                 onerror: "this.style.display='none';this.nextElementSibling.style.display='flex'" %>
           <% end %>
           <div style="width:100%;height:100%;display:<%= @biodata.photo.attached? ? 'none' : 'flex' %>;align-items:center;justify-content:center;">
-            <span style="font-size:36px;font-weight:900;color:white;"><%= @biodata.full_name[0].upcase %></span>
+            <span style="font-size:36px;font-weight:900;color:white;"><%= @biodata.avatar_initial %></span>
           </div>
         </div>
       </div>

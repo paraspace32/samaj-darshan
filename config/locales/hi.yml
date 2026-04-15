@@ -361,6 +361,7 @@ hi:
     template_heading: "विवाह परिचय"
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "शिक्षा एवं व्यवसाय"
+    personal_details: "व्यक्तिगत जानकारी"
     age: "आयु"
   signup:
     title: "खाता बनाएं"

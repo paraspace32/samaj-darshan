@@ -262,6 +262,7 @@ en:
     template_heading: "Matrimonial Biodata"
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "Education & Career"
+    personal_details: "Personal Details"
     age: "Age"
   signup:
     title: "Create an account"

@@ -1,6 +1,8 @@
 <%# ═══════════════════════════════════════════════════════════════
     MATRIMONIAL BIODATA — Premium Template
     ═══════════════════════════════════════════════════════════════ %>
+<% lspacing = I18n.locale == :hi ? "0" : "0.16em" %>
+<% lbl_lspacing = I18n.locale == :hi ? "0" : "0.1em" %>
 
 <div style="max-width:680px;margin:0 auto;padding:2px;">
 <div style="background:#fdf7f0;border-radius:20px;overflow:hidden;box-shadow:0 8px 48px rgba(180,83,9,0.14),0 2px 8px rgba(0,0,0,0.06);border:1.5px solid #f5c897;position:relative;">
@@ -83,13 +85,13 @@
     <% if personal.any? %>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
-        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;white-space:nowrap;">✦ <%= t("biodata.personal_details") %> ✦</span>
+        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.personal_details") %> ✦</span>
         <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
         <% personal.each do |label, value| %>
           <div style="flex:1 1 calc(50% - 4px);min-width:120px;background:white;border:1px solid #fde8cb;border-radius:10px;padding:10px 14px;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
-            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 3px;"><%= label %></p>
+            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:<%= lbl_lspacing %>;margin:0 0 3px;"><%= label %></p>
             <p style="font-size:13.5px;font-weight:700;color:#1c1917;margin:0;line-height:1.4;"><%= value %></p>
           </div>
         <% end %>
@@ -106,13 +108,13 @@
     <% if edu_rows.any? %>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
-        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;white-space:nowrap;">✦ <%= t("biodata.education_career") %> ✦</span>
+        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.education_career") %> ✦</span>
         <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
         <% edu_rows.each do |label, value| %>
           <div style="flex:1 1 calc(50% - 4px);min-width:120px;background:white;border:1px solid #fde8cb;border-radius:10px;padding:10px 14px;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
-            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 3px;"><%= label %></p>
+            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:<%= lbl_lspacing %>;margin:0 0 3px;"><%= label %></p>
             <p style="font-size:13.5px;font-weight:700;color:#1c1917;margin:0;line-height:1.4;"><%= value %></p>
           </div>
         <% end %>
@@ -130,13 +132,13 @@
     <% if family_rows.any? %>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
-        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;white-space:nowrap;">✦ <%= t("biodata.family_details") %> ✦</span>
+        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.family_details") %> ✦</span>
         <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
         <% family_rows.each do |label, value| %>
           <div style="flex:1 1 calc(50% - 4px);min-width:120px;background:white;border:1px solid #fde8cb;border-radius:10px;padding:10px 14px;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
-            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 3px;"><%= label %></p>
+            <p style="font-size:9px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:<%= lbl_lspacing %>;margin:0 0 3px;"><%= label %></p>
             <p style="font-size:13.5px;font-weight:700;color:#1c1917;margin:0;line-height:1.4;"><%= value %></p>
           </div>
         <% end %>
@@ -147,7 +149,7 @@
     <% if @biodata.display_about.present? %>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
-        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;white-space:nowrap;">✦ <%= t("biodata.about") %> ✦</span>
+        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.about") %> ✦</span>
         <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
       </div>
       <p style="font-size:13px;color:#44403c;line-height:1.8;margin:0 0 20px;background:white;border:1px solid #fde8cb;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(180,83,9,0.06);"><%= @biodata.display_about %></p>
@@ -156,7 +158,7 @@
     <%# ── Contact ── %>
     <% if @biodata.contact_phone.present? || @biodata.contact_email.present? %>
       <div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border-radius:12px;padding:14px 18px;border:1.5px solid #fcd9a0;box-shadow:0 2px 8px rgba(180,83,9,0.08);">
-        <p style="font-size:9px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.18em;text-align:center;margin:0 0 10px;">✦ <%= t("biodata.contact") %> ✦</p>
+        <p style="font-size:9px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;text-align:center;margin:0 0 10px;">✦ <%= t("biodata.contact") %> ✦</p>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px;">
           <% if @biodata.contact_phone.present? %>
             <div style="display:flex;align-items:center;gap:8px;">
@@ -164,7 +166,7 @@
                 <span style="font-size:14px;">📞</span>
               </div>
               <div>
-                <p style="font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.08em;margin:0;"><%= t("biodata.contact_phone") %></p>
+                <p style="font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:<%= lbl_lspacing %>;margin:0;"><%= t("biodata.contact_phone") %></p>
                 <p style="font-size:14px;font-weight:800;color:#1c1917;margin:0;letter-spacing:0.01em;"><%= @biodata.contact_phone %></p>
               </div>
             </div>
@@ -175,7 +177,7 @@
                 <span style="font-size:14px;">✉️</span>
               </div>
               <div>
-                <p style="font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.08em;margin:0;"><%= t("biodata.contact_email") %></p>
+                <p style="font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:<%= lbl_lspacing %>;margin:0;"><%= t("biodata.contact_email") %></p>
                 <p style="font-size:13px;font-weight:700;color:#1c1917;margin:0;"><%= @biodata.contact_email %></p>
               </div>
             </div>

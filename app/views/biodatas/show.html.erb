@@ -46,7 +46,7 @@
           <span class="w-1 h-1 rounded-full bg-gray-300"></span>
           <span class="inline-flex items-center gap-1.5 text-sm text-gray-600">
             <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
-            <%= @biodata.city %><%= @biodata.city_hi.present? ? " / #{@biodata.city_hi}" : "" %><%= @biodata.state.present? ? ", #{@biodata.state}" : "" %><%= @biodata.country.present? && @biodata.country != "India" ? ", #{@biodata.country}" : "" %>
+            <%= [@biodata.city, @biodata.city_hi].select(&:present?).join(" / ") %><%= @biodata.state.present? ? ", #{@biodata.state}" : "" %><%= @biodata.country.present? && @biodata.country != "India" ? ", #{@biodata.country}" : "" %>
           </span>
           <% if @biodata.height_display.present? %>
             <span class="w-1 h-1 rounded-full bg-gray-300"></span>

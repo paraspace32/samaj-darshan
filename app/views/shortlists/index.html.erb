@@ -1,0 +1,51 @@
+<% content_for(:title, t("shortlists.title")) %>
+
+<div class="mb-3 animate-fade-in text-center">
+  <h1 class="text-xl font-black tracking-tight">
+    <span class="text-gradient"><%= t("shortlists.title") %></span>
+  </h1>
+</div>
+
+<% if @biodatas.any? %>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 animate-fade-up">
+    <% @biodatas.each do |biodata| %>
+      <%= link_to biodata_path(biodata), class: "group card-premium rounded-2xl border border-gray-200/40 block overflow-hidden", data: { turbo_frame: "_top" } do %>
+        <%# Photo — square on mobile %>
+        <div class="aspect-square sm:aspect-[4/5] bg-gradient-to-br from-orange-100/90 via-amber-50 to-rose-100/80 relative overflow-hidden">
+          <% if biodata.photo.attached? %>
+            <%= optimized_image_tag biodata.photo, variant: :card, class: "img-zoom w-full h-full object-cover", loading: "lazy",
+                onerror: "this.style.display='none';this.nextElementSibling.style.display='flex'" %>
+          <% end %>
+          <div class="w-full h-full flex items-center justify-center" style="<%= biodata.photo.attached? ? 'display:none' : '' %>">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full gradient-brand flex items-center justify-center shadow-lg">
+              <span class="text-white font-black text-xl sm:text-2xl"><%= biodata.avatar_initial %></span>
+            </div>
+          </div>
+          <%# Gender badge %>
+          <span class="absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded-full <%= biodata.female? ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700' %>">
+            <%= t("biodata.gender_#{biodata.gender}") %>
+          </span>
+        </div>
+
+        <div class="p-2.5 sm:p-3">
+          <h3 class="font-bold tracking-tight text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-1 text-sm leading-snug">
+            <%= biodata.display_name %>
+          </h3>
+          <div class="flex items-center justify-between text-[11px] text-gray-400 mt-1">
+            <span class="font-semibold text-gray-500"><%= biodata.age %> yrs</span>
+            <span class="truncate ml-1.5 text-right"><%= biodata.city.presence || biodata.state %></span>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="surface-elevated rounded-3xl border border-gray-200/40 px-8 py-20 sm:py-24 text-center shadow-xl animate-fade-in">
+    <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-orange-100 to-rose-100 flex items-center justify-center mx-auto mb-6 border border-orange-200/40 shadow-inner">
+      <svg class="w-10 h-10 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+    </div>
+    <p class="text-gray-500 font-medium mb-2"><%= t("shortlists.empty") %></p>
+    <p class="text-gray-400 text-sm mb-6"><%= t("shortlists.empty_hint") %></p>
+    <%= link_to t("biodata.title"), biodatas_path, class: "btn-primary !inline-flex" %>
+  </div>
+<% end %>

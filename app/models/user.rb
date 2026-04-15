@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_one :biodata, dependent: :destroy
+  has_many :shortlists, dependent: :destroy
+  has_many :shortlisted_biodatas, through: :shortlists, source: :biodata
 
   enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account

@@ -1,5 +1,5 @@
 class BiodatasController < ApplicationController
-  before_action :require_login, only: [ :show, :template, :download_pdf ]
+  before_action :require_login, only: [ :show, :template, :download_pdf, :shortlist, :unshortlist ]
 
   def index
     @biodatas = Biodata.visible
@@ -48,5 +48,21 @@ class BiodatasController < ApplicationController
   rescue => e
     Rails.logger.error "BiodatasController#download_pdf error: #{e.class} – #{e.message}"
     redirect_to biodatas_path, alert: t("biodata.load_error")
+  end
+
+  def shortlist
+    @biodata = Biodata.published.find(params[:id])
+    current_user.shortlists.find_or_create_by(biodata: @biodata)
+    redirect_back fallback_location: template_biodata_path(@biodata)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path
+  end
+
+  def unshortlist
+    @biodata = Biodata.published.find(params[:id])
+    current_user.shortlists.find_by(biodata: @biodata)&.destroy
+    redirect_back fallback_location: template_biodata_path(@biodata)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path
   end
 end

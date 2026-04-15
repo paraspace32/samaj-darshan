@@ -311,6 +311,13 @@ en:
     more_in_category: "Related Education Posts"
     no_related: "No related education posts."
 
+  shortlists:
+    title: "Shortlisted Profiles"
+    empty: "You haven't shortlisted any profiles yet."
+    empty_hint: "Browse biodatas and tap the heart icon to save profiles."
+    removed: "Removed from shortlist"
+    added: "Added to shortlist"
+
   jobs:
     title: "Jobs & Internships"
     subtitle: "Career opportunities, internships, job openings, and new job announcements for our community"

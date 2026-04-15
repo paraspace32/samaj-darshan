@@ -1,5 +1,6 @@
 class Biodata < ApplicationRecord
   belongs_to :user
+  has_many :shortlists, dependent: :destroy
 
   has_one_attached :photo do |attachable|
     attachable.variant :profile, resize_to_fill: [ 400, 500 ], format: :webp, saver: { quality: 85 }

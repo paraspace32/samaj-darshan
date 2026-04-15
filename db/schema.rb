@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
     t.string "mother_occupation"
     t.string "mother_tongue"
     t.string "occupation"
+    t.integer "partner_age_max"
+    t.integer "partner_age_min"
+    t.string "partner_education"
+    t.text "partner_expectations"
+    t.string "partner_occupation"
     t.datetime "published_at"
     t.text "rejection_reason"
     t.integer "siblings_count", default: 0
@@ -251,6 +256,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
     t.index ["slug"], name: "index_regions_on_slug", unique: true
   end
 
+  create_table "shortlists", force: :cascade do |t|
+    t.bigint "biodata_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["biodata_id"], name: "index_shortlists_on_biodata_id"
+    t.index ["user_id", "biodata_id"], name: "index_shortlists_on_user_id_and_biodata_id", unique: true
+    t.index ["user_id"], name: "index_shortlists_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.jsonb "allowed_sections", default: [], null: false
     t.datetime "created_at", null: false
@@ -299,5 +314,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "shortlists", "biodatas"
+  add_foreign_key "shortlists", "users"
   add_foreign_key "webinars", "users", column: "host_id"
 end

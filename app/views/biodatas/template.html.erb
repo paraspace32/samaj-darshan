@@ -157,9 +157,39 @@
       </div>
     <% end %>
 
+    <%# ── Partner Expectations ── %>
+    <% partner_rows = [
+      [t("biodata.partner_age"),         [@biodata.partner_age_min, @biodata.partner_age_max].select(&:present?).map(&:to_s).join(" – ") + ([@biodata.partner_age_min, @biodata.partner_age_max].any?(&:present?) ? " #{t('biodata.years')}" : "")],
+      [t("biodata.partner_education"),   @biodata.partner_education],
+      [t("biodata.partner_occupation"),  @biodata.partner_occupation],
+    ].reject { |_, v| v.blank? } %>
+    <% has_partner = partner_rows.any? || @biodata.partner_expectations.present? %>
+    <% if has_partner %>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
+        <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.section_partner") %> ✦</span>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
+      </div>
+      <% if partner_rows.any? %>
+        <div style="background:white;border:1px solid #fde8cb;border-radius:10px;overflow:hidden;margin-bottom:<%= @biodata.partner_expectations.present? ? '8px' : '18px' %>;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
+          <% partner_rows.each_with_index do |(label, value), i| %>
+            <div style="display:flex;align-items:baseline;padding:8px 14px;<%= i < partner_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>">
+              <span style="font-size:13px;font-weight:700;color:#b45309;min-width:120px;flex-shrink:0;"><%= label %></span>
+              <span style="font-size:12px;font-weight:400;color:#1c1917;"><%= value %></span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @biodata.partner_expectations.present? %>
+        <div style="background:white;border:1px solid #fde8cb;border-radius:10px;padding:10px 14px;margin-bottom:18px;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
+          <p style="font-size:12.5px;color:#44403c;line-height:1.7;margin:0;"><%= @biodata.partner_expectations %></p>
+        </div>
+      <% end %>
+    <% end %>
+
     <%# ── Contact ── %>
     <% if @biodata.contact_phone.present? || @biodata.contact_email.present? %>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
         <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></div>
         <span style="font-size:9.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;white-space:nowrap;">✦ <%= t("biodata.contact") %> ✦</span>
         <div style="flex:1;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></div>
@@ -170,19 +200,13 @@
         <% contact_rows << ["✉️ #{t('biodata.contact_email')}", @biodata.contact_email] if @biodata.contact_email.present? %>
         <% contact_rows.each_with_index do |(label, value), i| %>
           <div style="display:flex;align-items:baseline;padding:8px 14px;<%= i < contact_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>">
-            <span style="font-size:11px;font-weight:600;color:#b45309;min-width:120px;flex-shrink:0;"><%= label %></span>
+            <span style="font-size:13px;font-weight:700;color:#b45309;min-width:120px;flex-shrink:0;"><%= label %></span>
             <span style="font-size:12px;font-weight:400;color:#1c1917;word-break:break-all;"><%= value %></span>
           </div>
         <% end %>
       </div>
     <% end %>
 
-  </div>
-
-  <%# ── Footer ── %>
-  <div style="border-top:1px solid #fde8cb;background:white;padding:9px 24px;display:flex;align-items:center;justify-content:space-between;">
-    <p style="font-size:9px;color:#c4a47a;margin:0;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;"><%= t("brand.name") %></p>
-    <p style="font-size:9px;color:#d6cfc6;margin:0;">ID #<%= @biodata.id %><%= @biodata.published_at.present? ? " · #{@biodata.published_at.strftime('%d %b %Y')}" : "" %></p>
   </div>
 
   <%# ── Bottom accent strip ── %>

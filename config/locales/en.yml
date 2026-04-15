@@ -246,6 +246,16 @@ en:
     section_personal: "Personal Information"
     section_location_education: "Location & Education"
     section_about_contact: "About & Contact"
+    section_partner: "Partner Expectations"
+    partner_age: "Age Range"
+    partner_age_min: "Min Age"
+    partner_age_max: "Max Age"
+    partner_education: "Education"
+    partner_education_placeholder: "Any / Graduate / Post Graduate"
+    partner_occupation: "Occupation"
+    partner_occupation_placeholder: "Any / Employed / Business"
+    partner_expectations: "Expectations"
+    partner_expectations_placeholder: "Describe the qualities you are looking for in a life partner..."
     status_draft: "Draft"
     status_draft_hint: "Your biodata is saved but not yet submitted. Submit for review when ready."
     status_pending: "Pending Review"
@@ -255,6 +265,7 @@ en:
     status_rejected: "Rejected"
     status_rejected_hint: "Your biodata was not approved. See the reason below and edit before resubmitting."
     view_card: "View Biodata Card"
+    save: "Save"
     download_pdf: "Download PDF"
     print_save: "Print / Save as PDF"
     biodata_card: "Biodata Card"
@@ -300,6 +311,13 @@ en:
     visit_official: "Visit Official Website"
     more_in_category: "Related Education Posts"
     no_related: "No related education posts."
+
+  shortlists:
+    title: "Shortlisted Profiles"
+    empty: "You haven't shortlisted any profiles yet."
+    empty_hint: "Browse biodatas and tap the heart icon to save profiles."
+    removed: "Removed from shortlist"
+    added: "Added to shortlist"
 
   jobs:
     title: "Jobs & Internships"

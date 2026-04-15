@@ -110,10 +110,13 @@ Rails.application.routes.draw do
   resources :webinars, only: [ :index, :show ]
 
   # Marriage Section / Biodata
+  get 'shortlists', to: 'shortlists#index', as: :shortlists
   resources :biodatas, only: [ :index, :show ] do
     member do
       get :template
       get :download_pdf
+      post :shortlist
+      delete :shortlist, action: :unshortlist
     end
   end
   resource :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do

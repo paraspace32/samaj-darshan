@@ -175,27 +175,19 @@
 
     <%# ── Contact ── %>
     <% if @biodata.contact_phone.present? || @biodata.contact_email.present? %>
-      <div style="background:linear-gradient(135deg,#fff7ed 0%,#fef3c7 100%);border-radius:12px;padding:16px 20px;border:1px solid #fed7aa;display:flex;flex-wrap:wrap;gap:20px;align-items:center;">
+      <div style="background:#fff7ed;border-radius:10px;padding:10px 16px;border:1px solid #fed7aa;display:flex;flex-wrap:wrap;gap:16px;align-items:center;">
         <% if @biodata.contact_phone.present? %>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:38px;height:38px;border-radius:50%;background:white;border:1.5px solid #fed7aa;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-              <span style="font-size:17px;">📞</span>
-            </div>
-            <div>
-              <p style="font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 1px;"><%= t("biodata.contact_phone") %></p>
-              <p style="font-size:15px;font-weight:800;color:#1c1917;margin:0;letter-spacing:0.02em;"><%= @biodata.contact_phone %></p>
-            </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;">📞</span>
+            <span style="font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.08em;margin-right:2px;"><%= t("biodata.contact_phone") %>:</span>
+            <span style="font-size:13px;font-weight:700;color:#1c1917;"><%= @biodata.contact_phone %></span>
           </div>
         <% end %>
         <% if @biodata.contact_email.present? %>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:38px;height:38px;border-radius:50%;background:white;border:1.5px solid #fed7aa;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
-              <span style="font-size:17px;">✉️</span>
-            </div>
-            <div>
-              <p style="font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 1px;"><%= t("biodata.contact_email") %></p>
-              <p style="font-size:13px;font-weight:700;color:#1c1917;margin:0;"><%= @biodata.contact_email %></p>
-            </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;">✉️</span>
+            <span style="font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.08em;margin-right:2px;"><%= t("biodata.contact_email") %>:</span>
+            <span style="font-size:13px;font-weight:700;color:#1c1917;"><%= @biodata.contact_email %></span>
           </div>
         <% end %>
       </div>

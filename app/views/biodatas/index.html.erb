@@ -1,4 +1,14 @@
 <% content_for(:title, t("biodata.title")) %>
+<% content_for :head do %>
+<script>
+function stepAge(id, delta) {
+  var el = document.getElementById(id);
+  var val = parseInt(el.value) || (id === 'age_min' ? 18 : 45);
+  val = Math.min(60, Math.max(18, val + delta));
+  el.value = val;
+}
+</script>
+<% end %>
 
 <%# Header %>
 <div class="mb-3 animate-fade-in flex items-baseline gap-3">
@@ -26,11 +36,19 @@
     <div>
       <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_age") %></label>
       <div class="flex items-center gap-1">
-        <input type="number" name="age_min" value="<%= params[:age_min] %>" placeholder="18"
-               min="18" max="60" class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm text-center">
-        <span class="text-gray-300 text-xs shrink-0">–</span>
-        <input type="number" name="age_max" value="<%= params[:age_max] %>" placeholder="45"
-               min="18" max="60" class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm text-center">
+        <div class="flex items-center input-premium !p-0 !gap-0 overflow-hidden w-full">
+          <button type="button" onclick="stepAge('age_min',-1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">−</button>
+          <input type="number" name="age_min" id="age_min" value="<%= params[:age_min] %>" placeholder="18"
+                 min="18" max="60" class="w-full !text-xs sm:!text-sm text-center bg-transparent border-0 outline-none !py-1.5 sm:!py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+          <button type="button" onclick="stepAge('age_min',1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">+</button>
+        </div>
+        <span class="text-gray-300 text-xs shrink-0 mx-0.5">–</span>
+        <div class="flex items-center input-premium !p-0 !gap-0 overflow-hidden w-full">
+          <button type="button" onclick="stepAge('age_max',-1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">−</button>
+          <input type="number" name="age_max" id="age_max" value="<%= params[:age_max] %>" placeholder="45"
+                 min="18" max="60" class="w-full !text-xs sm:!text-sm text-center bg-transparent border-0 outline-none !py-1.5 sm:!py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+          <button type="button" onclick="stepAge('age_max',1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">+</button>
+        </div>
       </div>
     </div>
 
@@ -38,17 +56,23 @@
     <div>
       <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_city") %></label>
       <input type="text" name="city" value="<%= params[:city] %>" placeholder="<%= t('biodata.city_placeholder') %>"
-             aria-label="<%= t('biodata.filter_city') %>"
+             aria-label="<%= t('biodata.filter_city') %>" list="city_list"
              class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm"
              data-filter-target="city" data-action="input->filter#cityInput">
+      <datalist id="city_list">
+        <% @cities.each do |c| %><option value="<%= c %>"><% end %>
+      </datalist>
     </div>
 
     <%# Occupation %>
     <div>
       <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_occupation") %></label>
       <input type="text" name="occupation" value="<%= params[:occupation] %>" placeholder="<%= t('biodata.occupation_placeholder') %>"
-             aria-label="<%= t('biodata.filter_occupation') %>"
+             aria-label="<%= t('biodata.filter_occupation') %>" list="occupation_list"
              class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm">
+      <datalist id="occupation_list">
+        <% @occupations.each do |o| %><option value="<%= o %>"><% end %>
+      </datalist>
     </div>
 
     <%# Actions %>

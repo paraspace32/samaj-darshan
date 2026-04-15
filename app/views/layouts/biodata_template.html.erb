@@ -34,12 +34,7 @@
         <% end %>
       </div>
 
-      <%# Center: person name %>
-      <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;">
-        <p style="font-size:13px;font-weight:700;color:white;margin:0;opacity:0.95;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis;"><%= @biodata.display_name %></p>
-      </div>
-
-      <%# Right: shortlist + PDF + print %>
+<%# Right: shortlist + PDF + print %>
       <div style="display:flex;align-items:center;gap:6px;">
         <% if logged_in? %>
           <% is_shortlisted = current_user.shortlists.exists?(biodata: @biodata) %>

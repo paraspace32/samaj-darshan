@@ -364,6 +364,7 @@ hi:
     status_rejected: "अस्वीकृत"
     status_rejected_hint: "आपका परिचय अस्वीकृत किया गया। कारण देखें और संपादित कर दोबारा भेजें।"
     view_card: "बायोडेटा कार्ड देखें"
+    save: "सेव करें"
     download_pdf: "PDF डाउनलोड करें"
     print_save: "प्रिंट / PDF सेव करें"
     biodata_card: "बायोडेटा कार्ड"

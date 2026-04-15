@@ -265,6 +265,7 @@ en:
     status_rejected: "Rejected"
     status_rejected_hint: "Your biodata was not approved. See the reason below and edit before resubmitting."
     view_card: "View Biodata Card"
+    save: "Save"
     download_pdf: "Download PDF"
     print_save: "Print / Save as PDF"
     biodata_card: "Biodata Card"

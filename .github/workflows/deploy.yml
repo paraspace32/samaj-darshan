@@ -34,6 +34,7 @@ jobs:
             sudo systemctl stop nginx 2>/dev/null || true;\
             sudo systemctl disable nginx 2>/dev/null || true;\
             docker system prune -f;\
+            docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true;\
             docker compose -f docker-compose.production.yml --env-file .env up -d --build;\
             docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production || true;\
           "

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_15_093446) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_14_205638) do
     t.string "mother_occupation"
     t.string "mother_tongue"
     t.string "occupation"
+    t.integer "partner_age_max"
+    t.integer "partner_age_min"
+    t.string "partner_education"
+    t.text "partner_expectations"
+    t.string "partner_occupation"
     t.datetime "published_at"
     t.text "rejection_reason"
     t.integer "siblings_count", default: 0

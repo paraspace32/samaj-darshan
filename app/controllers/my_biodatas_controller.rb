@@ -73,6 +73,7 @@ class MyBiodatasController < ApplicationController
       :about_en, :about_hi,
       :father_name, :father_occupation, :mother_name, :mother_occupation, :siblings_count,
       :contact_phone, :contact_email,
+      :partner_age_min, :partner_age_max, :partner_education, :partner_occupation, :partner_expectations,
       :photo
     )
   end

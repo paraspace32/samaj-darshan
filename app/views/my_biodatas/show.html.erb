@@ -73,7 +73,7 @@
             <%= optimized_image_tag @biodata.photo, variant: :profile, class: "w-full h-full object-cover", loading: "lazy" %>
           <% else %>
             <div class="w-20 h-20 rounded-full gradient-brand flex items-center justify-center shadow-xl">
-              <span class="text-white font-black text-3xl"><%= @biodata.full_name[0].upcase %></span>
+              <span class="text-white font-black text-3xl"><%= @biodata.avatar_initial %></span>
             </div>
           <% end %>
         </div>

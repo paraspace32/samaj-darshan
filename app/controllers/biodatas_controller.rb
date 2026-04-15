@@ -19,12 +19,22 @@ class BiodatasController < ApplicationController
 
   def show
     @biodata = Biodata.published.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path, alert: t("biodata.not_found")
+  rescue => e
+    Rails.logger.error "BiodatasController#show error: #{e.class} – #{e.message}"
+    redirect_to biodatas_path, alert: t("biodata.load_error")
   end
 
   def template
     @biodata = Biodata.published.find(params[:id])
     @pdf_download_path = download_pdf_biodata_path(@biodata)
     render layout: "biodata_template"
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path, alert: t("biodata.not_found")
+  rescue => e
+    Rails.logger.error "BiodatasController#template error: #{e.class} – #{e.message}"
+    redirect_to biodatas_path, alert: t("biodata.load_error")
   end
 
   def download_pdf
@@ -38,5 +48,10 @@ class BiodatasController < ApplicationController
            disable_smart_shrinking: true,
            print_media_type: true,
            disposition: "attachment"
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path, alert: t("biodata.not_found")
+  rescue => e
+    Rails.logger.error "BiodatasController#download_pdf error: #{e.class} – #{e.message}"
+    redirect_to biodatas_path, alert: t("biodata.load_error")
   end
 end

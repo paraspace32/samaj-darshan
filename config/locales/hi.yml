@@ -259,6 +259,8 @@ hi:
     edit_resubmit_notice: "बदलाव सहेजने पर आपका परिचय ड्राफ्ट में चला जाएगा और दोबारा समीक्षा के लिए भेजना होगा।"
     back_to_biodatas: "← विवाह परिचय पर वापस"
     no_biodatas: "आपकी खोज से मेल खाते परिचय नहीं मिले।"
+    not_found: "यह बायोडेटा प्रोफ़ाइल नहीं मिली।"
+    load_error: "यह प्रोफ़ाइल लोड नहीं हो सकी। कृपया पुनः प्रयास करें।"
     already_exists: "आपका परिचय पहले से मौजूद है।"
     created: "परिचय सफलतापूर्वक बना दिया गया!"
     updated: "परिचय अपडेट हो गया।"
@@ -359,6 +361,7 @@ hi:
     template_heading: "विवाह परिचय"
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "शिक्षा एवं व्यवसाय"
+    personal_details: "व्यक्तिगत जानकारी"
     age: "आयु"
   signup:
     title: "खाता बनाएं"

@@ -160,6 +160,8 @@ en:
     edit_resubmit_notice: "Saving changes will move your biodata back to Draft status and require re-submission for review."
     back_to_biodatas: "← Back to Marriage Section"
     no_biodatas: "No biodatas found matching your criteria."
+    not_found: "This biodata profile could not be found."
+    load_error: "This profile could not be loaded. Please try again or contact support."
     already_exists: "You already have a biodata."
     created: "Biodata created successfully!"
     updated: "Biodata updated."
@@ -260,6 +262,7 @@ en:
     template_heading: "Matrimonial Biodata"
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "Education & Career"
+    personal_details: "Personal Details"
     age: "Age"
   signup:
     title: "Create an account"

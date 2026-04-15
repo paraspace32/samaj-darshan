@@ -52,7 +52,11 @@ class Biodata < ApplicationRecord
   end
 
   def display_name
-    I18n.locale == :hi && full_name_hi.present? ? full_name_hi : full_name
+    I18n.locale == :hi && full_name_hi.present? ? full_name_hi : full_name.presence || "Unknown"
+  end
+
+  def avatar_initial
+    (full_name.presence || display_name.presence || "?")[0].upcase
   end
 
   def display_about

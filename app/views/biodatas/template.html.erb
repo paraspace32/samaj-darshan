@@ -37,14 +37,14 @@
       <div style="flex-shrink:0;">
         <div style="width:130px;height:160px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#fff7ed,#fed7aa);border:2px solid #fed7aa;">
           <% if @biodata.photo.attached? %>
-            <%= optimized_image_tag @biodata.photo, variant: :profile, style: "width:100%;height:100%;object-fit:cover;display:block;", loading: "eager" %>
-          <% else %>
-            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-              <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;">
-                <span style="color:white;font-weight:900;font-size:22px;"><%= @biodata.full_name[0].upcase %></span>
-              </div>
-            </div>
+            <%= optimized_image_tag @biodata.photo, variant: :profile, style: "width:100%;height:100%;object-fit:cover;display:block;", loading: "eager",
+                onerror: "this.style.display='none';this.nextElementSibling.style.display='flex'" %>
           <% end %>
+          <div style="width:100%;height:100%;display:<%= @biodata.photo.attached? ? 'none' : 'flex' %>;align-items:center;justify-content:center;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);display:flex;align-items:center;justify-content:center;">
+              <span style="color:white;font-weight:900;font-size:22px;"><%= @biodata.full_name[0].upcase %></span>
+            </div>
+          </div>
         </div>
       </div>
 

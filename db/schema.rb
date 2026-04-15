@@ -20,8 +20,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "name", null: false
     t.bigint "record_id", null: false
     t.string "record_type", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index [ "blob_id" ], name: "index_active_storage_attachments_on_blob_id"
+    t.index [ "record_type", "record_id", "name", "blob_id" ], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -33,13 +33,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "key", null: false
     t.text "metadata"
     t.string "service_name", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+    t.index [ "key" ], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
-    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index [ "blob_id", "variation_digest" ], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "billboards", force: :cascade do |t|
@@ -54,9 +54,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.date "start_date"
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["active", "billboard_type", "priority"], name: "idx_billboards_active_type_priority"
-    t.index ["active"], name: "index_billboards_on_active"
-    t.index ["billboard_type"], name: "index_billboards_on_billboard_type"
+    t.index [ "active", "billboard_type", "priority" ], name: "idx_billboards_active_type_priority"
+    t.index [ "active" ], name: "index_billboards_on_active"
+    t.index [ "billboard_type" ], name: "index_billboards_on_billboard_type"
   end
 
   create_table "biodatas", force: :cascade do |t|
@@ -96,13 +96,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["city"], name: "index_biodatas_on_city"
-    t.index ["date_of_birth"], name: "index_biodatas_on_date_of_birth"
-    t.index ["gender", "status"], name: "index_biodatas_on_gender_and_status"
-    t.index ["gender"], name: "index_biodatas_on_gender"
-    t.index ["status", "published_at"], name: "index_biodatas_on_status_and_published_at"
-    t.index ["status"], name: "index_biodatas_on_status"
-    t.index ["user_id"], name: "index_biodatas_on_user_id", unique: true
+    t.index [ "city" ], name: "index_biodatas_on_city"
+    t.index [ "date_of_birth" ], name: "index_biodatas_on_date_of_birth"
+    t.index [ "gender", "status" ], name: "index_biodatas_on_gender_and_status"
+    t.index [ "gender" ], name: "index_biodatas_on_gender"
+    t.index [ "status", "published_at" ], name: "index_biodatas_on_status_and_published_at"
+    t.index [ "status" ], name: "index_biodatas_on_status"
+    t.index [ "user_id" ], name: "index_biodatas_on_user_id", unique: true
   end
 
   create_table "categories", force: :cascade do |t|
@@ -114,9 +114,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.integer "position", default: 0, null: false
     t.string "slug", null: false
     t.datetime "updated_at", null: false
-    t.index ["active"], name: "index_categories_on_active"
-    t.index ["position"], name: "index_categories_on_position"
-    t.index ["slug"], name: "index_categories_on_slug", unique: true
+    t.index [ "active" ], name: "index_categories_on_active"
+    t.index [ "position" ], name: "index_categories_on_position"
+    t.index [ "slug" ], name: "index_categories_on_slug", unique: true
   end
 
   create_table "comments", force: :cascade do |t|
@@ -126,8 +126,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
-    t.index ["user_id"], name: "index_comments_on_user_id"
+    t.index [ "commentable_type", "commentable_id" ], name: "index_comments_on_commentable_type_and_commentable_id"
+    t.index [ "user_id" ], name: "index_comments_on_user_id"
   end
 
   create_table "education_posts", force: :cascade do |t|
@@ -147,12 +147,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_education_posts_on_author_id"
-    t.index ["category"], name: "index_education_posts_on_category"
-    t.index ["published_at"], name: "index_education_posts_on_published_at"
-    t.index ["status", "category"], name: "index_education_posts_on_status_and_category"
-    t.index ["status", "published_at"], name: "index_education_posts_on_status_and_published_at"
-    t.index ["status"], name: "index_education_posts_on_status"
+    t.index [ "author_id" ], name: "index_education_posts_on_author_id"
+    t.index [ "category" ], name: "index_education_posts_on_category"
+    t.index [ "published_at" ], name: "index_education_posts_on_published_at"
+    t.index [ "status", "category" ], name: "index_education_posts_on_status_and_category"
+    t.index [ "status", "published_at" ], name: "index_education_posts_on_status_and_published_at"
+    t.index [ "status" ], name: "index_education_posts_on_status"
   end
 
   create_table "job_posts", force: :cascade do |t|
@@ -170,12 +170,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_job_posts_on_author_id"
-    t.index ["category"], name: "index_job_posts_on_category"
-    t.index ["published_at"], name: "index_job_posts_on_published_at"
-    t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
-    t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
-    t.index ["status"], name: "index_job_posts_on_status"
+    t.index [ "author_id" ], name: "index_job_posts_on_author_id"
+    t.index [ "category" ], name: "index_job_posts_on_category"
+    t.index [ "published_at" ], name: "index_job_posts_on_published_at"
+    t.index [ "status", "category" ], name: "index_job_posts_on_status_and_category"
+    t.index [ "status", "published_at" ], name: "index_job_posts_on_status_and_published_at"
+    t.index [ "status" ], name: "index_job_posts_on_status"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -184,9 +184,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "likeable_type", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["likeable_type", "likeable_id", "user_id"], name: "index_likes_uniqueness", unique: true
-    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable_type_and_likeable_id"
-    t.index ["user_id"], name: "index_likes_on_user_id"
+    t.index [ "likeable_type", "likeable_id", "user_id" ], name: "index_likes_uniqueness", unique: true
+    t.index [ "likeable_type", "likeable_id" ], name: "index_likes_on_likeable_type_and_likeable_id"
+    t.index [ "user_id" ], name: "index_likes_on_user_id"
   end
 
   create_table "magazine_articles", force: :cascade do |t|
@@ -199,9 +199,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_magazine_articles_on_author_id"
-    t.index ["magazine_id", "position"], name: "index_magazine_articles_on_magazine_id_and_position"
-    t.index ["magazine_id"], name: "index_magazine_articles_on_magazine_id"
+    t.index [ "author_id" ], name: "index_magazine_articles_on_author_id"
+    t.index [ "magazine_id", "position" ], name: "index_magazine_articles_on_magazine_id_and_position"
+    t.index [ "magazine_id" ], name: "index_magazine_articles_on_magazine_id"
   end
 
   create_table "magazines", force: :cascade do |t|
@@ -215,9 +215,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
     t.string "volume"
-    t.index ["issue_number"], name: "index_magazines_on_issue_number", unique: true
-    t.index ["status", "published_at"], name: "index_magazines_on_status_and_published_at"
-    t.index ["status"], name: "index_magazines_on_status"
+    t.index [ "issue_number" ], name: "index_magazines_on_issue_number", unique: true
+    t.index [ "status", "published_at" ], name: "index_magazines_on_status_and_published_at"
+    t.index [ "status" ], name: "index_magazines_on_status"
   end
 
   create_table "news", force: :cascade do |t|
@@ -235,12 +235,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_news_on_author_id"
-    t.index ["category_id"], name: "index_news_on_category_id"
-    t.index ["published_at"], name: "index_news_on_published_at"
-    t.index ["region_id"], name: "index_news_on_region_id"
-    t.index ["status", "published_at"], name: "index_news_on_status_and_published_at"
-    t.index ["status"], name: "index_news_on_status"
+    t.index [ "author_id" ], name: "index_news_on_author_id"
+    t.index [ "category_id" ], name: "index_news_on_category_id"
+    t.index [ "published_at" ], name: "index_news_on_published_at"
+    t.index [ "region_id" ], name: "index_news_on_region_id"
+    t.index [ "status", "published_at" ], name: "index_news_on_status_and_published_at"
+    t.index [ "status" ], name: "index_news_on_status"
   end
 
   create_table "regions", force: :cascade do |t|
@@ -251,9 +251,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.integer "position", default: 0, null: false
     t.string "slug", null: false
     t.datetime "updated_at", null: false
-    t.index ["active"], name: "index_regions_on_active"
-    t.index ["position"], name: "index_regions_on_position"
-    t.index ["slug"], name: "index_regions_on_slug", unique: true
+    t.index [ "active" ], name: "index_regions_on_active"
+    t.index [ "position" ], name: "index_regions_on_position"
+    t.index [ "slug" ], name: "index_regions_on_slug", unique: true
   end
 
   create_table "shortlists", force: :cascade do |t|
@@ -261,9 +261,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.index ["biodata_id"], name: "index_shortlists_on_biodata_id"
-    t.index ["user_id", "biodata_id"], name: "index_shortlists_on_user_id_and_biodata_id", unique: true
-    t.index ["user_id"], name: "index_shortlists_on_user_id"
+    t.index [ "biodata_id" ], name: "index_shortlists_on_biodata_id"
+    t.index [ "user_id", "biodata_id" ], name: "index_shortlists_on_user_id_and_biodata_id", unique: true
+    t.index [ "user_id" ], name: "index_shortlists_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -276,9 +276,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.integer "role", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["phone"], name: "index_users_on_phone", unique: true
-    t.index ["role"], name: "index_users_on_role"
+    t.index [ "email" ], name: "index_users_on_email", unique: true
+    t.index [ "phone" ], name: "index_users_on_phone", unique: true
+    t.index [ "role" ], name: "index_users_on_role"
   end
 
   create_table "webinars", force: :cascade do |t|
@@ -296,10 +296,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_094156) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
-    t.index ["host_id"], name: "index_webinars_on_host_id"
-    t.index ["starts_at"], name: "index_webinars_on_starts_at"
-    t.index ["status", "starts_at"], name: "index_webinars_on_status_and_starts_at"
-    t.index ["status"], name: "index_webinars_on_status"
+    t.index [ "host_id" ], name: "index_webinars_on_host_id"
+    t.index [ "starts_at" ], name: "index_webinars_on_starts_at"
+    t.index [ "status", "starts_at" ], name: "index_webinars_on_status_and_starts_at"
+    t.index [ "status" ], name: "index_webinars_on_status"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

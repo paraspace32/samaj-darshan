@@ -18,12 +18,7 @@ class BiodatasController < ApplicationController
   end
 
   def show
-    @biodata = Biodata.published.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    redirect_to biodatas_path, alert: t("biodata.not_found")
-  rescue => e
-    Rails.logger.error "BiodatasController#show error: #{e.class} – #{e.message}"
-    redirect_to biodatas_path, alert: t("biodata.load_error")
+    redirect_to template_biodata_path(params[:id])
   end
 
   def template

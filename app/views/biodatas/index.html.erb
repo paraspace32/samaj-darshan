@@ -12,10 +12,6 @@ function selectGender(val) {
   document.querySelectorAll('[data-gender-card]').forEach(function(c) {
     c.setAttribute('data-selected', c.getAttribute('data-gender-card') === val ? 'true' : 'false');
   });
-  var form = document.getElementById('biodata_filter_form');
-  if (!form) return;
-  if (form.requestSubmit) form.requestSubmit();
-  else form.submit();
 }
 function toggleMoreFilters() {
   var el = document.getElementById('more-filters');

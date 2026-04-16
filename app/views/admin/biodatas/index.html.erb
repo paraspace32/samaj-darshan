@@ -8,6 +8,12 @@
       <p class="text-xs font-bold text-amber-600 mt-0.5"><%= @pending_count %> pending review</p>
     <% end %>
   </div>
+  <% if current_user&.can_manage_biodatas? %>
+    <%= link_to new_admin_biodata_path, class: "inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 transition-colors self-start sm:self-auto" do %>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 4v16m8-8H4"/></svg>
+      Create Biodata
+    <% end %>
+  <% end %>
 </div>
 
 <%# Status Tabs %>

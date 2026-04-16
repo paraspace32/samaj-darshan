@@ -48,7 +48,7 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
-    resources :biodatas, only: [ :index, :show, :destroy ] do
+    resources :biodatas, only: [ :index, :show, :new, :create, :destroy ] do
       member do
         patch :publish
         patch :reject

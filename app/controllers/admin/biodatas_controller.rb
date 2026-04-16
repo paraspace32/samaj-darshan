@@ -1,7 +1,7 @@
 module Admin
   class BiodatasController < Admin::BaseController
     before_action :require_biodata_reviewer, only: [ :index, :show ]
-    before_action :require_biodata_manager,  only: [ :publish, :reject ]
+    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject ]
     before_action :require_biodata_delete,   only: [ :destroy ]
     before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
 
@@ -23,6 +23,46 @@ module Admin
 
     def show; end
 
+    def new
+      @biodata = Biodata.new
+      load_eligible_users
+      if @eligible_users.empty?
+        redirect_to admin_biodatas_path,
+                    alert: "Every user already has a biodata. Create a new user first."
+      end
+    end
+
+    def create
+      user_id = params.dig(:biodata, :user_id).presence
+      user    = User.find_by(id: user_id)
+
+      if user.nil?
+        @biodata = Biodata.new(biodata_attrs)
+        @biodata.errors.add(:user_id, "must be selected")
+        load_eligible_users
+        render :new, status: :unprocessable_entity and return
+      end
+
+      if user.biodata.present?
+        @biodata = Biodata.new(biodata_attrs)
+        @biodata.errors.add(:user_id, "already has a biodata")
+        load_eligible_users
+        render :new, status: :unprocessable_entity and return
+      end
+
+      @biodata = user.build_biodata(biodata_attrs)
+      @biodata.status = :published
+      @biodata.published_at = Time.current
+
+      if @biodata.save
+        redirect_to admin_biodata_path(@biodata),
+                    notice: "Biodata created for #{user.name.presence || user.phone}."
+      else
+        load_eligible_users
+        render :new, status: :unprocessable_entity
+      end
+    end
+
     def publish
       @biodata.publish!
       redirect_to admin_biodata_path(@biodata), notice: "Biodata published successfully."
@@ -42,6 +82,27 @@ module Admin
 
     def set_biodata
       @biodata = Biodata.find(params[:id])
+    end
+
+    def load_eligible_users
+      @eligible_users = User.active_users
+                            .where.missing(:biodata)
+                            .order(Arel.sql("LOWER(COALESCE(name, phone))"))
+    end
+
+    def biodata_attrs
+      params.require(:biodata).permit(
+        :full_name, :full_name_hi, :gender, :date_of_birth,
+        :caste, :mother_tongue,
+        :city, :city_hi, :state, :country,
+        :education, :occupation, :job_location, :annual_income,
+        :height_cm, :complexion,
+        :about_en, :about_hi,
+        :father_name, :father_occupation, :mother_name, :mother_occupation, :siblings_count,
+        :contact_phone, :contact_email,
+        :partner_age_min, :partner_age_max, :partner_education, :partner_occupation, :partner_expectations,
+        :photo
+      )
     end
   end
 end

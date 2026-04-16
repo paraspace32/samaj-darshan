@@ -76,7 +76,7 @@
     <% is_shortlisted = Shortlist.table_exists? && current_user.shortlists.exists?(biodata: @biodata) rescue false %>
     <div class="no-print" style="position:fixed;bottom:24px;right:20px;z-index:50;">
       <% if is_shortlisted %>
-        <%= button_to unshortlist_biodata_path(@biodata), method: :delete,
+        <%= button_to shortlist_biodata_path(@biodata), method: :delete,
             style: "width:52px;height:52px;border-radius:50%;background:white;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.35);display:flex;align-items:center;justify-content:center;font-size:22px;color:#ea580c;",
             title: t("shortlists.remove") do %>
           ♥

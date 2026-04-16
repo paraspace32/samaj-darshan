@@ -34,20 +34,8 @@
         <% end %>
       </div>
 
-<%# Right: shortlist + PDF + print %>
+      <%# Right: Save dropdown %>
       <div style="display:flex;align-items:center;gap:6px;">
-        <% if logged_in? %>
-          <% is_shortlisted = current_user.shortlists.exists?(biodata: @biodata) %>
-          <% if is_shortlisted %>
-            <%= button_to unshortlist_biodata_path(@biodata), method: :delete, style: "display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.9);color:#ea580c;border:none;cursor:pointer;" do %>
-              ♥
-            <% end %>
-          <% else %>
-            <%= button_to shortlist_biodata_path(@biodata), method: :post, style: "display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);cursor:pointer;" do %>
-              ♡
-            <% end %>
-          <% end %>
-        <% end %>
         <%# Combined Save/Print dropdown %>
         <div style="position:relative;" id="save-menu-wrap">
           <button onclick="document.getElementById('save-menu').classList.toggle('hidden')" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,0.18);color:white;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.3);cursor:pointer;">
@@ -82,5 +70,25 @@
   <div class="py-8 px-4">
     <%= yield %>
   </div>
+
+  <%# Floating shortlist heart — hidden on print %>
+  <% if logged_in? %>
+    <% is_shortlisted = Shortlist.table_exists? && current_user.shortlists.exists?(biodata: @biodata) rescue false %>
+    <div class="no-print" style="position:fixed;bottom:24px;right:20px;z-index:50;">
+      <% if is_shortlisted %>
+        <%= button_to unshortlist_biodata_path(@biodata), method: :delete,
+            style: "width:52px;height:52px;border-radius:50%;background:white;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(234,88,12,0.35);display:flex;align-items:center;justify-content:center;font-size:22px;color:#ea580c;",
+            title: t("shortlists.remove") do %>
+          ♥
+        <% end %>
+      <% else %>
+        <%= button_to shortlist_biodata_path(@biodata), method: :post,
+            style: "width:52px;height:52px;border-radius:50%;background:white;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;font-size:22px;color:#d1ccc6;",
+            title: t("shortlists.add") do %>
+          ♡
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 </body>
 </html>

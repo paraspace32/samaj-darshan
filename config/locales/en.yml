@@ -318,6 +318,8 @@ en:
     empty_hint: "Browse biodatas and tap the heart icon to save profiles."
     removed: "Removed from shortlist"
     added: "Added to shortlist"
+    remove: "Remove from shortlist"
+    add: "Save to shortlist"
 
   jobs:
     title: "Jobs & Internships"

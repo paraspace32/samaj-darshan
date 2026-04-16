@@ -201,6 +201,10 @@ en:
     filter_any: "Any"
     filter_age_to: "to"
     filter_any_city: "Any city"
+    filter_state: "State"
+    filter_any_state: "Any state"
+    filter_education: "Education"
+    filter_any_education: "Any education"
     filter_any_occupation: "Any occupation"
     filter_show: "Show Results"
     filter_show_count:

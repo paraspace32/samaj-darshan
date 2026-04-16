@@ -300,6 +300,10 @@ hi:
     filter_any: "कोई भी"
     filter_age_to: "से"
     filter_any_city: "सभी शहर"
+    filter_state: "राज्य"
+    filter_any_state: "सभी राज्य"
+    filter_education: "शिक्षा"
+    filter_any_education: "सभी शिक्षा"
     filter_any_occupation: "सभी व्यवसाय"
     filter_show: "परिचय देखें"
     filter_show_count:

@@ -1,20 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Placeholder — filter form now uses inline handlers for gender cards
+// (see index.html.erb). Kept as a named controller for future extension.
 export default class extends Controller {
-  static targets = ["form", "city"]
-
-  connect() {
-    this._debounceTimer = null
-  }
-
-  cityInput() {
-    clearTimeout(this._debounceTimer)
-    this._debounceTimer = setTimeout(() => {
-      this.formTarget.requestSubmit()
-    }, 400)
-  }
-
-  disconnect() {
-    clearTimeout(this._debounceTimer)
-  }
+  static targets = ["form"]
 }

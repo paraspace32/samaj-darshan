@@ -7,80 +7,417 @@ function stepAge(id, delta) {
   val = Math.min(60, Math.max(18, val + delta));
   el.value = val;
 }
+function selectGender(val) {
+  document.getElementById('gender_field').value = val;
+  document.querySelectorAll('[data-gender-card]').forEach(function(c) {
+    c.setAttribute('data-selected', c.getAttribute('data-gender-card') === val ? 'true' : 'false');
+  });
+  var form = document.getElementById('biodata_filter_form');
+  if (!form) return;
+  if (form.requestSubmit) form.requestSubmit();
+  else form.submit();
+}
+function toggleMoreFilters() {
+  var el = document.getElementById('more-filters');
+  var btn = document.getElementById('more-filters-btn');
+  var open = el.classList.toggle('hidden') === false;
+  btn.querySelector('[data-more-label]').textContent = open
+    ? btn.getAttribute('data-label-less')
+    : btn.getAttribute('data-label-more');
+  btn.querySelector('[data-more-chevron]').style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+function openFilters() {
+  document.getElementById('filter-summary').classList.add('hidden');
+  document.getElementById('biodata_filter_form').classList.remove('hidden');
+}
+function closeFilters() {
+  updateFilterSummary();
+  document.getElementById('biodata_filter_form').classList.add('hidden');
+  document.getElementById('filter-summary').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function updateFilterSummary() {
+  var I18N = window.__filterI18n || {};
+  var parts = [];
+  var g = (document.getElementById('gender_field') || {}).value;
+  if (g === 'female') parts.push(I18N.bride);
+  else if (g === 'male') parts.push(I18N.groom);
+  var ageMin = (document.getElementById('age_min') || {}).value;
+  var ageMax = (document.getElementById('age_max') || {}).value;
+  if (ageMin && ageMax) parts.push(ageMin + '–' + ageMax + ' ' + I18N.years);
+  else if (ageMin) parts.push(ageMin + '+ ' + I18N.years);
+  else if (ageMax) parts.push('≤' + ageMax + ' ' + I18N.years);
+  var citySel = document.querySelector('select[name="city"]');
+  if (citySel && citySel.value) parts.push(citySel.value);
+  var occSel = document.querySelector('select[name="occupation"]');
+  if (occSel && occSel.value) parts.push(occSel.value);
+  var text = parts.length ? parts.join(' • ') : I18N.none;
+  var el = document.getElementById('filter-summary-text');
+  if (el) el.textContent = text;
+}
+document.addEventListener('turbo:submit-end', function(e) {
+  if (e.target && e.target.id === 'biodata_filter_form') closeFilters();
+});
 </script>
+<style>
+  .gender-card {
+    background: #fff;
+    border: 2px solid #e7e5e4;
+    border-radius: 16px;
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-height: 110px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gender-card:hover { border-color: #fdba74; }
+  .gender-card[data-selected="true"] {
+    border-color: #ea580c;
+    background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
+    box-shadow: 0 4px 12px rgba(234,88,12,0.15);
+  }
+  .gender-card-icon { font-size: 44px; line-height: 1; }
+  .gender-card-label {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1c1917;
+    letter-spacing: -0.01em;
+  }
+  .gender-card[data-selected="true"] .gender-card-label { color: #c2410c; }
+
+  .filter-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #44403c;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .big-select {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1917;
+    background: #fff;
+    border: 2px solid #e7e5e4;
+    border-radius: 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ea580c' stroke-width='3'%3E%3Cpath stroke-linecap='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  .big-select:focus { outline: none; border-color: #ea580c; }
+
+  .age-stepper {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #e7e5e4;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 48px;
+  }
+  .age-stepper:focus-within { border-color: #ea580c; }
+  .age-stepper button {
+    width: 40px;
+    height: 100%;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ea580c;
+    background: #fff7ed;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  .age-stepper button:active { background: #ffedd5; }
+  .age-stepper input {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1c1917;
+    background: transparent;
+    border: 0;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .age-stepper input::-webkit-outer-spin-button,
+  .age-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .show-btn {
+    width: 100%;
+    padding: 14px 16px;
+    background: linear-gradient(90deg, #c2410c, #ea580c);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(234,88,12,0.35);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  .show-btn:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(234,88,12,0.25); }
+
+  .clear-link {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #78716c;
+    text-decoration: none;
+  }
+  .clear-link:hover { color: #c2410c; text-decoration: underline; }
+
+  .more-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed #d6d3d1;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #78716c;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .more-btn:hover { border-color: #fdba74; color: #c2410c; }
+
+  .filter-summary-bar {
+    width: 100%;
+    background: #fff;
+    border: 2px solid #fed7aa;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .filter-summary-bar:hover { border-color: #fdba74; background: #fffbf5; }
+  .filter-summary-bar:active { background: #fff7ed; }
+  .filter-summary-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ea580c;
+  }
+  .filter-summary-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1c1917;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .filter-summary-cta {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ea580c;
+    background: #fff7ed;
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+</style>
 <% end %>
 
 <%# Header %>
-<div class="mb-3 animate-fade-in text-center">
+<div class="mb-4 animate-fade-in text-center">
   <h1 class="text-xl font-black tracking-tight">
     <span class="text-gradient"><%= t("biodata.title") %></span>
   </h1>
   <p class="text-xs text-gray-400 hidden sm:block"><%= t("biodata.subtitle") %></p>
 </div>
 
-<%# Filters %>
-<%= form_with url: biodatas_path, method: :get, class: "card-premium rounded-2xl p-2.5 sm:p-4 mb-3 shadow-sm", data: { turbo_frame: "biodata_grid", controller: "filter", filter_target: "form" } do |f| %>
-  <%# 2×2 grid on mobile, 5-col on desktop %>
-  <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
-    <%# Gender %>
-    <div>
-      <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_gender") %></label>
-      <select name="gender" aria-label="<%= t('biodata.filter_gender') %>" class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm">
-        <option value=""><%= t("biodata.all_genders") %></option>
-        <option value="male"   <%= "selected" if params[:gender] == "male"   %>><%= t("biodata.gender_male") %></option>
-        <option value="female" <%= "selected" if params[:gender] == "female" %>><%= t("biodata.gender_female") %></option>
-      </select>
-    </div>
+<%# Filters — simplified for non-technical users %>
+<%
+  has_filters = params[:gender].present? || params[:age_min].present? || params[:age_max].present? || params[:city].present? || params[:occupation].present?
+  summary_parts = []
+  summary_parts << t("biodata.filter_bride") if params[:gender] == "female"
+  summary_parts << t("biodata.filter_groom") if params[:gender] == "male"
+  if params[:age_min].present? && params[:age_max].present?
+    summary_parts << "#{params[:age_min]}–#{params[:age_max]} #{t('biodata.filter_years')}"
+  elsif params[:age_min].present?
+    summary_parts << "#{params[:age_min]}+ #{t('biodata.filter_years')}"
+  elsif params[:age_max].present?
+    summary_parts << "≤#{params[:age_max]} #{t('biodata.filter_years')}"
+  end
+  summary_parts << params[:city]       if params[:city].present?
+  summary_parts << params[:occupation] if params[:occupation].present?
+  summary_text = summary_parts.any? ? summary_parts.join(" • ") : t("biodata.filter_summary_none")
+%>
 
-    <%# Age Range %>
-    <div>
-      <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_age") %></label>
-      <div class="flex items-center gap-1">
-        <div class="flex items-center input-premium !p-0 !gap-0 overflow-hidden w-full">
-          <button type="button" onclick="stepAge('age_min',-1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">−</button>
-          <input type="number" name="age_min" id="age_min" value="<%= params[:age_min] %>" placeholder="18"
-                 min="18" max="60" class="w-full !text-xs sm:!text-sm text-center bg-transparent border-0 outline-none !py-1.5 sm:!py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-          <button type="button" onclick="stepAge('age_min',1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">+</button>
-        </div>
-        <span class="text-gray-300 text-xs shrink-0 mx-0.5">–</span>
-        <div class="flex items-center input-premium !p-0 !gap-0 overflow-hidden w-full">
-          <button type="button" onclick="stepAge('age_max',-1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">−</button>
-          <input type="number" name="age_max" id="age_max" value="<%= params[:age_max] %>" placeholder="45"
-                 min="18" max="60" class="w-full !text-xs sm:!text-sm text-center bg-transparent border-0 outline-none !py-1.5 sm:!py-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-          <button type="button" onclick="stepAge('age_max',1)" class="px-1.5 py-1.5 sm:py-2 text-gray-400 hover:text-orange-500 text-sm font-bold cursor-pointer select-none">+</button>
-        </div>
+<%# i18n payload so JS can rebuild summary on client-side after submits %>
+<script>
+  window.__filterI18n = {
+    bride: <%= raw t("biodata.filter_bride").to_json %>,
+    groom: <%= raw t("biodata.filter_groom").to_json %>,
+    years: <%= raw t("biodata.filter_years").to_json %>,
+    none:  <%= raw t("biodata.filter_summary_none").to_json %>
+  };
+</script>
+
+<%# Collapsed summary — visible when filters are applied %>
+<div id="filter-summary" class="<%= 'hidden' unless has_filters %> mb-4" onclick="openFilters()" role="button" tabindex="0" aria-label="<%= t('biodata.filter_edit') %>">
+  <div class="filter-summary-bar">
+    <span class="filter-summary-icon">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="7"/>
+        <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+      </svg>
+    </span>
+    <span class="filter-summary-text" id="filter-summary-text"><%= summary_text %></span>
+    <span class="filter-summary-cta">
+      <%= t("biodata.filter_edit") %>
+      <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+        <path stroke-linecap="round" d="M9 5l7 7-7 7"/>
+      </svg>
+    </span>
+  </div>
+</div>
+
+<%= form_with url: biodatas_path, method: :get,
+      id: "biodata_filter_form",
+      class: "card-premium rounded-2xl p-4 sm:p-5 mb-4 shadow-sm #{'hidden' if has_filters}",
+      data: { turbo_frame: "biodata_grid", controller: "filter", filter_target: "form" } do |f| %>
+
+  <%# Hidden gender field (populated by gender cards) %>
+  <input type="hidden" name="gender" id="gender_field" value="<%= params[:gender] %>">
+
+  <%# Primary: Who are you looking for? %>
+  <div style="margin-bottom:20px;">
+    <label class="filter-label" style="text-align:center;font-size:15px;"><%= t("biodata.filter_who") %></label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="gender-card"
+           data-gender-card="female"
+           data-selected="<%= params[:gender] == 'female' ? 'true' : 'false' %>"
+           onclick="selectGender(this.getAttribute('data-gender-card') === document.getElementById('gender_field').value ? '' : this.getAttribute('data-gender-card'))"
+           role="button"
+           tabindex="0"
+           aria-label="<%= t('biodata.filter_bride') %>">
+        <div class="gender-card-icon">👰</div>
+        <div class="gender-card-label"><%= t("biodata.filter_bride") %></div>
+      </div>
+      <div class="gender-card"
+           data-gender-card="male"
+           data-selected="<%= params[:gender] == 'male' ? 'true' : 'false' %>"
+           onclick="selectGender(this.getAttribute('data-gender-card') === document.getElementById('gender_field').value ? '' : this.getAttribute('data-gender-card'))"
+           role="button"
+           tabindex="0"
+           aria-label="<%= t('biodata.filter_groom') %>">
+        <div class="gender-card-icon">🤵</div>
+        <div class="gender-card-label"><%= t("biodata.filter_groom") %></div>
       </div>
     </div>
+  </div>
 
-    <%# City %>
-    <div>
-      <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_city") %></label>
-      <input type="text" name="city" value="<%= params[:city] %>" placeholder="<%= t('biodata.city_placeholder') %>"
-             aria-label="<%= t('biodata.filter_city') %>" list="city_list"
-             class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm"
-             data-filter-target="city" data-action="input->filter#cityInput">
-      <datalist id="city_list">
-        <% @cities.each do |c| %><option value="<%= c %>"><% end %>
-      </datalist>
-    </div>
-
-    <%# Occupation %>
-    <div>
-      <label class="hidden sm:block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5"><%= t("biodata.filter_occupation") %></label>
-      <input type="text" name="occupation" value="<%= params[:occupation] %>" placeholder="<%= t('biodata.occupation_placeholder') %>"
-             aria-label="<%= t('biodata.filter_occupation') %>" list="occupation_list"
-             class="input-premium block w-full !py-1.5 !text-xs sm:!py-2 sm:!text-sm">
-      <datalist id="occupation_list">
-        <% @occupations.each do |o| %><option value="<%= o %>"><% end %>
-      </datalist>
-    </div>
-
-    <%# Actions %>
-    <div class="col-span-2 sm:col-span-1 flex gap-2 items-end">
-      <button type="submit" class="flex-1 rounded-xl gradient-brand px-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white shadow-sm hover:shadow-md transition-all cursor-pointer"><%= t("biodata.filter_apply") %></button>
-      <%= link_to t("biodata.filter_clear"), biodatas_path, class: "flex-1 rounded-xl bg-gray-100 px-2 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors text-center" %>
+  <%# Primary: Age %>
+  <div style="margin-bottom:16px;">
+    <label class="filter-label"><%= t("biodata.filter_age") %></label>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="age-stepper" style="flex:1;">
+        <button type="button" onclick="stepAge('age_min',-1)" aria-label="−">−</button>
+        <input type="number" name="age_min" id="age_min" value="<%= params[:age_min] %>" placeholder="18" min="18" max="60" inputmode="numeric">
+        <button type="button" onclick="stepAge('age_min',1)" aria-label="+">+</button>
+      </div>
+      <span style="color:#a8a29e;font-size:13px;font-weight:600;flex-shrink:0;"><%= t("biodata.filter_age_to") %></span>
+      <div class="age-stepper" style="flex:1;">
+        <button type="button" onclick="stepAge('age_max',-1)" aria-label="−">−</button>
+        <input type="number" name="age_max" id="age_max" value="<%= params[:age_max] %>" placeholder="45" min="18" max="60" inputmode="numeric">
+        <button type="button" onclick="stepAge('age_max',1)" aria-label="+">+</button>
+      </div>
     </div>
   </div>
+
+  <%# Primary: City (dropdown, not free-text) %>
+  <div style="margin-bottom:16px;">
+    <label class="filter-label"><%= t("biodata.filter_city") %></label>
+    <select name="city" class="big-select" aria-label="<%= t('biodata.filter_city') %>">
+      <option value=""><%= t("biodata.filter_any_city") %></option>
+      <% @cities.each do |c| %>
+        <option value="<%= c %>" <%= "selected" if params[:city] == c %>><%= c %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <%# Secondary: Occupation — hidden by default, revealed via "More options" %>
+  <% more_open = params[:occupation].present? %>
+  <div id="more-filters" class="<%= "hidden" unless more_open %>" style="margin-bottom:16px;">
+    <label class="filter-label"><%= t("biodata.filter_occupation") %></label>
+    <select name="occupation" class="big-select" aria-label="<%= t('biodata.filter_occupation') %>">
+      <option value=""><%= t("biodata.filter_any_occupation") %></option>
+      <% @occupations.each do |o| %>
+        <option value="<%= o %>" <%= "selected" if params[:occupation] == o %>><%= o %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <%# "More options" toggle — only if there are occupations to show %>
+  <% if @occupations.any? %>
+    <div style="margin-bottom:14px;">
+      <button type="button"
+              id="more-filters-btn"
+              class="more-btn"
+              onclick="toggleMoreFilters()"
+              data-label-more="<%= t('biodata.filter_more') %>"
+              data-label-less="<%= t('biodata.filter_less') %>">
+        <span data-more-label><%= more_open ? t("biodata.filter_less") : t("biodata.filter_more") %></span>
+        <svg data-more-chevron width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" style="transition:transform 0.2s;<%= "transform:rotate(180deg);" if more_open %>">
+          <path stroke-linecap="round" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+    </div>
+  <% end %>
+
+  <%# Big primary action %>
+  <button type="submit" class="show-btn">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <circle cx="11" cy="11" r="7"/>
+      <path stroke-linecap="round" d="M21 21l-4.35-4.35"/>
+    </svg>
+    <%= t("biodata.filter_show") %>
+  </button>
+
+  <%# Clear — secondary %>
+  <% if params[:gender].present? || params[:age_min].present? || params[:age_max].present? || params[:city].present? || params[:occupation].present? %>
+    <%= link_to t("biodata.filter_clear"), biodatas_path, class: "clear-link" %>
+  <% end %>
 <% end %>
 
 <%# Biodata Grid %>

@@ -1,0 +1,23 @@
+<% content_for(:page_title, "Create Biodata") %>
+
+<div class="max-w-3xl mx-auto">
+  <%# Header %>
+  <div class="flex items-center gap-3 mb-6">
+    <%= link_to admin_biodatas_path, class: "inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" do %>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <div>
+      <h1 class="text-2xl font-black tracking-tight text-gray-900">Create Biodata</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Create a matrimonial biodata on behalf of another user.</p>
+    </div>
+  </div>
+
+  <%= render "my_biodatas/form",
+        biodata: @biodata,
+        url: admin_biodatas_path,
+        submit_label: "Create & Publish",
+        cancel_path: admin_biodatas_path,
+        show_user_picker: true,
+        eligible_users: @eligible_users,
+        selected_user_id: params.dig(:biodata, :user_id) %>
+</div>

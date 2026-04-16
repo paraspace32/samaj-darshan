@@ -20,6 +20,7 @@ class Biodata < ApplicationRecord
   scope :visible,       -> { published.order(published_at: :desc) }
   scope :for_gender,    ->(g)        { where(gender: g) if g.present? }
   scope :for_city,      ->(c)        { where("city ILIKE ?", "%#{c}%") if c.present? }
+  scope :for_state,       ->(s) { where("state ILIKE ?", "%#{s}%") if s.present? }
   scope :for_education,   ->(e) { where("education ILIKE ?", "%#{e}%") if e.present? }
   scope :for_occupation,  ->(o) { where("occupation ILIKE ?", "%#{o}%") if o.present? }
   scope :for_age_range, ->(min, max) {

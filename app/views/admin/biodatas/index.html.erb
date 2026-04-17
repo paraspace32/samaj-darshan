@@ -20,6 +20,7 @@
 <div class="flex items-center gap-1 mb-5 border-b border-gray-200/60">
   <% [
     ["", "All"],
+    ["pending_consent", "Needs Consent"],
     ["pending_review", "Pending Review"],
     ["published", "Published"],
     ["rejected", "Rejected"],
@@ -104,10 +105,11 @@
               <td class="px-6 py-4 text-gray-500 hidden lg:table-cell line-clamp-1"><%= biodata.education %></td>
               <td class="px-6 py-4">
                 <% badge_class = case biodata.status
-                  when "published"      then "bg-emerald-100 text-emerald-700 border border-emerald-200/60"
-                  when "pending_review" then "bg-amber-100 text-amber-700 border border-amber-200/60"
-                  when "rejected"       then "bg-red-100 text-red-700 border border-red-200/60"
-                  else                       "bg-gray-100 text-gray-600 border border-gray-200/60"
+                  when "published"       then "bg-emerald-100 text-emerald-700 border border-emerald-200/60"
+                  when "pending_review"  then "bg-amber-100 text-amber-700 border border-amber-200/60"
+                  when "rejected"        then "bg-red-100 text-red-700 border border-red-200/60"
+                  when "pending_consent" then "bg-orange-100 text-orange-700 border border-orange-200/60"
+                  else                        "bg-gray-100 text-gray-600 border border-gray-200/60"
                   end %>
                 <span class="badge <%= badge_class %>"><%= biodata.status.humanize %></span>
               </td>

@@ -38,10 +38,11 @@
             </div>
             <%# Status %>
             <% badge_class, badge_label = case bio.status
-              when "published"      then [ "bg-emerald-100 text-emerald-700 border-emerald-200/60", t("biodata.status_published") ]
-              when "pending_review" then [ "bg-amber-100 text-amber-700 border-amber-200/60",       t("biodata.status_pending") ]
-              when "rejected"       then [ "bg-red-100 text-red-700 border-red-200/60",             t("biodata.status_rejected") ]
-              else                       [ "bg-gray-100 text-gray-600 border-gray-200/60",          t("biodata.status_draft") ]
+              when "published"        then [ "bg-emerald-100 text-emerald-700 border-emerald-200/60", t("biodata.status_published") ]
+              when "pending_review"   then [ "bg-amber-100 text-amber-700 border-amber-200/60",       t("biodata.status_pending") ]
+              when "rejected"         then [ "bg-red-100 text-red-700 border-red-200/60",             t("biodata.status_rejected") ]
+              when "pending_consent"  then [ "bg-orange-100 text-orange-700 border-orange-200/60",    t("biodata.status_pending_consent") ]
+              else                         [ "bg-gray-100 text-gray-600 border-gray-200/60",          t("biodata.status_draft") ]
               end %>
             <span class="shrink-0 text-[10px] font-bold uppercase tracking-wider border px-2 py-1 rounded-md <%= badge_class %>">
               <%= badge_label %>

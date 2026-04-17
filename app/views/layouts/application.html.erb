@@ -271,6 +271,9 @@
     </footer>
 
     <%= render "shared/pwa_install_banner" %>
+    <% if @consent_pending_biodata %>
+      <%= render "shared/consent_popup" %>
+    <% end %>
     <% if controller_name == "news" && action_name == "index" && params[:page].blank? && params[:slug].blank? %>
       <%= render "shared/billboard_splash" %>
     <% end %>

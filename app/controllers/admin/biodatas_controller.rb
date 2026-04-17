@@ -1,9 +1,9 @@
 module Admin
   class BiodatasController < Admin::BaseController
     before_action :require_biodata_reviewer, only: [ :index, :show ]
-    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject, :search_users ]
+    before_action :require_biodata_manager,  only: [ :new, :create, :edit, :update, :publish, :reject, :search_users ]
     before_action :require_biodata_delete,   only: [ :destroy ]
-    before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
+    before_action :set_biodata, only: [ :show, :edit, :update, :destroy, :publish, :reject ]
 
     def index
       @biodatas = Biodata.includes(:user).with_attached_photo
@@ -64,6 +64,16 @@ module Admin
       else
         load_eligible_users
         render :new, status: :unprocessable_entity
+      end
+    end
+
+    def edit; end
+
+    def update
+      if @biodata.update(biodata_attrs)
+        redirect_to admin_biodata_path(@biodata), notice: "Biodata updated successfully."
+      else
+        render :edit, status: :unprocessable_entity
       end
     end
 

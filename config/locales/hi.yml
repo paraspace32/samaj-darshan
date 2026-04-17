@@ -181,6 +181,9 @@ hi:
     submit: "लॉगिन"
     no_account: "खाता नहीं है?"
     footer: "समाज दर्शन — समाज की आवाज़"
+    left_tagline: "परिवारों को जोड़ना, कहानियाँ साझा करना, भविष्य बनाना।"
+    show_password: "पासवर्ड दिखाएं"
+    hide_password: "पासवर्ड छुपाएं"
 
   datetime:
     distance_in_words:

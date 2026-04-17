@@ -1,5 +1,5 @@
 <%
-  cancel_path      ||= my_biodata_path
+  cancel_path      ||= my_biodatas_path
   show_user_picker ||= false
   eligible_users   ||= []
   selected_user_id ||= nil
@@ -20,8 +20,7 @@
             { include_blank: "Select a user…", selected: selected_user_id },
             class: "input-premium block w-full", required: true %>
         <p class="mt-1.5 text-xs text-gray-500">
-          Only users who do not already have a biodata are listed
-          (<%= eligible_users.size %> eligible).
+          <%= eligible_users.size %> active users listed.
         </p>
       </div>
     </div>

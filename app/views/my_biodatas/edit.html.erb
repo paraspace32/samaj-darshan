@@ -14,7 +14,7 @@
     <% end %>
   </div>
 
-  <% url = my_biodata_path %>
+  <% url = my_biodata_path(@biodata) %>
   <% submit_label = t("biodata.update_biodata") %>
-  <%= render "form", biodata: @biodata, url: url, submit_label: submit_label %>
+  <%= render "form", biodata: @biodata, url: url, submit_label: submit_label, cancel_path: my_biodata_path(@biodata) %>
 </div>

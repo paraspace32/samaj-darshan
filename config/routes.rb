@@ -119,7 +119,7 @@ Rails.application.routes.draw do
       delete :shortlist, action: :unshortlist
     end
   end
-  resource :my_biodata, controller: :my_biodatas, only: [ :new, :create, :edit, :update, :show ] do
+  resources :my_biodatas, only: [ :index, :new, :create, :edit, :update, :show ] do
     member do
       patch :submit_for_review
       get :template

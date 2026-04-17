@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :job_posts, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
-  has_one :biodata, dependent: :destroy
+  has_many :biodatas, dependent: :destroy
   has_many :shortlists, dependent: :destroy
   has_many :shortlisted_biodatas, through: :shortlists, source: :biodata
 

@@ -98,76 +98,71 @@
 
     <%= render "shared/billboard_article_mid" %>
 
-    <%# Like & Share actions %>
-    <div id="like-section" class="surface-elevated rounded-3xl border border-gray-200/40 p-6 sm:p-8 mb-10 shadow-xl shadow-stone-900/[0.06]">
-      <div class="flex flex-wrap items-center gap-3 mb-6">
+    <%# Engagement: like, share, and comments — one unified card %>
+    <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
+    <div id="comments" class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-xl shadow-stone-900/[0.06]">
+
+      <%# Action bar: like · comments count · share %>
+      <div class="flex items-center gap-2 px-4 sm:px-6 py-3 border-b border-stone-100/90 bg-stone-50/60 flex-wrap">
+        <%# Like %>
         <% if current_user %>
-          <%= button_to toggle_news_like_path(@news_item), method: :post, class: "inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-all cursor-pointer shadow-md #{@liked ? 'bg-red-50 border border-red-200/80 text-red-600 hover:bg-red-100' : 'bg-white border border-gray-200/40 text-stone-600 hover:bg-red-50/90 hover:border-red-200/60 hover:text-red-500'}" do %>
-            <svg class="w-5 h-5 <%= 'fill-red-500' if @liked %>" fill="<%= @liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-            <span><%= @liked ? t("likes.liked") : t("likes.like") %></span>
-            <span class="text-xs opacity-70">(<%= @news_item.likes_count %>)</span>
+          <%= button_to toggle_news_like_path(@news_item), method: :post,
+                class: "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold transition-all cursor-pointer #{@liked ? 'text-red-600 bg-red-50 border border-red-200/70' : 'text-stone-500 hover:text-red-500 hover:bg-red-50 border border-transparent'}" do %>
+            <svg class="w-4 h-4" fill="<%= @liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <%= @liked ? t("likes.liked") : t("likes.like") %>
+            <span class="text-xs opacity-60"><%= @news_item.likes_count %></span>
           <% end %>
         <% else %>
-          <%= link_to login_path, class: "btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-stone-500 hover:text-red-600" do %>
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-            <span><%= t("likes.like") %></span>
-            <span class="text-xs opacity-70">(<%= @news_item.likes_count %>)</span>
+          <%= link_to login_path, class: "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold text-stone-500 hover:text-red-500 hover:bg-red-50 border border-transparent transition-all" do %>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <%= t("likes.like") %>
+            <span class="text-xs opacity-60"><%= @news_item.likes_count %></span>
           <% end %>
         <% end %>
 
-        <span class="text-stone-300 font-light select-none">|</span>
+        <span class="text-stone-300 select-none text-xs">·</span>
 
-        <a href="#comments" class="btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold text-stone-600 hover:text-blue-700 hover:border-blue-200/80 hover:bg-blue-50/80">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-          <span><%= t("comments.title") %></span>
-          <span class="text-xs opacity-70">(<%= @news_item.comments_count %>)</span>
-        </a>
-      </div>
-
-      <p class="text-sm font-bold text-stone-900 tracking-tight mb-4"><%= t("article.share_whatsapp").gsub("WhatsApp", "") %></p>
-      <div class="flex flex-wrap items-center gap-3">
-        <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
-        <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
-           target="_blank" rel="noopener"
-           class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 shadow-lg shadow-emerald-900/15 hover:shadow-xl transition-all">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          WhatsApp
-        </a>
-        <button data-controller="copy-link" data-copy-link-url-value="<%= request.original_url %>" data-action="copy-link#copy"
-                class="btn-ghost inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-          Copy Link
-        </button>
-      </div>
-    </div>
-
-    <%# Comments section %>
-    <div id="comments" class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-xl shadow-stone-900/[0.06]">
-      <div class="px-6 sm:px-8 py-5 border-b border-stone-100/90 flex items-center gap-3 bg-gradient-to-r from-stone-50/80 via-white to-orange-50/30">
-        <span class="flex h-9 w-9 items-center justify-center rounded-2xl gradient-brand shadow-md shadow-orange-500/25">
-          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <%# Comment count — scrolls to form %>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-stone-500">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          <%= @news_item.comments_count %>
         </span>
-        <h3 class="text-base font-black text-stone-900 tracking-tight"><%= t("comments.title") %> (<%= @news_item.comments_count %>)</h3>
+
+        <%# Push share to the right %>
+        <div class="ml-auto flex items-center gap-2">
+          <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
+             target="_blank" rel="noopener"
+             class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+          <button data-controller="copy-link" data-copy-link-url-value="<%= request.original_url %>" data-action="copy-link#copy"
+                  class="inline-flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition-colors shadow-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            Copy Link
+          </button>
+        </div>
       </div>
 
-      <div class="px-6 sm:px-8">
+      <%# Comment form %>
+      <div class="px-5 sm:px-7">
         <% if current_user %>
-          <%= form_with model: Comment.new, url: news_comments_path(@news_item), class: "py-6 border-b border-stone-100/90" do |f| %>
-            <div class="flex gap-4">
-              <div class="w-10 h-10 rounded-2xl gradient-brand flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/25 ring-2 ring-white/70">
-                <span class="text-white font-bold text-sm"><%= current_user.name[0].upcase %></span>
+          <%= form_with model: Comment.new, url: news_comments_path(@news_item), class: "py-5 border-b border-stone-100/90" do |f| %>
+            <div class="flex gap-3">
+              <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 ring-2 ring-white/70">
+                <span class="text-white font-bold text-xs"><%= current_user.name[0].upcase %></span>
               </div>
               <div class="flex-1 min-w-0">
                 <%= f.text_area :body, placeholder: t("comments.write_placeholder"), rows: 2,
-                      class: "input-premium w-full rounded-2xl border border-gray-200/60 bg-stone-50/80 px-4 py-3.5 text-sm text-stone-800 placeholder-stone-400 focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100/80 focus:outline-none resize-none transition-all shadow-inner shadow-stone-900/5" %>
-                <div class="flex justify-end mt-3">
-                  <%= f.submit t("comments.submit"), class: "btn-primary cursor-pointer" %>
+                      class: "input-premium w-full rounded-xl border border-gray-200/60 bg-stone-50/80 px-3.5 py-3 text-sm text-stone-800 placeholder-stone-400 focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100/80 focus:outline-none resize-none transition-all" %>
+                <div class="flex justify-end mt-2">
+                  <%= f.submit t("comments.submit"), class: "btn-primary cursor-pointer !py-1.5 !px-4 !text-sm" %>
                 </div>
               </div>
             </div>
           <% end %>
         <% else %>
-          <div class="py-8 text-center">
+          <div class="py-6 text-center">
             <%= link_to login_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-semibold" do %>
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
               <%= t("comments.login_to_comment") %>
@@ -180,8 +175,8 @@
             <%= render partial: "comments/comment", collection: @comments %>
           </div>
         <% else %>
-          <div class="py-12 text-center">
-            <p class="text-sm text-stone-500"><%= t("comments.no_comments") %></p>
+          <div class="py-10 text-center">
+            <p class="text-sm text-stone-400"><%= t("comments.no_comments") %></p>
           </div>
         <% end %>
       </div>

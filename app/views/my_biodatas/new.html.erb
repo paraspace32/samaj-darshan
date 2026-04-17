@@ -8,7 +8,7 @@
     <p class="text-sm text-gray-500 mt-2"><%= t("biodata.create_subtitle") %></p>
   </div>
 
-  <% url = my_biodata_path %>
+  <% url = my_biodatas_path %>
   <% submit_label = t("biodata.save_biodata") %>
-  <%= render "form", biodata: @biodata, url: url, submit_label: submit_label %>
+  <%= render "form", biodata: @biodata, url: url, submit_label: submit_label, cancel_path: my_biodatas_path %>
 </div>

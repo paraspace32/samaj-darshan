@@ -1,5 +1,5 @@
 <%
-  cancel_path      ||= my_biodata_path
+  cancel_path      ||= my_biodatas_path
   show_user_picker ||= false
   eligible_users   ||= []
   selected_user_id ||= nil
@@ -13,16 +13,41 @@
         </div>
         <h2 class="text-lg font-black tracking-tight text-gray-900">Create for which user?</h2>
       </div>
-      <div>
+
+      <%# Live-search user picker %>
+      <div data-controller="user-picker"
+           data-user-picker-url-value="<%= search_users_admin_biodatas_path %>">
+
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">User</label>
-        <%= f.select :user_id,
-            eligible_users.map { |u| ["#{u.name.presence || '—'} · #{u.phone}", u.id] },
-            { include_blank: "Select a user…", selected: selected_user_id },
-            class: "input-premium block w-full", required: true %>
-        <p class="mt-1.5 text-xs text-gray-500">
-          Only users who do not already have a biodata are listed
-          (<%= eligible_users.size %> eligible).
-        </p>
+
+        <%# Hidden field that actually gets submitted %>
+        <%= f.hidden_field :user_id, data: { user_picker_target: "hidden" },
+              value: selected_user_id, required: true %>
+
+        <%# Visible search input + dropdown anchored together %>
+        <div class="relative">
+          <input type="text"
+                 placeholder="Search by name or phone…"
+                 autocomplete="off"
+                 data-user-picker-target="input"
+                 data-action="input->user-picker#search keydown->user-picker#keydown focus->user-picker#search"
+                 class="input-premium block w-full pr-8"
+                 value="<%= selected_user_id.present? ? eligible_users.find { |u| u.id.to_s == selected_user_id.to_s }&.then { |u| "#{u.name.presence || '—'} · #{u.phone}" } : '' %>">
+
+          <%# Clear × button %>
+          <button type="button"
+                  data-action="click->user-picker#clear"
+                  class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">
+            ×
+          </button>
+
+          <%# Results dropdown %>
+          <div data-user-picker-target="dropdown"
+               class="hidden absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden max-h-60 overflow-y-auto">
+          </div>
+        </div>
+
+        <p class="mt-1.5 text-xs text-gray-500">Type to search — name or phone number.</p>
       </div>
     </div>
   <% end %>

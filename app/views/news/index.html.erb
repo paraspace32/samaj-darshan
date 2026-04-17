@@ -100,36 +100,68 @@
     %>
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-6 mb-10">
       <div class="lg:col-span-3 -mx-4 sm:mx-0 animate-fade-up">
-        <%= link_to featured_path, class: "group block relative overflow-hidden sm:rounded-2xl shadow-xl shadow-gray-300/30 h-full min-h-[260px] sm:min-h-[400px]" do %>
-          <div class="absolute inset-0">
-            <% if @featured.cover_image.attached? %>
-              <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
-            <% else %>
-              <div class="w-full h-full gradient-hero"></div>
-            <% end %>
-            <div class="absolute inset-0 gradient-dark-strong"></div>
-          </div>
-          <div class="relative h-full flex flex-col justify-end p-5 sm:p-8">
-            <div class="flex items-center gap-2 mb-2 sm:mb-3">
-              <span class="badge badge-category !bg-white/20 !text-white !backdrop-blur-md !text-[10px] sm:!text-[11px]">
+        <%= link_to featured_path, class: "group block overflow-hidden sm:rounded-2xl shadow-xl shadow-gray-300/30 h-full" do %>
+
+          <%# MOBILE: image on top, text below — no overlay so image is fully visible %>
+          <div class="sm:hidden">
+            <div class="relative w-full h-52 overflow-hidden">
+              <% if @featured.cover_image.attached? %>
+                <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+              <% else %>
+                <div class="w-full h-full gradient-hero"></div>
+              <% end %>
+              <span class="absolute top-2.5 left-2.5 badge badge-category !bg-black/40 !text-white !backdrop-blur-md !text-[10px]">
                 <span class="w-1.5 h-1.5 rounded-full" style="background-color: <%= featured_badge_color %>"></span>
                 <%= featured_badge_label %>
               </span>
-              <span class="text-[10px] sm:text-xs text-white/60 font-medium"><%= featured_sub_label %></span>
             </div>
-            <h2 class="text-lg sm:text-2xl lg:text-3xl font-black text-white leading-snug sm:leading-tight group-hover:text-orange-200 transition-colors line-clamp-3 tracking-tight">
-              <%= @featured.display_title %>
-            </h2>
-            <p class="text-[13px] text-white/50 mt-2 line-clamp-2 hidden sm:block max-w-2xl"><%= truncate(strip_tags(featured_content), length: 180) %></p>
-            <div class="flex items-center gap-2.5 mt-3 sm:mt-4">
-              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20">
-                <span class="text-white font-bold text-[10px] sm:text-xs"><%= @featured.author.name[0] %></span>
+            <div class="bg-white px-4 py-3.5">
+              <h2 class="text-base font-black text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight">
+                <%= @featured.display_title %>
+              </h2>
+              <div class="flex items-center gap-2 mt-2 text-[11px] text-gray-400">
+                <span class="font-semibold text-orange-600"><%= featured_sub_label %></span>
+                <span>&middot;</span>
+                <span><%= @featured.author.name %></span>
+                <span>&middot;</span>
+                <span><%= t("feed.ago", time: time_ago_in_words(@featured.published_at)) %></span>
               </div>
-              <span class="text-[12px] sm:text-sm text-white/80 font-semibold"><%= @featured.author.name %></span>
-              <span class="text-white/30">&middot;</span>
-              <span class="text-[12px] sm:text-sm text-white/40"><%= t("feed.ago", time: time_ago_in_words(@featured.published_at)) %></span>
             </div>
           </div>
+
+          <%# TABLET/DESKTOP: full-bleed cinematic overlay %>
+          <div class="hidden sm:block relative min-h-[400px] lg:min-h-[460px] h-full">
+            <div class="absolute inset-0">
+              <% if @featured.cover_image.attached? %>
+                <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+              <% else %>
+                <div class="w-full h-full gradient-hero"></div>
+              <% end %>
+              <div class="absolute inset-0 gradient-dark-strong"></div>
+            </div>
+            <div class="relative h-full flex flex-col justify-end p-8">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-category !bg-white/20 !text-white !backdrop-blur-md !text-[11px]">
+                  <span class="w-1.5 h-1.5 rounded-full" style="background-color: <%= featured_badge_color %>"></span>
+                  <%= featured_badge_label %>
+                </span>
+                <span class="text-xs text-white/60 font-medium"><%= featured_sub_label %></span>
+              </div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white leading-tight group-hover:text-orange-200 transition-colors line-clamp-2 tracking-tight">
+                <%= @featured.display_title %>
+              </h2>
+              <p class="text-[13px] text-white/50 mt-2 line-clamp-2 max-w-2xl"><%= truncate(strip_tags(featured_content), length: 180) %></p>
+              <div class="flex items-center gap-2.5 mt-4">
+                <div class="w-8 h-8 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20">
+                  <span class="text-white font-bold text-xs"><%= @featured.author.name[0] %></span>
+                </div>
+                <span class="text-sm text-white/80 font-semibold"><%= @featured.author.name %></span>
+                <span class="text-white/30">&middot;</span>
+                <span class="text-sm text-white/40"><%= t("feed.ago", time: time_ago_in_words(@featured.published_at)) %></span>
+              </div>
+            </div>
+          </div>
+
         <% end %>
       </div>
 

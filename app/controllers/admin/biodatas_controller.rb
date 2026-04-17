@@ -1,7 +1,7 @@
 module Admin
   class BiodatasController < Admin::BaseController
     before_action :require_biodata_reviewer, only: [ :index, :show ]
-    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject ]
+    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject, :search_users ]
     before_action :require_biodata_delete,   only: [ :destroy ]
     before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
 
@@ -23,13 +23,24 @@ module Admin
 
     def show; end
 
+    def search_users
+      q = params[:q].to_s.strip
+      users = if q.length >= 1
+        User.active_users
+            .where("name ILIKE :q OR phone ILIKE :q", q: "%#{q}%")
+            .order(Arel.sql("LOWER(COALESCE(name, phone))"))
+            .limit(15)
+      else
+        User.active_users
+            .order(Arel.sql("LOWER(COALESCE(name, phone))"))
+            .limit(15)
+      end
+      render json: users.map { |u| { id: u.id, label: "#{u.name.presence || "—"} · #{u.phone}" } }
+    end
+
     def new
       @biodata = Biodata.new
       load_eligible_users
-      if @eligible_users.empty?
-        redirect_to admin_biodatas_path,
-                    alert: "Every user already has a biodata. Create a new user first."
-      end
     end
 
     def create
@@ -43,14 +54,7 @@ module Admin
         render :new, status: :unprocessable_entity and return
       end
 
-      if user.biodata.present?
-        @biodata = Biodata.new(biodata_attrs)
-        @biodata.errors.add(:user_id, "already has a biodata")
-        load_eligible_users
-        render :new, status: :unprocessable_entity and return
-      end
-
-      @biodata = user.build_biodata(biodata_attrs)
+      @biodata = user.biodatas.build(biodata_attrs)
       @biodata.status = :published
       @biodata.published_at = Time.current
 
@@ -86,7 +90,6 @@ module Admin
 
     def load_eligible_users
       @eligible_users = User.active_users
-                            .where.missing(:biodata)
                             .order(Arel.sql("LOWER(COALESCE(name, phone))"))
     end
 

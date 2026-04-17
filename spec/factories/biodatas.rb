@@ -31,5 +31,9 @@ FactoryBot.define do
       partner_occupation     { "Any" }
       partner_expectations   { "Looking for a kind and caring partner." }
     end
+
+    trait :pending_consent do
+      status { :pending_consent }
+    end
   end
 end

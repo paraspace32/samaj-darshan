@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :relative do
-    biodata { nil }
-    relative_type { "MyString" }
-    name { "MyString" }
+    association :biodata
+    relative_type { "Bhaiya" }
+    name          { "Ramesh Kumar" }
   end
 end

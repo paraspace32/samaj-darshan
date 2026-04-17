@@ -55,12 +55,12 @@ module Admin
       end
 
       @biodata = user.biodatas.build(biodata_attrs)
-      @biodata.status = :published
-      @biodata.published_at = Time.current
+      @biodata.created_by_id = current_user.id
+      @biodata.status = :pending_consent
 
       if @biodata.save
         redirect_to admin_biodata_path(@biodata),
-                    notice: "Biodata created for #{user.name.presence || user.phone}."
+                    notice: "Biodata created for #{user.name.presence || user.phone}. Awaiting their consent."
       else
         load_eligible_users
         render :new, status: :unprocessable_entity

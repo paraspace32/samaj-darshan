@@ -123,6 +123,8 @@ Rails.application.routes.draw do
   resources :my_biodatas, only: [ :index, :new, :create, :edit, :update, :show ] do
     member do
       patch :submit_for_review
+      patch :consent
+      patch :decline_consent
       get :template
       get :download_pdf
     end

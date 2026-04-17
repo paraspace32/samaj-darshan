@@ -1,6 +1,6 @@
 class MyBiodatasController < ApplicationController
   before_action :require_login
-  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :template, :download_pdf ]
+  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :consent, :decline_consent, :template, :download_pdf ]
 
   def index
     @biodatas = current_user.biodatas.order(created_at: :desc)
@@ -35,6 +35,22 @@ class MyBiodatasController < ApplicationController
   def submit_for_review
     @biodata.submit_for_review!
     redirect_to my_biodata_path(@biodata), notice: t("biodata.submitted")
+  end
+
+  def consent
+    unless @biodata.pending_consent? && @biodata.admin_created?
+      return redirect_to my_biodata_path(@biodata), alert: t("biodata.consent_not_required")
+    end
+    @biodata.consent!
+    redirect_to my_biodata_path(@biodata), notice: t("biodata.consent_given")
+  end
+
+  def decline_consent
+    unless @biodata.pending_consent? && @biodata.admin_created?
+      return redirect_to my_biodata_path(@biodata), alert: t("biodata.consent_not_required")
+    end
+    @biodata.decline_consent!
+    redirect_to my_biodatas_path, notice: t("biodata.consent_declined")
   end
 
   def template

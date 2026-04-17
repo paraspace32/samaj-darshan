@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_035234) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,10 +67,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.string "city", null: false
     t.string "city_hi"
     t.string "complexion"
+    t.datetime "consented_at"
     t.string "contact_email"
     t.string "contact_phone"
     t.string "country", default: "India"
     t.datetime "created_at", null: false
+    t.bigint "created_by_id"
     t.date "date_of_birth", null: false
     t.string "education", null: false
     t.string "father_name"
@@ -95,8 +97,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.string "state"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.boolean "user_consented", default: false, null: false
     t.bigint "user_id", null: false
     t.index ["city"], name: "index_biodatas_on_city"
+    t.index ["created_by_id"], name: "index_biodatas_on_created_by_id"
     t.index ["date_of_birth"], name: "index_biodatas_on_date_of_birth"
     t.index ["gender", "status"], name: "index_biodatas_on_gender_and_status"
     t.index ["gender"], name: "index_biodatas_on_gender"

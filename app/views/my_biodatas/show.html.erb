@@ -131,12 +131,6 @@
               <p class="text-gray-700 font-medium"><%= @biodata.occupation %></p>
             </div>
           <% end %>
-          <% if @biodata.religion.present? %>
-            <div>
-              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.religion") %></p>
-              <p class="text-gray-700 font-medium"><%= @biodata.religion %></p>
-            </div>
-          <% end %>
           <% if @biodata.height_display.present? %>
             <div>
               <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider"><%= t("biodata.height") %></p>

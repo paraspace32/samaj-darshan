@@ -122,6 +122,9 @@ en:
     submit: "Sign In"
     no_account: "Don't have an account?"
     footer: "Samaj Darshan — Voice of the Community"
+    left_tagline: "Connecting families, sharing stories, building futures together."
+    show_password: "Show password"
+    hide_password: "Hide password"
 
   pwa:
     download_app: "Download App"

@@ -45,8 +45,6 @@ function updateFilterSummary() {
   else if (ageMax) parts.push('≤' + ageMax + ' ' + I18N.years);
   var citySel = document.querySelector('select[name="city"]');
   if (citySel && citySel.value) parts.push(citySel.value);
-  var stateSel = document.querySelector('select[name="state"]');
-  if (stateSel && stateSel.value) parts.push(stateSel.value);
   var eduSel = document.querySelector('select[name="education"]');
   if (eduSel && eduSel.value) parts.push(eduSel.value);
   var occSel = document.querySelector('select[name="occupation"]');
@@ -262,7 +260,7 @@ document.addEventListener('turbo:submit-end', function(e) {
 <% end %>
 
 <%# Header %>
-<div class="mb-4 animate-fade-in text-center">
+<div class="mb-3 animate-fade-in text-center -mt-2">
   <h1 class="text-xl font-black tracking-tight">
     <span class="text-gradient"><%= t("biodata.title") %></span>
   </h1>
@@ -272,7 +270,7 @@ document.addEventListener('turbo:submit-end', function(e) {
 <%# Filters — simplified for non-technical users %>
 <%
   has_filters = params[:gender].present? || params[:age_min].present? || params[:age_max].present? ||
-                params[:city].present? || params[:state].present? ||
+                params[:city].present? ||
                 params[:education].present? || params[:occupation].present?
   summary_parts = []
   summary_parts << t("biodata.filter_bride") if params[:gender] == "female"
@@ -285,7 +283,6 @@ document.addEventListener('turbo:submit-end', function(e) {
     summary_parts << "≤#{params[:age_max]} #{t('biodata.filter_years')}"
   end
   summary_parts << params[:city]       if params[:city].present?
-  summary_parts << params[:state]      if params[:state].present?
   summary_parts << params[:education]  if params[:education].present?
   summary_parts << params[:occupation] if params[:occupation].present?
   summary_text = summary_parts.any? ? summary_parts.join(" • ") : t("biodata.filter_summary_none")
@@ -382,21 +379,10 @@ document.addEventListener('turbo:submit-end', function(e) {
     </div>
   </div>
 
-  <%# Secondary: State + Education + Occupation — hidden behind "More options" %>
-  <% more_open = params[:state].present? || params[:education].present? || params[:occupation].present? %>
+  <%# Secondary: Education + Occupation — hidden behind "More options" %>
+  <% more_open = params[:education].present? || params[:occupation].present? %>
   <div id="more-filters" class="<%= "hidden" unless more_open %>" style="margin-bottom:8px;">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-      <% if @states.any? %>
-        <div>
-          <label class="filter-label"><%= t("biodata.filter_state") %></label>
-          <select name="state" class="big-select" aria-label="<%= t('biodata.filter_state') %>">
-            <option value=""><%= t("biodata.filter_any_state") %></option>
-            <% @states.each do |s| %>
-              <option value="<%= s %>" <%= "selected" if params[:state] == s %>><%= s %></option>
-            <% end %>
-          </select>
-        </div>
-      <% end %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       <% if @educations.any? %>
         <div>
           <label class="filter-label"><%= t("biodata.filter_education") %></label>
@@ -423,7 +409,7 @@ document.addEventListener('turbo:submit-end', function(e) {
   </div>
 
   <%# "More options" toggle %>
-  <% if @states.any? || @educations.any? || @occupations.any? %>
+  <% if @educations.any? || @occupations.any? %>
     <div style="margin-bottom:8px;">
       <button type="button"
               id="more-filters-btn"

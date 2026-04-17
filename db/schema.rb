@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_17_035234) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_17_075757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,6 +63,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_035234) do
     t.text "about_en"
     t.text "about_hi"
     t.string "annual_income"
+    t.string "birth_time"
+    t.string "birth_time_hi"
     t.string "caste"
     t.string "city", null: false
     t.string "city_hi"
@@ -260,6 +262,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_035234) do
     t.index ["slug"], name: "index_regions_on_slug", unique: true
   end
 
+  create_table "relatives", force: :cascade do |t|
+    t.bigint "biodata_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.string "relative_type"
+    t.datetime "updated_at", null: false
+    t.index ["biodata_id"], name: "index_relatives_on_biodata_id"
+  end
+
   create_table "shortlists", force: :cascade do |t|
     t.bigint "biodata_id", null: false
     t.datetime "created_at", null: false
@@ -318,6 +329,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_17_035234) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"
   add_foreign_key "webinars", "users", column: "host_id"

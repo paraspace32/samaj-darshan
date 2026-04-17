@@ -2,6 +2,8 @@ class Biodata < ApplicationRecord
   belongs_to :user
   belongs_to :created_by, class_name: "User", optional: true
   has_many :shortlists, dependent: :destroy
+  has_many :relatives, dependent: :destroy
+  accepts_nested_attributes_for :relatives, allow_destroy: true, reject_if: :all_blank
 
   has_one_attached :photo do |attachable|
     attachable.variant :profile, resize_to_fill: [ 400, 500 ], format: :webp, saver: { quality: 85 }

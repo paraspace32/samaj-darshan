@@ -88,7 +88,8 @@ class MyBiodatasController < ApplicationController
       :father_name, :father_occupation, :mother_name, :mother_occupation, :siblings_count,
       :contact_phone, :contact_email,
       :partner_age_min, :partner_age_max, :partner_education, :partner_occupation, :partner_expectations,
-      :photo
+      :photo, :birth_time, :birth_time_hi,
+      relatives_attributes: [ :id, :relative_type, :name, :_destroy ]
     )
   end
 end

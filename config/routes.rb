@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       end
     end
     resources :biodatas, only: [ :index, :show, :new, :create, :destroy ] do
+      collection { get :search_users }
       member do
         patch :publish
         patch :reject

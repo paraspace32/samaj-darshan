@@ -1,7 +1,7 @@
 module Admin
   class BiodatasController < Admin::BaseController
     before_action :require_biodata_reviewer, only: [ :index, :show ]
-    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject ]
+    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject, :search_users ]
     before_action :require_biodata_delete,   only: [ :destroy ]
     before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
 
@@ -22,6 +22,21 @@ module Admin
     end
 
     def show; end
+
+    def search_users
+      q = params[:q].to_s.strip
+      users = if q.length >= 1
+        User.active_users
+            .where("name ILIKE :q OR phone ILIKE :q", q: "%#{q}%")
+            .order(Arel.sql("LOWER(COALESCE(name, phone))"))
+            .limit(15)
+      else
+        User.active_users
+            .order(Arel.sql("LOWER(COALESCE(name, phone))"))
+            .limit(15)
+      end
+      render json: users.map { |u| { id: u.id, label: "#{u.name.presence || "—"} · #{u.phone}" } }
+    end
 
     def new
       @biodata = Biodata.new

@@ -104,12 +104,19 @@
 
           <%# MOBILE: image + title only — clean, no meta clutter %>
           <div class="sm:hidden">
-            <div class="w-full h-52 overflow-hidden">
+            <div class="relative w-full h-52 overflow-hidden">
               <% if @featured.cover_image.attached? %>
                 <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
               <% else %>
                 <div class="w-full h-full gradient-hero"></div>
               <% end %>
+              <%# LIVE badge — always shown on the latest featured article %>
+              <div class="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-black text-white tracking-widest uppercase"
+                   style="background:linear-gradient(135deg,#dc2626,#b91c1c); box-shadow:0 2px 12px rgba(220,38,38,0.55)">
+                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping absolute"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-white relative"></span>
+                <%= t("feed.live") %>
+              </div>
             </div>
             <div class="bg-white px-4 py-3.5">
               <h2 class="text-base font-black text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight">
@@ -127,6 +134,15 @@
                 <div class="w-full h-full gradient-hero"></div>
               <% end %>
               <div class="absolute inset-0 gradient-dark-strong"></div>
+            </div>
+            <%# LIVE badge — always shown on the latest featured article %>
+            <div class="absolute top-5 left-5 z-10 flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black text-white tracking-widest uppercase"
+                 style="background:linear-gradient(135deg,#dc2626,#b91c1c); box-shadow:0 4px 16px rgba(220,38,38,0.6)">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+              </span>
+              <%= t("feed.live") %>
             </div>
             <div class="relative h-full flex flex-col justify-end p-8">
               <div class="flex items-center gap-2 mb-3">

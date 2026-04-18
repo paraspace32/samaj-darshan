@@ -90,8 +90,8 @@
     destroyMap();
 
     _map = L.map('visitor-map', {
-      center: [20, 78],
-      zoom: 4,
+      center: [20, 0],
+      zoom: 2,
       zoomControl: true,
       attributionControl: false,
       scrollWheelZoom: false,
@@ -132,15 +132,13 @@
       }).bindTooltip(p.name + ': ' + (p.count || 1) + (useLive ? ' अभी पढ़ रहे हैं' : ' visitors'), { sticky: true }).addTo(_map);
     });
 
-    // Auto-fit to data points; fall back to world view if no points
-    if (bounds.length > 0) {
-      if (bounds.length === 1) {
-        _map.setView(bounds[0], 5);
-      } else {
-        _map.fitBounds(bounds, { padding: [40, 40], maxZoom: 6 });
-      }
+    // Auto-fit to all data points worldwide
+    if (bounds.length === 0) {
+      _map.setView([20, 0], 2);
+    } else if (bounds.length === 1) {
+      _map.setView(bounds[0], 5);
     } else {
-      _map.setView([20, 78], 3);
+      _map.fitBounds(bounds, { padding: [50, 50] });
     }
   }
 

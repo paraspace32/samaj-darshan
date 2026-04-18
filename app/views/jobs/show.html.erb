@@ -70,6 +70,12 @@
       </div>
     <% end %>
 
+    <%# Share buttons — shown for all categories except new_job_news %>
+    <% unless @job_post.category_new_job_news? %>
+      <%= render "shared/share_buttons",
+            share_text: "#{@job_post.display_title} – #{@job_post.company_name} | #{request.original_url}" %>
+    <% end %>
+
     <%# Description %>
     <div class="rounded-3xl border border-gray-200/40 bg-white/80 p-6 sm:p-8 shadow-inner">
       <div class="prose prose-sm max-w-none text-gray-700 prose-headings:tracking-tight break-words">

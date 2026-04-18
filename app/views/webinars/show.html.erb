@@ -94,6 +94,10 @@
       </div>
     <% end %>
 
+    <%# Share buttons %>
+    <%= render "shared/share_buttons",
+          share_text: "#{@webinar.display_title} – #{request.original_url}" %>
+
     <%# Description %>
     <div class="rounded-3xl border border-gray-200/40 bg-white/80 p-6 sm:p-8 shadow-inner">
       <div class="prose prose-sm max-w-none text-gray-700 prose-headings:tracking-tight">

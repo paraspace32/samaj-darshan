@@ -153,6 +153,7 @@ hi:
     ended_on: "%{date} को समाप्त हुआ"
     meeting_link: "मीटिंग लिंक"
     copy_link: "कॉपी"
+    share: "शेयर"
 
   article:
     read_other_lang: "Read in English"

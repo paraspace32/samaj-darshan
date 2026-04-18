@@ -94,6 +94,7 @@ en:
     ended_on: "Ended on %{date}"
     meeting_link: "Meeting Link"
     copy_link: "Copy"
+    share: "Share"
 
   article:
     read_other_lang: "हिंदी में पढ़ें"

@@ -65,7 +65,8 @@ Rails.application.routes.draw do
       member { patch :publish }
     end
 
-    get "cache/clear", to: "cache#clear", as: :clear_cache
+    get "cache/clear",     to: "cache#clear",     as: :clear_cache
+    get "cache/ga_status", to: "cache#ga_status", as: :ga_status
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

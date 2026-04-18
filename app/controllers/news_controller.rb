@@ -99,7 +99,7 @@ class NewsController < ApplicationController
     latest_news = News.published.maximum(:updated_at)
     latest_webinar = Webinar.published.maximum(:updated_at) if @is_home
     latest_edu = EducationPost.published.maximum(:updated_at) if @is_home
-    latest_job = JobPost.published.maximum(:updated_at) if @is_home
-    "news/index/#{@page}/#{params[:slug]}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{latest_edu&.to_i}/#{latest_job&.to_i}/#{I18n.locale}"
+    latest_job = JobPost.published.category_new_job_news.maximum(:updated_at) if @is_home
+    "news/index/v2/#{@page}/#{params[:slug]}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{latest_edu&.to_i}/#{latest_job&.to_i}/#{I18n.locale}"
   end
 end

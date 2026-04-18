@@ -62,11 +62,11 @@ class GoogleAnalyticsService
   # ── Public API ────────────────────────────────────────────────────────────
 
   def self.realtime_data
-    Rails.cache.fetch(REALTIME_CACHE_KEY, expires_in: REALTIME_TTL) { fetch_realtime }
+    Rails.cache.fetch(REALTIME_CACHE_KEY, expires_in: REALTIME_TTL, skip_nil: true) { fetch_realtime }
   end
 
   def self.reporting_data
-    Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL) { fetch_reporting }
+    Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL, skip_nil: true) { fetch_reporting }
   end
 
   # ── Private ───────────────────────────────────────────────────────────────

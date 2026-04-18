@@ -64,6 +64,8 @@ Rails.application.routes.draw do
     resources :job_posts do
       member { patch :publish }
     end
+
+    get "cache/clear", to: "cache#clear", as: :clear_cache
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

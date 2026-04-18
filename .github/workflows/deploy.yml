@@ -27,14 +27,13 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           GOOGLE_ANALYTICS_CREDENTIALS: ${{ secrets.GOOGLE_ANALYTICS_CREDENTIALS }}
         run: |
-          # Base64-encode the JSON — store the encoded string directly in .env
-          # (dotenv does not evaluate shell commands, so we store base64 and decode in Ruby)
-          ENCODED=$(echo "$GOOGLE_ANALYTICS_CREDENTIALS" | base64 -w 0)
-          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" bash << ENDSSH
-            cd /home/paras/samaj-darshan
-            sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env
-            echo "GOOGLE_ANALYTICS_CREDENTIALS=$ENCODED" >> .env
-          ENDSSH
+          # Use printf (not echo) to avoid trailing newline before base64-encoding
+          ENCODED=$(printf '%s' "$GOOGLE_ANALYTICS_CREDENTIALS" | base64 -w 0)
+          echo "Credential present: $([ -n "$GOOGLE_ANALYTICS_CREDENTIALS" ] && echo yes || echo NO - SECRET MISSING)"
+          echo "Encoded length: ${#ENCODED}"
+          # Single-line SSH to avoid heredoc expansion issues
+          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" \
+            "cd /home/paras/samaj-darshan && sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env && echo 'GOOGLE_ANALYTICS_CREDENTIALS=${ENCODED}' >> .env && echo 'Injected OK'"
 
       - name: Deploy (git pull, build & restart)
         env:
@@ -52,4 +51,5 @@ jobs:
             docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true;\
             docker compose -f docker-compose.production.yml --env-file .env up -d --build;\
             docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production || true;\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner 'Rails.cache.delete("ga_realtime_active_users"); Rails.cache.delete("ga_reporting_visitors")' RAILS_ENV=production || true;\
           "

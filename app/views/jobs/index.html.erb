@@ -22,16 +22,12 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 animate-fade-up">
     <% @job_posts.each do |post| %>
       <%= link_to job_path(post), class: "group card-premium rounded-3xl border border-gray-200/40 block" do %>
-        <%# Cover image %>
-        <div class="aspect-video bg-gradient-to-br from-blue-100/90 via-sky-50 to-cyan-100/80 relative overflow-hidden rounded-t-3xl">
-          <% if post.cover_image.attached? %>
+        <%# Cover image — only shown when attached %>
+        <% if post.cover_image.attached? %>
+          <div class="aspect-video relative overflow-hidden rounded-t-3xl">
             <%= optimized_image_tag post.cover_image, variant: :card, class: "img-zoom w-full h-full object-cover", loading: "lazy" %>
-          <% else %>
-            <div class="w-full h-full flex items-center justify-center">
-              <svg class="w-14 h-14 text-blue-300/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
 
         <div class="p-5 sm:p-6">
           <div class="flex flex-wrap items-center gap-2 mb-3">

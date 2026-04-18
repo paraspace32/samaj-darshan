@@ -22,6 +22,7 @@ en:
     sign_in: "Sign In"
     sign_up: "Sign Up"
     logout: "Logout"
+    edit_profile: "Edit Profile"
     language_switch: "हिंदी"
 
   feed:
@@ -392,3 +393,17 @@ en:
     apply_now: "Apply Now"
     closed: "Closed"
     deadline_passed: "Application deadline has passed"
+
+  profile:
+    edit_title: "Edit Profile"
+    edit_subtitle: "Update your personal information"
+    name_label: "Full Name"
+    phone_label: "Phone"
+    email_label: "Email (optional)"
+    change_password: "Change Password"
+    new_password_label: "New Password"
+    confirm_password_label: "Confirm Password"
+    password_placeholder: "Leave blank to keep current"
+    password_hint: "Leave blank if you don't want to change your password"
+    save_button: "Save Changes"
+    updated: "Profile updated successfully!"

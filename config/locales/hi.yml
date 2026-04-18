@@ -81,6 +81,7 @@ hi:
     sign_in: "लॉगिन"
     sign_up: "साइन अप"
     logout: "लॉगआउट"
+    edit_profile: "प्रोफ़ाइल संपादित करें"
     language_switch: "English"
 
   feed:
@@ -491,3 +492,17 @@ hi:
     apply_now: "अभी आवेदन करें"
     closed: "बंद"
     deadline_passed: "आवेदन की अंतिम तिथि बीत चुकी है"
+
+  profile:
+    edit_title: "प्रोफ़ाइल संपादित करें"
+    edit_subtitle: "अपनी व्यक्तिगत जानकारी अपडेट करें"
+    name_label: "पूरा नाम"
+    phone_label: "फ़ोन"
+    email_label: "ईमेल (वैकल्पिक)"
+    change_password: "पासवर्ड बदलें"
+    new_password_label: "नया पासवर्ड"
+    confirm_password_label: "पासवर्ड की पुष्टि करें"
+    password_placeholder: "खाली छोड़ें यदि नहीं बदलना"
+    password_hint: "यदि पासवर्ड नहीं बदलना है तो खाली छोड़ें"
+    save_button: "परिवर्तन सहेजें"
+    updated: "प्रोफ़ाइल सफलतापूर्वक अपडेट हो गई!"

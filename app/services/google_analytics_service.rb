@@ -270,10 +270,12 @@ class GoogleAnalyticsService
       countries[code] ||= { name: country, code: code, flag: FLAG.call(code), count: 0 }
       countries[code][:count] += count
 
-      # City-level dot only — skip unknown cities to avoid misleading country-centroid blobs
-      coords = CITY_COORDINATES[city]
+      # Prefer city-level coords; fall back to country centroid for unknown cities
+      coords = CITY_COORDINATES[city] || COUNTRY_CENTROIDS[code]
       if coords
         map_points << { lat: coords[0], lng: coords[1], name: city, country: country, count: count }
+      else
+        Rails.logger.info "[GA] No coords for city=#{city} country=#{country} (#{code})"
       end
     end
 

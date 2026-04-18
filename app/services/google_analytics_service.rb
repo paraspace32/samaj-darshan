@@ -4,6 +4,11 @@ require "googleauth"
 class GoogleAnalyticsService
   PROPERTY_ID = "531385218"
 
+  # Dedicated log for cities missing from CITY_COORDINATES
+  GA_CITY_LOGGER = Logger.new(Rails.root.join("log", "ga_missing_cities.log"), "daily").tap do |l|
+    l.formatter = proc { |_sev, time, _prog, msg| "#{time.strftime('%Y-%m-%d %H:%M:%S')} #{msg}\n" }
+  end
+
   REALTIME_CACHE_KEY  = "ga_realtime_active_users"
   REPORTING_CACHE_KEY = "ga_reporting_visitors"
   REALTIME_TTL        = 60.seconds
@@ -274,8 +279,9 @@ class GoogleAnalyticsService
       coords = CITY_COORDINATES[city] || COUNTRY_CENTROIDS[code]
       if coords
         map_points << { lat: coords[0], lng: coords[1], name: city, country: country, count: count }
+        GA_CITY_LOGGER.info "MISSING_CITY | #{city} | #{country} | #{code} | count=#{count}" unless CITY_COORDINATES.key?(city)
       else
-        Rails.logger.info "[GA] No coords for city=#{city} country=#{country} (#{code})"
+        GA_CITY_LOGGER.info "MISSING_CITY | #{city} | #{country} | #{code} | count=#{count} | NO_COUNTRY_CENTROID"
       end
     end
 

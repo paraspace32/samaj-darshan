@@ -1,19 +1,13 @@
 <%# Locals: realtime (hash), reporting (hash) %>
 <%
-  total_users  = reporting&.dig(:total_users).to_i
-  live_total   = realtime&.dig(:total).to_i
-  live_points  = realtime&.dig(:countries) || []
+  total_users      = reporting&.dig(:total_users).to_i
+  live_total       = realtime&.dig(:total).to_i
+  live_city_points = realtime&.dig(:map_points) || []
+  live_countries   = realtime&.dig(:countries)  || []
 
-  # For the map: use realtime locations if available, else fall back to historical
-  map_points = if live_points.any?
-    live_points.filter_map do |c|
-      centroid = GoogleAnalyticsService::COUNTRY_CENTROIDS[c[:code]]
-      centroid ? c.merge(lat: centroid[0], lng: centroid[1]) : nil
-    end
-  else
-    reporting&.dig(:map_points) || []
-  end
-  use_live = live_points.any?
+  # Prefer city-level realtime dots; fall back to historical city dots
+  map_points = live_city_points.any? ? live_city_points : (reporting&.dig(:map_points) || [])
+  use_live   = live_city_points.any?
   map_points_json = map_points.to_json
 %>
 
@@ -59,7 +53,7 @@
   <div id="visitor-map" class="w-full" style="height:280px; z-index:0"></div>
 
   <%# ── Country list ─────────────────────────────────────────────────────── %>
-  <% display_countries = live_points.any? ? live_points.first(8) : (reporting&.dig(:countries) || []).first(8) %>
+  <% display_countries = live_countries.any? ? live_countries.first(8) : (reporting&.dig(:countries) || []).first(8) %>
   <% if display_countries.any? %>
     <div class="px-5 sm:px-7 py-4 flex flex-wrap gap-2 border-t border-gray-100">
       <% display_countries.each do |c| %>

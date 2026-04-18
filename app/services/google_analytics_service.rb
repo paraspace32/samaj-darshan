@@ -132,6 +132,14 @@ class GoogleAnalyticsService
     "Nanded" => [ 19.160, 77.322 ], "Gulbarga" => [ 17.330, 76.820 ],
     "Tirunelveli" => [ 8.727, 77.694 ], "Guntur" => [ 16.307, 80.436 ],
     "Kurnool" => [ 15.828, 78.037 ], "Davanagere" => [ 14.465, 75.921 ],
+    "Damoh" => [ 23.833, 79.450 ], "Sagar" => [ 23.838, 78.737 ],
+    "Satna" => [ 24.600, 80.833 ], "Rewa" => [ 24.530, 81.296 ],
+    "Katni" => [ 23.833, 80.400 ], "Chhindwara" => [ 22.057, 78.938 ],
+    "Shivpuri" => [ 25.423, 77.659 ], "Morena" => [ 26.499, 77.998 ],
+    "Bhind" => [ 26.557, 78.781 ], "Vidisha" => [ 23.524, 77.809 ],
+    "Hoshangabad" => [ 22.750, 77.716 ], "Betul" => [ 21.913, 77.895 ],
+    "Seoni" => [ 22.087, 79.536 ], "Balaghat" => [ 21.813, 80.186 ],
+    "Mandla" => [ 22.600, 80.383 ], "Dindori" => [ 22.943, 81.078 ],
     "Bokaro" => [ 23.667, 86.150 ], "Gaya" => [ 24.797, 85.007 ],
     "Akola" => [ 20.706, 77.007 ], "Jalgaon" => [ 21.002, 75.562 ],
     "Malegaon" => [ 20.561, 74.526 ], "Sangli" => [ 16.854, 74.564 ],
@@ -262,8 +270,8 @@ class GoogleAnalyticsService
       countries[code] ||= { name: country, code: code, flag: FLAG.call(code), count: 0 }
       countries[code][:count] += count
 
-      # City-level dot, fall back to country centroid
-      coords = CITY_COORDINATES[city] || COUNTRY_CENTROIDS[code]
+      # City-level dot only — skip unknown cities to avoid misleading country-centroid blobs
+      coords = CITY_COORDINATES[city]
       if coords
         map_points << { lat: coords[0], lng: coords[1], name: city, country: country, count: count }
       end

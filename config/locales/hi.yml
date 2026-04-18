@@ -98,6 +98,7 @@ hi:
     ago: "%{time} पहले"
     latest_news: "ताज़ा समाचार"
     trending: "ट्रेंडिंग"
+    live: "लाइव"
     active_now: "अभी पढ़ रहे हैं"
     total_visitors: "कुल आगंतुक"
     visitors_worldwide: "दुनियाभर के पाठक"

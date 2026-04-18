@@ -80,58 +80,71 @@
 
 <script>
 (function() {
-  var mapEl = document.getElementById('visitor-map');
-  if (!mapEl || mapEl._leaflet_id) return;
-
-  var map = L.map('visitor-map', {
-    center: [20, 0],
-    zoom: 2,
-    zoomControl: false,
-    attributionControl: false,
-    scrollWheelZoom: false,
-    dragging: false,
-    doubleClickZoom: false
-  });
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19
-  }).addTo(map);
-
   var useLive  = <%= raw(use_live.to_json) %>;
   var points   = <%= raw(map_points_json) %>;
-  var maxCount = points.reduce(function(m, p) { return Math.max(m, p.count || 1); }, 1);
 
-  points.forEach(function(p) {
-    if (!p.lat || !p.lng) return;
-    var radius = Math.max(6, Math.min(24, Math.sqrt((p.count || 1) / maxCount) * 24));
-
-    if (useLive) {
-      // Live users — green pulsing
-      L.circleMarker([p.lat, p.lng], {
-        radius: radius + 8,
-        fillColor: '#4ade80',
-        color: '#4ade80',
-        weight: 0,
-        fillOpacity: 0.12
-      }).addTo(map);
-      L.circleMarker([p.lat, p.lng], {
-        radius: radius,
-        fillColor: '#4ade80',
-        color: '#fff',
-        weight: 1.5,
-        fillOpacity: 0.85
-      }).bindTooltip('🟢 ' + p.name + ': ' + (p.count || 1) + ' reading now', { sticky: true }).addTo(map);
-    } else {
-      // Historical fallback — subtle indigo dots
-      L.circleMarker([p.lat, p.lng], {
-        radius: radius,
-        fillColor: '#6366f1',
-        color: '#818cf8',
-        weight: 1,
-        fillOpacity: 0.4,
-        opacity: 0.5
-      }).bindTooltip(p.name + ': ' + (p.count || 0).toLocaleString() + ' visitors', { sticky: true }).addTo(map);
+  function initMap() {
+    var mapEl = document.getElementById('visitor-map');
+    if (!mapEl) return;
+    if (mapEl._leaflet_id) {
+      // Already initialised — just return (Turbo cache hit)
+      return;
     }
-  });
+
+    var map = L.map('visitor-map', {
+      center: [20, 0],
+      zoom: 2,
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      dragging: false,
+      doubleClickZoom: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    var maxCount = points.reduce(function(m, p) { return Math.max(m, p.count || 1); }, 1);
+
+    points.forEach(function(p) {
+      if (!p.lat || !p.lng) return;
+      var radius = Math.max(6, Math.min(24, Math.sqrt((p.count || 1) / maxCount) * 24));
+
+      if (useLive) {
+        L.circleMarker([p.lat, p.lng], {
+          radius: radius + 8,
+          fillColor: '#4ade80',
+          color: '#4ade80',
+          weight: 0,
+          fillOpacity: 0.12
+        }).addTo(map);
+        L.circleMarker([p.lat, p.lng], {
+          radius: radius,
+          fillColor: '#4ade80',
+          color: '#fff',
+          weight: 1.5,
+          fillOpacity: 0.85
+        }).bindTooltip('🟢 ' + p.name + ': ' + (p.count || 1) + ' reading now', { sticky: true }).addTo(map);
+      } else {
+        L.circleMarker([p.lat, p.lng], {
+          radius: radius,
+          fillColor: '#6366f1',
+          color: '#818cf8',
+          weight: 1,
+          fillOpacity: 0.4,
+          opacity: 0.5
+        }).bindTooltip(p.name + ': ' + (p.count || 0).toLocaleString() + ' visitors', { sticky: true }).addTo(map);
+      }
+    });
+  }
+
+  // Run on initial load and on every Turbo navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMap);
+  } else {
+    initMap();
+  }
+  document.addEventListener('turbo:render', initMap);
 })();
 </script>

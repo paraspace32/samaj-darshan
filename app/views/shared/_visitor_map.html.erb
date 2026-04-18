@@ -50,7 +50,7 @@
   </div>
 
   <%# ── Map ─────────────────────────────────────────────────────────────── %>
-  <div id="visitor-map" class="w-full" style="height:280px; z-index:0"></div>
+  <div id="visitor-map" class="w-full" style="height:320px; z-index:0; cursor:grab"></div>
 
   <%# ── Country list ─────────────────────────────────────────────────────── %>
   <% display_countries = live_countries.any? ? live_countries.first(8) : (reporting&.dig(:countries) || []).first(8) %>
@@ -92,11 +92,12 @@
     _map = L.map('visitor-map', {
       center: [20, 78],
       zoom: 4,
-      zoomControl: false,
+      zoomControl: true,
       attributionControl: false,
       scrollWheelZoom: false,
-      dragging: false,
-      doubleClickZoom: false
+      dragging: true,
+      doubleClickZoom: true,
+      tap: true
     });
 
     // Light map tiles like Google Analytics

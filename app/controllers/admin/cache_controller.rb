@@ -65,6 +65,14 @@ module Admin
         status[:service_error] = "#{e.class}: #{e.message}"
       end
 
+      # Test reporting API separately
+      begin
+        result = GoogleAnalyticsService.send(:fetch_reporting)
+        status[:reporting_test] = result ? "✅ total_users=#{result[:total_users]}, countries=#{result[:countries]&.length}" : "❌ Returned nil"
+      rescue => e
+        status[:reporting_test] = "❌ #{e.class}: #{e.message}"
+      end
+
       render plain: status.map { |k, v| "#{k}: #{v}" }.join("\n"), content_type: "text/plain"
     end
   end

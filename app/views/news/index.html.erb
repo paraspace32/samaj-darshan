@@ -22,6 +22,12 @@
             <% end %>
           </div>
         </div>
+        <%# Active users widget — right side of ticker %>
+        <% if @active_users %>
+          <div class="shrink-0 hidden sm:block">
+            <%= render "shared/active_users", data: @active_users %>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>

@@ -98,6 +98,7 @@ hi:
     ago: "%{time} पहले"
     latest_news: "ताज़ा समाचार"
     trending: "ट्रेंडिंग"
+    active_now: "अभी पढ़ रहे हैं"
     trending_subtitle: "समाज में सबसे चर्चित खबरें"
     upcoming_webinar: "आगामी वेबिनार"
     latest_magazine: "नवीनतम अंक"

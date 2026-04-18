@@ -51,7 +51,8 @@ class NewsController < ApplicationController
       @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
       @latest_magazine = Magazine.visible.includes(cover_image_attachment: :blob).first
 
-      @active_users = GoogleAnalyticsService.realtime_data
+      @active_users    = GoogleAnalyticsService.realtime_data
+      @visitor_stats   = GoogleAnalyticsService.reporting_data
 
       shown_ids = [ (@featured_type == :news ? @featured&.id : nil), *@news_items.first(3).map(&:id), *@trending.map(&:id) ].compact.uniq
       @category_sections = @categories.filter_map do |cat|

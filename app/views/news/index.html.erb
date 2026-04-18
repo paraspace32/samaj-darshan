@@ -323,6 +323,9 @@
     </div>
   </div>
 
+  <%# ── VISITOR MAP ───────────────────────────────────────────────── %>
+  <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
+
   <%# ── CATEGORY SECTIONS — alternating slider / grid layouts ────── %>
   <% if @category_sections.present? %>
     <% @category_sections.each_with_index do |section, sec_idx| %>

@@ -23,7 +23,7 @@ class NewsController < ApplicationController
     if @is_home
       # Determine the overall latest item across news, education posts, and job posts
       @education_posts = EducationPost.visible.with_attached_cover_image.includes(:author).limit(6)
-      @job_posts = JobPost.visible.with_attached_cover_image.includes(:author).limit(6)
+      @job_posts = JobPost.visible.category_new_job_news.with_attached_cover_image.includes(:author).limit(6)
 
       latest_news_item = @news_items.first
       latest_education = @education_posts.first

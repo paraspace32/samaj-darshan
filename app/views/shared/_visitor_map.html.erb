@@ -79,16 +79,23 @@
 (function() {
   var useLive  = <%= raw(use_live.to_json) %>;
   var points   = <%= raw(map_points_json) %>;
+  var _map     = null;
+
+  function destroyMap() {
+    if (_map) { try { _map.remove(); } catch(e) {} _map = null; }
+    var el = document.getElementById('visitor-map');
+    if (el) el._leaflet_id = null;
+  }
 
   function initMap() {
+    if (typeof L === 'undefined') return;
     var mapEl = document.getElementById('visitor-map');
     if (!mapEl) return;
-    if (mapEl._leaflet_id) {
-      // Already initialised — just return (Turbo cache hit)
-      return;
-    }
 
-    var map = L.map('visitor-map', {
+    // Destroy any stale Leaflet instance before re-creating
+    destroyMap();
+
+    _map = L.map('visitor-map', {
       center: [20, 0],
       zoom: 2,
       zoomControl: false,
@@ -101,7 +108,7 @@
     // Light map tiles like Google Analytics
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
       maxZoom: 19
-    }).addTo(map);
+    }).addTo(_map);
 
     var maxCount = points.reduce(function(m, p) { return Math.max(m, p.count || 1); }, 1);
 
@@ -117,7 +124,7 @@
         color: 'transparent',
         weight: 0,
         fillOpacity: 0.18
-      }).addTo(map);
+      }).addTo(_map);
       // Inner solid dot
       L.circleMarker([p.lat, p.lng], {
         radius: Math.max(7, radius * 0.45),
@@ -125,16 +132,21 @@
         color: '#fff',
         weight: 2,
         fillOpacity: 0.95
-      }).bindTooltip(p.name + ': ' + (p.count || 1) + (useLive ? ' reading now' : ' visitors'), { sticky: true }).addTo(map);
+      }).bindTooltip(p.name + ': ' + (p.count || 1) + (useLive ? ' अभी पढ़ रहे हैं' : ' visitors'), { sticky: true }).addTo(_map);
     });
   }
 
-  // Run on initial load and on every Turbo navigation
+  // Destroy before Turbo caches the page so the snapshot is clean
+  document.addEventListener('turbo:before-cache', destroyMap);
+  // Re-init on every render (initial load + Turbo navigations)
+  document.addEventListener('turbo:load', initMap);
+  document.addEventListener('turbo:render', initMap);
+
+  // Fallback for non-Turbo / direct load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initMap);
   } else {
     initMap();
   }
-  document.addEventListener('turbo:render', initMap);
 })();
 </script>

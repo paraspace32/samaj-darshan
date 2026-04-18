@@ -52,24 +52,6 @@
       </div>
     <% end %>
 
-    <%# Apply button %>
-    <% if @job_post.application_url.present? && !@job_post.deadline_passed? %>
-      <div class="text-center mb-10">
-        <%= link_to sanitize_url(@job_post.application_url), target: "_blank", rel: "noopener noreferrer",
-            class: "btn-primary !inline-flex !items-center !gap-3 !px-10 !py-4 !text-lg !rounded-2xl !shadow-xl" do %>
-          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-          <%= t("jobs.apply_now") %>
-        <% end %>
-      </div>
-    <% elsif @job_post.deadline_passed? %>
-      <div class="text-center mb-10">
-        <div class="inline-flex items-center gap-2.5 rounded-2xl surface-raised border border-gray-200/40 px-8 py-4 text-gray-500 font-semibold shadow-inner">
-          <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <%= t("jobs.deadline_passed") %>
-        </div>
-      </div>
-    <% end %>
-
     <%# Description %>
     <div class="rounded-3xl border border-gray-200/40 bg-white/80 p-6 sm:p-8 shadow-inner mb-8">
       <div class="prose prose-sm max-w-none text-gray-700 prose-headings:tracking-tight break-words">

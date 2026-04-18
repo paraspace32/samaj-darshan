@@ -116,12 +116,16 @@
               <% else %>
                 <div class="w-full h-full gradient-hero"></div>
               <% end %>
-              <%# LIVE badge — always shown on the latest featured article %>
-              <div class="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-black text-white tracking-widest uppercase"
-                   style="background:linear-gradient(135deg,#dc2626,#b91c1c); box-shadow:0 2px 12px rgba(220,38,38,0.55)">
-                <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping absolute"></span>
-                <span class="w-1.5 h-1.5 rounded-full bg-white relative"></span>
-                <%= t("feed.live") %>
+              <%# LIVE badge — mobile %>
+              <div class="absolute top-3 left-3 z-10 live-badge-wrap">
+                <div class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-black text-white tracking-widest uppercase"
+                     style="background:linear-gradient(135deg,#ff1a1a,#dc2626); box-shadow:0 0 0 2px rgba(255,80,80,0.4), 0 4px 20px rgba(220,38,38,0.75)">
+                  <span class="relative flex h-2 w-2 shrink-0">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                  </span>
+                  <%= t("feed.live") %>
+                </div>
               </div>
             </div>
             <div class="bg-white px-4 py-3.5">
@@ -141,14 +145,16 @@
               <% end %>
               <div class="absolute inset-0 gradient-dark-strong"></div>
             </div>
-            <%# LIVE badge — always shown on the latest featured article %>
-            <div class="absolute top-5 left-5 z-10 flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black text-white tracking-widest uppercase"
-                 style="background:linear-gradient(135deg,#dc2626,#b91c1c); box-shadow:0 4px 16px rgba(220,38,38,0.6)">
-              <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-              </span>
-              <%= t("feed.live") %>
+            <%# LIVE badge — desktop %>
+            <div class="absolute top-5 left-5 z-10 live-badge-wrap">
+              <div class="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-black text-white tracking-widest uppercase"
+                   style="background:linear-gradient(135deg,#ff1a1a,#dc2626); box-shadow:0 0 0 3px rgba(255,80,80,0.35), 0 6px 28px rgba(220,38,38,0.8)">
+                <span class="relative flex h-2.5 w-2.5 shrink-0">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                </span>
+                <%= t("feed.live") %>
+              </div>
             </div>
             <div class="relative h-full flex flex-col justify-end p-8">
               <div class="flex items-center gap-2 mb-3">

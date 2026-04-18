@@ -37,7 +37,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
-    <style>body { font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; }</style>
+    <style>
+      body { font-family: 'Inter', 'Noto Sans Devanagari', system-ui, sans-serif; }
+      @keyframes live-glow {
+        0%, 100% { box-shadow: 0 0 0 3px rgba(255,80,80,0.35), 0 6px 28px rgba(220,38,38,0.8); }
+        50%       { box-shadow: 0 0 0 6px rgba(255,80,80,0.15), 0 8px 36px rgba(220,38,38,0.5); }
+      }
+      .live-badge-wrap > div { animation: live-glow 2s ease-in-out infinite; }
+    </style>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <script>
       window.__pwaPrompt = null;

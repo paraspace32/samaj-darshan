@@ -206,6 +206,9 @@
     </div>
   <% end %>
 
+  <%# ── VISITOR MAP ───────────────────────────────────────────────── %>
+  <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
+
   <%# ── TRENDING + SIDEBAR ────────────────────────────────────────── %>
   <% if @trending.present? %>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-10 lg:mb-14">
@@ -322,9 +325,6 @@
       <% end %>
     </div>
   </div>
-
-  <%# ── VISITOR MAP ───────────────────────────────────────────────── %>
-  <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
 
   <%# ── CATEGORY SECTIONS — alternating slider / grid layouts ────── %>
   <% if @category_sections.present? %>

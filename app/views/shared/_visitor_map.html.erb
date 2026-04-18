@@ -16,6 +16,7 @@
     reporting&.dig(:map_points) || []
   end
   use_live = live_points.any?
+  map_points_json = map_points.to_json
 %>
 
 <div class="mb-10 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl shadow-stone-900/10"
@@ -101,7 +102,7 @@
   }).addTo(map);
 
   var useLive  = <%= raw(use_live.to_json) %>;
-  var points   = <%= raw(map_points.to_json rescue "[]") %>;
+  var points   = <%= raw(map_points_json) %>;
   var maxCount = points.reduce(function(m, p) { return Math.max(m, p.count || 1); }, 1);
 
   points.forEach(function(p) {

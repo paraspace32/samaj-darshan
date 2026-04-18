@@ -37,6 +37,7 @@ services:
       GCS_BUCKET: ${GCS_BUCKET}
       GCS_CREDENTIALS: ${GCS_CREDENTIALS}
       GA_MEASUREMENT_ID: "G-KJBW0359PV"
+      GOOGLE_ANALYTICS_CREDENTIALS: ${GOOGLE_ANALYTICS_CREDENTIALS}
     volumes:
       - storage:/rails/storage
 

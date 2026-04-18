@@ -39,6 +39,32 @@ module Admin
         status[:api_test] = "❌ #{e.class}: #{e.message}"
       end
 
+      # Also try decoding credentials to verify JSON is valid
+      begin
+        raw = ENV["GOOGLE_ANALYTICS_CREDENTIALS"]
+        decoded = raw.strip.start_with?("{") ? raw : Base64.decode64(raw)
+        parsed  = JSON.parse(decoded)
+        status[:credential_email] = parsed["client_email"] || "not found"
+        status[:credential_project] = parsed["project_id"] || "not found"
+      rescue => e
+        status[:credential_decode_error] = "#{e.class}: #{e.message}"
+      end
+
+      # Try building the service directly to catch auth errors
+      begin
+        svc = GoogleAnalyticsService.send(:build_service)
+        status[:service_built] = svc ? "yes" : "no"
+        if svc
+          req = Google::Apis::AnalyticsdataV1beta::RunRealtimeReportRequest.new(
+            metrics: [ Google::Apis::AnalyticsdataV1beta::Metric.new(name: "activeUsers") ]
+          )
+          resp = svc.run_property_realtime_report("properties/#{GoogleAnalyticsService::PROPERTY_ID}", req)
+          status[:raw_api_response] = "rows: #{resp.rows&.length || 0}, total: #{resp.row_count}"
+        end
+      rescue => e
+        status[:service_error] = "#{e.class}: #{e.message}"
+      end
+
       render plain: status.map { |k, v| "#{k}: #{v}" }.join("\n"), content_type: "text/plain"
     end
   end

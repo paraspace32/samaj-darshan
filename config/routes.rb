@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   get  "signup" => "registrations#new", as: :signup
   post "signup" => "registrations#create"
 
+  # User profile
+  resource :profile, only: [ :edit, :update ], controller: "profiles"
+
   # Admin
   namespace :admin do
     get "/" => "dashboard#show", as: :root

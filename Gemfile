@@ -71,3 +71,4 @@ group :development do
 end
 
 gem "google-cloud-storage", "~> 1.59"
+gem "google-apis-analyticsdata_v1beta", "~> 0.27"

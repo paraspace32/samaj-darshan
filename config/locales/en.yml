@@ -39,6 +39,11 @@ en:
     ago: "%{time} ago"
     latest_news: "Latest News"
     trending: "Trending"
+    live: "LIVE"
+    active_now: "reading now"
+    total_visitors: "total visitors"
+    visitors_worldwide: "Readers Worldwide"
+    visitors_subtitle: "People who have visited from around the world"
     trending_subtitle: "Most discussed stories in the community"
     upcoming_webinar: "Upcoming Webinar"
     latest_magazine: "Latest Issue"
@@ -89,6 +94,7 @@ en:
     ended_on: "Ended on %{date}"
     meeting_link: "Meeting Link"
     copy_link: "Copy"
+    share: "Share"
 
   article:
     read_other_lang: "हिंदी में पढ़ें"

@@ -21,6 +21,19 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
+      - name: Inject secrets into server .env
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          GOOGLE_ANALYTICS_CREDENTIALS: ${{ secrets.GOOGLE_ANALYTICS_CREDENTIALS }}
+        run: |
+          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "
+            cd /home/paras/samaj-darshan
+            # Remove old entry if exists, then append updated value
+            sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env
+            echo 'GOOGLE_ANALYTICS_CREDENTIALS=$GOOGLE_ANALYTICS_CREDENTIALS' >> .env
+          "
+
       - name: Deploy (git pull, build & restart)
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}

@@ -73,8 +73,11 @@ class GoogleAnalyticsService
   private
 
   def self.build_service
-    credentials_json = ENV["GOOGLE_ANALYTICS_CREDENTIALS"]
-    return nil if credentials_json.blank?
+    raw = ENV["GOOGLE_ANALYTICS_CREDENTIALS"]
+    return nil if raw.blank?
+
+    # Support both raw JSON and base64-encoded JSON
+    credentials_json = raw.strip.start_with?("{") ? raw : Base64.decode64(raw)
 
     service = Google::Apis::AnalyticsdataV1beta::AnalyticsDataService.new
     service.authorization = Google::Auth::ServiceAccountCredentials.make_creds(

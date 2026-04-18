@@ -27,12 +27,13 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           GOOGLE_ANALYTICS_CREDENTIALS: ${{ secrets.GOOGLE_ANALYTICS_CREDENTIALS }}
         run: |
-          # Base64-encode the JSON to avoid quoting/newline issues over SSH
+          # Base64-encode the JSON — store the encoded string directly in .env
+          # (dotenv does not evaluate shell commands, so we store base64 and decode in Ruby)
           ENCODED=$(echo "$GOOGLE_ANALYTICS_CREDENTIALS" | base64 -w 0)
           ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" bash << ENDSSH
             cd /home/paras/samaj-darshan
             sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env
-            echo "GOOGLE_ANALYTICS_CREDENTIALS=\$(echo '$ENCODED' | base64 -d)" >> .env
+            echo "GOOGLE_ANALYTICS_CREDENTIALS=$ENCODED" >> .env
           ENDSSH
 
       - name: Deploy (git pull, build & restart)

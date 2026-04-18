@@ -10,10 +10,8 @@ class MagazineArticle < ApplicationRecord
     attachable.variant :thumb, resize_to_limit: [ 200, 140 ], format: :webp, saver: { quality: 75 }
   end
 
-  validates :title_en, presence: true
-  validates :title_hi, presence: true
+  validates :title_en,   presence: true
   validates :content_en, presence: true
-  validates :content_hi, presence: true
   validates :position, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   scope :ordered, -> { order(position: :asc) }

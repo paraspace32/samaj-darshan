@@ -13,10 +13,8 @@ class Webinar < ApplicationRecord
   enum :status, { draft: 0, published: 1, cancelled: 2 }
   enum :platform, { zoom: 0, google_meet: 1, youtube_live: 2, other: 3 }
 
-  validates :title_en, presence: true
-  validates :title_hi, presence: true
+  validates :title_en,       presence: true
   validates :description_en, presence: true
-  validates :description_hi, presence: true
   validates :speaker_name, presence: true
   validates :starts_at, presence: true
   validates :duration_minutes, presence: true, numericality: { greater_than: 0 }

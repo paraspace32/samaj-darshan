@@ -21,10 +21,8 @@ class JobPost < ApplicationRecord
     new_job_news: 6
   }, prefix: :category
 
-  validates :title_en, presence: true
-  validates :title_hi, presence: true
+  validates :title_en,       presence: true
   validates :description_en, presence: true
-  validates :description_hi, presence: true
   validates :company_name, presence: true
 
   scope :visible, -> { published.order(published_at: :desc, created_at: :desc) }

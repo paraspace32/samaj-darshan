@@ -7,7 +7,7 @@ class GoogleAnalyticsService
   REALTIME_CACHE_KEY  = "ga_realtime_active_users"
   REPORTING_CACHE_KEY = "ga_reporting_visitors"
   REALTIME_TTL        = 60.seconds
-  REPORTING_TTL       = 6.hours
+  REPORTING_TTL       = 15.minutes
 
   # ISO 3166-1 alpha-2 → [lat, lng] centroid
   COUNTRY_CENTROIDS = {

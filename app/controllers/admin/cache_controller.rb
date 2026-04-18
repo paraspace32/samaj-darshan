@@ -73,7 +73,7 @@ module Admin
             date_ranges: [ Google::Apis::AnalyticsdataV1beta::DateRange.new(start_date: "2020-01-01", end_date: "today") ],
             metrics: [ Google::Apis::AnalyticsdataV1beta::Metric.new(name: "totalUsers") ]
           )
-          resp = svc.run_report("properties/#{GoogleAnalyticsService::PROPERTY_ID}", total_req)
+          resp = svc.run_property_report("properties/#{GoogleAnalyticsService::PROPERTY_ID}", total_req)
           total = resp.rows&.first&.metric_values&.first&.value.to_i
           status[:reporting_test] = "✅ total_users=#{total}"
         end

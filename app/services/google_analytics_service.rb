@@ -227,8 +227,8 @@ class GoogleAnalyticsService
       limit: 100
     )
 
-    total_response = service.run_report("properties/#{PROPERTY_ID}", total_request)
-    city_response  = service.run_report("properties/#{PROPERTY_ID}", city_request)
+    total_response = service.run_property_report("properties/#{PROPERTY_ID}", total_request)
+    city_response  = service.run_property_report("properties/#{PROPERTY_ID}", city_request)
 
     total_users = total_response.rows&.first&.metric_values&.first&.value.to_i
     city_data   = parse_cities(city_response.rows, metric_index: 0)

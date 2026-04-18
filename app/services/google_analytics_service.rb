@@ -1,6 +1,3 @@
-require "google/apis/analyticsdata_v1beta"
-require "googleauth"
-
 class GoogleAnalyticsService
   PROPERTY_ID = "531385218"
 

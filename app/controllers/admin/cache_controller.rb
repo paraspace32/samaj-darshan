@@ -65,10 +65,18 @@ module Admin
         status[:service_error] = "#{e.class}: #{e.message}"
       end
 
-      # Test reporting API separately
+      # Test reporting API separately — bypass rescue to see real error
       begin
-        result = GoogleAnalyticsService.send(:fetch_reporting)
-        status[:reporting_test] = result ? "✅ total_users=#{result[:total_users]}, countries=#{result[:countries]&.length}" : "❌ Returned nil"
+        svc = GoogleAnalyticsService.send(:build_service)
+        if svc
+          total_req = Google::Apis::AnalyticsdataV1beta::RunReportRequest.new(
+            date_ranges: [ Google::Apis::AnalyticsdataV1beta::DateRange.new(start_date: "2020-01-01", end_date: "today") ],
+            metrics: [ Google::Apis::AnalyticsdataV1beta::Metric.new(name: "totalUsers") ]
+          )
+          resp = svc.run_report("properties/#{GoogleAnalyticsService::PROPERTY_ID}", total_req)
+          total = resp.rows&.first&.metric_values&.first&.value.to_i
+          status[:reporting_test] = "✅ total_users=#{total}"
+        end
       rescue => e
         status[:reporting_test] = "❌ #{e.class}: #{e.message}"
       end

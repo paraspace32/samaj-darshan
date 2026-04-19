@@ -1,7 +1,15 @@
-<% content_for(:title, "#{@news_item.display_title} — #{t('brand.name')}") %>
-<% content_for(:og_title, @news_item.display_title) %>
+<%
+  # Use locale-specific fields directly so OG tags carry the right language
+  # regardless of whether the crawler has a locale cookie.
+  og_title_text   = I18n.locale == :en ? (@news_item.title_en.presence || @news_item.title_hi) : @news_item.display_title
+  og_desc_text    = I18n.locale == :en ? (@news_item.content_en.presence || @news_item.content_hi) : @news_item.display_content
+  # Share URL includes locale param so the link opens in the same language
+  share_locale_url = I18n.locale == :en ? news_url(@news_item, locale: :en) : news_url(@news_item)
+%>
+<% content_for(:title, "#{og_title_text} — #{t('brand.name')}") %>
+<% content_for(:og_title, og_title_text) %>
 <% content_for(:og_type, "article") %>
-<% content_for(:description, truncate(strip_tags(@news_item.display_content), length: 200)) %>
+<% content_for(:description, truncate(strip_tags(og_desc_text), length: 200)) %>
 <% if @news_item.cover_image.attached? %>
   <% content_for(:og_image, og_image_url(@news_item.cover_image)) %>
 <% end %>
@@ -99,7 +107,7 @@
     <%= render "shared/billboard_article_mid" %>
 
     <%# Engagement: like, share, and comments %>
-    <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
+    <% share_text = "#{og_title_text}\n\n#{share_locale_url}" %>
     <%= render "shared/engagement_card",
           item: @news_item,
           liked: @liked,

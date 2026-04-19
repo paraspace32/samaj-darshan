@@ -56,6 +56,7 @@ Rails.application.routes.draw do
       member do
         patch :publish
         patch :reject
+        patch :grant_consent
       end
     end
     resources :education_posts do

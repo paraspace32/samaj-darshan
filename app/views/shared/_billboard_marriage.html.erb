@@ -8,22 +8,22 @@
         <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
           <% marriage_ads.each_with_index do |bb, i| %>
             <% bb.track_impression! %>
-            <div class="w-full shrink-0 relative" style="height: 384px;" data-carousel-target="slide">
+            <div class="w-full shrink-0 relative" data-carousel-target="slide">
               <% if bb.link_url.present? %>
-                <%= link_to billboard_click_path(bb), class: "block w-full h-full" do %>
+                <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                   <% if bb.image.attached? %>
-                    <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                    <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:384px">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>
                 <% end %>
               <% else %>
                 <% if bb.image.attached? %>
-                  <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                  <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
                 <% else %>
-                  <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                  <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:384px">
                     <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                   </div>
                 <% end %>
@@ -34,32 +34,40 @@
         </div>
       </div>
 
-      <%# Bottom nav bar — prev | title + dots | next %>
-      <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between px-3 py-2"
-           style="background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);">
+      <%# Bottom nav bar — prev | dots title dots | next %>
+      <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between px-2" style="padding-top:3px;padding-bottom:3px;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)">
 
         <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
-                class="flex items-center gap-1 text-white/90 text-xs font-semibold active:scale-95 transition-transform cursor-pointer select-none">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+                class="flex items-center gap-0.5 text-white/90 text-[10px] font-semibold active:scale-95 transition-transform cursor-pointer select-none">
+          <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
           <%= t("feed.carousel_prev") %>
         </button>
 
-        <div class="flex flex-col items-center gap-1">
-          <span class="text-white text-[11px] font-bold tracking-wide"><%= t("feed.marriage_ads") %></span>
+        <div class="flex items-center gap-1.5">
           <% if marriage_ads.size > 1 %>
-            <div class="flex items-center gap-1.5">
-              <% marriage_ads.each_with_index do |_, i| %>
+            <% half = marriage_ads.size / 2 %>
+            <div class="flex items-center gap-1">
+              <% (0...half).each do |i| %>
                 <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                        class="h-1.5 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-5' : 'bg-white/40 w-1.5' %>"></button>
+                        class="h-0.5 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-3' : 'bg-white/40 w-0.5' %>"></button>
+              <% end %>
+            </div>
+          <% end %>
+          <span class="text-white/90 text-[9px] font-bold tracking-wide whitespace-nowrap"><%= t("feed.marriage_ads") %></span>
+          <% if marriage_ads.size > 1 %>
+            <div class="flex items-center gap-1">
+              <% (half...marriage_ads.size).each do |i| %>
+                <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                        class="h-0.5 rounded-full transition-all duration-300 cursor-pointer bg-white/40 w-0.5"></button>
               <% end %>
             </div>
           <% end %>
         </div>
 
         <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
-                class="flex items-center gap-1 text-white/90 text-xs font-semibold active:scale-95 transition-transform cursor-pointer select-none">
+                class="flex items-center gap-0.5 text-white/90 text-[10px] font-semibold active:scale-95 transition-transform cursor-pointer select-none">
           <%= t("feed.carousel_next") %>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
         </button>
 
       </div>

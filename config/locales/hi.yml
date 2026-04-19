@@ -123,6 +123,7 @@ hi:
     marriage_ads_subtitle: "समाज में अपना जीवनसाथी खोजें"
     carousel_prev: "पिछला"
     carousel_next: "अगला"
+    total_events: "बार खुला"
 
   magazine:
     title: "मैगज़ीन"

@@ -452,7 +452,11 @@
     background-clip: text;
     min-width: 2rem;
     text-align: center;
-    filter: drop-shadow(0 1px 2px rgba(234, 88, 12, 0.2));
+    filter: drop-shadow(0 1px 3px rgba(234, 88, 12, 0.22));
+    transition: filter 200ms ease;
+  }
+  .group:hover .trending-rank {
+    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.55)) drop-shadow(0 2px 4px rgba(234, 88, 12, 0.3));
   }
 
   /* ── Promo banner / CTA cards ────────────────────────── */
@@ -515,12 +519,22 @@
     border-radius: 4px;
     background: linear-gradient(180deg, #fb923c, #f97316, #dc2626);
     flex-shrink: 0;
-    box-shadow: 0 0 8px rgba(249, 115, 22, 0.55), 0 0 20px rgba(249, 115, 22, 0.18);
-    animation: accentPulse 3s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.6), 0 0 22px rgba(249, 115, 22, 0.2);
   }
-  @keyframes accentPulse {
-    0%, 100% { box-shadow: 0 0 6px rgba(249, 115, 22, 0.5), 0 0 16px rgba(249, 115, 22, 0.15); }
-    50%       { box-shadow: 0 0 12px rgba(249, 115, 22, 0.8), 0 0 28px rgba(249, 115, 22, 0.25); }
+
+  /* ── Section break — between major page blocks ───────── */
+  .page-section-break {
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(249, 115, 22, 0.1) 15%,
+      rgba(249, 115, 22, 0.18) 50%,
+      rgba(249, 115, 22, 0.1) 85%,
+      transparent 100%);
+    margin: 0.25rem -1rem;
+  }
+  @media (min-width: 640px) {
+    .page-section-break { margin: 0.25rem 0; }
   }
 
   /* ── Hero card glow ─────────────────────────────────── */

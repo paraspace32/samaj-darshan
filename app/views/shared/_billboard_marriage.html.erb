@@ -48,24 +48,29 @@
       </div>
 
       <% if marriage_ads.size > 1 %>
-        <%# Prev / Next arrows — always visible, pointer-events isolated so ad clicks still work %>
-        <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
-                class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-white flex items-center justify-center cursor-pointer shadow-lg"
-                style="background:linear-gradient(135deg,#f97316,#ea580c);">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
-        </button>
-        <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
-                class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-white flex items-center justify-center cursor-pointer shadow-lg"
-                style="background:linear-gradient(135deg,#f97316,#ea580c);">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
+        <%# Bottom nav bar — arrows + dots in one row, below the poster %>
+        <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between px-3 py-2"
+             style="background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);">
 
-        <%# Dot indicators %>
-        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
-          <% marriage_ads.each_with_index do |_, i| %>
-            <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                    class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-6' : 'bg-white/45 w-2 hover:bg-white/70' %>"></button>
-          <% end %>
+          <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
+                  class="flex items-center gap-1 text-white/90 text-xs font-semibold active:scale-95 transition-transform cursor-pointer select-none">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+            Prev
+          </button>
+
+          <div class="flex items-center gap-1.5">
+            <% marriage_ads.each_with_index do |_, i| %>
+              <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                      class="h-1.5 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-5' : 'bg-white/40 w-1.5' %>"></button>
+            <% end %>
+          </div>
+
+          <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
+                  class="flex items-center gap-1 text-white/90 text-xs font-semibold active:scale-95 transition-transform cursor-pointer select-none">
+            Next
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
+
         </div>
       <% end %>
     </div>

@@ -21,11 +21,11 @@
         <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
           <% marriage_ads.each_with_index do |bb, i| %>
             <% bb.track_impression! %>
-            <div class="w-full shrink-0 relative" style="height: 384px;" data-carousel-target="slide">
+            <div class="w-full shrink-0 relative bg-white" style="height: 384px;" data-carousel-target="slide">
               <% if bb.link_url.present? %>
                 <%= link_to billboard_click_path(bb), class: "block w-full h-full" do %>
                   <% if bb.image.attached? %>
-                    <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                    <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-contain", loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
                     <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
@@ -34,7 +34,7 @@
                 <% end %>
               <% else %>
                 <% if bb.image.attached? %>
-                  <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                  <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-contain", loading: i == 0 ? "eager" : "lazy" %>
                 <% else %>
                   <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
                     <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
@@ -51,14 +51,16 @@
         <%# Gradient overlay for arrows %>
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 to-transparent"></div>
 
-        <%# Prev / Next arrows %>
-        <button data-action="carousel#prev"
-                class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/55 cursor-pointer">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+        <%# Prev / Next arrows — always visible, pointer-events isolated so ad clicks still work %>
+        <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
+                class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-white flex items-center justify-center cursor-pointer shadow-lg"
+                style="background:linear-gradient(135deg,#f97316,#ea580c);">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
         </button>
-        <button data-action="carousel#next"
-                class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/35 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/55 cursor-pointer">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+        <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
+                class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-white flex items-center justify-center cursor-pointer shadow-lg"
+                style="background:linear-gradient(135deg,#f97316,#ea580c);">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
         </button>
 
         <%# Dot indicators %>

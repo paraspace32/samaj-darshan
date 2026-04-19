@@ -8,22 +8,22 @@
         <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
           <% marriage_ads.each_with_index do |bb, i| %>
             <% bb.track_impression! %>
-            <div class="w-full shrink-0 relative" style="height: 384px;" data-carousel-target="slide">
+            <div class="w-full shrink-0 relative" data-carousel-target="slide">
               <% if bb.link_url.present? %>
-                <%= link_to billboard_click_path(bb), class: "block w-full h-full" do %>
+                <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                   <% if bb.image.attached? %>
-                    <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                    <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:384px">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>
                 <% end %>
               <% else %>
                 <% if bb.image.attached? %>
-                  <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-full object-cover", loading: i == 0 ? "eager" : "lazy" %>
+                  <%= optimized_image_tag bb.image, variant: :splash, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
                 <% else %>
-                  <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                  <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:384px">
                     <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                   </div>
                 <% end %>

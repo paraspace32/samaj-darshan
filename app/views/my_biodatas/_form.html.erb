@@ -79,7 +79,9 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
-        <%= f.label :full_name, t("biodata.full_name"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.label :full_name, class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" do %>
+          <%= t("biodata.full_name") %> <span class="text-red-500">*</span>
+        <% end %>
         <%= f.text_field :full_name, class: "input-premium block w-full", placeholder: t("biodata.full_name_placeholder"), required: true %>
       </div>
       <div>
@@ -88,7 +90,9 @@
       </div>
 
       <div>
-        <%= f.label :gender, t("biodata.gender"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.label :gender, class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" do %>
+          <%= t("biodata.gender") %> <span class="text-red-500">*</span>
+        <% end %>
         <%= f.select :gender, [
           [t("biodata.gender_male"), "male"],
           [t("biodata.gender_female"), "female"]
@@ -96,7 +100,9 @@
       </div>
 
       <div>
-        <%= f.label :date_of_birth, t("biodata.date_of_birth"), class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" %>
+        <%= f.label :date_of_birth, class: "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5" do %>
+          <%= t("biodata.date_of_birth") %> <span class="text-red-500">*</span>
+        <% end %>
         <%= f.date_field :date_of_birth, class: "input-premium block w-full", required: true %>
       </div>
 

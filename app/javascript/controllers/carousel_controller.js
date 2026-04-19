@@ -8,6 +8,12 @@ export default class extends Controller {
     this.total = this.slideTargets.length
     if (this.total <= 1) return
 
+    // Sync container height to active slide after first image loads
+    const firstImg = this.slideTargets[0]?.querySelector("img")
+    if (firstImg && !firstImg.complete) {
+      firstImg.addEventListener("load", () => this.syncHeight(0), { once: true })
+    }
+
     this.goTo(0)
 
     if (this.autoplayValue) {
@@ -44,6 +50,7 @@ export default class extends Controller {
     const slide = this.slideTargets[index]
     if (!slide) return
     const wrapper = this.trackTarget.parentElement
+    wrapper.style.transition = "height 0.4s ease"
     wrapper.style.height = slide.offsetHeight + "px"
   }
 

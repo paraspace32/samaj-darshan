@@ -220,7 +220,10 @@ class GoogleAnalyticsService
 
     total_request = Google::Apis::AnalyticsdataV1beta::RunReportRequest.new(
       date_ranges: [ Google::Apis::AnalyticsdataV1beta::DateRange.new(start_date: "2020-01-01", end_date: "today") ],
-      metrics: [ Google::Apis::AnalyticsdataV1beta::Metric.new(name: "totalUsers") ]
+      metrics: [
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "totalUsers"),
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "eventCount")
+      ]
     )
 
     city_request = Google::Apis::AnalyticsdataV1beta::RunReportRequest.new(
@@ -243,14 +246,16 @@ class GoogleAnalyticsService
     total_response = service.run_property_report("properties/#{PROPERTY_ID}", total_request)
     city_response  = service.run_property_report("properties/#{PROPERTY_ID}", city_request)
 
-    total_users = total_response.rows&.first&.metric_values&.first&.value.to_i
-    city_data   = parse_cities(city_response.rows, metric_index: 0)
+    total_users   = total_response.rows&.first&.metric_values&.dig(0)&.value.to_i
+    total_events  = total_response.rows&.first&.metric_values&.dig(1)&.value.to_i
+    city_data     = parse_cities(city_response.rows, metric_index: 0)
 
     {
-      total_users: total_users,
-      countries:   city_data[:countries],
-      map_points:  city_data[:map_points],
-      fetched_at:  Time.current
+      total_users:  total_users,
+      total_events: total_events,
+      countries:    city_data[:countries],
+      map_points:   city_data[:map_points],
+      fetched_at:   Time.current
     }
   rescue StandardError => e
     Rails.logger.error "[GA Reporting] #{e.class}: #{e.message}"

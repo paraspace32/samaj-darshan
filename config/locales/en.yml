@@ -64,6 +64,7 @@ en:
     marriage_ads_subtitle: "Find your perfect match in the community"
     carousel_prev: "Prev"
     carousel_next: "Next"
+    total_events: "times opened"
 
   magazine:
     title: "Magazine"

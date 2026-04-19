@@ -213,7 +213,7 @@
 
       <%# ── SIDE STACK (mobile only — shown after marriage ads) ──── %>
       <% if @news_items.first(3).any? %>
-        <div class="lg:hidden flex flex-col gap-3 mb-10">
+        <div class="lg:hidden flex flex-col gap-3 mb-4">
           <% @news_items.first(3).each_with_index do |item, idx| %>
             <div class="animate-fade-in stagger-<%= idx + 1 %>">
               <%= link_to news_path(item), class: "group news-list-row" do %>
@@ -248,7 +248,7 @@
 
   <%# ── TRENDING + SIDEBAR ────────────────────────────────────────── %>
   <% if @trending.present? %>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-10 lg:mb-14">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-4 lg:mb-8">
       <div class="lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div class="section-heading">
@@ -354,7 +354,7 @@
   <% end %>
 
   <%# ── REGIONS — horizontal scroll tabs (Aaj Tak state-bar style) ── %>
-  <div class="mb-6">
+  <div class="mb-4">
     <div class="flex items-center gap-2.5 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
       <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       <% @regions.each do |r| %>
@@ -366,7 +366,7 @@
   <%# ── CATEGORY SECTIONS — alternating slider / grid layouts ────── %>
   <% if @category_sections.present? %>
     <% @category_sections.each_with_index do |section, sec_idx| %>
-      <div class="mb-10">
+      <div class="mb-6">
         <div class="flex items-center justify-between mb-4">
           <div class="section-heading">
             <div class="flex items-center gap-2">
@@ -459,7 +459,7 @@
 
   <%# ── EDUCATION NEWS SECTION ─────────────────────────────────────── %>
   <% if @education_posts.present? %>
-    <div class="mb-10">
+    <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <div class="section-heading">
           <div class="flex items-center gap-2">
@@ -505,7 +505,7 @@
 
   <%# ── JOB NEWS SECTION ───────────────────────────────────────────── %>
   <% if @job_posts.present? %>
-    <div class="mb-10">
+    <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
         <div class="section-heading">
           <div class="flex items-center gap-2">
@@ -609,7 +609,7 @@
         <% start_idx = @is_home ? 3 : 0 %>
 
         <%# MOBILE — compact list view (visible < sm) %>
-        <div class="sm:hidden space-y-3">
+        <div class="sm:hidden space-y-2">
           <% @news_items.drop(start_idx).each_with_index do |news_item, idx| %>
             <% if idx == 4 %>
               <%= render "shared/billboard_feed" %>

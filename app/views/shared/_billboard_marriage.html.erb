@@ -2,7 +2,7 @@
 <% marriage_ads = (marriage_ads * 10).first(10) if marriage_ads.size.between?(1, 9) %>
 <% if marriage_ads.any? %>
   <div class="mb-4">
-    <div class="relative rounded-2xl overflow-hidden border border-rose-100 shadow-sm group"
+    <div class="relative rounded-2xl overflow-hidden border border-rose-100 shadow-lg shadow-rose-200/30 group"
          data-controller="carousel" data-carousel-autoplay-value="true">
       <div class="overflow-hidden">
         <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">

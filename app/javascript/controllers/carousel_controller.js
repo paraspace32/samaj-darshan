@@ -8,6 +8,15 @@ export default class extends Controller {
     this.total = this.slideTargets.length
     if (this.total <= 1) return
 
+    // Add transition to the overflow wrapper so height change animates
+    this.trackTarget.parentElement.style.transition = "height 0.5s ease-out"
+
+    // Once first image loads, set correct initial height
+    const firstImg = this.slideTargets[0]?.querySelector("img")
+    if (firstImg && !firstImg.complete) {
+      firstImg.addEventListener("load", () => this.syncHeight(0), { once: true })
+    }
+
     this.goTo(0)
 
     if (this.autoplayValue) {
@@ -40,9 +49,24 @@ export default class extends Controller {
     this.goTo(Number(event.currentTarget.dataset.index))
   }
 
+  syncHeight(index) {
+    const slide = this.slideTargets[index]
+    if (!slide) return
+    const wrapper = this.trackTarget.parentElement
+    wrapper.style.height = slide.offsetHeight + "px"
+  }
+
   goTo(index) {
     this.indexValue = index
     this.trackTarget.style.transform = `translateX(-${index * 100}%)`
+
+    this.syncHeight(index)
+
+    // If the target slide's image isn't loaded yet, re-sync once it loads
+    const img = this.slideTargets[index]?.querySelector("img")
+    if (img && !img.complete) {
+      img.addEventListener("load", () => this.syncHeight(index), { once: true })
+    }
 
     this.dotTargets.forEach((dot, i) => {
       dot.classList.toggle("bg-white", i === index)

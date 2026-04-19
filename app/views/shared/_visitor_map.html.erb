@@ -14,7 +14,7 @@
   display_countries = live_countries.any? ? live_countries.first(6) : (reporting&.dig(:countries) || []).first(6)
 %>
 
-<div class="mt-0 mb-4 rounded-2xl overflow-hidden border border-gray-200 shadow-sm"
+<div class="mt-0 mb-4 rounded-2xl overflow-hidden border border-gray-200/70 shadow-lg shadow-blue-100/40"
      style="background:#f8fafc">
 
   <%# ── Header: title centred on mobile, stats on one line below ── %>

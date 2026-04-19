@@ -119,6 +119,8 @@ hi:
     job_news: "नौकरी समाचार"
     job_news_subtitle: "करियर के अवसर और नौकरी की खबरें"
     view_all_jobs: "सभी नौकरी समाचार"
+    marriage_ads: "विवाह विज्ञापन"
+    marriage_ads_subtitle: "समाज में अपना जीवनसाथी खोजें"
 
   magazine:
     title: "मैगज़ीन"

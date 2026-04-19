@@ -6,7 +6,7 @@ class Billboard < ApplicationRecord
     attachable.variant :thumb,  resize_to_limit: [ 300, 180 ],    format: :webp, saver: { quality: 75 }
   end
 
-  enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4 }
+  enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5 }
 
   validates :title, presence: true
   validates :billboard_type, presence: true

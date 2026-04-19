@@ -98,7 +98,7 @@
                            else @featured.region.display_name
                            end
     %>
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-6 mb-10">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-6 mb-4">
       <div class="lg:col-span-3 -mx-4 sm:mx-0 animate-fade-up">
         <%= link_to featured_path, class: "group block overflow-hidden sm:rounded-2xl shadow-xl shadow-gray-300/30 h-full" do %>
 
@@ -112,8 +112,8 @@
               <% end %>
               <%# LIVE badge — mobile %>
               <div class="absolute top-3 left-3 z-10 live-badge-wrap">
-                <div class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-black text-white tracking-widest uppercase"
-                     style="background:linear-gradient(135deg,#ff1a1a,#dc2626); box-shadow:0 0 0 2px rgba(255,80,80,0.4), 0 4px 20px rgba(220,38,38,0.75)">
+                <div class="flex items-center gap-1 rounded-full px-2 py-1 text-[9px] font-black text-white tracking-widest uppercase"
+                     style="background:linear-gradient(135deg,#f97316,#ea580c); box-shadow:0 0 0 2px rgba(249,115,22,0.4), 0 4px 20px rgba(234,88,12,0.75)">
                   <span class="relative flex h-2 w-2 shrink-0">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
@@ -141,8 +141,8 @@
             </div>
             <%# LIVE badge — desktop %>
             <div class="absolute top-5 left-5 z-10 live-badge-wrap">
-              <div class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black text-white tracking-widest uppercase"
-                   style="background:linear-gradient(135deg,#ff1a1a,#dc2626); box-shadow:0 0 0 2px rgba(255,80,80,0.35), 0 4px 20px rgba(220,38,38,0.8)">
+              <div class="flex items-center gap-1 rounded-full px-2 py-1 text-[9px] font-black text-white tracking-widest uppercase"
+                   style="background:linear-gradient(135deg,#f97316,#ea580c); box-shadow:0 0 0 2px rgba(249,115,22,0.35), 0 4px 20px rgba(234,88,12,0.8)">
                 <span class="relative flex h-2 w-2 shrink-0">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-90"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
@@ -176,8 +176,8 @@
         <% end %>
       </div>
 
-      <%# Side stack — next 3 stories %>
-      <div class="lg:col-span-2 flex flex-col gap-3">
+      <%# Side stack — next 3 stories (desktop only) %>
+      <div class="lg:col-span-2 hidden lg:flex flex-col gap-3">
         <% @news_items.first(3).each_with_index do |item, idx| %>
           <div class="animate-fade-in stagger-<%= idx + 1 %>">
             <%= link_to news_path(item), class: "group news-list-row" do %>
@@ -203,6 +203,39 @@
           </div>
         <% end %>
       </div>
+    </div>
+  <% end %>
+
+  <%# ── MARRIAGE ADS SLIDESHOW ──────────────────────────────────── %>
+  <%= render "shared/billboard_marriage" %>
+
+  <%# ── SIDE STACK (mobile only — shown after marriage ads) ────────── %>
+  <% if @news_items.first(3).any? %>
+    <div class="lg:hidden flex flex-col gap-3 mb-10">
+      <% @news_items.first(3).each_with_index do |item, idx| %>
+        <div class="animate-fade-in stagger-<%= idx + 1 %>">
+          <%= link_to news_path(item), class: "group news-list-row" do %>
+            <div class="w-20 h-[4.5rem] sm:w-28 sm:h-[5.5rem] rounded-lg overflow-hidden shrink-0">
+              <% if item.cover_image.attached? %>
+                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                  <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1 min-w-0 flex flex-col justify-center">
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="text-[10px] sm:text-[11px] font-bold text-orange-600"><%= item.category.display_name %></span>
+                <span class="text-[10px] text-gray-300">&middot;</span>
+                <span class="text-[10px] sm:text-[11px] text-gray-400"><%= t("feed.ago", time: time_ago_in_words(item.published_at)) %></span>
+              </div>
+              <h3 class="text-[13px] sm:text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+              <span class="text-[11px] text-gray-400 mt-1"><%= item.region.display_name %></span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 

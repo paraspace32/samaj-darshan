@@ -62,6 +62,8 @@ en:
     view_all_jobs: "All Job News"
     marriage_ads: "Marriage Advertisements"
     marriage_ads_subtitle: "Find your perfect match in the community"
+    carousel_prev: "Prev"
+    carousel_next: "Next"
 
   magazine:
     title: "Magazine"

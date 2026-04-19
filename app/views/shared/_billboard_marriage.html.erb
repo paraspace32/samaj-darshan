@@ -44,10 +44,15 @@
           <%= t("feed.carousel_prev") %>
         </button>
 
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-2">
           <span class="text-white/90 text-[10px] font-bold tracking-wide"><%= t("feed.marriage_ads") %></span>
           <% if marriage_ads.size > 1 %>
-            <span class="text-white/60 text-[10px] font-medium" data-carousel-target="counter">1 / <%= marriage_ads.size %></span>
+            <div class="flex items-center gap-1">
+              <% marriage_ads.each_with_index do |_, i| %>
+                <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                        class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/40 w-1' %>"></button>
+              <% end %>
+            </div>
           <% end %>
         </div>
 

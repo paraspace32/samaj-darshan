@@ -48,9 +48,6 @@
       </div>
 
       <% if marriage_ads.size > 1 %>
-        <%# Gradient overlay for arrows %>
-        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 to-transparent"></div>
-
         <%# Prev / Next arrows — always visible, pointer-events isolated so ad clicks still work %>
         <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
                 class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-white flex items-center justify-center cursor-pointer shadow-lg"

@@ -8,15 +8,6 @@ export default class extends Controller {
     this.total = this.slideTargets.length
     if (this.total <= 1) return
 
-    // Add transition to the overflow wrapper so height change animates
-    this.trackTarget.parentElement.style.transition = "height 0.5s ease-out"
-
-    // Once first image loads, set correct initial height
-    const firstImg = this.slideTargets[0]?.querySelector("img")
-    if (firstImg && !firstImg.complete) {
-      firstImg.addEventListener("load", () => this.syncHeight(0), { once: true })
-    }
-
     this.goTo(0)
 
     if (this.autoplayValue) {

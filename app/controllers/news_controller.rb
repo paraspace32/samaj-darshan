@@ -96,6 +96,20 @@ class NewsController < ApplicationController
                    .order(published_at: :desc)
                    .limit(5)
 
+    @category_articles = News.published
+                             .where(category: @news_item.category)
+                             .where.not(id: @news_item.id)
+                             .includes(:region, :category, :author)
+                             .with_attached_cover_image
+                             .order(published_at: :desc)
+                             .limit(6)
+
+    @trending_articles = News.published
+                             .where.not(id: @news_item.id)
+                             .includes(:region, :category)
+                             .order(views_count: :desc, likes_count: :desc)
+                             .limit(5)
+
     latest_comment_at = @comments.first&.created_at
     fresh_when etag: [ @news_item, latest_comment_at ], last_modified: @news_item.updated_at, public: !logged_in? unless logged_in?
   end

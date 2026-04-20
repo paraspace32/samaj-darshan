@@ -1,25 +1,48 @@
 module ApplicationHelper
-  # Auto-links URLs in plain user-generated text.
-  # Safely HTML-escapes all non-URL content, then wraps detected URLs in <a> tags.
-  # Use instead of plain <%= text %> wherever users can type free-form content.
+  # Matches http(s) URLs in plain text
   URL_PATTERN = %r{https?://[^\s<>"'\]]+}
 
+  # Linkify a single line of plain text — HTML-escapes non-URL parts,
+  # wraps URLs in styled <a> tags. Used for comment bodies.
   def linkify(text)
     return "".html_safe if text.blank?
+    linkify_segment(text.to_s)
+  end
 
-    # Split on URL boundaries (capture group keeps the URLs in the array)
+  # Drop-in replacement for simple_format that ALSO auto-links URLs.
+  # Normalises whitespace, wraps paragraphs in <p> tags, converts \n to <br>,
+  # and makes every http(s) URL a clickable link.
+  # Use everywhere editorial / user content is displayed (news, education, jobs, etc.)
+  def format_with_links(text)
+    return "".html_safe if text.blank?
+
+    clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
+    paragraphs = clean.split(/\n\n+/)
+
+    html = paragraphs.map do |para|
+      lines = para.split(/\n/).map { |line| linkify_segment(line) }
+      "<p>#{lines.join('<br>')}</p>"
+    end.join("\n")
+
+    html.html_safe
+  end
+
+  private
+
+  def linkify_segment(text)
     parts = text.split(/(#{URL_PATTERN})/)
-    html  = parts.map do |part|
+    parts.map do |part|
       if part.match?(URL_PATTERN)
         safe = CGI.escapeHTML(part)
-        %(<a href="#{safe}" target="_blank" rel="noopener noreferrer nofollow"
-             class="text-orange-600 underline decoration-orange-300/70 break-all hover:text-orange-700 transition-colors">#{safe}</a>)
+        %(<a href="#{safe}" target="_blank" rel="noopener noreferrer nofollow" ) +
+          %(class="text-orange-600 underline decoration-orange-300/70 break-all hover:text-orange-700 transition-colors">#{safe}</a>)
       else
         CGI.escapeHTML(part)
       end
     end.join
-    html.html_safe
   end
+
+  public
 
 
   def billboard_for(position)

@@ -125,6 +125,22 @@
       <span class="text-[10px] font-black tracking-wide"><%= I18n.locale == :hi ? "ENG" : "हिंदी" %></span>
     <% end %>
 
+    <%# Home %>
+    <%= link_to root_path, class: "flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-500 no-underline" do %>
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="text-[10px] font-black"><%= I18n.locale == :hi ? "होम" : "Home" %></span>
+    <% end %>
+
+    <%# Back %>
+    <a href="javascript:history.back()" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-500 no-underline">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      <span class="text-[10px] font-black"><%= I18n.locale == :hi ? "वापस" : "Back" %></span>
+    </a>
+
   </div>
 </div>
 
@@ -252,7 +268,7 @@
                 prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-[1.05rem]
                 prose-a:text-orange-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline prose-a:decoration-orange-300/80
                 prose-blockquote:border-orange-500 prose-blockquote:border-l-4 prose-blockquote:bg-orange-50/60 prose-blockquote:rounded-r-2xl prose-blockquote:py-3 prose-blockquote:px-2 prose-blockquote:text-stone-700">
-      <%= simple_format(@news_item.display_content) %>
+      <%= format_with_links(@news_item.display_content) %>
     </div>
 
     <%= render "shared/billboard_article_mid" %>
@@ -278,7 +294,7 @@
         </summary>
         <div class="px-6 sm:px-8 pb-8 pt-2 prose prose-sm prose-stone max-w-none border-t border-stone-100/90" dir="auto">
           <% if other_title.present? %><h3 class="text-lg font-black tracking-tight text-stone-900"><%= other_title %></h3><% end %>
-          <% if other_content.present? %><%= simple_format(other_content.gsub(/\n{3,}/, "\n\n").strip) %><% end %>
+          <% if other_content.present? %><%= format_with_links(other_content) %><% end %>
         </div>
       </details>
     <% end %>

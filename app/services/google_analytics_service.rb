@@ -74,6 +74,18 @@ class GoogleAnalyticsService
     Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL, skip_nil: true) { fetch_reporting }
   end
 
+  # Returns the number of active users currently on a specific page path.
+  # Cached for 60 seconds. Returns nil if GA is unavailable.
+  def self.active_readers(path)
+    cache_key = "ga_active_readers/#{Digest::MD5.hexdigest(path)}"
+    Rails.cache.fetch(cache_key, expires_in: REALTIME_TTL, skip_nil: true) do
+      fetch_active_readers(path)
+    end
+  rescue StandardError => e
+    Rails.logger.error "[GA Active Readers] #{e.class}: #{e.message}"
+    nil
+  end
+
   # ── Private ───────────────────────────────────────────────────────────────
   private
 
@@ -190,6 +202,32 @@ class GoogleAnalyticsService
     "Tehran" => [ 35.694, 51.422 ], "Baghdad" => [ 33.341, 44.401 ],
     "Ankara" => [ 39.921, 32.854 ], "Istanbul" => [ 41.013, 28.948 ]
   }.freeze
+
+  def self.fetch_active_readers(path)
+    service = build_service
+    return nil unless service
+
+    request = Google::Apis::AnalyticsdataV1beta::RunRealtimeReportRequest.new(
+      dimension_filter: Google::Apis::AnalyticsdataV1beta::FilterExpression.new(
+        filter: Google::Apis::AnalyticsdataV1beta::Filter.new(
+          field_name: "unifiedPagePathScreen",
+          string_filter: Google::Apis::AnalyticsdataV1beta::StringFilter.new(
+            match_type: "EXACT",
+            value: path
+          )
+        )
+      ),
+      metrics: [
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "activeUsers")
+      ]
+    )
+
+    response = service.run_property_realtime_report("properties/#{PROPERTY_ID}", request)
+    (response.rows&.first&.metric_values&.first&.value || 0).to_i
+  rescue StandardError => e
+    Rails.logger.error "[GA Active Readers] #{e.class}: #{e.message}"
+    nil
+  end
 
   def self.fetch_realtime
     service = build_service

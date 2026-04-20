@@ -6,7 +6,7 @@ module ApplicationHelper
   # wraps URLs in styled <a> tags. Used for comment bodies.
   def linkify(text)
     return "".html_safe if text.blank?
-    linkify_segment(text.to_s)
+    linkify_segment(text.to_s).html_safe
   end
 
   # Drop-in replacement for simple_format that ALSO auto-links URLs.

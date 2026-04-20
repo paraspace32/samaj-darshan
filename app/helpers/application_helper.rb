@@ -1,4 +1,27 @@
 module ApplicationHelper
+  # Auto-links URLs in plain user-generated text.
+  # Safely HTML-escapes all non-URL content, then wraps detected URLs in <a> tags.
+  # Use instead of plain <%= text %> wherever users can type free-form content.
+  URL_PATTERN = %r{https?://[^\s<>"'\]]+}
+
+  def linkify(text)
+    return "".html_safe if text.blank?
+
+    # Split on URL boundaries (capture group keeps the URLs in the array)
+    parts = text.split(/(#{URL_PATTERN})/)
+    html  = parts.map do |part|
+      if part.match?(URL_PATTERN)
+        safe = CGI.escapeHTML(part)
+        %(<a href="#{safe}" target="_blank" rel="noopener noreferrer nofollow"
+             class="text-orange-600 underline decoration-orange-300/70 break-all hover:text-orange-700 transition-colors">#{safe}</a>)
+      else
+        CGI.escapeHTML(part)
+      end
+    end.join
+    html.html_safe
+  end
+
+
   def billboard_for(position)
     Rails.cache.fetch("billboard/#{position}", expires_in: 5.minutes) do
       Billboard.for_position(position)

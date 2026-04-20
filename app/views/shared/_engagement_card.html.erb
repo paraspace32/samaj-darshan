@@ -60,7 +60,7 @@
     </a>
 
     <%# ── Copy link ─────────────────────────────────────────────────────── %>
-    <button data-controller="copy-link" data-copy-link-url-value="<%= request.original_url %>" data-action="copy-link#copy"
+    <button data-controller="copy-link" data-copy-link-url-value="<%= local_assigns[:share_url] || request.original_url %>" data-action="copy-link#copy"
             class="group flex flex-col items-center gap-1.5 py-4 text-stone-500 hover:text-orange-500 transition-all duration-200 cursor-pointer">
       <div class="w-14 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:shadow-md group-hover:shadow-orange-100"
            style="background:linear-gradient(135deg,#fff7ed,#ffedd5); border:1.5px solid #fed7aa">

@@ -4,7 +4,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <% end %>
 
-<div class="max-w-3xl mx-auto animate-fade-in">
+<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar",
+      share_text: "#{@magazine.display_title}\n\n#{request.original_url}" %>
+
+<div class="max-w-3xl mx-auto animate-fade-in pb-20 sm:pb-0">
   <%# Breadcrumb %>
   <nav class="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-stone-400 mb-10">
     <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>

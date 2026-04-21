@@ -1,48 +1,106 @@
-<% content_for(:title, "#{@education_post.display_title} — #{t('brand.name')}") %>
-<% content_for(:og_title, @education_post.display_title) %>
+<%
+  og_title_text = @education_post.display_title
+  og_desc_text  = @education_post.display_content
+  share_text    = "#{og_title_text}\n\n#{request.original_url}"
+
+  # Reading time (200 wpm)
+  word_count   = @education_post.display_content.to_s.split.size
+  reading_mins = [[( word_count / 200.0).ceil, 1].max, 60].min
+
+  # Smart date
+  smart_date = if @education_post.published_at && @education_post.published_at > 7.days.ago
+                 t("feed.ago", time: time_ago_in_words(@education_post.published_at))
+               else
+                 @education_post.published_at&.strftime("%d %b %Y")
+               end
+
+  other_lang_label = I18n.locale == :hi ? "Read in English" : "हिंदी में पढ़ें"
+  other_title      = I18n.locale == :hi ? @education_post.title_en : @education_post.title_hi
+  other_content    = I18n.locale == :hi ? @education_post.content_en : @education_post.content_hi
+
+  # degree_news category items are pure articles — hide exam-specific fields
+  is_news_style = @education_post.category_degree_news?
+%>
+
+<%# ── Meta tags ──────────────────────────────────────────────────────────────── %>
+<% content_for(:title, "#{og_title_text} — #{t('brand.name')}") %>
+<% content_for(:og_title, og_title_text) %>
 <% content_for(:og_type, "article") %>
-<% content_for(:description, truncate(strip_tags(@education_post.display_content), length: 200)) %>
+<% content_for(:description, truncate(strip_tags(og_desc_text), length: 200)) %>
 <% if @education_post.cover_image.attached? %>
   <% content_for(:og_image, og_image_url(@education_post.cover_image)) %>
 <% end %>
 
-<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">
-  <%# Main content %>
+<%# ── Reading progress bar ────────────────────────────────────────────────────── %>
+<div data-controller="reading-progress" class="fixed top-0 left-0 right-0 z-[100] h-[3px] pointer-events-none">
+  <div data-reading-progress-target="bar" class="h-full w-0 rounded-r-full"
+       style="background:linear-gradient(90deg,#f97316,#dc2626); box-shadow:0 0 10px rgba(249,115,22,0.7); transition:none"></div>
+</div>
+
+<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar",
+      toggle_path: toggle_education_like_path(@education_post),
+      liked: @liked,
+      likes_count: @education_post.likes_count,
+      share_text: share_text %>
+
+<%# ── Main layout ─────────────────────────────────────────────────────────────── %>
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20 pb-20 sm:pb-0">
+
+  <%# ════ Main article ════════════════════════════════════════════════════════ %>
   <article class="flex-1 min-w-0 animate-fade-in">
+
     <%# Breadcrumb %>
-    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-4 animate-fade-up">
-      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>
+    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-5 animate-fade-up flex-wrap">
+      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium shrink-0" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-      <%= link_to t("nav.education"), education_index_path, class: "hover:text-orange-600 transition-colors font-medium" %>
+      <%= link_to t("nav.education"), education_index_path, class: "hover:text-orange-600 transition-colors font-medium shrink-0" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
       <span class="text-stone-600 truncate font-medium"><%= truncate(@education_post.display_title, length: 40) %></span>
     </nav>
 
+    <%# Category pill + reading time %>
+    <div class="flex items-center gap-2.5 mb-3 flex-wrap">
+      <%= link_to education_index_path(category: @education_post.category),
+            class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black text-white shrink-0 transition-opacity hover:opacity-90",
+            style: "background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 2px 10px -2px rgba(249,115,22,0.5)" do %>
+        <span class="w-1.5 h-1.5 rounded-full bg-white/70 shrink-0"></span>
+        <%= @education_post.category_label %>
+      <% end %>
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-stone-400 bg-stone-50 border border-stone-100 rounded-full px-3 py-1">
+        <svg class="w-3 h-3 shrink-0 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <%= reading_mins %> <%= I18n.locale == :hi ? "मिनट पढ़ें" : "min read" %>
+      </span>
+    </div>
+
     <%# Title %>
-    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-3"><%= @education_post.display_title %></h1>
+    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-4">
+      <%= @education_post.display_title %>
+    </h1>
 
-    <%# Cover image %>
-    <% if @education_post.cover_image.attached? %>
-      <div class="mb-5 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
+    <%# Author card %>
+    <div class="flex items-center gap-3 bg-stone-50/80 border border-stone-100 rounded-2xl px-4 py-3 mb-5 animate-fade-up">
+      <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-md shadow-orange-200/50 ring-2 ring-white shrink-0">
+        <span class="text-white font-black text-sm"><%= @education_post.author.name[0] %></span>
       </div>
-    <% end %>
-
-    <% other_title = I18n.locale == :hi ? @education_post.title_en : @education_post.title_hi %>
-
-    <%# Author line %>
-    <div class="flex items-center gap-2.5 mb-4">
-      <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-sm">
-        <span class="text-white font-bold text-xs"><%= @education_post.author.name[0] %></span>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-black text-stone-800 leading-tight"><%= @education_post.author.name %></p>
+        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+          <span class="text-xs text-stone-400 font-medium"><%= @education_post.category_label %></span>
+          <span class="text-stone-300 text-xs">·</span>
+          <span class="text-xs text-stone-400 font-medium"><%= smart_date %></span>
+        </div>
       </div>
-      <div class="min-w-0">
-        <p class="text-sm font-semibold text-stone-800"><%= @education_post.author.name %></p>
-        <p class="text-xs text-stone-400"><%= @education_post.published_at&.strftime("%d %b %Y") %> · <%= t("feed.ago", time: time_ago_in_words(@education_post.published_at)) %></p>
+      <div class="shrink-0 flex items-center gap-2 text-xs text-stone-400 font-semibold">
+        <svg class="w-3.5 h-3.5 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        <%= number_with_delimiter(@education_post.likes_count) %>
       </div>
     </div>
 
-    <%# Meta info row (exam date, deadline, organization) %>
-    <% if @education_post.organization_name.present? || @education_post.exam_date.present? || @education_post.registration_deadline.present? %>
+    <%# Meta info row (organization, exam date, deadline) — hidden for degree_news %>
+    <% if !is_news_style && (@education_post.organization_name.present? || @education_post.exam_date.present? || @education_post.registration_deadline.present?) %>
       <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-stone-500 mb-4 pb-4 border-b border-stone-100/90">
         <% if @education_post.organization_name.present? %>
           <div class="flex items-center gap-2">
@@ -69,9 +127,16 @@
 
     <%= render "shared/billboard_article_top" %>
 
-    <%# Official URL link %>
-    <% if @education_post.official_url.present? %>
-      <div class="text-center mb-10">
+    <%# Cover image %>
+    <% if @education_post.cover_image.attached? %>
+      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
+      </div>
+    <% end %>
+
+    <%# Official URL button — hidden for degree_news %>
+    <% if !is_news_style && @education_post.official_url.present? %>
+      <div class="text-center mb-8">
         <%= link_to sanitize_url(@education_post.official_url), target: "_blank", rel: "noopener noreferrer",
             class: "btn-primary !inline-flex !items-center !gap-3 !px-8 !py-3.5 !text-base !rounded-2xl !shadow-lg" do %>
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
@@ -86,48 +151,192 @@
                 prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-[1.05rem]
                 prose-a:text-orange-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline prose-a:decoration-orange-300/80
                 prose-blockquote:border-orange-500 prose-blockquote:border-l-4 prose-blockquote:bg-orange-50/60 prose-blockquote:rounded-r-2xl prose-blockquote:py-3 prose-blockquote:px-2 prose-blockquote:text-stone-700">
-      <%= simple_format(@education_post.display_content) %>
+      <%= format_with_links(@education_post.display_content) %>
     </div>
 
     <%= render "shared/billboard_article_mid" %>
 
-    <%# Engagement: like, share, and comments %>
-    <% share_text = "#{@education_post.display_title}\n\n#{request.original_url}" %>
+    <%# Engagement card %>
     <%= render "shared/engagement_card",
           item: @education_post,
           liked: @liked,
           toggle_path: toggle_education_like_path(@education_post),
           comments_path: education_comments_path(@education_post),
           comments: @comments,
-          share_text: share_text %>
+          share_text: share_text,
+          share_url: request.original_url %>
 
-    <%# Bilingual toggle (only if other language has content) %>
-    <% other_content = I18n.locale == :hi ? @education_post.content_en : @education_post.content_hi %>
+    <%# Bilingual toggle %>
     <% if other_title.present? || other_content.present? %>
       <details class="surface-raised rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-lg shadow-stone-900/[0.05] open:shadow-xl open:ring-1 open:ring-orange-200/40 transition-shadow">
         <summary class="px-6 sm:px-8 py-5 text-sm font-bold text-stone-800 cursor-pointer hover:bg-stone-50/80 transition-colors flex items-center gap-3 list-none [&::-webkit-details-marker]:hidden">
-          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-stone-100 text-stone-500 transition-colors">
+          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-stone-100 text-stone-500 transition-colors shrink-0">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
           </span>
-          <%= t("article.read_other_lang") %>
+          <%= other_lang_label %>
         </summary>
         <div class="px-6 sm:px-8 pb-8 pt-2 prose prose-sm prose-stone max-w-none border-t border-stone-100/90" dir="auto">
           <% if other_title.present? %><h3 class="text-lg font-black tracking-tight text-stone-900"><%= other_title %></h3><% end %>
-          <% if other_content.present? %><%= simple_format(other_content.gsub(/\n{3,}/, "\n\n").strip) %><% end %>
+          <% if other_content.present? %><%= format_with_links(other_content) %><% end %>
         </div>
       </details>
     <% end %>
 
-    <%# Back link %>
-    <div class="mt-10 mb-2 animate-fade-up">
-      <%= link_to education_index_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-bold text-stone-700 hover:text-orange-700" do %>
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        <%= t("education.back") %>
-      <% end %>
+    <%# Continue reading %>
+    <% if @related.any? %>
+      <% next_post = @related.first %>
+      <div class="mt-8 mb-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.15em] text-orange-500 mb-3 pl-1">
+          <%= I18n.locale == :hi ? "आगे पढ़ें" : "Continue Reading" %>
+        </p>
+        <%= link_to education_path(next_post),
+              class: "group flex gap-4 p-4 sm:p-5 rounded-3xl border border-gray-200/40 shadow-lg shadow-stone-900/[0.06]
+                      hover:shadow-xl hover:shadow-orange-100/40 transition-all duration-200 bg-white
+                      hover:bg-gradient-to-r hover:from-orange-50/30 hover:to-amber-50/20 no-underline" do %>
+          <% if next_post.cover_image.attached? %>
+            <div class="shrink-0 overflow-hidden rounded-2xl border border-gray-200/30 shadow-md">
+              <%= optimized_image_tag next_post.cover_image, variant: :thumb, class: "w-24 h-16 sm:w-28 object-cover img-zoom", loading: "lazy" %>
+            </div>
+          <% else %>
+            <div class="w-24 h-16 rounded-2xl gradient-brand-soft border border-orange-100/60 flex items-center justify-center shrink-0 shadow-inner">
+              <span class="text-orange-300 font-black text-xs"><%= t("brand.logo_letter") %></span>
+            </div>
+          <% end %>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-black text-stone-900 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text
+                       group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-red-600 transition-all leading-snug tracking-tight mb-1.5">
+              <%= next_post.display_title %>
+            </p>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-stone-400"><%= next_post.category_label %></span>
+              <span class="text-stone-200 text-[10px]">·</span>
+              <span class="text-[10px] font-bold text-stone-400"><%= t("feed.ago", time: time_ago_in_words(next_post.published_at)) %></span>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center self-center text-stone-300 group-hover:text-orange-400 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# ══ More from this category ══════════════════════════════════════════════ %>
+    <% if @category_articles.any? %>
+      <div class="mt-12">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <%= link_to education_index_path(category: @education_post.category),
+                  class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black text-white",
+                  style: "background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 2px 8px -2px rgba(249,115,22,0.5)" do %>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/70"></span>
+              <%= @education_post.category_label %>
+            <% end %>
+            <span class="text-xs font-black text-stone-400 uppercase tracking-widest">
+              <%= I18n.locale == :hi ? "और पोस्ट" : "More posts" %>
+            </span>
+          </div>
+          <%= link_to education_index_path(category: @education_post.category),
+                class: "text-[11px] font-black text-orange-500 hover:text-orange-700 transition-colors" do %>
+            <%= I18n.locale == :hi ? "सभी देखें →" : "See all →" %>
+          <% end %>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% @category_articles.first(4).each do |post| %>
+            <%= link_to education_path(post),
+                  class: "group flex gap-3 p-3 rounded-2xl border border-gray-200/40 bg-white hover:bg-orange-50/30
+                          hover:border-orange-200/50 hover:shadow-md hover:shadow-orange-100/30 transition-all duration-200 no-underline" do %>
+              <% if post.cover_image.attached? %>
+                <div class="shrink-0 overflow-hidden rounded-xl border border-gray-200/30">
+                  <%= optimized_image_tag post.cover_image, variant: :thumb, class: "w-16 h-12 object-cover img-zoom", loading: "lazy" %>
+                </div>
+              <% else %>
+                <div class="w-16 h-12 rounded-xl gradient-brand-soft border border-orange-100/60 flex items-center justify-center shrink-0">
+                  <span class="text-orange-300 font-black text-[10px]"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-black text-stone-800 line-clamp-2 leading-snug group-hover:text-orange-700 transition-colors"><%= post.display_title %></p>
+                <p class="text-[10px] text-stone-400 font-medium mt-1"><%= t("feed.ago", time: time_ago_in_words(post.published_at)) %></p>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ══ Trending posts ══════════════════════════════════════════════════════ %>
+    <% if @trending_articles.any? %>
+      <div class="mt-12">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-7 w-7 items-center justify-center rounded-xl shrink-0"
+                style="background:linear-gradient(135deg,#f97316,#dc2626)">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </span>
+          <span class="text-sm font-black text-stone-800 tracking-tight">
+            <%= I18n.locale == :hi ? "लोकप्रिय पोस्ट" : "Popular Posts" %>
+          </span>
+        </div>
+        <div class="rounded-3xl border border-gray-200/40 overflow-hidden shadow-lg shadow-stone-900/[0.05]">
+          <% @trending_articles.each_with_index do |post, i| %>
+            <%= link_to education_path(post),
+                  class: "group flex items-center gap-4 px-5 py-4 bg-white hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-amber-50/30
+                          transition-colors border-b border-stone-100/80 last:border-0 no-underline" do %>
+              <span class="text-2xl font-black shrink-0 leading-none <%= i == 0 ? 'text-transparent bg-clip-text' : 'text-stone-200' %>"
+                    <%= i == 0 ? 'style="background:linear-gradient(135deg,#f97316,#dc2626)"' : '' %>>
+                <%= i + 1 %>
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-stone-800 line-clamp-2 leading-snug group-hover:text-orange-700 transition-colors tracking-tight"><%= post.display_title %></p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[10px] font-semibold text-stone-400"><%= post.category_label %></span>
+                  <span class="text-stone-200 text-[10px]">·</span>
+                  <span class="text-[10px] font-semibold text-stone-400 flex items-center gap-1">
+                    <svg class="w-2.5 h-2.5 text-red-300" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <%= number_with_delimiter(post.likes_count) %>
+                  </span>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-stone-300 group-hover:text-orange-400 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ══ Share CTA ═════════════════════════════════════════════════════════════ %>
+    <div class="mt-12 mb-4 rounded-3xl overflow-hidden relative"
+         style="background:linear-gradient(135deg,#fff7ed,#fef3c7,#fff7ed); border:1px solid rgba(249,115,22,0.15); box-shadow:0 8px 32px -8px rgba(249,115,22,0.2)">
+      <div class="absolute inset-0 opacity-[0.03]" style="background-image:radial-gradient(#f97316 1px,transparent 1px); background-size:20px 20px"></div>
+      <div class="relative px-6 py-8 text-center">
+        <div class="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg"
+             style="background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 8px 20px -4px rgba(249,115,22,0.45)">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-black text-stone-800 mb-1">
+          <%= I18n.locale == :hi ? "जानकारी काम की लगी? शेयर करें!" : "Found this useful? Share it!" %>
+        </h3>
+        <p class="text-xs text-stone-500 mb-5">
+          <%= I18n.locale == :hi ? "अपने दोस्तों और परिवार तक पहुँचाएं" : "Help others in your community" %>
+        </p>
+        <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl font-black text-sm text-white shadow-lg transition-all hover:scale-[1.03] hover:shadow-xl active:scale-95"
+           style="background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 8px 20px -4px rgba(34,197,94,0.45)">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          <%= I18n.locale == :hi ? "WhatsApp पर शेयर करें" : "Share on WhatsApp" %>
+        </a>
+      </div>
     </div>
+
   </article>
 
-  <%# Sidebar — related education posts %>
+  <%# ════ Sidebar — related education posts ════════════════════════════════════ %>
   <aside class="lg:w-80 shrink-0 animate-fade-in">
     <div class="lg:sticky lg:top-28">
       <div class="card-premium !rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
@@ -173,4 +382,5 @@
       </div>
     </div>
   </aside>
+
 </div>

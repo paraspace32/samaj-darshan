@@ -22,6 +22,8 @@ class LikesController < ApplicationController
       @likeable = News.published.find(params[:news_id])
     elsif params[:education_id]
       @likeable = EducationPost.published.find(params[:education_id])
+    elsif params[:job_id]
+      @likeable = JobPost.published.find(params[:job_id])
     end
   end
 end

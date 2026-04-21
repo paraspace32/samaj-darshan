@@ -1,0 +1,77 @@
+<%# Sticky mobile bottom bar — shared across all show pages
+  # Locals (all optional):
+  #   toggle_path  — CSRF-safe POST path for Like; omit to hide Like button
+  #   liked        — boolean, default false
+  #   likes_count  — integer shown under Like icon
+  #   share_text   — WhatsApp message; omit to hide Share button
+%>
+<% _toggle_path = local_assigns[:toggle_path] %>
+<% _liked       = local_assigns.fetch(:liked, false) %>
+<% _likes_count = local_assigns[:likes_count] %>
+<% _share_text  = local_assigns[:share_text] %>
+
+<div class="sm:hidden fixed bottom-0 inset-x-0 z-50"
+     style="background:rgba(255,255,255,0.94); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            border-top:1px solid rgba(0,0,0,0.08); box-shadow:0 -8px 32px -4px rgba(0,0,0,0.1)">
+  <div class="flex items-stretch divide-x divide-gray-100">
+
+    <%# Home %>
+    <%= link_to root_path, class: "flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-500 no-underline" do %>
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <span class="text-[10px] font-black"><%= I18n.locale == :hi ? "होम" : "Home" %></span>
+    <% end %>
+
+    <%# Like — only when toggle_path is provided %>
+    <% if _toggle_path %>
+      <% if current_user %>
+        <%= button_to _toggle_path, method: :post,
+              form: { style: "display:contents" },
+              class: "flex-1 flex flex-col items-center gap-0.5 py-3 cursor-pointer transition-colors #{_liked ? 'text-red-500' : 'text-stone-400'}" do %>
+          <svg class="w-5 h-5" fill="<%= _liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          <span class="text-[10px] font-black tabular-nums"><%= _likes_count %></span>
+        <% end %>
+      <% else %>
+        <%= link_to login_path, class: "flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-400" do %>
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          <span class="text-[10px] font-black tabular-nums"><%= _likes_count %></span>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%# WhatsApp — only when share_text is provided %>
+    <% if _share_text %>
+      <a href="https://wa.me/?text=<%= ERB::Util.url_encode(_share_text) %>"
+         target="_blank" rel="noopener"
+         class="flex-1 flex flex-col items-center gap-0.5 py-3 text-green-600">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span class="text-[10px] font-black"><%= I18n.locale == :hi ? "शेयर" : "Share" %></span>
+      </a>
+    <% end %>
+
+    <%# Language toggle %>
+    <%= link_to switch_locale_path, "data-turbo": "false",
+          class: "flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-500 no-underline" do %>
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+      </svg>
+      <span class="text-[10px] font-black tracking-wide"><%= I18n.locale == :hi ? "ENG" : "हिंदी" %></span>
+    <% end %>
+
+    <%# Back %>
+    <a href="javascript:history.back()" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-stone-500 no-underline">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      <span class="text-[10px] font-black"><%= I18n.locale == :hi ? "वापस" : "Back" %></span>
+    </a>
+
+  </div>
+</div>

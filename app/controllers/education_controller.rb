@@ -13,11 +13,27 @@ class EducationController < ApplicationController
     @education_post = EducationPost.published.find(params[:id])
     @comments = @education_post.comments.includes(:user).recent
     @liked = current_user ? @education_post.likes.exists?(user: current_user) : false
+
     @related = EducationPost.published
                             .where(category: @education_post.category)
                             .where.not(id: @education_post.id)
+                            .includes(:author)
                             .with_attached_cover_image
                             .order(published_at: :desc)
                             .limit(5)
+
+    @category_articles = EducationPost.published
+                                      .where(category: @education_post.category)
+                                      .where.not(id: @education_post.id)
+                                      .includes(:author)
+                                      .with_attached_cover_image
+                                      .order(published_at: :desc)
+                                      .limit(6)
+
+    @trending_articles = EducationPost.published
+                                      .where.not(id: @education_post.id)
+                                      .includes(:author)
+                                      .order(likes_count: :desc, comments_count: :desc, published_at: :desc)
+                                      .limit(5)
   end
 end

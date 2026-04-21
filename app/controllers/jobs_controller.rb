@@ -11,5 +11,27 @@ class JobsController < ApplicationController
 
   def show
     @job_post = JobPost.published.find(params[:id])
+
+    @related = JobPost.published
+                      .where(category: @job_post.category)
+                      .where.not(id: @job_post.id)
+                      .includes(:author)
+                      .with_attached_cover_image
+                      .order(published_at: :desc)
+                      .limit(5)
+
+    @category_articles = JobPost.published
+                                .where(category: @job_post.category)
+                                .where.not(id: @job_post.id)
+                                .includes(:author)
+                                .with_attached_cover_image
+                                .order(published_at: :desc)
+                                .limit(6)
+
+    @trending_articles = JobPost.published
+                                .where.not(id: @job_post.id)
+                                .includes(:author)
+                                .order(published_at: :desc)
+                                .limit(5)
   end
 end

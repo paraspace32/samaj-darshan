@@ -1,6 +1,10 @@
 <% content_for(:title, @job_post.display_title) %>
+<% _job_share_text = "#{@job_post.display_title} – #{@job_post.company_name}\n\n#{request.original_url}" %>
 
-<div class="max-w-3xl mx-auto animate-fade-in">
+<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar", share_text: _job_share_text %>
+
+<div class="max-w-3xl mx-auto animate-fade-in pb-20 sm:pb-0">
   <div class="surface-elevated rounded-3xl border border-gray-200/40 p-6 sm:p-8 lg:p-10 shadow-2xl shadow-gray-900/5">
     <%# Back link %>
     <div class="mb-8">

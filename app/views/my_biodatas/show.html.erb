@@ -1,6 +1,9 @@
 <% content_for(:title, t("biodata.my_biodata")) %>
 
-<div class="max-w-3xl mx-auto animate-fade-in">
+<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar" %>
+
+<div class="max-w-3xl mx-auto animate-fade-in pb-20 sm:pb-0">
   <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
     <div>
       <h1 class="text-3xl font-black tracking-tight text-gray-900">

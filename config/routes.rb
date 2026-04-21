@@ -146,7 +146,12 @@ Rails.application.routes.draw do
   end
 
   # Jobs
-  resources :jobs, only: [ :index, :show ]
+  resources :jobs, only: [ :index, :show ] do
+    resources :comments, only: [ :create, :destroy ], controller: "comments"
+    resource :like, only: [], controller: "likes" do
+      post :toggle
+    end
+  end
 
   get "offline" => "pages#offline"
 

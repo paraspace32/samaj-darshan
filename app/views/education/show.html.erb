@@ -17,6 +17,9 @@
   other_lang_label = I18n.locale == :hi ? "Read in English" : "हिंदी में पढ़ें"
   other_title      = I18n.locale == :hi ? @education_post.title_en : @education_post.title_hi
   other_content    = I18n.locale == :hi ? @education_post.content_en : @education_post.content_hi
+
+  # degree_news category items are pure articles — hide exam-specific fields
+  is_news_style = @education_post.category_degree_news?
 %>
 
 <%# ── Meta tags ──────────────────────────────────────────────────────────────── %>
@@ -96,8 +99,8 @@
       </div>
     </div>
 
-    <%# Meta info row (organization, exam date, deadline) %>
-    <% if @education_post.organization_name.present? || @education_post.exam_date.present? || @education_post.registration_deadline.present? %>
+    <%# Meta info row (organization, exam date, deadline) — hidden for degree_news %>
+    <% if !is_news_style && (@education_post.organization_name.present? || @education_post.exam_date.present? || @education_post.registration_deadline.present?) %>
       <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-stone-500 mb-4 pb-4 border-b border-stone-100/90">
         <% if @education_post.organization_name.present? %>
           <div class="flex items-center gap-2">
@@ -131,8 +134,8 @@
       </div>
     <% end %>
 
-    <%# Official URL button %>
-    <% if @education_post.official_url.present? %>
+    <%# Official URL button — hidden for degree_news %>
+    <% if !is_news_style && @education_post.official_url.present? %>
       <div class="text-center mb-8">
         <%= link_to sanitize_url(@education_post.official_url), target: "_blank", rel: "noopener noreferrer",
             class: "btn-primary !inline-flex !items-center !gap-3 !px-8 !py-3.5 !text-base !rounded-2xl !shadow-lg" do %>

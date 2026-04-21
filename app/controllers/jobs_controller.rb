@@ -11,6 +11,8 @@ class JobsController < ApplicationController
 
   def show
     @job_post = JobPost.published.find(params[:id])
+    @liked    = current_user ? @job_post.likes.exists?(user: current_user) : false
+    @comments = @job_post.comments.includes(:user).recent
 
     @related = JobPost.published
                       .where(category: @job_post.category)
@@ -31,7 +33,7 @@ class JobsController < ApplicationController
     @trending_articles = JobPost.published
                                 .where.not(id: @job_post.id)
                                 .includes(:author)
-                                .order(published_at: :desc)
+                                .order(@job_post.category_new_job_news? ? { likes_count: :desc, comments_count: :desc, published_at: :desc } : { published_at: :desc })
                                 .limit(5)
   end
 end

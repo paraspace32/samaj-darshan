@@ -32,6 +32,8 @@ class CommentsController < ApplicationController
       @commentable = News.published.find(params[:news_id])
     elsif params[:education_id]
       @commentable = EducationPost.published.find(params[:education_id])
+    elsif params[:job_id]
+      @commentable = JobPost.published.find(params[:job_id])
     end
   end
 

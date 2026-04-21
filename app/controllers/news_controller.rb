@@ -83,8 +83,15 @@ class NewsController < ApplicationController
     # Increment view counter — skip for admins, count everyone else
     News.update_counters(@news_item.id, views_count: 1) unless current_user&.admin_panel_access?
 
-    # Live reader count from GA realtime (nil if GA not configured)
-    @active_readers = GoogleAnalyticsService.active_readers(request.path)
+    # Live reader counts from GA
+    # @active_readers → people on THIS article right now (per-page filter)
+    # @site_active_users → people on the whole site right now (always shows something)
+    @active_readers   = GoogleAnalyticsService.active_readers(request.path)
+    @site_active_users = begin
+      GoogleAnalyticsService.realtime_data&.dig(:total)
+    rescue
+      nil
+    end
 
     @comments = @news_item.comments.includes(:user).recent
     @liked = current_user ? @news_item.likes.exists?(user: current_user) : false

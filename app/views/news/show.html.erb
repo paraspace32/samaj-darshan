@@ -182,16 +182,18 @@
           <span class="text-xs text-stone-400 font-medium"><%= smart_date %></span>
         </div>
       </div>
-      <%# Live readers (GA realtime) or fallback to total views %>
+      <%# Live readers — per-article → site-wide → total views fallback %>
       <div class="shrink-0 flex items-center gap-2.5">
-        <% if @active_readers && @active_readers > 0 %>
+        <% live_count  = @active_readers.to_i > 0 ? @active_readers : nil %>
+        <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
+        <% if live_count %>
           <div class="flex items-center gap-1.5">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
             <span class="text-xs font-black text-green-600">
-              <%= @active_readers %> <%= I18n.locale == :hi ? "अभी पढ़ रहे हैं" : "reading now" %>
+              <%= live_count %> <%= I18n.locale == :hi ? "अभी पढ़ रहे हैं" : "reading now" %>
             </span>
           </div>
         <% else %>

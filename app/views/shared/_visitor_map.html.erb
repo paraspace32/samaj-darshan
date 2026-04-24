@@ -1,0 +1,159 @@
+<%# Locals: realtime (hash), reporting (hash) %>
+<%
+  total_users      = reporting&.dig(:total_users).to_i
+  total_events     = reporting&.dig(:total_events).to_i
+  live_total       = realtime&.dig(:total).to_i
+  live_city_points = realtime&.dig(:map_points) || []
+  live_countries   = realtime&.dig(:countries)  || []
+
+  # Prefer city-level realtime dots; fall back to historical city dots
+  map_points = live_city_points.any? ? live_city_points : (reporting&.dig(:map_points) || [])
+  use_live   = live_city_points.any?
+  map_points_json = map_points.to_json
+
+  display_countries = live_countries.any? ? live_countries.first(6) : (reporting&.dig(:countries) || []).first(6)
+%>
+
+<div class="mt-0 mb-4 rounded-2xl overflow-hidden border border-gray-200/70 shadow-lg shadow-blue-100/40"
+     style="background:#f8fafc">
+
+  <%# ── Header: title centred on mobile, stats on one line below ── %>
+  <div class="px-3 pt-2.5 pb-2 border-b border-gray-100">
+
+    <%# Title — centred on mobile, left on sm+ %>
+    <div class="flex items-center justify-center sm:justify-start gap-1.5 mb-1.5">
+      <span class="text-base">🌍</span>
+      <span class="text-gray-900 font-black text-sm tracking-tight"><%= t("feed.visitors_worldwide") %></span>
+    </div>
+
+    <%# Stats row — all in one line, centred on mobile %>
+    <div class="flex items-center justify-center sm:justify-start flex-wrap gap-x-3 gap-y-1">
+
+    <%# Total visitors %>
+    <span class="flex items-center gap-1" style="color:#6366f1">
+      <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+      <span class="font-black text-xs text-gray-900 tabular-nums"><%= total_users > 0 ? number_with_delimiter(total_users) : "—" %></span>
+      <span class="text-gray-400 text-[10px]"><%= t("feed.total_visitors") %></span>
+    </span>
+
+    <%# Total events %>
+    <% if total_events > 0 %>
+      <span class="flex items-center gap-1" style="color:#a855f7">
+        <svg class="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span class="font-black text-xs text-gray-900 tabular-nums"><%= number_with_delimiter(total_events) %></span>
+        <span class="text-gray-400 text-[10px]"><%= t("feed.total_events") %></span>
+      </span>
+    <% end %>
+
+    <%# Live now %>
+    <span class="flex items-center gap-1">
+      <span class="relative flex h-1.5 w-1.5 shrink-0">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-400"></span>
+      </span>
+      <span class="font-black text-xs text-green-700 tabular-nums"><%= live_total > 0 ? live_total : "—" %></span>
+      <span class="text-green-600/70 text-[10px]"><%= t("feed.active_now") %></span>
+    </span>
+
+    <%# Country flags %>
+    <% if display_countries.any? %>
+      <span class="flex items-center gap-1.5">
+        <% display_countries.each do |c| %>
+          <span class="text-xs" title="<%= c[:name] %>: <%= number_with_delimiter(c[:count]) %>"><%= c[:flag] %></span>
+        <% end %>
+      </span>
+    <% end %>
+
+    </div><%# /stats row %>
+  </div><%# /header %>
+
+
+  <%# ── Map ── %>
+  <div id="visitor-map" class="w-full" style="height:260px; z-index:0; cursor:grab"></div>
+
+</div>
+
+<%# ── Leaflet map init ── %>
+<script>
+(function() {
+  var useLive  = <%= raw(use_live.to_json) %>;
+  var points   = <%= raw(map_points_json) %>;
+  var _map     = null;
+
+  function destroyMap() {
+    if (_map) { try { _map.remove(); } catch(e) {} _map = null; }
+    var el = document.getElementById('visitor-map');
+    if (el) el._leaflet_id = null;
+  }
+
+  function initMap() {
+    if (typeof L === 'undefined') return;
+    var mapEl = document.getElementById('visitor-map');
+    if (!mapEl) return;
+
+    destroyMap();
+
+    _map = L.map('visitor-map', {
+      center: [20, 0],
+      zoom: 2,
+      zoomControl: true,
+      attributionControl: false,
+      scrollWheelZoom: false,
+      dragging: true,
+      doubleClickZoom: true,
+      tap: true
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(_map);
+
+    var maxCount = points.reduce(function(m, p) { return Math.max(m, p.count || 1); }, 1);
+    var bounds   = [];
+
+    points.forEach(function(p) {
+      if (!p.lat || !p.lng) return;
+      bounds.push([p.lat, p.lng]);
+      var ratio  = (p.count || 1) / maxCount;
+      var radius = Math.max(14, Math.min(40, ratio * 40));
+
+      L.circleMarker([p.lat, p.lng], {
+        radius: radius,
+        fillColor: '#4285f4',
+        color: 'transparent',
+        weight: 0,
+        fillOpacity: 0.18
+      }).addTo(_map);
+      L.circleMarker([p.lat, p.lng], {
+        radius: Math.max(7, radius * 0.45),
+        fillColor: '#1a73e8',
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.95
+      }).bindTooltip(p.name + ': ' + (p.count || 1) + (useLive ? ' अभी पढ़ रहे हैं' : ' visitors'), { sticky: true }).addTo(_map);
+    });
+
+    if (bounds.length === 0) {
+      _map.setView([20, 0], 2);
+    } else if (bounds.length === 1) {
+      _map.setView(bounds[0], 5);
+    } else {
+      _map.fitBounds(bounds, { padding: [50, 50] });
+    }
+  }
+
+  document.addEventListener('turbo:before-cache', destroyMap);
+  document.addEventListener('turbo:load', initMap);
+  document.addEventListener('turbo:render', initMap);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMap);
+  } else {
+    initMap();
+  }
+})();
+</script>

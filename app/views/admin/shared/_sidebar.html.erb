@@ -32,7 +32,15 @@
       <%= admin_nav_link "Jobs", admin_job_posts_path, "briefcase" %>
     <% end %>
     <% if current_user.can_review_biodatas? %>
-      <%= admin_nav_link "Marriage", admin_biodatas_path, "heart" %>
+      <% active = current_page?(admin_biodatas_path) || request.path.start_with?("/admin/biodatas") %>
+      <% base = "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" %>
+      <%= link_to admin_biodatas_path, class: "#{base} #{active ? 'bg-white/10 text-white shadow-sm' : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'}" do %>
+        <%= admin_icon("heart") %>
+        <span>Marriage</span>
+        <% if @marriage_consent_count.to_i > 0 %>
+          <span class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-orange-500 text-white text-[10px] font-black"><%= @marriage_consent_count %></span>
+        <% end %>
+      <% end %>
     <% end %>
 
     <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>

@@ -4,6 +4,9 @@ class JobPost < ApplicationRecord
 
   belongs_to :author, class_name: "User"
 
+  has_many :comments, as: :commentable, dependent: :destroy
+  has_many :likes, as: :likeable, dependent: :destroy
+
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
     attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 80 }
@@ -21,10 +24,8 @@ class JobPost < ApplicationRecord
     new_job_news: 6
   }, prefix: :category
 
-  validates :title_en, presence: true
-  validates :title_hi, presence: true
+  validates :title_en,       presence: true
   validates :description_en, presence: true
-  validates :description_hi, presence: true
   validates :company_name, presence: true
 
   scope :visible, -> { published.order(published_at: :desc, created_at: :desc) }

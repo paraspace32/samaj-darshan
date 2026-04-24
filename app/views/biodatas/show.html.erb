@@ -1,6 +1,9 @@
 <% content_for(:title, @biodata.display_name) %>
 
-<div class="max-w-4xl mx-auto animate-fade-in">
+<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar" %>
+
+<div class="max-w-4xl mx-auto animate-fade-in pb-20 sm:pb-0">
   <%# Back link %>
   <div class="mb-6">
     <%= link_to biodatas_path, class: "btn-ghost !py-2 !px-3 !text-sm text-gray-600 hover:text-orange-600" do %>

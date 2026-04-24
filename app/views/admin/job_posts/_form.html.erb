@@ -79,7 +79,7 @@
     </div>
 
     <div class="mt-5 pt-5 border-t border-gray-100">
-      <label for="job_post_cover_image" class="block text-sm font-semibold text-gray-600 mb-2">Cover Image</label>
+      <label for="job_post_cover_image" class="block text-sm font-semibold text-gray-600 mb-2">Cover Image <span class="text-xs font-normal text-gray-400">(optional)</span></label>
       <% if job_post.persisted? && job_post.cover_image.attached? %>
         <div class="mb-3">
           <%= image_tag url_for(job_post.cover_image.variant(:thumb)), class: "h-32 w-auto rounded-xl object-cover border border-gray-200/60 shadow-sm" %>

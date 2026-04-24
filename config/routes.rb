@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   get  "signup" => "registrations#new", as: :signup
   post "signup" => "registrations#create"
 
+  # User profile
+  resource :profile, only: [ :edit, :update ], controller: "profiles"
+
   # Admin
   namespace :admin do
     get "/" => "dashboard#show", as: :root
@@ -48,11 +51,12 @@ Rails.application.routes.draw do
         patch :cancel
       end
     end
-    resources :biodatas, only: [ :index, :show, :new, :create, :destroy ] do
+    resources :biodatas, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
       collection { get :search_users }
       member do
         patch :publish
         patch :reject
+        patch :grant_consent
       end
     end
     resources :education_posts do
@@ -61,6 +65,9 @@ Rails.application.routes.draw do
     resources :job_posts do
       member { patch :publish }
     end
+
+    get "cache/clear",     to: "cache#clear",     as: :clear_cache
+    get "cache/ga_status", to: "cache#ga_status", as: :ga_status
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -123,6 +130,8 @@ Rails.application.routes.draw do
   resources :my_biodatas, only: [ :index, :new, :create, :edit, :update, :show ] do
     member do
       patch :submit_for_review
+      patch :consent
+      patch :decline_consent
       get :template
       get :download_pdf
     end
@@ -137,7 +146,12 @@ Rails.application.routes.draw do
   end
 
   # Jobs
-  resources :jobs, only: [ :index, :show ]
+  resources :jobs, only: [ :index, :show ] do
+    resources :comments, only: [ :create, :destroy ], controller: "comments"
+    resource :like, only: [], controller: "likes" do
+      post :toggle
+    end
+  end
 
   get "offline" => "pages#offline"
 

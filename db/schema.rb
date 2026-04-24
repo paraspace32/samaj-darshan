@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_21_044910) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -63,14 +63,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.text "about_en"
     t.text "about_hi"
     t.string "annual_income"
+    t.string "birth_time"
+    t.string "birth_time_hi"
     t.string "caste"
     t.string "city", null: false
     t.string "city_hi"
     t.string "complexion"
+    t.datetime "consented_at"
     t.string "contact_email"
     t.string "contact_phone"
     t.string "country", default: "India"
     t.datetime "created_at", null: false
+    t.bigint "created_by_id"
     t.date "date_of_birth", null: false
     t.string "education", null: false
     t.string "father_name"
@@ -95,8 +99,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.string "state"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.boolean "user_consented", default: false, null: false
     t.bigint "user_id", null: false
     t.index ["city"], name: "index_biodatas_on_city"
+    t.index ["created_by_id"], name: "index_biodatas_on_created_by_id"
     t.index ["date_of_birth"], name: "index_biodatas_on_date_of_birth"
     t.index ["gender", "status"], name: "index_biodatas_on_gender_and_status"
     t.index ["gender"], name: "index_biodatas_on_gender"
@@ -159,11 +165,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.string "application_url"
     t.bigint "author_id", null: false
     t.integer "category", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
     t.string "company_name", null: false
     t.datetime "created_at", null: false
     t.date "deadline"
     t.text "description_en", null: false
     t.text "description_hi", null: false
+    t.integer "likes_count", default: 0, null: false
     t.string "location"
     t.datetime "published_at"
     t.integer "status", default: 0, null: false
@@ -235,6 +243,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.string "title_en", null: false
     t.string "title_hi", null: false
     t.datetime "updated_at", null: false
+    t.integer "views_count", default: 0, null: false
     t.index ["author_id"], name: "index_news_on_author_id"
     t.index ["category_id"], name: "index_news_on_category_id"
     t.index ["published_at"], name: "index_news_on_published_at"
@@ -254,6 +263,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
     t.index ["active"], name: "index_regions_on_active"
     t.index ["position"], name: "index_regions_on_position"
     t.index ["slug"], name: "index_regions_on_slug", unique: true
+  end
+
+  create_table "relatives", force: :cascade do |t|
+    t.bigint "biodata_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.string "relative_type"
+    t.datetime "updated_at", null: false
+    t.index ["biodata_id"], name: "index_relatives_on_biodata_id"
   end
 
   create_table "shortlists", force: :cascade do |t|
@@ -314,6 +332,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_16_103641) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"
   add_foreign_key "webinars", "users", column: "host_id"

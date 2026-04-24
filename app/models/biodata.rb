@@ -1,6 +1,9 @@
 class Biodata < ApplicationRecord
   belongs_to :user
+  belongs_to :created_by, class_name: "User", optional: true
   has_many :shortlists, dependent: :destroy
+  has_many :relatives, dependent: :destroy
+  accepts_nested_attributes_for :relatives, allow_destroy: true, reject_if: :all_blank
 
   has_one_attached :photo do |attachable|
     attachable.variant :profile, resize_to_fill: [ 400, 500 ], format: :webp, saver: { quality: 85 }
@@ -9,7 +12,7 @@ class Biodata < ApplicationRecord
   end
 
   enum :gender, { male: 0, female: 1 }
-  enum :status, { draft: 0, pending_review: 1, published: 2, rejected: 3 }
+  enum :status, { draft: 0, pending_review: 1, published: 2, rejected: 3, pending_consent: 4 }
 
   validates :full_name,     presence: true
   validates :gender,        presence: true
@@ -31,6 +34,19 @@ class Biodata < ApplicationRecord
     scope = scope.where("date_of_birth >= ?", min_dob) if min_dob
     scope
   }
+
+  # Was this biodata created by an admin on behalf of the user?
+  def admin_created?
+    created_by_id.present? && created_by_id != user_id
+  end
+
+  def consent!
+    update!(status: :published, published_at: Time.current, user_consented: true, consented_at: Time.current)
+  end
+
+  def decline_consent!
+    update!(status: :rejected, rejection_reason: "User declined consent")
+  end
 
   def publish!
     update!(status: :published, published_at: Time.current)

@@ -1,4 +1,50 @@
 module ApplicationHelper
+  # Matches http(s) URLs in plain text
+  URL_PATTERN = %r{https?://[^\s<>"'\]]+}
+
+  # Linkify a single line of plain text — HTML-escapes non-URL parts,
+  # wraps URLs in styled <a> tags. Used for comment bodies.
+  def linkify(text)
+    return "".html_safe if text.blank?
+    linkify_segment(text.to_s).html_safe
+  end
+
+  # Drop-in replacement for simple_format that ALSO auto-links URLs.
+  # Normalises whitespace, wraps paragraphs in <p> tags, converts \n to <br>,
+  # and makes every http(s) URL a clickable link.
+  # Use everywhere editorial / user content is displayed (news, education, jobs, etc.)
+  def format_with_links(text)
+    return "".html_safe if text.blank?
+
+    clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
+    paragraphs = clean.split(/\n\n+/)
+
+    html = paragraphs.map do |para|
+      lines = para.split(/\n/).map { |line| linkify_segment(line) }
+      "<p>#{lines.join('<br>')}</p>"
+    end.join("\n")
+
+    html.html_safe
+  end
+
+  private
+
+  def linkify_segment(text)
+    parts = text.split(/(#{URL_PATTERN})/)
+    parts.map do |part|
+      if part.match?(URL_PATTERN)
+        safe = CGI.escapeHTML(part)
+        %(<a href="#{safe}" target="_blank" rel="noopener noreferrer nofollow" ) +
+          %(class="text-orange-600 underline decoration-orange-300/70 break-all hover:text-orange-700 transition-colors">#{safe}</a>)
+      else
+        CGI.escapeHTML(part)
+      end
+    end.join
+  end
+
+  public
+
+
   def billboard_for(position)
     Rails.cache.fetch("billboard/#{position}", expires_in: 5.minutes) do
       Billboard.for_position(position)
@@ -44,29 +90,33 @@ module ApplicationHelper
   # Route helpers for polymorphic commentable/likeable models
   def commentable_path(record, **opts)
     case record
-    when News then news_path(record, **opts)
+    when News         then news_path(record, **opts)
     when EducationPost then education_path(record, **opts)
+    when JobPost      then job_path(record, **opts)
     end
   end
 
   def commentable_comments_path(record, **opts)
     case record
-    when News then news_comments_path(record, **opts)
+    when News         then news_comments_path(record, **opts)
     when EducationPost then education_comments_path(record, **opts)
+    when JobPost      then job_comments_path(record, **opts)
     end
   end
 
   def commentable_comment_path(record, comment, **opts)
     case record
-    when News then news_comment_path(record, comment, **opts)
+    when News         then news_comment_path(record, comment, **opts)
     when EducationPost then education_comment_path(record, comment, **opts)
+    when JobPost      then job_comment_path(record, comment, **opts)
     end
   end
 
   def toggle_likeable_like_path(record, **opts)
     case record
-    when News then toggle_news_like_path(record, **opts)
+    when News         then toggle_news_like_path(record, **opts)
     when EducationPost then toggle_education_like_path(record, **opts)
+    when JobPost      then toggle_job_like_path(record, **opts)
     end
   end
 end

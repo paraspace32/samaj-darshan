@@ -1,9 +1,9 @@
 module Admin
   class BiodatasController < Admin::BaseController
     before_action :require_biodata_reviewer, only: [ :index, :show ]
-    before_action :require_biodata_manager,  only: [ :new, :create, :publish, :reject, :search_users ]
+    before_action :require_biodata_manager,  only: [ :new, :create, :edit, :update, :publish, :reject, :search_users ]
     before_action :require_biodata_delete,   only: [ :destroy ]
-    before_action :set_biodata, only: [ :show, :destroy, :publish, :reject ]
+    before_action :set_biodata, only: [ :show, :edit, :update, :destroy, :publish, :reject, :grant_consent ]
 
     def index
       @biodatas = Biodata.includes(:user).with_attached_photo
@@ -55,15 +55,25 @@ module Admin
       end
 
       @biodata = user.biodatas.build(biodata_attrs)
-      @biodata.status = :published
-      @biodata.published_at = Time.current
+      @biodata.created_by_id = current_user.id
+      @biodata.status = :pending_consent
 
       if @biodata.save
         redirect_to admin_biodata_path(@biodata),
-                    notice: "Biodata created for #{user.name.presence || user.phone}."
+                    notice: "Biodata created for #{user.name.presence || user.phone}. Awaiting their consent."
       else
         load_eligible_users
         render :new, status: :unprocessable_entity
+      end
+    end
+
+    def edit; end
+
+    def update
+      if @biodata.update(biodata_attrs)
+        redirect_to admin_biodata_path(@biodata), notice: "Biodata updated successfully."
+      else
+        render :edit, status: :unprocessable_entity
       end
     end
 
@@ -75,6 +85,15 @@ module Admin
     def reject
       @biodata.reject!(params[:rejection_reason].to_s)
       redirect_to admin_biodatas_path, notice: "Biodata rejected."
+    end
+
+    def grant_consent
+      unless @biodata.pending_consent?
+        return redirect_to admin_biodata_path(@biodata), alert: "Consent is not pending for this biodata."
+      end
+      # Consent recorded as the biodata owner (user), not the admin
+      @biodata.consent!
+      redirect_to admin_biodata_path(@biodata), notice: "Consent granted on behalf of #{@biodata.user.name.presence || @biodata.user.phone}."
     end
 
     def destroy
@@ -104,7 +123,8 @@ module Admin
         :father_name, :father_occupation, :mother_name, :mother_occupation, :siblings_count,
         :contact_phone, :contact_email,
         :partner_age_min, :partner_age_max, :partner_education, :partner_occupation, :partner_expectations,
-        :photo
+        :photo, :birth_time, :birth_time_hi,
+        relatives_attributes: [ :id, :relative_type, :name, :_destroy ]
       )
     end
   end

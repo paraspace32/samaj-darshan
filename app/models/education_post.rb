@@ -25,10 +25,8 @@ class EducationPost < ApplicationRecord
     degree_news: 6
   }, prefix: :category
 
-  validates :title_en, presence: true
-  validates :title_hi, presence: true
+  validates :title_en,   presence: true
   validates :content_en, presence: true
-  validates :content_hi, presence: true
 
   scope :visible, -> { published.order(published_at: :desc, created_at: :desc) }
   scope :recent, -> { order(created_at: :desc) }

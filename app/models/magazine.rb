@@ -13,7 +13,6 @@ class Magazine < ApplicationRecord
   enum :status, { draft: 0, published: 1 }
 
   validates :title_en, presence: true
-  validates :title_hi, presence: true
   validates :issue_number, presence: true, uniqueness: true, numericality: { greater_than: 0 }
 
   scope :visible, -> { published.order(published_at: :desc) }

@@ -1,0 +1,29 @@
+<%# Locals: data (hash from GoogleAnalyticsService or nil) %>
+<% return unless data&.dig(:total).to_i > 0 %>
+
+<div class="inline-flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm"
+     style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(8px)">
+
+  <%# Pulsing green dot %>
+  <span class="relative flex h-2.5 w-2.5 shrink-0">
+    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+  </span>
+
+  <%# Count %>
+  <span class="font-black text-white tabular-nums">
+    <%= data[:total] %>
+    <span class="font-medium text-white/70"><%= t("feed.active_now") %></span>
+  </span>
+
+  <%# Country flags %>
+  <% if data[:countries].present? %>
+    <span class="text-white/30 text-xs">·</span>
+    <span class="flex items-center gap-1">
+      <% data[:countries].each do |c| %>
+        <span title="<%= c[:name] %> (<%= c[:count] %>)" class="text-base leading-none cursor-default"><%= c[:flag] %></span>
+      <% end %>
+    </span>
+  <% end %>
+
+</div>

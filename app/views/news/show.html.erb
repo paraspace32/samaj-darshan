@@ -1,51 +1,126 @@
-<% content_for(:title, "#{@news_item.display_title} — #{t('brand.name')}") %>
-<% content_for(:og_title, @news_item.display_title) %>
+<%
+  # ─── Locale-aware OG / sharing variables ───────────────────────────────────
+  og_title_text    = I18n.locale == :en ? (@news_item.title_en.presence || @news_item.title_hi) : @news_item.display_title
+  og_desc_text     = I18n.locale == :en ? (@news_item.content_en.presence || @news_item.content_hi) : @news_item.display_content
+  share_locale_url = I18n.locale == :en ? news_url(@news_item, locale: :en) : news_url(@news_item)
+  share_text       = "#{og_title_text}\n\n#{share_locale_url}"
+
+  # Reading time (200 wpm average)
+  word_count   = @news_item.display_content.to_s.split.size
+  reading_mins = [[( word_count / 200.0).ceil, 1].max, 60].min
+
+  # Smart date: relative if < 7 days, absolute otherwise
+  smart_date = if @news_item.published_at > 7.days.ago
+                 t("feed.ago", time: time_ago_in_words(@news_item.published_at))
+               else
+                 @news_item.published_at.strftime("%d %b %Y")
+               end
+
+  # Other-language helpers for bilingual toggle
+  other_lang_label = I18n.locale == :hi ? "Read in English" : "हिंदी में पढ़ें"
+  other_title      = I18n.locale == :hi ? @news_item.title_en : @news_item.title_hi
+  other_content    = I18n.locale == :hi ? @news_item.content_en : @news_item.content_hi
+%>
+
+<%# ── Meta tags ──────────────────────────────────────────────────────────────── %>
+<% content_for(:title, "#{og_title_text} — #{t('brand.name')}") %>
+<% content_for(:og_title, og_title_text) %>
 <% content_for(:og_type, "article") %>
-<% content_for(:description, truncate(strip_tags(@news_item.display_content), length: 200)) %>
+<% content_for(:description, truncate(strip_tags(og_desc_text), length: 200)) %>
 <% if @news_item.cover_image.attached? %>
   <% content_for(:og_image, og_image_url(@news_item.cover_image)) %>
 <% end %>
 
-<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">
-  <%# Main content %>
+<%# ── Canonical URL — prevents ?locale=en duplicate content penalty ──────────── %>
+<% content_for :head do %>
+  <link rel="canonical" href="<%= news_url(@news_item) %>">
+<% end %>
+
+<%# ── Schema.org Article JSON-LD — Google News / Discover / rich snippets ──────── %>
+<% content_for :head do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": <%= og_title_text.to_json %>,
+    "description": <%= truncate(strip_tags(og_desc_text), length: 200).to_json %>,
+    "url": <%= news_url(@news_item).to_json %>,
+    "datePublished": <%= @news_item.published_at.iso8601.to_json %>,
+    "dateModified": <%= @news_item.updated_at.iso8601.to_json %>,
+    "inLanguage": <%= (I18n.locale == :hi ? "hi-IN" : "en-IN").to_json %>,
+    "author": {
+      "@type": "Person",
+      "name": <%= @news_item.author.name.to_json %>
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": <%= t("brand.name").to_json %>,
+      "logo": {
+        "@type": "ImageObject",
+        "url": "<%= request.base_url %>/icon-192.png",
+        "width": 192,
+        "height": 192
+      }
+    }<%= @news_item.cover_image.attached? ? ",\n    \"image\": [#{og_image_url(@news_item.cover_image).to_json}]" : "" %>
+  }
+  </script>
+<% end %>
+
+<%# ── Reading progress bar (fixed, above everything) ─────────────────────────── %>
+<div data-controller="reading-progress" class="fixed top-0 left-0 right-0 z-[100] h-[3px] pointer-events-none">
+  <div data-reading-progress-target="bar" class="h-full w-0 rounded-r-full"
+       style="background:linear-gradient(90deg,#f97316,#dc2626); box-shadow:0 0 10px rgba(249,115,22,0.7); transition:none"></div>
+</div>
+
+<%# ── Sticky mobile bottom bar ────────────────────────────────────────────────── %>
+<%= render "shared/mobile_bottom_bar",
+      toggle_path: toggle_news_like_path(@news_item),
+      liked: @liked,
+      likes_count: @news_item.likes_count,
+      share_text: share_text %>
+
+<%# ── Main layout ─────────────────────────────────────────────────────────────── %>
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20 pb-20 sm:pb-0">
+
+  <%# ════ Main article ════════════════════════════════════════════════════════ %>
   <article class="flex-1 min-w-0 animate-fade-in">
+
     <%# Breadcrumb %>
-    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-4 animate-fade-up">
-      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium" %>
+    <nav class="flex items-center gap-2 text-sm text-stone-500 mb-5 animate-fade-up flex-wrap">
+      <%= link_to t("nav.home"), root_path, class: "hover:text-orange-600 transition-colors font-medium shrink-0" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-      <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors font-medium" %>
+      <%= link_to @news_item.region.display_name, region_feed_path(slug: @news_item.region.slug), class: "hover:text-orange-600 transition-colors font-medium shrink-0" %>
       <svg class="w-3.5 h-3.5 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
       <span class="text-stone-600 truncate font-medium"><%= truncate(@news_item.display_title, length: 40) %></span>
     </nav>
 
-    <%# Title %>
-    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-3"><%= @news_item.display_title %></h1>
-
-    <% other_title = I18n.locale == :hi ? @news_item.title_en : @news_item.title_hi %>
-
-    <%# Author line %>
-    <div class="flex items-center gap-2.5 mb-4">
-      <div class="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-sm">
-        <span class="text-white font-bold text-xs"><%= @news_item.author.name[0] %></span>
-      </div>
-      <div class="min-w-0">
-        <p class="text-sm font-semibold text-stone-800"><%= @news_item.author.name %></p>
-        <p class="text-xs text-stone-400"><%= @news_item.region.display_name %> · <%= @news_item.published_at.strftime("%d %b %Y") %> · <%= t("feed.ago", time: time_ago_in_words(@news_item.published_at)) %></p>
-      </div>
+    <%# Category pill + reading time ── new row above title %>
+    <div class="flex items-center gap-2.5 mb-3 flex-wrap">
+      <%= link_to category_feed_path(slug: @news_item.category.slug),
+            class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black text-white shrink-0 transition-opacity hover:opacity-90",
+            style: "background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 2px 10px -2px rgba(249,115,22,0.5)" do %>
+        <span class="w-1.5 h-1.5 rounded-full bg-white/70 shrink-0"></span>
+        <%= @news_item.category.display_name %>
+      <% end %>
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-stone-400 bg-stone-50 border border-stone-100 rounded-full px-3 py-1">
+        <svg class="w-3 h-3 shrink-0 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <%= reading_mins %> <%= I18n.locale == :hi ? "मिनट पढ़ें" : "min read" %>
+      </span>
     </div>
 
-    <div class="section-divider mb-6"></div>
+    <%# Title %>
+    <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-gradient leading-snug mb-4">
+      <%= @news_item.display_title %>
+    </h1>
 
-    <%= render "shared/billboard_article_top" %>
-
-    <%# Image carousel (cover + additional images) %>
+    <%# Cover image — right below headline %>
     <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
     <% if gallery_images.size == 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+      <div class="mb-5 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
         <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
       </div>
     <% elsif gallery_images.size > 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
+      <div class="mb-5 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
            data-controller="carousel" data-carousel-autoplay-value="true">
         <div class="relative">
           <div class="overflow-hidden">
@@ -57,10 +132,7 @@
               <% end %>
             </div>
           </div>
-
           <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-32 gradient-dark-strong opacity-90"></div>
-
-          <%# Prev / Next arrows %>
           <button data-action="carousel#prev"
                   class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
@@ -69,16 +141,12 @@
                   class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
           </button>
-
-          <%# Dot indicators %>
           <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
             <% gallery_images.each_with_index do |_, i| %>
               <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
                       class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-7 shadow-md' : 'bg-white/45 w-2 hover:bg-white/70' %>"></button>
             <% end %>
           </div>
-
-          <%# Counter %>
           <div class="absolute top-5 right-5 z-10 rounded-2xl bg-black/45 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 border border-white/15 shadow-lg"
                data-carousel-target="counter">
             1 / <%= gallery_images.size %>
@@ -87,128 +155,251 @@
       </div>
     <% end %>
 
+    <%# Author card %>
+    <div class="flex items-center gap-3 bg-stone-50/80 border border-stone-100 rounded-2xl px-4 py-3 mb-5 animate-fade-up">
+      <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-md shadow-orange-200/50 ring-2 ring-white shrink-0">
+        <span class="text-white font-black text-sm"><%= @news_item.author.name[0] %></span>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-black text-stone-800 leading-tight"><%= @news_item.author.name %></p>
+        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+          <span class="text-xs text-stone-400 font-medium"><%= @news_item.region.display_name %></span>
+          <span class="text-stone-300 text-xs">·</span>
+          <span class="text-xs text-stone-400 font-medium"><%= smart_date %></span>
+        </div>
+      </div>
+      <%# Live readers — per-article → site-wide → total views fallback %>
+      <div class="shrink-0 flex items-center gap-2.5">
+        <% live_count  = @active_readers.to_i > 0 ? @active_readers : nil %>
+        <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
+        <% if live_count %>
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2 shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-xs font-black text-green-600 animate-pulse">
+              <%= live_count %> <%= I18n.locale == :hi ? "पढ़ रहे हैं" : "reading" %>
+            </span>
+          </div>
+        <% else %>
+          <div class="flex items-center gap-1 text-xs text-stone-400 font-semibold">
+            <svg class="w-3.5 h-3.5 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <%= number_with_delimiter(@news_item.views_count) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="section-divider mb-6"></div>
+
+    <%= render "shared/billboard_article_top" %>
+
     <%# News body %>
     <div class="prose prose-stone prose-lg max-w-none mb-12 animate-fade-up
                 prose-headings:font-black prose-headings:tracking-tight prose-headings:text-stone-900
                 prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-[1.05rem]
                 prose-a:text-orange-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:underline prose-a:decoration-orange-300/80
                 prose-blockquote:border-orange-500 prose-blockquote:border-l-4 prose-blockquote:bg-orange-50/60 prose-blockquote:rounded-r-2xl prose-blockquote:py-3 prose-blockquote:px-2 prose-blockquote:text-stone-700">
-      <%= simple_format(@news_item.display_content) %>
+      <%= format_with_links(@news_item.display_content) %>
     </div>
 
     <%= render "shared/billboard_article_mid" %>
 
-    <%# Engagement: like, share, and comments — one unified card %>
-    <% share_text = "#{@news_item.display_title}\n\n#{request.original_url}" %>
-    <div id="comments" class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-xl shadow-stone-900/[0.06]">
+    <%# Engagement card — pass locale-aware share_url to fix copy link %>
+    <%= render "shared/engagement_card",
+          item: @news_item,
+          liked: @liked,
+          toggle_path: toggle_news_like_path(@news_item),
+          comments_path: news_comments_path(@news_item),
+          comments: @comments,
+          share_text: share_text,
+          share_url: share_locale_url %>
 
-      <%# Action bar: like · comments count · share %>
-      <div class="flex items-center gap-2 px-4 sm:px-6 py-3 border-b border-stone-100/90 bg-stone-50/60 flex-wrap">
-        <%# Like %>
-        <% if current_user %>
-          <%= button_to toggle_news_like_path(@news_item), method: :post,
-                class: "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold transition-all cursor-pointer #{@liked ? 'text-red-600 bg-red-50 border border-red-200/70' : 'text-stone-500 hover:text-red-500 hover:bg-red-50 border border-transparent'}" do %>
-            <svg class="w-4 h-4" fill="<%= @liked ? 'currentColor' : 'none' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-            <%= @liked ? t("likes.liked") : t("likes.like") %>
-            <span class="text-xs opacity-60"><%= @news_item.likes_count %></span>
-          <% end %>
-        <% else %>
-          <%= link_to login_path, class: "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold text-stone-500 hover:text-red-500 hover:bg-red-50 border border-transparent transition-all" do %>
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-            <%= t("likes.like") %>
-            <span class="text-xs opacity-60"><%= @news_item.likes_count %></span>
-          <% end %>
-        <% end %>
-
-        <span class="text-stone-300 select-none text-xs">·</span>
-
-        <%# Comment count %>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold text-stone-500">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-          <%= @news_item.comments_count %>
-        </span>
-
-        <%# Push share to the right %>
-        <div class="ml-auto flex items-center gap-2">
-          <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
-             target="_blank" rel="noopener"
-             class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-sm font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp
-          </a>
-          <button data-controller="copy-link" data-copy-link-url-value="<%= request.original_url %>" data-action="copy-link#copy"
-                  class="inline-flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition-colors shadow-sm">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-            Copy Link
-          </button>
-        </div>
-      </div>
-
-      <%# Comment form + thread %>
-      <div class="px-5 sm:px-7">
-        <% if current_user %>
-          <%= form_with model: Comment.new, url: news_comments_path(@news_item), class: "py-5 border-b border-stone-100/90" do |f| %>
-            <div class="flex gap-3">
-              <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shrink-0 shadow-md shadow-orange-500/20 ring-2 ring-white/70">
-                <span class="text-white font-bold text-xs"><%= current_user.name[0].upcase %></span>
-              </div>
-              <div class="flex-1 min-w-0">
-                <%= f.text_area :body, placeholder: t("comments.write_placeholder"), rows: 2,
-                      class: "input-premium w-full rounded-xl border border-gray-200/60 bg-stone-50/80 px-3.5 py-3 text-sm text-stone-800 placeholder-stone-400 focus:bg-white focus:border-orange-400 focus:ring-4 focus:ring-orange-100/80 focus:outline-none resize-none transition-all" %>
-                <div class="flex justify-end mt-2">
-                  <%= f.submit t("comments.submit"), class: "btn-primary cursor-pointer !py-1.5 !px-4 !text-sm" %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="py-6 text-center">
-            <%= link_to login_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-semibold" do %>
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-              <%= t("comments.login_to_comment") %>
-            <% end %>
-          </div>
-        <% end %>
-
-        <% if @comments.any? %>
-          <div class="divide-y divide-stone-100/90">
-            <%= render partial: "comments/comment", collection: @comments %>
-          </div>
-        <% else %>
-          <div class="py-10 text-center">
-            <p class="text-sm text-stone-400"><%= t("comments.no_comments") %></p>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <%# Bilingual toggle (only if other language has content) %>
-    <% other_content = I18n.locale == :hi ? @news_item.content_en : @news_item.content_hi %>
+    <%# Bilingual toggle — specific language label %>
     <% if other_title.present? || other_content.present? %>
       <details class="surface-raised rounded-3xl border border-gray-200/40 overflow-hidden mb-10 shadow-lg shadow-stone-900/[0.05] open:shadow-xl open:ring-1 open:ring-orange-200/40 transition-shadow">
         <summary class="px-6 sm:px-8 py-5 text-sm font-bold text-stone-800 cursor-pointer hover:bg-stone-50/80 transition-colors flex items-center gap-3 list-none [&::-webkit-details-marker]:hidden">
-          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-stone-100 text-stone-500 transition-colors">
+          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-stone-100 text-stone-500 transition-colors shrink-0">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
           </span>
-          <%= t("article.read_other_lang") %>
+          <%= other_lang_label %>
         </summary>
         <div class="px-6 sm:px-8 pb-8 pt-2 prose prose-sm prose-stone max-w-none border-t border-stone-100/90" dir="auto">
           <% if other_title.present? %><h3 class="text-lg font-black tracking-tight text-stone-900"><%= other_title %></h3><% end %>
-          <% if other_content.present? %><%= simple_format(other_content.gsub(/\n{3,}/, "\n\n").strip) %><% end %>
+          <% if other_content.present? %><%= format_with_links(other_content) %><% end %>
         </div>
       </details>
     <% end %>
 
-    <%# Back link %>
-    <div class="mt-10 mb-2 animate-fade-up">
-      <%= link_to root_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-bold text-stone-700 hover:text-orange-700" do %>
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        <%= t("article.back_to_news") %>
-      <% end %>
+    <%# Continue reading — first related article, or back link if none %>
+    <% if @related.any? %>
+      <% next_article = @related.first %>
+      <div class="mt-8 mb-2">
+        <p class="text-[10px] font-black uppercase tracking-[0.15em] text-orange-500 mb-3 pl-1">
+          <%= I18n.locale == :hi ? "आगे पढ़ें" : "Continue Reading" %>
+        </p>
+        <%= link_to news_path(next_article),
+              class: "group flex gap-4 p-4 sm:p-5 rounded-3xl border border-gray-200/40 shadow-lg shadow-stone-900/[0.06]
+                      hover:shadow-xl hover:shadow-orange-100/40 transition-all duration-200 bg-white
+                      hover:bg-gradient-to-r hover:from-orange-50/30 hover:to-amber-50/20 no-underline" do %>
+          <% if next_article.cover_image.attached? %>
+            <div class="shrink-0 overflow-hidden rounded-2xl border border-gray-200/30 shadow-md">
+              <%= optimized_image_tag next_article.cover_image, variant: :thumb, class: "w-24 h-16 sm:w-28 sm:h-18 object-cover img-zoom", loading: "lazy" %>
+            </div>
+          <% else %>
+            <div class="w-24 h-16 rounded-2xl gradient-brand-soft border border-orange-100/60 flex items-center justify-center shrink-0 shadow-inner">
+              <span class="text-orange-300 font-black text-xs"><%= t("brand.logo_letter") %></span>
+            </div>
+          <% end %>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-black text-stone-900 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text
+                       group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-red-600 transition-all leading-snug tracking-tight mb-1.5">
+              <%= next_article.display_title %>
+            </p>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold text-stone-400"><%= next_article.region.display_name %></span>
+              <span class="text-stone-200 text-[10px]">·</span>
+              <span class="text-[10px] font-bold text-stone-400"><%= t("feed.ago", time: time_ago_in_words(next_article.published_at)) %></span>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center self-center text-stone-300 group-hover:text-orange-400 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-10 mb-2 animate-fade-up">
+        <%= link_to root_path, class: "btn-ghost inline-flex items-center gap-2 text-sm font-bold text-stone-700 hover:text-orange-700" do %>
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          <%= t("article.back_to_news") %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# ══ More from this category ══════════════════════════════════════════════ %>
+    <% if @category_articles.any? %>
+      <div class="mt-12">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <%= link_to category_feed_path(slug: @news_item.category.slug),
+                  class: "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black text-white",
+                  style: "background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 2px 8px -2px rgba(249,115,22,0.5)" do %>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/70"></span>
+              <%= @news_item.category.display_name %>
+            <% end %>
+            <span class="text-xs font-black text-stone-400 uppercase tracking-widest">
+              <%= I18n.locale == :hi ? "और खबरें" : "More stories" %>
+            </span>
+          </div>
+          <%= link_to category_feed_path(slug: @news_item.category.slug),
+                class: "text-[11px] font-black text-orange-500 hover:text-orange-700 transition-colors" do %>
+            <%= I18n.locale == :hi ? "सभी देखें →" : "See all →" %>
+          <% end %>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <% @category_articles.first(4).each do |art| %>
+            <%= link_to news_path(art),
+                  class: "group flex gap-3 p-3 rounded-2xl border border-gray-200/40 bg-white hover:bg-orange-50/30
+                          hover:border-orange-200/50 hover:shadow-md hover:shadow-orange-100/30 transition-all duration-200 no-underline" do %>
+              <% if art.cover_image.attached? %>
+                <div class="shrink-0 overflow-hidden rounded-xl border border-gray-200/30">
+                  <%= optimized_image_tag art.cover_image, variant: :thumb, class: "w-16 h-12 object-cover img-zoom", loading: "lazy" %>
+                </div>
+              <% else %>
+                <div class="w-16 h-12 rounded-xl gradient-brand-soft border border-orange-100/60 flex items-center justify-center shrink-0">
+                  <span class="text-orange-300 font-black text-[10px]"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-black text-stone-800 line-clamp-2 leading-snug group-hover:text-orange-700 transition-colors"><%= art.display_title %></p>
+                <p class="text-[10px] text-stone-400 font-medium mt-1"><%= t("feed.ago", time: time_ago_in_words(art.published_at)) %></p>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ══ Trending now ══════════════════════════════════════════════════════════ %>
+    <% if @trending_articles.any? %>
+      <div class="mt-12">
+        <div class="flex items-center gap-2.5 mb-4">
+          <span class="flex h-7 w-7 items-center justify-center rounded-xl shrink-0"
+                style="background:linear-gradient(135deg,#f97316,#dc2626)">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </span>
+          <span class="text-sm font-black text-stone-800 tracking-tight">
+            <%= I18n.locale == :hi ? "ट्रेंडिंग खबरें" : "Trending Now" %>
+          </span>
+        </div>
+        <div class="rounded-3xl border border-gray-200/40 overflow-hidden shadow-lg shadow-stone-900/[0.05]">
+          <% @trending_articles.each_with_index do |art, i| %>
+            <%= link_to news_path(art),
+                  class: "group flex items-center gap-4 px-5 py-4 bg-white hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-amber-50/30
+                          transition-colors border-b border-stone-100/80 last:border-0 no-underline" do %>
+              <span class="text-2xl font-black shrink-0 leading-none <%= i == 0 ? 'text-transparent bg-clip-text' : 'text-stone-200' %>"
+                    <%= i == 0 ? 'style="background:linear-gradient(135deg,#f97316,#dc2626)"' : '' %>>
+                <%= i + 1 %>
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-bold text-stone-800 line-clamp-2 leading-snug group-hover:text-orange-700 transition-colors tracking-tight"><%= art.display_title %></p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-[10px] font-semibold text-stone-400"><%= art.region.display_name %></span>
+                  <span class="text-stone-200 text-[10px]">·</span>
+                  <span class="text-[10px] font-semibold text-stone-400 flex items-center gap-1">
+                    <svg class="w-2.5 h-2.5 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <%= number_with_delimiter(art.views_count) %>
+                  </span>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-stone-300 group-hover:text-orange-400 transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ══ Share CTA ═════════════════════════════════════════════════════════════ %>
+    <div class="mt-12 mb-4 rounded-3xl overflow-hidden relative"
+         style="background:linear-gradient(135deg,#fff7ed,#fef3c7,#fff7ed); border:1px solid rgba(249,115,22,0.15); box-shadow:0 8px 32px -8px rgba(249,115,22,0.2)">
+      <div class="absolute inset-0 opacity-[0.03]" style="background-image:radial-gradient(#f97316 1px,transparent 1px); background-size:20px 20px"></div>
+      <div class="relative px-6 py-8 text-center">
+        <div class="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg"
+             style="background:linear-gradient(135deg,#f97316,#dc2626); box-shadow:0 8px 20px -4px rgba(249,115,22,0.45)">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-black text-stone-800 mb-1">
+          <%= I18n.locale == :hi ? "खबर अच्छी लगी? शेयर करें!" : "Liked this story? Share it!" %>
+        </h3>
+        <p class="text-xs text-stone-500 mb-5">
+          <%= I18n.locale == :hi ? "अपने परिवार और दोस्तों तक पहुँचाएं" : "Spread the word to your community" %>
+        </p>
+        <a href="https://wa.me/?text=<%= ERB::Util.url_encode(share_text) %>"
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2.5 px-6 py-3 rounded-2xl font-black text-sm text-white shadow-lg transition-all hover:scale-[1.03] hover:shadow-xl active:scale-95"
+           style="background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 8px 20px -4px rgba(34,197,94,0.45)">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          <%= I18n.locale == :hi ? "WhatsApp पर शेयर करें" : "Share on WhatsApp" %>
+        </a>
+      </div>
     </div>
+
   </article>
 
-  <%# Sidebar — related news %>
+  <%# ════ Sidebar — related news ═══════════════════════════════════════════════ %>
   <aside class="lg:w-80 shrink-0 animate-fade-in">
     <div class="lg:sticky lg:top-28">
       <div class="card-premium !rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
@@ -238,7 +429,7 @@
                     <p class="text-sm font-bold text-stone-900 line-clamp-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-orange-600 group-hover:to-red-600 transition-all leading-snug tracking-tight"><%= rel.display_title %></p>
                     <div class="flex items-center gap-2 mt-2">
                       <span class="badge badge-category border border-gray-200/40 !py-0.5 !text-[0.65rem] text-stone-500">
-                        <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: <%= rel.category.color %>"></span>
+                        <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color:#f97316"></span>
                         <%= rel.category.display_name %>
                       </span>
                     </div>
@@ -255,4 +446,5 @@
       </div>
     </div>
   </aside>
+
 </div>

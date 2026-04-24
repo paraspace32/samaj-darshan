@@ -1,0 +1,21 @@
+<% content_for(:page_title, "Edit Biodata") %>
+
+<div class="max-w-3xl mx-auto">
+  <%# Header %>
+  <div class="flex items-center gap-3 mb-6">
+    <%= link_to admin_biodata_path(@biodata), class: "inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors" do %>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <div>
+      <h1 class="text-2xl font-black tracking-tight text-gray-900">Edit Biodata</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Editing biodata for <%= @biodata.user.name.presence || @biodata.user.phone %>.</p>
+    </div>
+  </div>
+
+  <%= render "my_biodatas/form",
+        biodata: @biodata,
+        url: admin_biodata_path(@biodata),
+        submit_label: "Save Changes",
+        cancel_path: admin_biodata_path(@biodata),
+        show_user_picker: false %>
+</div>

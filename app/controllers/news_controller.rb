@@ -57,6 +57,8 @@ class NewsController < ApplicationController
       @trending = News.published.order(likes_count: :desc, comments_count: :desc)
                       .includes(:region, :category, :author).with_attached_cover_image
                       .limit(5)
+      @latest_news_tab = News.published.includes(:region, :category, :author).with_attached_cover_image
+                             .order(published_at: :desc).limit(5)
       @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
       @latest_magazine  = Magazine.visible.includes(cover_image_attachment: :blob).first
 

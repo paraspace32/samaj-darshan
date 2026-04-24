@@ -113,6 +113,48 @@
       <%= @news_item.display_title %>
     </h1>
 
+    <%# Cover image — right below headline %>
+    <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
+    <% if gallery_images.size == 1 %>
+      <div class="mb-5 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
+      </div>
+    <% elsif gallery_images.size > 1 %>
+      <div class="mb-5 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
+           data-controller="carousel" data-carousel-autoplay-value="true">
+        <div class="relative">
+          <div class="overflow-hidden">
+            <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
+              <% gallery_images.each do |img| %>
+                <div class="w-full shrink-0 group" data-carousel-target="slide">
+                  <%= optimized_image_tag img, variant: :carousel, class: "w-full h-64 sm:h-96 object-cover img-zoom", loading: "lazy" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-32 gradient-dark-strong opacity-90"></div>
+          <button data-action="carousel#prev"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button data-action="carousel#next"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
+            <% gallery_images.each_with_index do |_, i| %>
+              <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                      class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-7 shadow-md' : 'bg-white/45 w-2 hover:bg-white/70' %>"></button>
+            <% end %>
+          </div>
+          <div class="absolute top-5 right-5 z-10 rounded-2xl bg-black/45 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 border border-white/15 shadow-lg"
+               data-carousel-target="counter">
+            1 / <%= gallery_images.size %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
     <%# Author card %>
     <div class="flex items-center gap-3 bg-stone-50/80 border border-stone-100 rounded-2xl px-4 py-3 mb-5 animate-fade-up">
       <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-md shadow-orange-200/50 ring-2 ring-white shrink-0">
@@ -132,12 +174,12 @@
         <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
         <% if live_count %>
           <div class="flex items-center gap-1.5">
-            <span class="relative flex h-2 w-2">
+            <span class="relative flex h-2 w-2 shrink-0">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <span class="text-xs font-black text-green-600">
-              <%= live_count %> <%= I18n.locale == :hi ? "अभी पढ़ रहे हैं" : "reading now" %>
+            <span class="text-xs font-black text-green-600 animate-pulse">
+              <%= live_count %> <%= I18n.locale == :hi ? "पढ़ रहे हैं" : "reading" %>
             </span>
           </div>
         <% else %>
@@ -155,55 +197,6 @@
     <div class="section-divider mb-6"></div>
 
     <%= render "shared/billboard_article_top" %>
-
-    <%# Image carousel (cover + additional images) %>
-    <% gallery_images = [@news_item.cover_image.attached? ? @news_item.cover_image : nil, *(@news_item.images.attached? ? @news_item.images : [])].compact %>
-    <% if gallery_images.size == 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag gallery_images.first, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
-      </div>
-    <% elsif gallery_images.size > 1 %>
-      <div class="mb-8 -mx-4 sm:mx-0 relative rounded-none sm:rounded-3xl overflow-hidden border border-gray-200/40 shadow-2xl shadow-stone-900/10 group"
-           data-controller="carousel" data-carousel-autoplay-value="true">
-        <div class="relative">
-          <div class="overflow-hidden">
-            <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
-              <% gallery_images.each do |img| %>
-                <div class="w-full shrink-0 group" data-carousel-target="slide">
-                  <%= optimized_image_tag img, variant: :carousel, class: "w-full h-64 sm:h-96 object-cover img-zoom", loading: "lazy" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-
-          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-32 gradient-dark-strong opacity-90"></div>
-
-          <%# Prev / Next arrows %>
-          <button data-action="carousel#prev"
-                  class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button data-action="carousel#next"
-                  class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-2xl bg-black/35 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/55 cursor-pointer shadow-lg border border-white/10">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-
-          <%# Dot indicators %>
-          <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-            <% gallery_images.each_with_index do |_, i| %>
-              <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                      class="h-2 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-7 shadow-md' : 'bg-white/45 w-2 hover:bg-white/70' %>"></button>
-            <% end %>
-          </div>
-
-          <%# Counter %>
-          <div class="absolute top-5 right-5 z-10 rounded-2xl bg-black/45 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 border border-white/15 shadow-lg"
-               data-carousel-target="counter">
-            1 / <%= gallery_images.size %>
-          </div>
-        </div>
-      </div>
-    <% end %>
 
     <%# News body %>
     <div class="prose prose-stone prose-lg max-w-none mb-12 animate-fade-up

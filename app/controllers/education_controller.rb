@@ -13,6 +13,11 @@ class EducationController < ApplicationController
     @education_post = EducationPost.published.find(params[:id])
     @comments = @education_post.comments.includes(:user).recent
     @liked = current_user ? @education_post.likes.exists?(user: current_user) : false
+    @site_active_users = begin
+      GoogleAnalyticsService.realtime_data&.dig(:total)
+    rescue
+      nil
+    end
 
     @related = EducationPost.published
                             .where(category: @education_post.category)

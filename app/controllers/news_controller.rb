@@ -21,11 +21,9 @@ class NewsController < ApplicationController
     @is_home = @page == 1 && @region.nil? && @category.nil?
 
     if @is_home
-      # ── Education: split news-style (degree_news) vs exam/study content ──
-      @education_news  = EducationPost.visible.category_degree_news
-                                      .with_attached_cover_image.includes(:author).limit(4)
-      @education_posts = EducationPost.visible.where.not(category: :degree_news)
-                                      .with_attached_cover_image.includes(:author).limit(6)
+      # ── Education: degree news only on homepage ──
+      @education_news = EducationPost.visible.category_degree_news
+                                     .with_attached_cover_image.includes(:author).limit(4)
 
       # ── Jobs: split news-style (new_job_news) vs actual job listings ──────
       @job_news     = JobPost.visible.category_new_job_news

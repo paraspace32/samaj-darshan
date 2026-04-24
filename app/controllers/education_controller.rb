@@ -40,5 +40,12 @@ class EducationController < ApplicationController
                                       .includes(:author)
                                       .order(likes_count: :desc, comments_count: :desc, published_at: :desc)
                                       .limit(5)
+
+    # Sidebar + cross-content: latest general news
+    @sidebar_news = News.published
+                        .includes(:region, :category)
+                        .with_attached_cover_image
+                        .order(published_at: :desc)
+                        .limit(4)
   end
 end

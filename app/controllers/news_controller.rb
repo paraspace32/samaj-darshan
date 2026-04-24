@@ -21,11 +21,9 @@ class NewsController < ApplicationController
     @is_home = @page == 1 && @region.nil? && @category.nil?
 
     if @is_home
-      # ── Education: split news-style (degree_news) vs exam/study content ──
-      @education_news  = EducationPost.visible.category_degree_news
-                                      .with_attached_cover_image.includes(:author).limit(4)
-      @education_posts = EducationPost.visible.where.not(category: :degree_news)
-                                      .with_attached_cover_image.includes(:author).limit(6)
+      # ── Education: degree news only on homepage ──
+      @education_news = EducationPost.visible.category_degree_news
+                                     .with_attached_cover_image.includes(:author).limit(4)
 
       # ── Jobs: split news-style (new_job_news) vs actual job listings ──────
       @job_news     = JobPost.visible.category_new_job_news
@@ -148,6 +146,19 @@ class NewsController < ApplicationController
                              .includes(:region, :category)
                              .order(views_count: :desc, likes_count: :desc)
                              .limit(5)
+
+    # Sidebar widget: latest news (excl. current) + latest job openings
+    @sidebar_news = News.published
+                        .where.not(id: @news_item.id)
+                        .includes(:region, :category)
+                        .with_attached_cover_image
+                        .order(published_at: :desc)
+                        .limit(4)
+    @sidebar_jobs = JobPost.visible
+                           .with_attached_cover_image
+                           .includes(:author)
+                           .order(published_at: :desc)
+                           .limit(3)
 
     latest_comment_at = @comments.first&.created_at
     fresh_when etag: [ @news_item, latest_comment_at ], last_modified: @news_item.updated_at, public: !logged_in? unless logged_in?

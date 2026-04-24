@@ -792,7 +792,7 @@
         <% has_more    = @page < total_pages %>
         <% next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil %>
 
-        <div data-controller="infinite-scroll">
+        <div>
           <%# MOBILE — compact list view (visible < sm) %>
           <div id="news-grid-mobile" class="sm:hidden space-y-2">
             <% @news_items.drop(start_idx).each_with_index do |news_item, idx| %>
@@ -817,8 +817,6 @@
             <% end %>
           </div>
 
-          <%# Infinite scroll sentinel — replaced by turbo stream on each page load %>
-          <%= render "news/news_sentinel", has_more: has_more, next_url: next_url %>
         </div>
       <% end %>
     </div>

@@ -1,30 +1,48 @@
 <% marriage_ads = billboards_for(:marriage_ad).first(10) %>
 <% marriage_ads = (marriage_ads * 10).first(10) if marriage_ads.size.between?(1, 9) %>
 <% if marriage_ads.any? %>
-  <%# Ornate wedding-style picture frame wrapper %>
-  <div class="mb-4 relative" style="padding: 5px; border-radius: 18px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 20%, #f9a8d4 40%, #fde68a 60%, #fda4af 80%, #fde68a 100%);">
-    <%# Inner white mat border %>
-    <div style="border-radius: 14px; padding: 3px; background: white;">
+  <%#
+    Ornate wedding picture frame:
+    - Full width on mobile (no side margins)
+    - sm+: rounded corners with gradient border
+    - Badge sits ON the top border of the frame (not inside image)
+  %>
+  <div class="mb-4 relative -mx-4 sm:mx-0 pt-4">
 
-      <%# Carousel — no bottom bar %>
-      <div class="relative overflow-hidden" style="border-radius: 12px;"
-           data-controller="carousel" data-carousel-autoplay-value="true">
+    <%# Badge ON the top-center of the frame border %>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 z-30">
+      <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide text-white select-none"
+            style="background: linear-gradient(135deg, #fb7185, #f43f5e); box-shadow: 0 2px 12px rgba(244,63,94,0.45)">
+        💍 <%= t("feed.marriage_ads") %>
+      </span>
+    </div>
 
-        <%# "विवाह विज्ञापन" badge at top %>
-        <div class="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-          <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide text-white select-none"
-                style="background: linear-gradient(135deg, rgba(251,113,133,0.92), rgba(244,63,94,0.92)); backdrop-filter: blur(8px); box-shadow: 0 2px 10px rgba(244,63,94,0.4)">
-            💍 <%= t("feed.marriage_ads") %>
-          </span>
-        </div>
+    <%# Gradient border frame — full-width mobile, rounded on sm+ %>
+    <div class="sm:rounded-[18px]"
+         style="padding: 4px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 25%, #f9a8d4 50%, #fde68a 75%, #fda4af 100%);">
+      <%# White mat inner border %>
+      <div class="sm:rounded-[15px]" style="padding: 3px; background: white;">
 
-        <%# Slides track %>
-        <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
-          <% marriage_ads.each_with_index do |bb, i| %>
-            <% bb.track_impression! %>
-            <div class="w-full shrink-0 relative" data-carousel-target="slide">
-              <% if bb.link_url.present? %>
-                <%= link_to billboard_click_path(bb), class: "block w-full" do %>
+        <%# Carousel — no bottom bar %>
+        <div class="relative overflow-hidden sm:rounded-[13px]"
+             data-controller="carousel" data-carousel-autoplay-value="true">
+
+          <%# Slides track %>
+          <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
+            <% marriage_ads.each_with_index do |bb, i| %>
+              <% bb.track_impression! %>
+              <div class="w-full shrink-0 relative" data-carousel-target="slide">
+                <% if bb.link_url.present? %>
+                  <%= link_to billboard_click_path(bb), class: "block w-full" do %>
+                    <% if bb.image.attached? %>
+                      <%= optimized_image_tag bb.image, variant: :marriage_ad, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
+                    <% else %>
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:400px">
+                        <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
+                      </div>
+                    <% end %>
+                  <% end %>
+                <% else %>
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
@@ -33,42 +51,34 @@
                     </div>
                   <% end %>
                 <% end %>
-              <% else %>
-                <% if bb.image.attached? %>
-                  <%= optimized_image_tag bb.image, variant: :marriage_ad, class: "w-full h-auto block", loading: i == 0 ? "eager" : "lazy" %>
-                <% else %>
-                  <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="height:400px">
-                    <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
-                  </div>
-                <% end %>
-              <% end %>
-              <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
-            </div>
-          <% end %>
-        </div>
-
-        <%# Floating prev/next arrows (subtle, over the image) %>
-        <% if marriage_ads.size > 1 %>
-          <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
-                  class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
-                  style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
-            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
-                  style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
-            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-          </button>
-
-          <%# Dot indicators — bottom of image %>
-          <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
-            <% (0...(marriage_ads.size / 2)).each do |i| %>
-              <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                      class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
+                <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
+              </div>
             <% end %>
           </div>
-        <% end %>
 
+          <%# Floating prev/next circle arrows on image sides %>
+          <% if marriage_ads.size > 1 %>
+            <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
+                    class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
+                    style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
+              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
+                    style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
+              <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
+            <%# Dot indicators at bottom of image %>
+            <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+              <% (0...(marriage_ads.size / 2)).each do |i| %>
+                <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                        class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
+              <% end %>
+            </div>
+          <% end %>
+
+        </div>
       </div>
     </div>
   </div>

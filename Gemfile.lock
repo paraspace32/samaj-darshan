@@ -494,6 +494,7 @@ DEPENDENCIES
   faker
   google-apis-analyticsdata_v1beta (~> 0.27)
   google-cloud-storage (~> 1.59)
+  googleauth
   image_processing (~> 1.2)
   importmap-rails
   jbuilder

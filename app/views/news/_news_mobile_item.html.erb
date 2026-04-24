@@ -1,0 +1,36 @@
+<% idx ||= 0 %>
+<% cache [ news_item, I18n.locale, "list", ENV.fetch("CACHE_VERSION", "v1") ] do %>
+  <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
+    <%= link_to news_path(news_item), class: "group news-list-row" do %>
+      <div class="w-24 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
+        <% if news_item.cover_image.attached? %>
+          <%= optimized_image_tag news_item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
+        <% else %>
+          <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+            <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="flex-1 min-w-0 flex flex-col justify-center">
+        <div class="flex items-center gap-1.5 mb-1">
+          <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color:#f97316"></span>
+          <span class="text-[10px] font-bold text-orange-600 truncate"><%= news_item.category.display_name %></span>
+          <span class="text-[10px] text-gray-300">&middot;</span>
+          <span class="text-[10px] text-gray-400 shrink-0"><%= t("feed.ago", time: time_ago_in_words(news_item.published_at)) %></span>
+        </div>
+        <h2 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= news_item.display_title %></h2>
+        <div class="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
+          <span><%= news_item.region.display_name %></span>
+          <span class="inline-flex items-center gap-0.5">
+            <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            <%= news_item.likes_count %>
+          </span>
+          <span class="inline-flex items-center gap-0.5">
+            <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <%= news_item.comments_count %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

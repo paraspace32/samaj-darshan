@@ -1,10 +1,24 @@
 <% marriage_ads = billboards_for(:marriage_ad).first(10) %>
 <% marriage_ads = (marriage_ads * 10).first(10) if marriage_ads.size.between?(1, 9) %>
 <% if marriage_ads.any? %>
-  <div class="mb-4">
-    <div class="relative rounded-2xl overflow-hidden border border-rose-100 shadow-lg shadow-rose-200/30 group"
-         data-controller="carousel" data-carousel-autoplay-value="true">
-      <div class="overflow-hidden">
+  <%# Ornate wedding-style picture frame wrapper %>
+  <div class="mb-4 relative" style="padding: 5px; border-radius: 18px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 20%, #f9a8d4 40%, #fde68a 60%, #fda4af 80%, #fde68a 100%);">
+    <%# Inner white mat border %>
+    <div style="border-radius: 14px; padding: 3px; background: white;">
+
+      <%# Carousel — no bottom bar %>
+      <div class="relative overflow-hidden" style="border-radius: 12px;"
+           data-controller="carousel" data-carousel-autoplay-value="true">
+
+        <%# "विवाह विज्ञापन" badge at top %>
+        <div class="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+          <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide text-white select-none"
+                style="background: linear-gradient(135deg, rgba(251,113,133,0.92), rgba(244,63,94,0.92)); backdrop-filter: blur(8px); box-shadow: 0 2px 10px rgba(244,63,94,0.4)">
+            💍 <%= t("feed.marriage_ads") %>
+          </span>
+        </div>
+
+        <%# Slides track %>
         <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
           <% marriage_ads.each_with_index do |bb, i| %>
             <% bb.track_impression! %>
@@ -32,43 +46,28 @@
             </div>
           <% end %>
         </div>
-      </div>
 
-      <%# Bottom nav bar — prev | dots title dots | next %>
-      <div class="flex items-center justify-between px-3 py-2" style="background:rgba(0,0,0,0.75)">
+        <%# Floating prev/next arrows (subtle, over the image) %>
+        <% if marriage_ads.size > 1 %>
+          <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
+                  class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
+                  style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center active:scale-90 transition-transform cursor-pointer"
+                  style="background:rgba(0,0,0,0.35); backdrop-filter:blur(4px)">
+            <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
 
-        <button data-action="click->carousel#prev" onclick="event.preventDefault(); event.stopPropagation();"
-                class="flex items-center gap-1 text-white/90 text-sm font-semibold active:scale-95 transition-transform cursor-pointer select-none">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
-          <%= t("feed.carousel_prev") %>
-        </button>
-
-        <div class="flex items-center gap-1.5">
-          <% if marriage_ads.size > 1 %>
-            <% half = marriage_ads.size / 2 %>
-            <div class="flex items-center gap-1">
-              <% (0...half).each do |i| %>
-                <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                        class="h-0.5 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-3' : 'bg-white/40 w-0.5' %>"></button>
-              <% end %>
-            </div>
-          <% end %>
-          <span class="text-white/90 text-[9px] font-bold tracking-wide whitespace-nowrap"><%= t("feed.marriage_ads") %></span>
-          <% if marriage_ads.size > 1 %>
-            <div class="flex items-center gap-1">
-              <% (half...marriage_ads.size).each do |i| %>
-                <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                        class="h-0.5 rounded-full transition-all duration-300 cursor-pointer bg-white/40 w-0.5"></button>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-
-        <button data-action="click->carousel#next" onclick="event.preventDefault(); event.stopPropagation();"
-                class="flex items-center gap-1 text-white/90 text-sm font-semibold active:scale-95 transition-transform cursor-pointer select-none">
-          <%= t("feed.carousel_next") %>
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
+          <%# Dot indicators — bottom of image %>
+          <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+            <% (0...(marriage_ads.size / 2)).each do |i| %>
+              <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                      class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
+            <% end %>
+          </div>
+        <% end %>
 
       </div>
     </div>

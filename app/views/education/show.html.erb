@@ -78,6 +78,13 @@
       <%= @education_post.display_title %>
     </h1>
 
+    <%# Cover image — right below headline %>
+    <% if @education_post.cover_image.attached? %>
+      <div class="mb-5 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
+        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
+      </div>
+    <% end %>
+
     <%# Author card %>
     <div class="flex items-center gap-3 bg-stone-50/80 border border-stone-100 rounded-2xl px-4 py-3 mb-5 animate-fade-up">
       <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-md shadow-orange-200/50 ring-2 ring-white shrink-0">
@@ -91,11 +98,26 @@
           <span class="text-xs text-stone-400 font-medium"><%= smart_date %></span>
         </div>
       </div>
-      <div class="shrink-0 flex items-center gap-2 text-xs text-stone-400 font-semibold">
-        <svg class="w-3.5 h-3.5 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>
-        <%= number_with_delimiter(@education_post.likes_count) %>
+      <%# Live readers (blinking) — site-wide GA count %>
+      <div class="shrink-0 flex items-center gap-2.5">
+        <% if @site_active_users.to_i > 0 %>
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2 shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-xs font-black text-green-600 animate-pulse">
+              <%= @site_active_users %> <%= I18n.locale == :hi ? "पढ़ रहे हैं" : "reading" %>
+            </span>
+          </div>
+        <% else %>
+          <div class="flex items-center gap-1 text-xs text-stone-400 font-semibold">
+            <svg class="w-3.5 h-3.5 text-red-300" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            <%= number_with_delimiter(@education_post.likes_count) %>
+          </div>
+        <% end %>
       </div>
     </div>
 
@@ -126,13 +148,6 @@
     <div class="section-divider mb-6"></div>
 
     <%= render "shared/billboard_article_top" %>
-
-    <%# Cover image %>
-    <% if @education_post.cover_image.attached? %>
-      <div class="mb-8 -mx-4 sm:mx-0 group overflow-hidden rounded-none sm:rounded-3xl border border-gray-200/40 shadow-2xl shadow-stone-900/10">
-        <%= optimized_image_tag @education_post.cover_image, variant: :hero, class: "w-full h-64 sm:h-80 lg:h-[520px] object-cover img-zoom" %>
-      </div>
-    <% end %>
 
     <%# Official URL button — hidden for degree_news %>
     <% if !is_news_style && @education_post.official_url.present? %>

@@ -2,7 +2,7 @@
 <% if feed_bbs.any? %>
   <% bb = feed_bbs.sample %>
   <% bb.track_impression! %>
-  <div class="col-span-1 sm:col-span-2 animate-fade-in">
+  <div class="my-3 animate-fade-in">
     <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm relative">
       <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
       <% if bb.link_url.present? %>
@@ -17,5 +17,16 @@
         <% end %>
       <% end %>
     </div>
+  </div>
+<% else %>
+  <%# Fallback: decorative section divider so no dead whitespace %>
+  <div class="flex items-center gap-3 my-4" aria-hidden="true">
+    <div class="flex-1 h-px" style="background: linear-gradient(to right, transparent, #fed7aa, transparent)"></div>
+    <span class="shrink-0 flex items-center gap-1.5 text-[10px] font-semibold text-orange-300 tracking-widest uppercase select-none">
+      <span class="w-1 h-1 rounded-full bg-orange-300"></span>
+      <%= t("brand.name", default: "समाज दर्शन") %>
+      <span class="w-1 h-1 rounded-full bg-orange-300"></span>
+    </span>
+    <div class="flex-1 h-px" style="background: linear-gradient(to right, #fed7aa, transparent)"></div>
   </div>
 <% end %>

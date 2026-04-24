@@ -1,0 +1,24 @@
+<% has_more ||= false %>
+<% next_url  ||= nil %>
+
+<% if has_more %>
+  <div id="news-sentinel"
+       data-infinite-scroll-target="sentinel"
+       data-next-url="<%= next_url %>"
+       class="flex justify-center items-center py-8 gap-3 text-gray-400">
+    <svg class="animate-spin w-5 h-5 text-orange-400" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <span class="text-sm font-medium text-gray-400"><%= I18n.locale == :hi ? "और लोड हो रहा है..." : "Loading more..." %></span>
+  </div>
+<% else %>
+  <div id="news-sentinel" class="py-8 text-center">
+    <span class="inline-flex items-center gap-2 text-[12px] text-gray-400 font-medium">
+      <svg class="w-4 h-4 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      <%= I18n.locale == :hi ? "सब कुछ पढ़ लिया!" : "You're all caught up!" %>
+    </span>
+  </div>
+<% end %>

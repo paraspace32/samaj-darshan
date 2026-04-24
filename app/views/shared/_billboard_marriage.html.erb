@@ -7,14 +7,12 @@
     - sm+: rounded corners with gradient border
     - Badge sits ON the top border of the frame (not inside image)
   %>
-  <div class="mb-4 relative -mx-4 sm:mx-0 pt-4">
+  <div class="mb-4 relative -mx-4 sm:mx-0">
 
-    <%# Badge ON the top-center of the frame border %>
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 z-30">
-      <span class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wide text-white select-none"
-            style="background: linear-gradient(135deg, #fb7185, #f43f5e); box-shadow: 0 2px 12px rgba(244,63,94,0.45)">
-        💍 <%= t("feed.marriage_ads") %>
-      </span>
+    <%# 💍 Ring decoration — top-right corner of frame %>
+    <div class="absolute -top-2.5 -right-0 sm:-right-2.5 z-30 w-9 h-9 rounded-full flex items-center justify-center text-base select-none"
+         style="background: linear-gradient(135deg, #fb7185, #f43f5e); box-shadow: 0 2px 10px rgba(244,63,94,0.5)">
+      💍
     </div>
 
     <%# Gradient border frame — full-width mobile, rounded on sm+ %>

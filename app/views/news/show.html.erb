@@ -155,43 +155,35 @@
       </div>
     <% end %>
 
-    <%# Author card %>
-    <div class="flex items-center gap-3 bg-stone-50/80 border border-stone-100 rounded-2xl px-4 py-3 mb-5 animate-fade-up">
-      <div class="w-10 h-10 rounded-full gradient-brand flex items-center justify-center shadow-md shadow-orange-200/50 ring-2 ring-white shrink-0">
-        <span class="text-white font-black text-sm"><%= @news_item.author.name[0] %></span>
+    <%# Author card — single compact line %>
+    <div class="flex items-center gap-2.5 bg-stone-50/80 border border-stone-100 rounded-xl px-3 py-2 mb-5 animate-fade-up">
+      <div class="w-7 h-7 rounded-full gradient-brand flex items-center justify-center shadow-sm ring-1 ring-white shrink-0">
+        <span class="text-white font-black text-[11px]"><%= @news_item.author.name[0] %></span>
       </div>
-      <div class="min-w-0 flex-1">
-        <p class="text-sm font-black text-stone-800 leading-tight"><%= @news_item.author.name %></p>
-        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-          <span class="text-xs text-stone-400 font-medium"><%= @news_item.region.display_name %></span>
-          <span class="text-stone-300 text-xs">·</span>
-          <span class="text-xs text-stone-400 font-medium"><%= smart_date %></span>
+      <div class="min-w-0 flex-1 flex items-center gap-1.5 flex-wrap">
+        <span class="text-[12px] font-black text-stone-800"><%= @news_item.author.name %></span>
+        <span class="text-stone-300 text-[11px]">·</span>
+        <span class="text-[11px] text-stone-400 font-medium"><%= @news_item.region.display_name %></span>
+        <span class="text-stone-300 text-[11px]">·</span>
+        <span class="text-[11px] text-stone-400 font-medium"><%= smart_date %></span>
+      </div>
+      <%# Live readers %>
+      <% live_count  = @active_readers.to_i > 0 ? @active_readers : nil %>
+      <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
+      <% if live_count %>
+        <div class="shrink-0 flex items-center gap-1.5">
+          <span class="relative flex h-1.5 w-1.5 shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+          </span>
+          <span class="text-[11px] font-black text-green-600"><%= live_count %> <%= I18n.locale == :hi ? "पढ़ रहे हैं" : "reading" %></span>
         </div>
-      </div>
-      <%# Live readers — per-article → site-wide → total views fallback %>
-      <div class="shrink-0 flex items-center gap-2.5">
-        <% live_count  = @active_readers.to_i > 0 ? @active_readers : nil %>
-        <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
-        <% if live_count %>
-          <div class="flex items-center gap-1.5">
-            <span class="relative flex h-2 w-2 shrink-0">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <span class="text-xs font-black text-green-600 animate-pulse">
-              <%= live_count %> <%= I18n.locale == :hi ? "पढ़ रहे हैं" : "reading" %>
-            </span>
-          </div>
-        <% else %>
-          <div class="flex items-center gap-1 text-xs text-stone-400 font-semibold">
-            <svg class="w-3.5 h-3.5 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-              <path stroke-linecap="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-            </svg>
-            <%= number_with_delimiter(@news_item.views_count) %>
-          </div>
-        <% end %>
-      </div>
+      <% else %>
+        <div class="shrink-0 flex items-center gap-1 text-[11px] text-stone-400 font-semibold">
+          <svg class="w-3 h-3 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <%= number_with_delimiter(@news_item.views_count) %>
+        </div>
+      <% end %>
     </div>
 
     <div class="section-divider mb-6"></div>

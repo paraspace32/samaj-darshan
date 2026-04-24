@@ -848,6 +848,9 @@
     HOME: Quick links — Webinars & Magazine
     ═══════════════════════════════════════════════════════════════════ %>
 <% if @is_home %>
+  <%# ── VISITOR MAP — global readers widget ───────────────────────── %>
+  <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
+
   <div class="page-section-break mb-6"></div>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-4">
     <%= link_to webinars_path, class: "group promo-card gradient-hero text-white p-5 sm:p-6 flex items-center gap-4 sm:gap-5", style: "box-shadow: 0 8px 32px -8px rgba(15,23,42,0.5)" do %>
@@ -898,6 +901,4 @@
     <% end %>
   </div>
 
-  <%# ── VISITOR MAP — global readers widget (pinned to bottom) ───── %>
-  <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
 <% end %>

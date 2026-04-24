@@ -10,12 +10,8 @@
           <%= t("feed.trending") %>
         </span>
         <div class="w-px h-4 bg-white/20 shrink-0"></div>
-        <div class="overflow-hidden flex-1">
-          <div class="ticker-scroll flex items-center gap-4">
-            <% @trending.each do |item| %>
-              <%= link_to item.display_title, news_path(item), class: "text-xs font-medium text-white/80 shrink-0 whitespace-nowrap" %>
-              <span class="text-white/20 shrink-0">&bull;</span>
-            <% end %>
+        <div class="overflow-x-auto flex-1 scrollbar-hide">
+          <div class="flex items-center gap-4">
             <% @trending.each do |item| %>
               <%= link_to item.display_title, news_path(item), class: "text-xs font-medium text-white/80 shrink-0 whitespace-nowrap" %>
               <span class="text-white/20 shrink-0">&bull;</span>
@@ -70,8 +66,8 @@
       HOME PAGE — advanced multi-section layout
       ═════════════════════════════════════════════════════════════════ %>
 
-  <%# ── TOP AD — right below ticker/pills, before any content ────── %>
-  <%= render "shared/billboard_banner" %>
+  <%# ── TOP AD — right below ticker/pills, before hero ────────── %>
+  <%= render "shared/billboard_feed" %>
 
   <%# ── HERO (full-bleed on mobile) + Top stories side stack ─────── %>
   <% if @featured.present? %>

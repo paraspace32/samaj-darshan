@@ -24,8 +24,10 @@
 <% end %>
 
 <%# ═══════════════════════════════════════════════════════════════════
-    Category pills — horizontal scroll on mobile
+    Category pills — top of page on filtered/paged views only
+    On homepage they appear below the hero (see @is_home block)
     ═══════════════════════════════════════════════════════════════════ %>
+<% unless @is_home %>
 <div class="mb-3">
   <div class="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
     <%= link_to root_path, class: "shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all #{ @region.nil? && @category.nil? ? 'gradient-brand text-white shadow-md shadow-orange-400/35' : 'bg-white text-gray-600 border border-gray-200/60 hover:border-orange-200 hover:text-orange-600 shadow-sm shadow-gray-100' }" do %>
@@ -39,6 +41,7 @@
     <% end %>
   </div>
 </div>
+<% end %>
 
 <%# ═══════════════════════════════════════════════════════════════════
     Filtered view header (region / category)
@@ -66,8 +69,8 @@
       HOME PAGE — advanced multi-section layout
       ═════════════════════════════════════════════════════════════════ %>
 
-  <%# ── TOP AD — right below ticker/pills, before hero ────────── %>
-  <%= render "shared/billboard_feed" %>
+  <%# ── TOP AD (marriage/sponsored) — right below ticker/pills, before hero ── %>
+  <%= render "shared/billboard_marriage" %>
 
   <%# ── HERO (full-bleed on mobile) + Top stories side stack ─────── %>
   <% if @featured.present? %>
@@ -209,10 +212,7 @@
     </div>
   <% end %>
 
-  <%# ── MARRIAGE ADS ───────────────────────────────────────────────── %>
-  <%= render "shared/billboard_marriage" %>
-
-  <%# ── SIDE STACK (mobile only — shown after marriage ads) ─────── %>
+  <%# ── SIDE STACK (mobile only) ──────────────────────────────────── %>
   <% if @news_items.first(3).any? %>
     <div class="lg:hidden flex flex-col gap-3 mb-4">
       <% @news_items.first(3).each_with_index do |item, idx| %>
@@ -242,7 +242,22 @@
     </div>
   <% end %>
 
-  <%# ── AD after hero/marriage block ───────────────────────────── %>
+  <%# ── CATEGORY PILLS — below hero on homepage ───────────────── %>
+  <div class="mb-3">
+    <div class="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+      <%= link_to root_path, class: "shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all gradient-brand text-white shadow-md shadow-orange-400/35" do %>
+        <%= t("feed.all_regions") %>
+      <% end %>
+      <% @categories.each do |c| %>
+        <%= link_to category_feed_path(slug: c.slug), class: "shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all bg-white text-gray-600 border border-gray-200/60 hover:border-orange-200 hover:text-orange-600 shadow-sm shadow-gray-100" do %>
+          <span class="w-1.5 h-1.5 rounded-full shrink-0 ring-1 ring-white/50" style="background-color:#f97316"></span>
+          <%= c.display_name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── AD after hero block ─────────────────────────────────────── %>
   <%= render "shared/billboard_feed" %>
 
   <div class="page-section-break mb-4"></div>

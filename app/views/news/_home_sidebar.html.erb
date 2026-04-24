@@ -1,0 +1,52 @@
+<%# Sticky right sidebar — desktop home page only %>
+<aside class="hidden lg:block lg:w-72 shrink-0">
+  <div class="sticky top-4 space-y-4">
+
+    <%# ── Sidebar ad slot #1 ──────────────────────────── %>
+    <%= render "shared/billboard_sidebar" %>
+
+    <%# ── Most Read Today ─────────────────────────────── %>
+    <% if @trending.present? %>
+      <div class="surface-raised rounded-2xl p-4">
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-1 h-5 rounded-full bg-red-500 shrink-0"></div>
+          <h3 class="text-[13px] font-black text-gray-900">
+            <%= I18n.locale == :hi ? "सर्वाधिक पढ़ा गया" : "Most Read" %>
+          </h3>
+        </div>
+        <div class="space-y-0.5">
+          <% @trending.each_with_index do |item, idx| %>
+            <%= link_to news_path(item), class: "group flex items-start gap-3 px-2 py-2.5 rounded-xl hover:bg-orange-50 transition-colors" do %>
+              <span class="text-xl font-black text-orange-200/80 leading-none w-6 shrink-0 mt-0.5 select-none"><%= idx + 1 %></span>
+              <h4 class="text-[12px] font-semibold text-gray-700 group-hover:text-orange-700 line-clamp-2 leading-snug flex-1 min-w-0"><%= item.display_title %></h4>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ── Sidebar ad slot #2 ──────────────────────────── %>
+    <%= render "shared/billboard_feed" %>
+
+    <%# ── Explore categories ───────────────────────────── %>
+    <% if @categories.present? %>
+      <div class="surface-raised rounded-2xl p-4">
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-1 h-5 rounded-full bg-orange-500 shrink-0"></div>
+          <h3 class="text-[13px] font-black text-gray-900"><%= t("feed.explore_categories") %></h3>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <% @categories.each do |c| %>
+            <%= link_to category_feed_path(slug: c.slug), class: "text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 hover:bg-orange-100 hover:text-orange-700 transition-colors" do %>
+              <%= c.display_name %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <%# ── Sidebar ad slot #3 ──────────────────────────── %>
+    <%= render "shared/billboard_feed" %>
+
+  </div>
+</aside>

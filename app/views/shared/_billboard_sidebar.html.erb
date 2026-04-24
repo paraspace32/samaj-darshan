@@ -1,0 +1,19 @@
+<% sidebar_bbs = billboards_for(:feed_inline) %>
+<% if sidebar_bbs.any? %>
+  <% bb = sidebar_bbs.sample %>
+  <% bb.track_impression! %>
+  <div class="rounded-2xl bg-white border border-gray-200/60 overflow-hidden shadow-sm relative">
+    <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
+    <% if bb.link_url.present? %>
+      <%= link_to billboard_click_path(bb), class: "block" do %>
+        <% if bb.image.attached? %>
+          <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-40 object-cover", loading: "lazy" %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if bb.image.attached? %>
+        <%= optimized_image_tag bb.image, variant: :card, class: "w-full h-40 object-cover", loading: "lazy" %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

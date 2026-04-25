@@ -132,9 +132,22 @@ class FcmService
   end
 
   def firebase_credentials
-    # Stored as a single JSON string in Rails credentials or ENV
-    Rails.application.credentials.dig(:firebase, :service_account_json) ||
-      ENV["FIREBASE_SERVICE_ACCOUNT_JSON"]
+    # Option 1: single JSON string in ENV (set via GitHub secret)
+    return ENV["FIREBASE_SERVICE_ACCOUNT_JSON"] if ENV["FIREBASE_SERVICE_ACCOUNT_JSON"].present?
+
+    # Option 2: single JSON string in Rails credentials
+    json_str = Rails.application.credentials.dig(:firebase, :service_account_json)
+    return json_str if json_str.present?
+
+    # Option 3: structured hash in Rails credentials (stored as YAML fields)
+    sa = Rails.application.credentials.dig(:firebase, :service_account)
+    return nil unless sa
+
+    sa_hash = sa.is_a?(Hash) ? sa : sa.to_h
+    # Ensure private_key has real newlines (credentials may store as literal block)
+    sa_hash = sa_hash.stringify_keys
+    sa_hash["private_key"] = sa_hash["private_key"].to_s.gsub("\\n", "\n")
+    sa_hash.to_json
   end
 
   def firebase_project_id

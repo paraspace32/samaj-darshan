@@ -107,7 +107,7 @@ class FcmService
     webpush_notification = notification.merge(
       icon:  "/icon-192.png",
       badge: "/icon-192.png",
-      vibrate: [200, 100, 200]
+      vibrate: [ 200, 100, 200 ]
     )
     webpush_notification[:image] = image if image.present?
 

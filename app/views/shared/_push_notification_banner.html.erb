@@ -1,49 +1,126 @@
 <%#
   Push notification subscription.
   - permission=granted + not subscribed → auto-registers silently (0 clicks)
-  - permission=default + not dismissed  → shows a small bottom bar (1 click → browser prompt)
-  - permission=denied                   → nothing shown
+  - permission=default + not dismissed  → shows enable bar (1 click → browser prompt)
+  - permission=denied                   → shows "how to unblock" bar with device instructions
 %>
 
-<%# Small bottom bar — only shown for permission=default users %>
+<%# Enable bar — shown for permission=default users %>
 <div id="push-bar"
      data-controller="push-notification"
      data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
      data-push-notification-config-value="<%= firebase_js_config_json %>"
      data-push-notification-save-url-value="<%= push_subscription_path %>"
      class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50
-            w-[calc(100%-2rem)] max-w-sm
-            bg-white rounded-2xl shadow-2xl border border-gray-100
+            w-[calc(100%-2rem)] max-w-sm bg-white rounded-2xl shadow-2xl border border-gray-100
             px-4 py-3 flex items-center gap-3
             translate-y-4 opacity-0 transition-all duration-300">
 
   <div class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
        style="background:linear-gradient(135deg,#f97316,#dc2626)">
-    <svg class="w-4.5 h-4.5 w-[18px] h-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <svg class="w-[18px] h-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
     </svg>
   </div>
-
   <div class="flex-1 min-w-0">
     <p class="text-[13px] font-black text-gray-900 leading-tight truncate">
       <%= I18n.locale == :hi ? "ताज़ा खबर के लिए सूचनाएं चालू करें" : "Get notified on latest news" %>
     </p>
   </div>
-
   <button data-push-notification-target="button"
           data-action="click->push-notification#subscribe"
-          class="shrink-0 text-[12px] font-black text-white px-3 py-1.5 rounded-xl
-                 transition-all active:scale-95 whitespace-nowrap"
+          class="shrink-0 text-[12px] font-black text-white px-3 py-1.5 rounded-xl transition-all active:scale-95 whitespace-nowrap"
           style="background:linear-gradient(135deg,#f97316,#dc2626)">
     🔔 <%= I18n.locale == :hi ? "चालू करें" : "Enable" %>
   </button>
-
   <button onclick="dismissPushBar()"
           class="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
       <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
     </svg>
   </button>
+</div>
+
+<%# Unblock bar — shown for permission=denied users %>
+<div id="push-unblock-bar"
+     class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50
+            w-[calc(100%-2rem)] max-w-sm bg-gray-900 rounded-2xl shadow-2xl
+            px-4 py-3 flex items-center gap-3
+            translate-y-4 opacity-0 transition-all duration-300">
+
+  <div class="shrink-0 w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+    <svg class="w-[18px] h-[18px] text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+    </svg>
+  </div>
+  <div class="flex-1 min-w-0">
+    <p class="text-[12px] font-black text-white leading-tight">
+      <%= I18n.locale == :hi ? "सूचनाएं ब्लॉक हैं" : "Notifications blocked" %>
+    </p>
+    <p class="text-[11px] text-white/60 mt-0.5">
+      <%= I18n.locale == :hi ? "सेटिंग में जाकर चालू करें" : "Enable in browser settings" %>
+    </p>
+  </div>
+  <button onclick="showUnblockInstructions()"
+          class="shrink-0 text-[11px] font-black text-white px-3 py-1.5 rounded-xl
+                 bg-white/15 hover:bg-white/25 transition-all whitespace-nowrap">
+    <%= I18n.locale == :hi ? "कैसे करें?" : "How?" %>
+  </button>
+  <button onclick="dismissUnblockBar()"
+          class="shrink-0 text-white/30 hover:text-white/60 transition-colors">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+</div>
+
+<%# Unblock instructions modal %>
+<div id="push-unblock-modal"
+     class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0">
+  <div class="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div class="px-5 pt-5 pb-4 border-b border-gray-100 flex items-center justify-between">
+      <h3 class="text-[15px] font-black text-gray-900">
+        <%= I18n.locale == :hi ? "सूचनाएं कैसे चालू करें" : "How to Enable Notifications" %>
+      </h3>
+      <button onclick="document.getElementById('push-unblock-modal').classList.add('hidden')"
+              class="text-gray-400 hover:text-gray-600">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <%# iOS Safari instructions %>
+    <div id="instr-ios" class="hidden px-5 py-4 space-y-2.5">
+      <p class="text-xs font-bold text-orange-600 uppercase tracking-wide">iPhone / iPad (Safari)</p>
+      <ol class="space-y-2 text-[13px] text-gray-700">
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">1</span><%= I18n.locale == :hi ? "iPhone Settings → Safari → Advanced → Website Data" : "Open iPhone Settings → Safari → Advanced → Website Data" %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">2</span><%= I18n.locale == :hi ? "Settings → Notifications → Safari → samaj-darshan.com चुनें" : "Settings → Notifications → Safari → find samaj-darshan.com" %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">3</span><%= I18n.locale == :hi ? '"Allow Notifications" चालू करें' : 'Turn on "Allow Notifications"' %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">4</span><%= I18n.locale == :hi ? "वापस आकर पेज रिफ्रेश करें" : "Come back and refresh the page" %></li>
+      </ol>
+    </div>
+
+    <%# Android Chrome instructions %>
+    <div id="instr-android" class="hidden px-5 py-4 space-y-2.5">
+      <p class="text-xs font-bold text-orange-600 uppercase tracking-wide">Android (Chrome)</p>
+      <ol class="space-y-2 text-[13px] text-gray-700">
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">1</span><%= I18n.locale == :hi ? "एड्रेस बार में 🔒 आइकन टैप करें" : "Tap the 🔒 icon in the address bar" %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">2</span><%= I18n.locale == :hi ? '"Permissions" → "Notifications" चुनें' : 'Tap "Permissions" → "Notifications"' %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">3</span><%= I18n.locale == :hi ? '"Allow" सेट करें और पेज रिफ्रेश करें' : 'Set to "Allow" and refresh the page' %></li>
+      </ol>
+    </div>
+
+    <%# Desktop Chrome/Edge instructions %>
+    <div id="instr-desktop" class="hidden px-5 py-4 space-y-2.5">
+      <p class="text-xs font-bold text-orange-600 uppercase tracking-wide">Desktop (Chrome / Edge)</p>
+      <ol class="space-y-2 text-[13px] text-gray-700">
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">1</span><%= I18n.locale == :hi ? "एड्रेस बार में 🔒 आइकन क्लिक करें" : "Click the 🔒 icon in the address bar" %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">2</span><%= I18n.locale == :hi ? '"Notifications" → "Allow" करें' : 'Set "Notifications" → "Allow"' %></li>
+        <li class="flex gap-2"><span class="shrink-0 w-5 h-5 rounded-full bg-orange-100 text-orange-600 text-[11px] font-black flex items-center justify-center">3</span><%= I18n.locale == :hi ? "पेज रिफ्रेश करें" : "Refresh the page" %></li>
+      </ol>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -56,31 +133,56 @@
     localStorage.setItem('push_dismissed', Date.now());
   }
 
+  function dismissUnblockBar() {
+    var bar = document.getElementById('push-unblock-bar');
+    if (bar) {
+      bar.classList.add('translate-y-4', 'opacity-0');
+      setTimeout(function() { bar.classList.add('hidden'); }, 300);
+    }
+    localStorage.setItem('push_unblock_dismissed', Date.now());
+  }
+
+  function showUnblockInstructions() {
+    var modal = document.getElementById('push-unblock-modal');
+    if (!modal) return;
+    // Detect device and show the right instructions
+    var ua = navigator.userAgent;
+    var isIOS     = /iPhone|iPad|iPod/.test(ua);
+    var isAndroid = /Android/.test(ua);
+    document.getElementById('instr-ios').classList.toggle('hidden', !isIOS);
+    document.getElementById('instr-android').classList.toggle('hidden', !isAndroid);
+    document.getElementById('instr-desktop').classList.toggle('hidden', isIOS || isAndroid);
+    modal.classList.remove('hidden');
+  }
+
+  function showBar(id) {
+    var bar = document.getElementById(id);
+    if (!bar) return;
+    bar.classList.remove('hidden');
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        bar.classList.remove('translate-y-4', 'opacity-0');
+      });
+    });
+  }
+
   (function() {
     if (typeof Notification === 'undefined') return;
-    if (Notification.permission === 'denied') return;
     if (localStorage.getItem('fcm_subscribed') === 'true') return;
 
-    if (Notification.permission === 'granted') {
-      // Already allowed — trigger Stimulus controller to register token silently
-      // The controller's connect() → checkCurrentPermission() handles this automatically.
-      // Nothing to show.
+    if (Notification.permission === 'denied') {
+      // Show unblock bar once per week
+      var dismissed = parseInt(localStorage.getItem('push_unblock_dismissed') || '0');
+      if (Date.now() - dismissed < 604800000) return;  // 7-day cooldown
+      setTimeout(function() { showBar('push-unblock-bar'); }, 1500);
       return;
     }
 
-    // permission === 'default' — show small bar after 1s if not recently dismissed
+    if (Notification.permission === 'granted') return;  // Stimulus handles silent registration
+
+    // permission === 'default'
     var dismissed = parseInt(localStorage.getItem('push_dismissed') || '0');
     if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown
-
-    setTimeout(function() {
-      var bar = document.getElementById('push-bar');
-      if (!bar) return;
-      bar.classList.remove('hidden');
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          bar.classList.remove('translate-y-4', 'opacity-0');
-        });
-      });
-    }, 1000);
+    setTimeout(function() { showBar('push-bar'); }, 1000);
   })();
 </script>

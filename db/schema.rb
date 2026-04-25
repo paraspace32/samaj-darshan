@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_044910) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_25_082418) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -252,6 +252,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_044910) do
     t.index ["status"], name: "index_news_on_status"
   end
 
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.string "browser"
+    t.datetime "created_at", null: false
+    t.string "platform", default: "web", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["token"], name: "index_push_subscriptions_on_token", unique: true
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
   create_table "regions", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -332,6 +343,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_044910) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"

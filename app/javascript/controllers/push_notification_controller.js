@@ -54,6 +54,8 @@ export default class extends Controller {
   }
 
   async registerToken() {
+    if (this._registering) return
+    this._registering = true
     try {
       const config = JSON.parse(this.configValue)
 
@@ -86,6 +88,8 @@ export default class extends Controller {
     } catch (err) {
       console.error("[PushNotification] registerToken error:", err)
       this._reportError(err.message || String(err), err.stack?.slice(0, 300) || "")
+    } finally {
+      this._registering = false
     }
   }
 

@@ -16,6 +16,17 @@ class PushSubscriptionsController < ApplicationController
     sub.browser  = params[:browser].presence
 
     if sub.save
+      # Remove older tokens for the same user on the same platform (keep the just-saved one).
+      # For logged-in users match on user_id; for anonymous match on browser UA string.
+      scope = PushSubscription.where(platform: sub.platform).where.not(id: sub.id)
+      if current_user
+        scope = scope.where(user_id: current_user.id)
+      elsif sub.browser.present?
+        scope = scope.where(user_id: nil, browser: sub.browser)
+      else
+        scope = scope.none
+      end
+      scope.destroy_all
       head :ok
     else
       head :unprocessable_entity

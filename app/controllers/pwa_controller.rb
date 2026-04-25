@@ -49,6 +49,7 @@ class PwaController < ApplicationController
   def firebase_messaging_sw_js
     config = firebase_js_config
     <<~JS
+      // ── Firebase Cloud Messaging ─────────────────────────────────────────────
       importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
       importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
@@ -62,11 +63,11 @@ class PwaController < ApplicationController
         const link = payload.fcmOptions?.link || payload.data?.url || '/';
 
         self.registration.showNotification(title || 'समाज दर्शन', {
-          body:  body  || '',
-          icon:  '/icon-192.png',
-          badge: '/icon-192.png',
-          image: image,
-          data:  { url: link },
+          body:    body  || '',
+          icon:    '/icon-192.png',
+          badge:   '/icon-192.png',
+          image:   image,
+          data:    { url: link },
           vibrate: [200, 100, 200]
         });
       });
@@ -80,6 +81,55 @@ class PwaController < ApplicationController
               if (client.url === url && 'focus' in client) return client.focus();
             }
             if (clients.openWindow) return clients.openWindow(url);
+          })
+        );
+      });
+
+      // ── PWA Caching (merged so only one SW controls the scope) ───────────────
+      const CACHE_VERSION = 'samaj-darshan-v2';
+      const OFFLINE_URL   = '/offline';
+      const PRECACHE_URLS = [OFFLINE_URL, '/icon-192.png', '/icon-512.png'];
+
+      self.addEventListener('install', (event) => {
+        event.waitUntil(
+          caches.open(CACHE_VERSION)
+            .then((cache) => cache.addAll(PRECACHE_URLS))
+            .then(() => self.skipWaiting())
+        );
+      });
+
+      self.addEventListener('activate', (event) => {
+        event.waitUntil(
+          caches.keys().then((keys) =>
+            Promise.all(
+              keys.filter((key) => key !== CACHE_VERSION)
+                  .map((key) => caches.delete(key))
+            )
+          ).then(() => self.clients.claim())
+        );
+      });
+
+      self.addEventListener('fetch', (event) => {
+        if (event.request.method !== 'GET') return;
+
+        // Navigate: network-first, offline fallback
+        if (event.request.mode === 'navigate') {
+          event.respondWith(
+            fetch(event.request).catch(() => caches.match(OFFLINE_URL))
+          );
+          return;
+        }
+
+        // Static assets: cache-first
+        event.respondWith(
+          caches.match(event.request).then((cached) => {
+            return cached || fetch(event.request).then((response) => {
+              if (response.ok && event.request.url.match(/\\.(png|svg|css|js|woff2?)$/)) {
+                const clone = response.clone();
+                caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
+              }
+              return response;
+            }).catch(() => caches.match(OFFLINE_URL));
           })
         );
       });

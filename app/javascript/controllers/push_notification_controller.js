@@ -65,8 +65,12 @@ export default class extends Controller {
       const app       = getApps().length ? getApps()[0] : initializeApp(config)
       const messaging = getMessaging(app)
 
-      // Register the dedicated Firebase SW
-      const swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" })
+      // Reuse the already-registered merged SW (registered on page load in layout)
+      // Falls back to registering if somehow not yet active
+      let swReg = await navigator.serviceWorker.getRegistration("/")
+      if (!swReg) {
+        swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" })
+      }
       await navigator.serviceWorker.ready
 
       const token = await getToken(messaging, {

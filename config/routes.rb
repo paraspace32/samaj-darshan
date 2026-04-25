@@ -74,7 +74,7 @@ Rails.application.routes.draw do
     get "cache/ga_status", to: "cache#ga_status", as: :ga_status
 
     # Push notifications
-    resource :push_notifications, only: [ :index ], path: "push_notifications" do
+    resources :push_notifications, only: [ :index ], path: "push_notifications" do
       collection { post :send_notification }
     end
     post "news/:news_id/push", to: "push_notifications#send_for_news", as: :news_push

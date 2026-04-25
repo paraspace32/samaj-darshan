@@ -57,7 +57,7 @@
       <% if current_user.can_manage_billboards? %>
         <%= admin_nav_link "Billboards", admin_billboards_path, "billboard" %>
       <% end %>
-      <% if current_user.admin? %>
+      <% if current_user.super_admin? %>
         <%= admin_nav_link "Push Notifications", admin_push_notifications_path, "bell" %>
       <% end %>
     <% end %>

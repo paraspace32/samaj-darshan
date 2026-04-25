@@ -301,6 +301,27 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
+          <% if firebase_configured? %>
+          var currentVapidKey = '<%= firebase_vapid_key %>';
+          var storedVapidKey  = localStorage.getItem('fcm_vapid_key');
+
+          if (storedVapidKey && storedVapidKey !== currentVapidKey) {
+            // VAPID key changed — unregister old SW and clear cached token so
+            // the Stimulus controller fetches a fresh FCM token on next load.
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              regs.forEach(function(r) { r.unregister(); });
+              localStorage.removeItem('fcm_token');
+              // Re-register SW and reload once so the new key takes effect
+              navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' }).then(function() {
+                localStorage.setItem('fcm_vapid_key', currentVapidKey);
+                window.location.reload();
+              });
+            });
+            return;
+          }
+          localStorage.setItem('fcm_vapid_key', currentVapidKey);
+          <% end %>
+
           // Single merged SW handles both PWA caching and FCM push notifications
           navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' }).then(function(reg) {
             console.log('Service worker registered with scope:', reg.scope);

@@ -28,7 +28,7 @@ export default class extends Controller {
   checkCurrentPermission() {
     if (Notification.permission === "granted") {
       this.showStatus("subscribed")
-      this.registerToken()     // refresh token silently on each visit
+      this.registerToken()     // refresh / save token silently on each visit
     } else if (Notification.permission === "denied") {
       this.showStatus("blocked")
     } else {
@@ -41,10 +41,16 @@ export default class extends Controller {
     if (!this.supported) return
 
     try {
-      const permission = await Notification.requestPermission()
+      // If already granted, skip the browser prompt and go straight to token registration
+      const permission = Notification.permission === "granted"
+        ? "granted"
+        : await Notification.requestPermission()
+
       if (permission === "granted") {
         await this.registerToken()
         this.showStatus("subscribed")
+        // Close the modal automatically after subscribing
+        if (typeof closePushModal === "function") closePushModal()
       } else {
         this.showStatus("blocked")
       }
@@ -103,6 +109,7 @@ export default class extends Controller {
     if (!response.ok) {
       throw new Error(`[PushNotification] Failed to save token: ${response.status}`)
     }
+    localStorage.setItem("fcm_subscribed", "true")
   }
 
   showStatus(state) {

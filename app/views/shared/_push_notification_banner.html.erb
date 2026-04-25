@@ -86,27 +86,36 @@
     localStorage.setItem('push_dismissed', Date.now());
   }
 
-  (function() {
-    // Show only if push is supported, not already decided, and not recently dismissed
-    if (typeof Notification === 'undefined') return;
-    if (Notification.permission !== 'default') return;
-
-    var dismissed = parseInt(localStorage.getItem('push_dismissed') || '0');
-    if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown after dismiss
-
-    setTimeout(function() {
-      var backdrop = document.getElementById('push-backdrop');
-      var modal    = document.getElementById('push-modal');
-      if (!backdrop || !modal) return;
-
-      backdrop.classList.remove('hidden');
-      // Trigger enter animation
+  function showPushModal() {
+    var backdrop = document.getElementById('push-backdrop');
+    var modal    = document.getElementById('push-modal');
+    if (!backdrop || !modal) return;
+    backdrop.classList.remove('hidden');
+    requestAnimationFrame(function() {
       requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          modal.classList.remove('scale-95', 'opacity-0');
-          modal.classList.add('scale-100', 'opacity-100');
-        });
+        modal.classList.remove('scale-95', 'opacity-0');
+        modal.classList.add('scale-100', 'opacity-100');
       });
-    }, 1000);  // show after 1 s on page load
+    });
+  }
+
+  (function() {
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission === 'denied') return;  // user explicitly blocked — never ask
+
+    var dismissed   = parseInt(localStorage.getItem('push_dismissed') || '0');
+    var subscribed  = localStorage.getItem('fcm_subscribed') === 'true';
+
+    // Already subscribed — nothing to do
+    if (subscribed) return;
+
+    // Permission already granted but not yet subscribed — show popup immediately (0.5 s)
+    // Permission not yet asked — show popup after 1 s (respecting 3-day dismiss cooldown)
+    if (Notification.permission === 'granted') {
+      setTimeout(showPushModal, 500);
+    } else {
+      if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown after dismiss
+      setTimeout(showPushModal, 1000);
+    }
   })();
 </script>

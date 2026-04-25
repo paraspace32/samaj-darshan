@@ -1,121 +1,86 @@
 <%#
-  Push notification permission modal popup.
-  Shows on app/web open (1s delay) unless already granted/denied or dismissed in last 3 days.
-  Uses Stimulus push-notification controller.
+  Push notification subscription.
+  - permission=granted + not subscribed → auto-registers silently (0 clicks)
+  - permission=default + not dismissed  → shows a small bottom bar (1 click → browser prompt)
+  - permission=denied                   → nothing shown
 %>
 
-<%# Backdrop %>
-<div id="push-backdrop"
-     class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4">
+<%# Small bottom bar — only shown for permission=default users %>
+<div id="push-bar"
+     data-controller="push-notification"
+     data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
+     data-push-notification-config-value="<%= firebase_js_config_json.html_safe %>"
+     data-push-notification-save-url-value="<%= push_subscription_path %>"
+     class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50
+            w-[calc(100%-2rem)] max-w-sm
+            bg-white rounded-2xl shadow-2xl border border-gray-100
+            px-4 py-3 flex items-center gap-3
+            translate-y-4 opacity-0 transition-all duration-300">
 
-  <%# Modal card %>
-  <div id="push-modal"
-       data-controller="push-notification"
-       data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
-       data-push-notification-config-value="<%= firebase_js_config_json.html_safe %>"
-       data-push-notification-save-url-value="<%= push_subscription_path %>"
-       class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden
-              transform transition-all duration-300 scale-95 opacity-0">
-
-    <%# Gradient header %>
-    <div class="px-6 pt-8 pb-6 text-center"
-         style="background: linear-gradient(135deg, #f97316 0%, #dc2626 100%)">
-
-      <%# Bell icon %>
-      <div class="mx-auto w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
-        <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-        </svg>
-      </div>
-
-      <h2 class="text-xl font-black text-white leading-tight">
-        <%= I18n.locale == :hi ? "सूचनाएं चालू करें" : "Stay Updated!" %>
-      </h2>
-      <p class="text-white/80 text-sm mt-1">
-        <%= I18n.locale == :hi ? "समाज दर्शन" : "Samaj Darshan" %>
-      </p>
-    </div>
-
-    <%# Body %>
-    <div class="px-6 py-5">
-      <p class="text-gray-600 text-sm text-center leading-relaxed">
-        <%= I18n.locale == :hi \
-          ? "नई खबरें, समाचार और अपडेट सबसे पहले पाएं।" \
-          : "Get the latest news, updates and breaking stories delivered instantly." %>
-      </p>
-
-      <%# Allow button %>
-      <button data-push-notification-target="button"
-              data-action="click->push-notification#subscribe"
-              class="mt-5 w-full py-3.5 rounded-2xl text-white font-black text-[15px]
-                     transition-all active:scale-95 shadow-lg shadow-orange-200"
-              style="background: linear-gradient(135deg, #f97316, #dc2626)">
-        🔔 <%= I18n.locale == :hi ? "सूचनाएं चालू करें" : "Allow Notifications" %>
-      </button>
-
-      <%# Dismiss %>
-      <button onclick="closePushModal()"
-              class="mt-3 w-full py-2.5 rounded-2xl text-gray-400 text-sm font-semibold
-                     hover:bg-gray-50 transition-colors">
-        <%= I18n.locale == :hi ? "अभी नहीं" : "Not now" %>
-      </button>
-    </div>
-
-    <%# Close X %>
-    <button onclick="closePushModal()"
-            class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 flex items-center
-                   justify-center text-white hover:bg-white/30 transition-colors">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-        <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
+  <div class="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+       style="background:linear-gradient(135deg,#f97316,#dc2626)">
+    <svg class="w-4.5 h-4.5 w-[18px] h-[18px] text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+    </svg>
   </div>
+
+  <div class="flex-1 min-w-0">
+    <p class="text-[13px] font-black text-gray-900 leading-tight truncate">
+      <%= I18n.locale == :hi ? "ताज़ा खबर के लिए सूचनाएं चालू करें" : "Get notified on latest news" %>
+    </p>
+  </div>
+
+  <button data-push-notification-target="button"
+          data-action="click->push-notification#subscribe"
+          class="shrink-0 text-[12px] font-black text-white px-3 py-1.5 rounded-xl
+                 transition-all active:scale-95 whitespace-nowrap"
+          style="background:linear-gradient(135deg,#f97316,#dc2626)">
+    🔔 <%= I18n.locale == :hi ? "चालू करें" : "Enable" %>
+  </button>
+
+  <button onclick="dismissPushBar()"
+          class="shrink-0 text-gray-300 hover:text-gray-500 transition-colors">
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
 </div>
 
 <script>
-  function closePushModal() {
-    var backdrop = document.getElementById('push-backdrop');
-    var modal    = document.getElementById('push-modal');
-    if (modal) {
-      modal.classList.remove('scale-100', 'opacity-100');
-      modal.classList.add('scale-95', 'opacity-0');
+  function dismissPushBar() {
+    var bar = document.getElementById('push-bar');
+    if (bar) {
+      bar.classList.add('translate-y-4', 'opacity-0');
+      setTimeout(function() { bar.classList.add('hidden'); }, 300);
     }
-    setTimeout(function() {
-      if (backdrop) backdrop.classList.add('hidden');
-    }, 250);
     localStorage.setItem('push_dismissed', Date.now());
-  }
-
-  function showPushModal() {
-    var backdrop = document.getElementById('push-backdrop');
-    var modal    = document.getElementById('push-modal');
-    if (!backdrop || !modal) return;
-    backdrop.classList.remove('hidden');
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        modal.classList.remove('scale-95', 'opacity-0');
-        modal.classList.add('scale-100', 'opacity-100');
-      });
-    });
   }
 
   (function() {
     if (typeof Notification === 'undefined') return;
-    if (Notification.permission === 'denied') return;  // user explicitly blocked — never ask
+    if (Notification.permission === 'denied') return;
+    if (localStorage.getItem('fcm_subscribed') === 'true') return;
 
-    var dismissed   = parseInt(localStorage.getItem('push_dismissed') || '0');
-    var subscribed  = localStorage.getItem('fcm_subscribed') === 'true';
-
-    // Already subscribed — nothing to do
-    if (subscribed) return;
-
-    // Permission already granted but not yet subscribed — show popup immediately (0.5 s)
-    // Permission not yet asked — show popup after 1 s (respecting 3-day dismiss cooldown)
     if (Notification.permission === 'granted') {
-      setTimeout(showPushModal, 500);
-    } else {
-      if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown after dismiss
-      setTimeout(showPushModal, 1000);
+      // Already allowed — trigger Stimulus controller to register token silently
+      // The controller's connect() → checkCurrentPermission() handles this automatically.
+      // Nothing to show.
+      return;
     }
+
+    // permission === 'default' — show small bar after 1s if not recently dismissed
+    var dismissed = parseInt(localStorage.getItem('push_dismissed') || '0');
+    if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown
+
+    setTimeout(function() {
+      var bar = document.getElementById('push-bar');
+      if (!bar) return;
+      bar.classList.remove('hidden');
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          bar.classList.remove('translate-y-4', 'opacity-0');
+        });
+      });
+    }, 1000);
   })();
 </script>

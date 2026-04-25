@@ -27,30 +27,24 @@ export default class extends Controller {
 
   checkCurrentPermission() {
     if (Notification.permission === "granted") {
-      this.showStatus("subscribed")
-      this.registerToken()     // refresh / save token silently on each visit
+      // Already allowed — register token silently, no UI needed
+      this.registerToken()
     } else if (Notification.permission === "denied") {
       this.showStatus("blocked")
-    } else {
-      this.showStatus("prompt")
     }
+    // default → bar is shown by the inline script; button triggers subscribe()
   }
 
-  // Called by the subscribe button
+  // Called by the subscribe button (permission=default case only)
   async subscribe() {
     if (!this.supported) return
 
     try {
-      // If already granted, skip the browser prompt and go straight to token registration
-      const permission = Notification.permission === "granted"
-        ? "granted"
-        : await Notification.requestPermission()
-
+      const permission = await Notification.requestPermission()
       if (permission === "granted") {
         await this.registerToken()
         this.showStatus("subscribed")
-        // Close the modal automatically after subscribing
-        if (typeof closePushModal === "function") closePushModal()
+        if (typeof dismissPushBar === "function") dismissPushBar()
       } else {
         this.showStatus("blocked")
       }

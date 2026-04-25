@@ -104,7 +104,8 @@ class FcmService
     # Use only webpush section for web push tokens.
     # Having a top-level `notification` key AND `webpush.notification` causes
     # two notifications on iOS Safari (one from APNs, one from the service worker).
-    webpush_notification = { title: title, body: body, icon: "/icon-192.png", badge: "/icon-192.png", vibrate: [ 200, 100, 200 ] }
+    webpush_notification = { title: title, icon: "/icon-192.png", badge: "/icon-192.png", vibrate: [ 200, 100, 200 ] }
+    webpush_notification[:body] = body if body.present?
     webpush_notification[:image] = image if image.present?
 
     msg = {

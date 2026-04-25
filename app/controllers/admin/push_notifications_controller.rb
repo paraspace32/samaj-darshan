@@ -13,8 +13,6 @@ class Admin::PushNotificationsController < Admin::BaseController
     url   = params[:url].presence
     image = params[:image].presence
 
-    return redirect_to admin_push_notifications_path, alert: "Body is required." if body.blank?
-
     SendPushNotificationsJob.perform_later(title: title, body: body, url: url, image: image)
     redirect_to admin_push_notifications_path, notice: "Push notification queued for #{PushSubscription.count} subscribers."
   end

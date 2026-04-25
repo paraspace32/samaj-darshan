@@ -26,14 +26,19 @@ jobs:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
           GOOGLE_ANALYTICS_CREDENTIALS: ${{ secrets.GOOGLE_ANALYTICS_CREDENTIALS }}
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           # Use printf (not echo) to avoid trailing newline before base64-encoding
           ENCODED=$(printf '%s' "$GOOGLE_ANALYTICS_CREDENTIALS" | base64 -w 0)
           echo "Credential present: $([ -n "$GOOGLE_ANALYTICS_CREDENTIALS" ] && echo yes || echo NO - SECRET MISSING)"
           echo "Encoded length: ${#ENCODED}"
+          echo "Master key present: $([ -n "$RAILS_MASTER_KEY" ] && echo yes || echo NO - SECRET MISSING)"
           # Single-line SSH to avoid heredoc expansion issues
           ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" \
-            "cd /home/paras/samaj-darshan && sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env && echo 'GOOGLE_ANALYTICS_CREDENTIALS=${ENCODED}' >> .env && echo 'Injected OK'"
+            "cd /home/paras/samaj-darshan && \
+             sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env && echo 'GOOGLE_ANALYTICS_CREDENTIALS=${ENCODED}' >> .env && \
+             sed -i '/^RAILS_MASTER_KEY=/d' .env && echo 'RAILS_MASTER_KEY=${RAILS_MASTER_KEY}' >> .env && \
+             echo 'Injected OK'"
 
       - name: Deploy (git pull, build & restart)
         env:
@@ -55,7 +60,9 @@ jobs:
             echo '=== CACHE CLEAR ===';\
             docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"Rails.cache.delete('ga_realtime_active_users'); Rails.cache.delete('ga_reporting_visitors')\" RAILS_ENV=production || true;\
             echo '=== HEALTH CHECK ===';\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'Boot OK'; puts 'push_subscriptions: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s; puts 'credentials: ' + Rails.application.credentials.secret_key_base.present?.to_s\" RAILS_ENV=production;\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'Boot OK'; puts 'push_subscriptions table: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s; puts 'credentials readable: ' + Rails.application.credentials.secret_key_base.present?.to_s; puts 'firebase vapid: ' + Rails.application.credentials.dig(:firebase, :vapid_key).present?.to_s\" RAILS_ENV=production;\
+            echo '=== MASTER KEY CHECK ===';\
+            docker compose -f docker-compose.production.yml exec -T web sh -c \"echo MASTER_KEY_LENGTH=\$\$(echo -n \\\$RAILS_MASTER_KEY | wc -c)\";\
             echo '=== WEB LOGS ===';\
             docker compose -f docker-compose.production.yml logs --tail=80 web;\
           "

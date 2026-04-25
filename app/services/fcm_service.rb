@@ -101,18 +101,20 @@ class FcmService
   private
 
   def build_payload(token, title, body, url, image)
-    # Use only webpush section for web push tokens.
-    # Having a top-level `notification` key AND `webpush.notification` causes
-    # two notifications on iOS Safari (one from APNs, one from the service worker).
-    webpush_notification = { title: title, icon: "/icon-192.png", badge: "/icon-192.png", vibrate: [ 200, 100, 200 ] }
-    webpush_notification[:body] = body if body.present?
-    webpush_notification[:image] = image if image.present?
-
+    # Use data-only webpush payload so the browser does NOT auto-display a
+    # notification from the push message itself.  The service worker's
+    # onBackgroundMessage handler reads these data fields and calls
+    # showNotification exactly once.  Using webpush.notification here would
+    # trigger a second display (browser auto-show + SW handler = 2 toasts).
     msg = {
       token:   token,
       webpush: {
-        notification: webpush_notification,
-        fcm_options:  { link: url.presence || "/" }
+        data: {
+          title: title.to_s,
+          body:  body.to_s,
+          url:   url.presence || "/",
+          image: image.to_s
+        }
       }
     }
 

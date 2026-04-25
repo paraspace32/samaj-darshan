@@ -57,19 +57,22 @@ class PwaController < ApplicationController
 
       const messaging = firebase.messaging();
 
-      // Handle background messages (app not in foreground)
+      // Handle background messages.
+      // Payload is data-only (no notification key) so the browser will NOT
+      // auto-display anything — we show exactly one notification here.
       messaging.onBackgroundMessage((payload) => {
-        const { title, body, image } = payload.notification || {};
-        const link = payload.fcmOptions?.link || payload.data?.url || '/';
-
-        self.registration.showNotification(title || 'समाज दर्शन', {
-          body:    body  || '',
+        const d     = payload.data || {};
+        const title = d.title || 'समाज दर्शन';
+        const opts  = {
+          body:    d.body  || '',
           icon:    '/icon-192.png',
           badge:   '/icon-192.png',
-          image:   image,
-          data:    { url: link },
+          data:    { url: d.url || '/' },
           vibrate: [200, 100, 200]
-        });
+        };
+        if (d.image) opts.image = d.image;
+
+        self.registration.showNotification(title, opts);
       });
 
       self.addEventListener('notificationclick', (event) => {

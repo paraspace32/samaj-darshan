@@ -101,25 +101,17 @@ class FcmService
   private
 
   def build_payload(token, title, body, url, image)
-    notification = { title: title, body: body }
-    notification[:image] = image if image.present?
-
-    webpush_notification = notification.merge(
-      icon:  "/icon-192.png",
-      badge: "/icon-192.png",
-      vibrate: [ 200, 100, 200 ]
-    )
+    # Use only webpush section for web push tokens.
+    # Having a top-level `notification` key AND `webpush.notification` causes
+    # two notifications on iOS Safari (one from APNs, one from the service worker).
+    webpush_notification = { title: title, body: body, icon: "/icon-192.png", badge: "/icon-192.png", vibrate: [ 200, 100, 200 ] }
     webpush_notification[:image] = image if image.present?
 
     msg = {
-      token:        token,
-      notification: notification,
+      token:   token,
       webpush: {
         notification: webpush_notification,
         fcm_options:  { link: url.presence || "/" }
-      },
-      apns: {
-        payload: { aps: { sound: "default", badge: 1 } }
       }
     }
 

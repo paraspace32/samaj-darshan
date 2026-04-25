@@ -9,14 +9,13 @@
      class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4">
 
   <%# Modal card %>
-  <div id="push-banner"
+  <div id="push-modal"
        data-controller="push-notification"
        data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
        data-push-notification-config-value="<%= firebase_js_config_json.html_safe %>"
        data-push-notification-save-url-value="<%= push_subscription_path %>"
        class="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden
-              transform transition-all duration-300 scale-95 opacity-0"
-       id="push-modal">
+              transform transition-all duration-300 scale-95 opacity-0">
 
     <%# Gradient header %>
     <div class="px-6 pt-8 pb-6 text-center"

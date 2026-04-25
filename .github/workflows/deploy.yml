@@ -62,7 +62,7 @@ jobs:
             echo '=== HEALTH CHECK ===';\
             docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'Boot OK'; puts 'push_subscriptions table: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s; puts 'credentials readable: ' + Rails.application.credentials.secret_key_base.present?.to_s; puts 'firebase vapid: ' + Rails.application.credentials.dig(:firebase, :vapid_key).present?.to_s\" RAILS_ENV=production;\
             echo '=== MASTER KEY CHECK ===';\
-            docker compose -f docker-compose.production.yml exec -T web sh -c \"echo MASTER_KEY_LENGTH=\$\$(echo -n \\\$RAILS_MASTER_KEY | wc -c)\";\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'master_key_length: ' + ENV.fetch('RAILS_MASTER_KEY','').length.to_s\" RAILS_ENV=production || true;\
             echo '=== WEB LOGS ===';\
             docker compose -f docker-compose.production.yml logs --tail=80 web;\
           "

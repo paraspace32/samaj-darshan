@@ -39,3 +39,4 @@
 
 # Ignore vendor bundle
 /vendor/bundle
+.claude/

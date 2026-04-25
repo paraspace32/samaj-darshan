@@ -37,7 +37,116 @@ class PwaController < ApplicationController
     render plain: service_worker_js, layout: false
   end
 
+  def firebase_messaging_sw
+    response.headers["Content-Type"] = "application/javascript"
+    response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Cache-Control"] = "no-cache"
+    render plain: firebase_messaging_sw_js, layout: false
+  end
+
   private
+
+  def firebase_messaging_sw_js
+    config = firebase_js_config
+    <<~JS
+      // ── Firebase Cloud Messaging ─────────────────────────────────────────────
+      importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+      importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+
+      firebase.initializeApp(#{config.to_json});
+
+      const messaging = firebase.messaging();
+
+      // Handle background messages (app not in foreground)
+      messaging.onBackgroundMessage((payload) => {
+        const { title, body, image } = payload.notification || {};
+        const link = payload.fcmOptions?.link || payload.data?.url || '/';
+
+        self.registration.showNotification(title || 'समाज दर्शन', {
+          body:    body  || '',
+          icon:    '/icon-192.png',
+          badge:   '/icon-192.png',
+          image:   image,
+          data:    { url: link },
+          vibrate: [200, 100, 200]
+        });
+      });
+
+      self.addEventListener('notificationclick', (event) => {
+        event.notification.close();
+        const url = event.notification.data?.url || '/';
+        event.waitUntil(
+          clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+              if (client.url === url && 'focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow(url);
+          })
+        );
+      });
+
+      // ── PWA Caching (merged so only one SW controls the scope) ───────────────
+      const CACHE_VERSION = 'samaj-darshan-v2';
+      const OFFLINE_URL   = '/offline';
+      const PRECACHE_URLS = [OFFLINE_URL, '/icon-192.png', '/icon-512.png'];
+
+      self.addEventListener('install', (event) => {
+        event.waitUntil(
+          caches.open(CACHE_VERSION)
+            .then((cache) => cache.addAll(PRECACHE_URLS))
+            .then(() => self.skipWaiting())
+        );
+      });
+
+      self.addEventListener('activate', (event) => {
+        event.waitUntil(
+          caches.keys().then((keys) =>
+            Promise.all(
+              keys.filter((key) => key !== CACHE_VERSION)
+                  .map((key) => caches.delete(key))
+            )
+          ).then(() => self.clients.claim())
+        );
+      });
+
+      self.addEventListener('fetch', (event) => {
+        if (event.request.method !== 'GET') return;
+
+        // Navigate: network-first, offline fallback
+        if (event.request.mode === 'navigate') {
+          event.respondWith(
+            fetch(event.request).catch(() => caches.match(OFFLINE_URL))
+          );
+          return;
+        }
+
+        // Static assets: cache-first
+        event.respondWith(
+          caches.match(event.request).then((cached) => {
+            return cached || fetch(event.request).then((response) => {
+              if (response.ok && event.request.url.match(/\\.(png|svg|css|js|woff2?)$/)) {
+                const clone = response.clone();
+                caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
+              }
+              return response;
+            }).catch(() => caches.match(OFFLINE_URL));
+          })
+        );
+      });
+    JS
+  end
+
+  def firebase_js_config
+    creds = Rails.application.credentials.firebase || {}
+    {
+      apiKey:            creds[:api_key]            || ENV["FIREBASE_API_KEY"],
+      authDomain:        creds[:auth_domain]         || ENV["FIREBASE_AUTH_DOMAIN"],
+      projectId:         creds[:project_id]          || ENV["FIREBASE_PROJECT_ID"],
+      storageBucket:     creds[:storage_bucket]      || ENV["FIREBASE_STORAGE_BUCKET"],
+      messagingSenderId: creds[:messaging_sender_id] || ENV["FIREBASE_MESSAGING_SENDER_ID"],
+      appId:             creds[:app_id]              || ENV["FIREBASE_APP_ID"]
+    }
+  end
 
   def service_worker_js
     <<~JS

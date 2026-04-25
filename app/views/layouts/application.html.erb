@@ -291,6 +291,7 @@
     </footer>
 
     <%= render "shared/pwa_install_banner" %>
+    <%= render "shared/push_notification_banner" if firebase_configured? %>
     <% if @consent_pending_biodata %>
       <%= render "shared/consent_popup" %>
     <% end %>
@@ -300,7 +301,8 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('<%= pwa_service_worker_path %>', { scope: '/' }).then(function(reg) {
+          // Single merged SW handles both PWA caching and FCM push notifications
+          navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' }).then(function(reg) {
             console.log('Service worker registered with scope:', reg.scope);
           }).catch(function(err) {
             console.warn('Service worker registration failed:', err);

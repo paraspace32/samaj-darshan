@@ -37,7 +37,66 @@ class PwaController < ApplicationController
     render plain: service_worker_js, layout: false
   end
 
+  def firebase_messaging_sw
+    response.headers["Content-Type"] = "application/javascript"
+    response.headers["Service-Worker-Allowed"] = "/"
+    response.headers["Cache-Control"] = "no-cache"
+    render plain: firebase_messaging_sw_js, layout: false
+  end
+
   private
+
+  def firebase_messaging_sw_js
+    config = firebase_js_config
+    <<~JS
+      importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+      importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+
+      firebase.initializeApp(#{config.to_json});
+
+      const messaging = firebase.messaging();
+
+      // Handle background messages (app not in foreground)
+      messaging.onBackgroundMessage((payload) => {
+        const { title, body, image } = payload.notification || {};
+        const link = payload.fcmOptions?.link || payload.data?.url || '/';
+
+        self.registration.showNotification(title || 'समाज दर्शन', {
+          body:  body  || '',
+          icon:  '/icon-192.png',
+          badge: '/icon-192.png',
+          image: image,
+          data:  { url: link },
+          vibrate: [200, 100, 200]
+        });
+      });
+
+      self.addEventListener('notificationclick', (event) => {
+        event.notification.close();
+        const url = event.notification.data?.url || '/';
+        event.waitUntil(
+          clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+              if (client.url === url && 'focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow(url);
+          })
+        );
+      });
+    JS
+  end
+
+  def firebase_js_config
+    creds = Rails.application.credentials.firebase || {}
+    {
+      apiKey:            creds[:api_key]            || ENV["FIREBASE_API_KEY"],
+      authDomain:        creds[:auth_domain]         || ENV["FIREBASE_AUTH_DOMAIN"],
+      projectId:         creds[:project_id]          || ENV["FIREBASE_PROJECT_ID"],
+      storageBucket:     creds[:storage_bucket]      || ENV["FIREBASE_STORAGE_BUCKET"],
+      messagingSenderId: creds[:messaging_sender_id] || ENV["FIREBASE_MESSAGING_SENDER_ID"],
+      appId:             creds[:app_id]              || ENV["FIREBASE_APP_ID"]
+    }
+  end
 
   def service_worker_js
     <<~JS

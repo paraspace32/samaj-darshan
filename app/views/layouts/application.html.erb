@@ -291,6 +291,7 @@
     </footer>
 
     <%= render "shared/pwa_install_banner" %>
+    <%= render "shared/push_notification_banner" if firebase_configured? %>
     <% if @consent_pending_biodata %>
       <%= render "shared/consent_popup" %>
     <% end %>

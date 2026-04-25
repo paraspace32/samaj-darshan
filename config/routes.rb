@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   # PWA
   get "manifest" => "pwa#manifest", as: :pwa_manifest
   get "service-worker" => "pwa#service_worker", as: :pwa_service_worker
+  get "firebase-messaging-sw.js" => "pwa#firebase_messaging_sw", as: :firebase_messaging_sw
+
+  # Push notifications
+  resource :push_subscription, only: [ :create, :destroy ]
 
   # Locale switching
   get "locale/:locale" => "locales#update", as: :set_locale
@@ -68,6 +72,12 @@ Rails.application.routes.draw do
 
     get "cache/clear",     to: "cache#clear",     as: :clear_cache
     get "cache/ga_status", to: "cache#ga_status", as: :ga_status
+
+    # Push notifications
+    resource :push_notifications, only: [ :index ], path: "push_notifications" do
+      collection { post :send_notification }
+    end
+    post "news/:news_id/push", to: "push_notifications#send_for_news", as: :news_push
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

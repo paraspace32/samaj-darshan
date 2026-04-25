@@ -1,0 +1,61 @@
+<%#
+  Push notification permission banner.
+  Shown once (after 10s delay) unless user has already granted/denied permission.
+  Uses Stimulus push-notification controller.
+%>
+<div id="push-banner"
+     data-controller="push-notification"
+     data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
+     data-push-notification-config-value="<%= firebase_js_config_json.html_safe %>"
+     data-push-notification-save-url-value="<%= push_subscription_path %>"
+     class="hidden fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm">
+
+  <div class="bg-white rounded-2xl shadow-2xl shadow-black/15 border border-gray-200/60 px-4 py-3 flex items-center gap-3">
+    <%# Bell icon %>
+    <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
+         style="background:linear-gradient(135deg,#f97316,#dc2626)">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <p class="text-[13px] font-black text-gray-900 leading-tight">
+        <%= I18n.locale == :hi ? "सूचनाएं चालू करें" : "Enable Notifications" %>
+      </p>
+      <p class="text-[11px] text-gray-500 mt-0.5">
+        <%= I18n.locale == :hi ? "नई खबर आने पर तुरंत जानें" : "Get notified on breaking news" %>
+      </p>
+    </div>
+
+    <%# Subscribe button %>
+    <button data-push-notification-target="button"
+            data-action="click->push-notification#subscribe"
+            class="shrink-0 text-[12px] font-black text-white px-3 py-1.5 rounded-xl transition-all active:scale-95"
+            style="background:linear-gradient(135deg,#f97316,#dc2626)">
+      <%= I18n.locale == :hi ? "चालू करें" : "Allow" %>
+    </button>
+
+    <%# Dismiss %>
+    <button onclick="document.getElementById('push-banner').remove(); localStorage.setItem('push_dismissed', Date.now())"
+            class="shrink-0 text-gray-400 hover:text-gray-600 transition-colors p-1">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Show only if not already granted/denied and not recently dismissed (24 h)
+    if (typeof Notification === 'undefined') return;
+    if (Notification.permission !== 'default') return;
+
+    var dismissed = parseInt(localStorage.getItem('push_dismissed') || '0');
+    if (Date.now() - dismissed < 86400000) return;  // 24 h cooldown
+
+    setTimeout(function() {
+      var banner = document.getElementById('push-banner');
+      if (banner) banner.classList.remove('hidden');
+    }, 12000);  // show after 12 s on page
+  })();
+</script>

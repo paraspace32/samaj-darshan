@@ -62,9 +62,21 @@
       <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga_id %>"></script>
       <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag(){ dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', '<%= ga_id %>');
+
+        // Initialise without auto-firing a pageview — turbo:load fires it instead,
+        // covering both the first page load and every subsequent Turbo navigation.
+        gtag('config', '<%= ga_id %>', { send_page_view: false });
+
+        // Fire one pageview per Turbo navigation (and the initial load).
+        document.addEventListener('turbo:load', function() {
+          gtag('event', 'page_view', {
+            page_path:     window.location.pathname + window.location.search,
+            page_title:    document.title,
+            page_location: window.location.href
+          });
+        });
       </script>
     <% end %>
   </head>

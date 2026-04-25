@@ -88,7 +88,7 @@ export default class extends Controller {
 
   async saveToken(token) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
-    await fetch(this.saveUrlValue, {
+    const response = await fetch(this.saveUrlValue, {
       method:  "POST",
       headers: {
         "Content-Type": "application/json",
@@ -100,6 +100,9 @@ export default class extends Controller {
         browser:  navigator.userAgent.slice(0, 200)
       })
     })
+    if (!response.ok) {
+      throw new Error(`[PushNotification] Failed to save token: ${response.status}`)
+    }
   }
 
   showStatus(state) {

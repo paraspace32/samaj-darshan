@@ -31,7 +31,10 @@ class FcmService
 
       case status
       when :ok      then results[:sent]    += 1
-      when :invalid then results[:removed] += 1; sub.destroy
+      when :invalid
+        Rails.logger.warn "[FCM] Removing invalid token (user: #{sub.user_id}, platform: #{sub.platform})"
+        results[:removed] += 1
+        sub.destroy
       else               results[:failed]  += 1
       end
     end
@@ -79,9 +82,11 @@ class FcmService
     uri     = URI("https://fcm.googleapis.com/v1/projects/#{project_id}/messages:send")
     payload = build_payload(fcm_token, title, body, url, image)
 
-    http          = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl  = true
-    request       = Net::HTTP::Post.new(uri)
+    http              = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl      = true
+    http.open_timeout = 5   # seconds to open connection
+    http.read_timeout = 10  # seconds to wait for response
+    request           = Net::HTTP::Post.new(uri)
     request["Authorization"] = "Bearer #{access_token}"
     request["Content-Type"]  = "application/json"
     request.body = payload.to_json

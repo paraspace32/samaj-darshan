@@ -27,8 +27,8 @@ class Admin::PushNotificationsController < Admin::BaseController
       return redirect_to admin_news_path(@news_item), alert: "Article must be published first."
     end
 
-    title = @news_item.display_title.truncate(80)
-    body  = ActionController::Base.helpers.strip_tags(@news_item.display_content).truncate(120)
+    title = @news_item.display_title.truncate(80, separator: " ")
+    body  = ActionController::Base.helpers.strip_tags(@news_item.display_content).truncate(120, separator: " ")
     url   = Rails.application.routes.url_helpers.news_url(@news_item, host: request.host_with_port)
     image = @news_item.cover_image.attached? ? Rails.application.routes.url_helpers.url_for(@news_item.cover_image) : nil
 

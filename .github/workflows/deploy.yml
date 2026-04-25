@@ -50,6 +50,12 @@ jobs:
             docker system prune -f;\
             docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true;\
             docker compose -f docker-compose.production.yml --env-file .env up -d --build;\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production || true;\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails runner 'Rails.cache.delete("ga_realtime_active_users"); Rails.cache.delete("ga_reporting_visitors")' RAILS_ENV=production || true;\
+            echo '=== DB MIGRATE ===';\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production;\
+            echo '=== CACHE CLEAR ===';\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"Rails.cache.delete('ga_realtime_active_users'); Rails.cache.delete('ga_reporting_visitors')\" RAILS_ENV=production || true;\
+            echo '=== HEALTH CHECK ===';\
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'Boot OK'; puts 'push_subscriptions: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s; puts 'credentials: ' + Rails.application.credentials.secret_key_base.present?.to_s\" RAILS_ENV=production;\
+            echo '=== WEB LOGS ===';\
+            docker compose -f docker-compose.production.yml logs --tail=80 web;\
           "

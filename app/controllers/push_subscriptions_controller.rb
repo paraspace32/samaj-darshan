@@ -1,4 +1,10 @@
 class PushSubscriptionsController < ApplicationController
+  # POST /push_subscriptions/log_error  — receives JS-side errors for server logging
+  def log_error
+    Rails.logger.error("[PushNotification] Client error: #{params[:message]} | #{params[:detail]}")
+    head :ok
+  end
+
   # POST /push_subscriptions
   def create
     token = params[:token].to_s.strip

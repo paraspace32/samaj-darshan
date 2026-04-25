@@ -80,10 +80,24 @@ export default class extends Controller {
 
       if (token) {
         await this.saveToken(token)
+      } else {
+        this._reportError("getToken returned empty", `vapidKey length: ${this.vapidKeyValue?.length}, swState: ${swReg?.active?.state}`)
       }
     } catch (err) {
       console.error("[PushNotification] registerToken error:", err)
+      this._reportError(err.message || String(err), err.stack?.slice(0, 300) || "")
     }
+  }
+
+  async _reportError(message, detail) {
+    try {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+      await fetch("/push_subscription/log_error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf || "" },
+        body: JSON.stringify({ message, detail })
+      })
+    } catch (_) { /* best-effort */ }
   }
 
   async saveToken(token) {

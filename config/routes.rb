@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   # Push notifications
   resource :push_subscription, only: [ :create, :destroy ]
+  post "push_subscription/log_error", to: "push_subscriptions#log_error", as: :push_subscription_log_error
 
   # Locale switching
   get "locale/:locale" => "locales#update", as: :set_locale

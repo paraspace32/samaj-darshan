@@ -13,9 +13,15 @@ class FcmService
 
   # Send to every stored subscription (runs inside a job — do NOT call from request cycle)
   def self.broadcast(title:, body:, url: nil, image: nil)
+    total = PushSubscription.count
+    Rails.logger.info "[Push] broadcast starting | title=#{title.inspect} total_subscribers=#{total}"
+
     service = new
     token   = service.access_token
-    return unless token
+    unless token
+      Rails.logger.error "[Push] broadcast aborted: could not obtain FCM access token"
+      return
+    end
 
     results = { sent: 0, failed: 0, removed: 0 }
 
@@ -30,26 +36,36 @@ class FcmService
       )
 
       case status
-      when :ok      then results[:sent]    += 1
+      when :ok
+        results[:sent] += 1
+        Rails.logger.debug "[Push] sent | sub_id=#{sub.id} user=#{sub.user_id || "anon"} platform=#{sub.platform}"
       when :invalid
-        Rails.logger.warn "[FCM] Removing invalid token (user: #{sub.user_id}, platform: #{sub.platform})"
+        Rails.logger.warn "[Push] invalid token removed | sub_id=#{sub.id} user=#{sub.user_id || "anon"} platform=#{sub.platform}"
         results[:removed] += 1
         sub.destroy
-      else               results[:failed]  += 1
+      else
+        results[:failed] += 1
+        Rails.logger.warn "[Push] delivery failed | sub_id=#{sub.id} user=#{sub.user_id || "anon"} platform=#{sub.platform}"
       end
     end
 
-    Rails.logger.info "[FCM] broadcast done: #{results.inspect}"
+    Rails.logger.info "[Push] broadcast done | sent=#{results[:sent]} failed=#{results[:failed]} removed=#{results[:removed]} title=#{title.inspect}"
     results
   end
 
   # Send to a single FCM token
   def self.send_to_token(token, title:, body:, url: nil, image: nil)
+    Rails.logger.info "[Push] send_to_token | title=#{title.inspect} token=#{token&.slice(0, 12)}..."
     service = new
     access  = service.access_token
-    return unless access
+    unless access
+      Rails.logger.error "[Push] send_to_token aborted: could not obtain FCM access token"
+      return
+    end
 
-    service.push(fcm_token: token, title: title, body: body, url: url, image: image, access_token: access)
+    result = service.push(fcm_token: token, title: title, body: body, url: url, image: image, access_token: access)
+    Rails.logger.info "[Push] send_to_token result=#{result} | token=#{token&.slice(0, 12)}..."
+    result
   end
 
   # ── OAuth2 ────────────────────────────────────────────────────────────────────
@@ -67,9 +83,11 @@ class FcmService
       json_key_io: StringIO.new(creds_json),
       scope: FCM_SCOPE
     )
-    creds.fetch_access_token!["access_token"]
+    token = creds.fetch_access_token!["access_token"]
+    Rails.logger.debug "[Push] FCM access token obtained (length=#{token&.length})"
+    token
   rescue => e
-    Rails.logger.error "[FCM] access_token error: #{e.message}"
+    Rails.logger.error "[Push] FCM access_token error: #{e.class} #{e.message}"
     nil
   end
 
@@ -126,7 +144,7 @@ class FcmService
     when 200      then :ok
     when 404, 410 then :invalid   # token unregistered / not found
     else
-      Rails.logger.warn "[FCM] HTTP #{response.code} for token #{token[0..10]}...: #{response.body}"
+      Rails.logger.warn "[Push] FCM HTTP #{response.code} for token #{token[0..10]}...: #{response.body&.slice(0, 200)}"
       :error
     end
   end

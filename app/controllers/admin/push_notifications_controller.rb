@@ -15,11 +15,9 @@ class Admin::PushNotificationsController < Admin::BaseController
   # POST /admin/push_notifications/send
   def send_notification
     title = params[:title].presence || t("brand.name")
-    body  = params[:body].presence
     url   = params[:url].presence
-    image = params[:image].presence
 
-    SendPushNotificationsJob.perform_later(title: title, body: body, url: url, image: image)
+    SendPushNotificationsJob.perform_later(title: title, body: nil, url: url, image: nil)
     redirect_to admin_push_notifications_path,
                 notice: "Push notification queued for #{PushSubscription.count} subscribers."
   rescue => e
@@ -37,11 +35,9 @@ class Admin::PushNotificationsController < Admin::BaseController
     end
 
     title = @news_item.display_title.truncate(80, separator: " ")
-    body  = ActionController::Base.helpers.strip_tags(@news_item.display_content).truncate(120, separator: " ")
     url   = news_url(@news_item)
-    image = @news_item.cover_image.attached? ? url_for(@news_item.cover_image) : nil
 
-    SendPushNotificationsJob.perform_later(title: title, body: body, url: url, image: image)
+    SendPushNotificationsJob.perform_later(title: title, body: nil, url: url, image: nil)
     redirect_to admin_news_path(@news_item),
                 notice: "Push notification queued for #{PushSubscription.count} subscribers."
   rescue => e

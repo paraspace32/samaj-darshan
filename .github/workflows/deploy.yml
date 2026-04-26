@@ -86,8 +86,12 @@ jobs:
               docker compose -f docker-compose.production.yml --env-file .env up -d --no-build
             fi
 
-            echo '=== DB MIGRATE ==='
-            docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production
+            echo '=== DB PREPARE (all databases) ==='
+            # db:prepare creates missing databases AND migrates all of them —
+            # covers primary, queue, cache and cable databases.
+            # db:migrate alone misses the queue DB (solid_queue_jobs table)
+            # which causes perform_later to 500 in the admin panel.
+            docker compose -f docker-compose.production.yml exec -T web bin/rails db:prepare RAILS_ENV=production
 
             echo '=== CACHE CLEAR ==='
             docker compose -f docker-compose.production.yml exec -T web bin/rails runner \

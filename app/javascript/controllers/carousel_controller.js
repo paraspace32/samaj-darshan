@@ -49,6 +49,13 @@ export default class extends Controller {
   syncHeight(index) {
     const slide = this.slideTargets[index]
     if (!slide) return
+
+    // If the slide has a CSS aspect-ratio, its height is determined entirely by
+    // CSS (width × ratio). Setting an explicit JS height would fight that and
+    // can lock the wrapper to a wrong value (making portrait images look cropped
+    // landscape). Skip the sync and let CSS own the height.
+    if (window.getComputedStyle(slide).aspectRatio !== "auto") return
+
     const wrapper = this.trackTarget.parentElement
     wrapper.style.transition = "height 0.4s ease"
     wrapper.style.height = slide.offsetHeight + "px"

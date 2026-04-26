@@ -18,17 +18,15 @@ class PushSubscriptionsController < ApplicationController
     sub.browser  = params[:browser].presence
 
     if sub.save
-      # Remove older tokens for the same user on the same platform (keep the just-saved one).
-      # For logged-in users match on user_id; for anonymous match on browser UA string.
-      scope = PushSubscription.where(platform: sub.platform).where.not(id: sub.id)
+      # For logged-in users: remove their older tokens on the same platform (1 token per user).
+      # For anonymous users: don't deduplicate — generic Android/Chrome UA strings are identical
+      # across many different devices, so UA-based deduplication deletes real subscribers.
       if current_user
-        scope = scope.where(user_id: current_user.id)
-      elsif sub.browser.present?
-        scope = scope.where(user_id: nil, browser: sub.browser)
-      else
-        scope = scope.none
+        PushSubscription
+          .where(platform: sub.platform, user_id: current_user.id)
+          .where.not(id: sub.id)
+          .destroy_all
       end
-      scope.destroy_all
       head :ok
     else
       head :unprocessable_entity

@@ -42,7 +42,7 @@ class PushSubscription < ApplicationRecord
   # Human-readable label for logging / admin display.
   # e.g. "pwa/android/standalone", "web/windows/browser"
   def identity_label
-    [platform, os, display_mode].join("/")
+    [ platform, os, display_mode ].join("/")
   end
 
   # Remove an invalid/expired token silently

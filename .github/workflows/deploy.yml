@@ -3,6 +3,16 @@ name: Deploy to GCP VM
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      full_clean:
+        description: "Full clean deploy — wipe Docker cache, prune all images/containers, force rebuild from scratch. Use when cache is corrupt or disk is full."
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
   deploy:
@@ -42,6 +52,7 @@ jobs:
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
+          FULL_CLEAN: ${{ github.event.inputs.full_clean || 'false' }}
         run: |
           ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "
             set -e
@@ -51,15 +62,29 @@ jobs:
             git fetch --all
             git reset --hard origin/main
 
-            echo '=== BUILD NEW IMAGE ==='
-            # Build image first while the old container is still serving traffic.
-            # Docker layer cache is PRESERVED so bundle install and assets:precompile
-            # are only re-run when Gemfile.lock or assets actually change.
-            docker compose -f docker-compose.production.yml --env-file .env build web
+            # ── Full-clean mode (run manually via workflow_dispatch) ───────────
+            # Wipes Docker build cache, stops all containers cleanly, removes all
+            # images. Use when: cache is corrupt, disk is full, or after major
+            # dependency changes. First deploy after this will be slow (~8 min).
+            if [ '${FULL_CLEAN}' = 'true' ]; then
+              echo '=== FULL CLEAN MODE ==='
+              sudo systemctl stop nginx 2>/dev/null || true
+              sudo systemctl disable nginx 2>/dev/null || true
+              docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true
+              docker system prune -af
+              echo '=== REBUILDING FROM SCRATCH (no cache) ==='
+              docker compose -f docker-compose.production.yml --env-file .env up -d --build
+            else
+              # ── Fast deploy (normal path) ──────────────────────────────────
+              # Build while old container is still live, then swap.
+              # Docker layer cache preserved — bundle install / assets:precompile
+              # only re-run when Gemfile.lock or assets actually change (~2 min).
+              echo '=== BUILD NEW IMAGE ==='
+              docker compose -f docker-compose.production.yml --env-file .env build web
 
-            echo '=== SWAP CONTAINERS ==='
-            # Bring up the new image (down + up in one step minimises downtime to seconds)
-            docker compose -f docker-compose.production.yml --env-file .env up -d --no-build
+              echo '=== SWAP CONTAINERS ==='
+              docker compose -f docker-compose.production.yml --env-file .env up -d --no-build
+            fi
 
             echo '=== DB MIGRATE ==='
             docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production
@@ -70,7 +95,6 @@ jobs:
               RAILS_ENV=production || true
 
             echo '=== HEALTH CHECK ==='
-            # Single rails runner call — boots Rails once instead of three times
             docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"
               puts 'Boot OK'
               puts 'master_key_length: '  + ENV.fetch('RAILS_MASTER_KEY','').length.to_s
@@ -80,7 +104,8 @@ jobs:
             \" RAILS_ENV=production
 
             echo '=== PRUNE OLD IMAGES ==='
-            # Remove old/dangling images only — keeps build cache intact for next deploy
+            # Always remove dangling/old images to free disk space.
+            # In full-clean mode this is a no-op (already pruned above).
             docker image prune -f
 
             echo '=== WEB LOGS ==='

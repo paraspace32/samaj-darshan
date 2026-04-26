@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_25_082418) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_033806) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -255,10 +255,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_25_082418) do
   create_table "push_subscriptions", force: :cascade do |t|
     t.string "browser"
     t.datetime "created_at", null: false
+    t.string "display_mode", default: "browser", null: false
+    t.string "os", default: "unknown", null: false
     t.string "platform", default: "web", null: false
     t.string "token", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["display_mode"], name: "index_push_subscriptions_on_display_mode"
+    t.index ["platform", "os"], name: "index_push_subscriptions_on_platform_and_os"
     t.index ["token"], name: "index_push_subscriptions_on_token", unique: true
     t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end

@@ -5,8 +5,8 @@
     Ornate wedding picture frame:
     - Full width on mobile (no side margins)
     - sm+: rounded corners with gradient border
-    - Badge sits ON the top border of the frame (not inside image)
-    - Frame size is FIXED via aspect-[3/4] — never grows with image dimensions
+    - Images are pre-cropped to 600×800 (3∶4) at upload so the frame is
+      always portrait — no CSS aspect-ratio tricks needed
   %>
   <div class="mb-4 relative -mx-4 sm:mx-0">
 
@@ -30,16 +30,16 @@
           <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
             <% marriage_ads.each_with_index do |bb, i| %>
               <% bb.track_impression! %>
-              <%# Fixed-ratio frame — always aspect-[3/4] regardless of image dimensions %>
-              <div class="w-full shrink-0 relative aspect-[3/4] overflow-hidden" data-carousel-target="slide">
+              <%# Image is pre-cropped to 600×800 so it naturally fills the frame %>
+              <div class="w-full shrink-0 relative" data-carousel-target="slide">
                 <% if bb.link_url.present? %>
-                  <%= link_to billboard_click_path(bb), class: "absolute inset-0 w-full h-full block" do %>
+                  <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                     <% if bb.image.attached? %>
                       <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                            class: "w-full h-full object-cover block",
+                            class: "w-full h-auto block",
                             loading: i == 0 ? "eager" : "lazy" %>
                     <% else %>
-                      <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio:3/4">
                         <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                       </div>
                     <% end %>
@@ -47,10 +47,10 @@
                 <% else %>
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                          class: "absolute inset-0 w-full h-full object-cover block",
+                          class: "w-full h-auto block",
                           loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="absolute inset-0 w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio:3/4">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>

@@ -29,7 +29,7 @@ class PushSubscriptionsController < ApplicationController
         "[Push] subscribe #{action_taken} | " \
         "id=#{sub.id} " \
         "user=#{current_user&.id || "anon"} " \
-        "identity=#{sub.identity_label} " \    # e.g. pwa/android/standalone
+        "identity=#{sub.identity_label} " \
         "ip=#{request.remote_ip} " \
         "browser=#{sub.browser&.slice(0, 80)}"
       )

@@ -3,6 +3,16 @@ name: Deploy to GCP VM
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      full_clean:
+        description: "Full clean deploy — wipe Docker cache, prune all images/containers, force rebuild from scratch. Use when cache is corrupt or disk is full."
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
   deploy:
@@ -28,12 +38,10 @@ jobs:
           GOOGLE_ANALYTICS_CREDENTIALS: ${{ secrets.GOOGLE_ANALYTICS_CREDENTIALS }}
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
-          # Use printf (not echo) to avoid trailing newline before base64-encoding
           ENCODED=$(printf '%s' "$GOOGLE_ANALYTICS_CREDENTIALS" | base64 -w 0)
           echo "Credential present: $([ -n "$GOOGLE_ANALYTICS_CREDENTIALS" ] && echo yes || echo NO - SECRET MISSING)"
           echo "Encoded length: ${#ENCODED}"
           echo "Master key present: $([ -n "$RAILS_MASTER_KEY" ] && echo yes || echo NO - SECRET MISSING)"
-          # Single-line SSH to avoid heredoc expansion issues
           ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" \
             "cd /home/paras/samaj-darshan && \
              sed -i '/^GOOGLE_ANALYTICS_CREDENTIALS=/d' .env && echo 'GOOGLE_ANALYTICS_CREDENTIALS=${ENCODED}' >> .env && \
@@ -44,25 +52,62 @@ jobs:
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
+          FULL_CLEAN: ${{ github.event.inputs.full_clean || 'false' }}
         run: |
-          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "\
-            set -e;\
-            cd /home/paras/samaj-darshan;\
-            git fetch --all;\
-            git reset --hard origin/main;\
-            sudo systemctl stop nginx 2>/dev/null || true;\
-            sudo systemctl disable nginx 2>/dev/null || true;\
-            docker system prune -f;\
-            docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true;\
-            docker compose -f docker-compose.production.yml --env-file .env up -d --build;\
-            echo '=== DB MIGRATE ===';\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production;\
-            echo '=== CACHE CLEAR ===';\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"Rails.cache.delete('ga_realtime_active_users'); Rails.cache.delete('ga_reporting_visitors')\" RAILS_ENV=production || true;\
-            echo '=== HEALTH CHECK ===';\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'Boot OK'; puts 'push_subscriptions table: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s; puts 'credentials readable: ' + Rails.application.credentials.secret_key_base.present?.to_s; puts 'firebase vapid: ' + Rails.application.credentials.dig(:firebase, :vapid_key).present?.to_s\" RAILS_ENV=production;\
-            echo '=== MASTER KEY CHECK ===';\
-            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"puts 'master_key_length: ' + ENV.fetch('RAILS_MASTER_KEY','').length.to_s\" RAILS_ENV=production || true;\
-            echo '=== WEB LOGS ===';\
-            docker compose -f docker-compose.production.yml logs --tail=80 web;\
+          ssh -o StrictHostKeyChecking=yes "${USER}@${HOST}" "
+            set -e
+            cd /home/paras/samaj-darshan
+
+            echo '=== GIT PULL ==='
+            git fetch --all
+            git reset --hard origin/main
+
+            # ── Full-clean mode (run manually via workflow_dispatch) ───────────
+            # Wipes Docker build cache, stops all containers cleanly, removes all
+            # images. Use when: cache is corrupt, disk is full, or after major
+            # dependency changes. First deploy after this will be slow (~8 min).
+            if [ '${FULL_CLEAN}' = 'true' ]; then
+              echo '=== FULL CLEAN MODE ==='
+              sudo systemctl stop nginx 2>/dev/null || true
+              sudo systemctl disable nginx 2>/dev/null || true
+              docker compose -f docker-compose.production.yml --env-file .env down --remove-orphans 2>/dev/null || true
+              docker system prune -af
+              echo '=== REBUILDING FROM SCRATCH (no cache) ==='
+              docker compose -f docker-compose.production.yml --env-file .env up -d --build
+            else
+              # ── Fast deploy (normal path) ──────────────────────────────────
+              # Build while old container is still live, then swap.
+              # Docker layer cache preserved — bundle install / assets:precompile
+              # only re-run when Gemfile.lock or assets actually change (~2 min).
+              echo '=== BUILD NEW IMAGE ==='
+              docker compose -f docker-compose.production.yml --env-file .env build web
+
+              echo '=== SWAP CONTAINERS ==='
+              docker compose -f docker-compose.production.yml --env-file .env up -d --no-build
+            fi
+
+            echo '=== DB MIGRATE ==='
+            docker compose -f docker-compose.production.yml exec -T web bin/rails db:migrate RAILS_ENV=production
+
+            echo '=== CACHE CLEAR ==='
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \
+              \"Rails.cache.delete('ga_realtime_active_users'); Rails.cache.delete('ga_reporting_visitors')\" \
+              RAILS_ENV=production || true
+
+            echo '=== HEALTH CHECK ==='
+            docker compose -f docker-compose.production.yml exec -T web bin/rails runner \"
+              puts 'Boot OK'
+              puts 'master_key_length: '  + ENV.fetch('RAILS_MASTER_KEY','').length.to_s
+              puts 'push_subscriptions: ' + ActiveRecord::Base.connection.table_exists?('push_subscriptions').to_s
+              puts 'credentials ok: '     + Rails.application.credentials.secret_key_base.present?.to_s
+              puts 'firebase vapid: '     + Rails.application.credentials.dig(:firebase, :vapid_key).present?.to_s
+            \" RAILS_ENV=production
+
+            echo '=== PRUNE OLD IMAGES ==='
+            # Always remove dangling/old images to free disk space.
+            # In full-clean mode this is a no-op (already pruned above).
+            docker image prune -f
+
+            echo '=== WEB LOGS ==='
+            docker compose -f docker-compose.production.yml logs --tail=60 web
           "

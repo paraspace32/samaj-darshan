@@ -3,6 +3,12 @@ class Admin::PushNotificationsController < Admin::BaseController
   def index
     @total_subscriptions = PushSubscription.count
     @web_count           = PushSubscription.web.count
+    @pwa_count           = PushSubscription.pwa.count
+    @android_count       = PushSubscription.on_android.count
+    @ios_count           = PushSubscription.on_ios.count
+    @desktop_count       = PushSubscription.on_desktop.count
+    @anonymous_count     = PushSubscription.anonymous.count
+    @logged_in_count     = PushSubscription.logged_in.count
     @recent              = PushSubscription.order(created_at: :desc).limit(10)
   end
 
@@ -14,7 +20,12 @@ class Admin::PushNotificationsController < Admin::BaseController
     image = params[:image].presence
 
     SendPushNotificationsJob.perform_later(title: title, body: body, url: url, image: image)
-    redirect_to admin_push_notifications_path, notice: "Push notification queued for #{PushSubscription.count} subscribers."
+    redirect_to admin_push_notifications_path,
+                notice: "Push notification queued for #{PushSubscription.count} subscribers."
+  rescue => e
+    Rails.logger.error "[Push] admin send failed: #{e.class}: #{e.message}"
+    redirect_to admin_push_notifications_path,
+                alert: "Failed to queue notification: #{e.message.truncate(120)}"
   end
 
   # POST /admin/news/:id/push  (called from news show page)
@@ -27,10 +38,15 @@ class Admin::PushNotificationsController < Admin::BaseController
 
     title = @news_item.display_title.truncate(80, separator: " ")
     body  = ActionController::Base.helpers.strip_tags(@news_item.display_content).truncate(120, separator: " ")
-    url   = Rails.application.routes.url_helpers.news_url(@news_item, host: request.host_with_port)
-    image = @news_item.cover_image.attached? ? Rails.application.routes.url_helpers.url_for(@news_item.cover_image) : nil
+    url   = news_url(@news_item)
+    image = @news_item.cover_image.attached? ? url_for(@news_item.cover_image) : nil
 
     SendPushNotificationsJob.perform_later(title: title, body: body, url: url, image: image)
-    redirect_to admin_news_path(@news_item), notice: "Push notification queued for #{PushSubscription.count} subscribers."
+    redirect_to admin_news_path(@news_item),
+                notice: "Push notification queued for #{PushSubscription.count} subscribers."
+  rescue => e
+    Rails.logger.error "[Push] admin send_for_news failed: #{e.class}: #{e.message}"
+    redirect_to admin_news_path(@news_item),
+                alert: "Failed to queue notification: #{e.message.truncate(120)}"
   end
 end

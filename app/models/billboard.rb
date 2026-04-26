@@ -4,7 +4,7 @@ class Billboard < ApplicationRecord
     attachable.variant :card,   resize_to_limit: [ 800, 400 ],   format: :webp, saver: { quality: 80 }
     attachable.variant :splash, resize_to_limit: [ 1600, 1200 ], format: :webp, saver: { quality: 85 }
     attachable.variant :thumb,       resize_to_limit: [ 300, 180 ],  format: :webp, saver: { quality: 75 }
-    attachable.variant :marriage_ad, resize_to_limit: [ 800, 4000 ], format: :webp, saver: { quality: 85 }, preprocessed: true
+    attachable.variant :marriage_ad, resize_to_limit: [ 800, 1200 ], format: :webp, saver: { quality: 85 }, preprocessed: true
   end
 
   enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5 }

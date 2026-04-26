@@ -113,15 +113,50 @@ export default class extends Controller {
         "X-CSRF-Token": csrfToken || ""
       },
       body: JSON.stringify({
-        token:    token,
-        platform: "web",
-        browser:  navigator.userAgent.slice(0, 200)
+        token:        token,
+        platform:     this._detectPlatform(),
+        display_mode: this._detectDisplayMode(),
+        os:           this._detectOS(),
+        browser:      navigator.userAgent.slice(0, 200)
       })
     })
     if (!response.ok) {
       throw new Error(`[PushNotification] Failed to save token: ${response.status}`)
     }
     localStorage.setItem("fcm_subscribed", "true")
+  }
+
+  // ── Detection helpers ───────────────────────────────────────────────────────
+
+  // "pwa" when launched from home screen / app drawer (standalone display mode).
+  // "web" when opened in a regular browser tab.
+  _detectPlatform() {
+    return this._isStandalone() ? "pwa" : "web"
+  }
+
+  // "standalone" = installed PWA, "browser" = regular tab
+  _detectDisplayMode() {
+    return this._isStandalone() ? "standalone" : "browser"
+  }
+
+  _isStandalone() {
+    // Android & desktop Chrome/Edge PWA
+    if (window.matchMedia("(display-mode: standalone)").matches) return true
+    // iOS Safari "Add to Home Screen"
+    if (navigator.standalone === true) return true
+    return false
+  }
+
+  // Detect OS / device type from the user agent string.
+  // Returns one of: android | ios | windows | macos | linux | unknown
+  _detectOS() {
+    const ua = navigator.userAgent
+    if (/android/i.test(ua))              return "android"
+    if (/iphone|ipad|ipod/i.test(ua))     return "ios"
+    if (/windows/i.test(ua))              return "windows"
+    if (/macintosh|mac os x/i.test(ua))   return "macos"
+    if (/linux/i.test(ua))                return "linux"
+    return "unknown"
   }
 
   showStatus(state) {

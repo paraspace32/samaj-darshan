@@ -65,8 +65,8 @@ class PwaController < ApplicationController
         const title = d.title || 'समाज दर्शन';
         const opts  = {
           body:    d.body  || '',
-          icon:    '/icon-192.png',
-          badge:   '/icon-192.png',
+          icon:    '/icon-login.png',
+          badge:   '/icon-login.png',
           data:    { url: d.url || '/' },
           vibrate: [200, 100, 200]
         };

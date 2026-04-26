@@ -5,13 +5,15 @@ class Billboard < ApplicationRecord
     attachable.variant :splash, resize_to_limit: [ 1600, 1200 ], format: :webp, saver: { quality: 85 }
     attachable.variant :thumb,       resize_to_limit: [ 300, 180 ],  format: :webp, saver: { quality: 75 }
     # resize_to_fill crops to EXACTLY 600×800 (3∶4 portrait) regardless of the
-    # uploaded image's shape — landscape, square or tall are all center-cropped
-    # to fit. The stored variant is always the right shape so the frame needs
-    # no CSS tricks to stay portrait.
-    attachable.variant :marriage_ad, resize_to_fill: [ 600, 800 ], format: :webp, saver: { quality: 85 }, preprocessed: true
+    # uploaded image's shape — landscape, square or tall are all cropped to fit.
+    # gravity: "North" keeps subjects near the top of the frame (faces, couples)
+    # rather than always using the geometric center.
+    attachable.variant :marriage_ad, resize_to_fill: [ 600, 800 ], gravity: "North", format: :webp, saver: { quality: 85 }, preprocessed: true
   end
 
   enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5 }
+
+  after_commit :expire_cache
 
   validates :title, presence: true
   validates :billboard_type, presence: true
@@ -44,5 +46,14 @@ class Billboard < ApplicationRecord
 
   def track_click!
     self.class.update_counters(id, clicks_count: 1)
+  end
+
+  private
+
+  # Bust the helper cache so changes appear immediately instead of waiting
+  # up to 5 minutes for the Rails.cache TTL to expire.
+  def expire_cache
+    Rails.cache.delete("billboard/#{billboard_type}")
+    Rails.cache.delete("billboards/#{billboard_type}")
   end
 end

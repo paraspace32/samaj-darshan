@@ -1,4 +1,6 @@
 class PushSubscriptionsController < ApplicationController
+  protect_from_forgery with: :null_session
+
   # POST /push_subscriptions/log_error  — receives JS-side errors for server logging
   def log_error
     Rails.logger.error("[PushNotification] Client error: #{params[:message]} | #{params[:detail]}")

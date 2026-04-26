@@ -5,10 +5,11 @@ class Billboard < ApplicationRecord
     attachable.variant :splash, resize_to_limit: [ 1600, 1200 ], format: :webp, saver: { quality: 85 }
     attachable.variant :thumb,       resize_to_limit: [ 300, 180 ],  format: :webp, saver: { quality: 75 }
     # resize_to_fill crops to EXACTLY 600×800 (3∶4 portrait) regardless of the
-    # uploaded image's shape — landscape, square or tall are all cropped to fit.
-    # gravity: "North" keeps subjects near the top of the frame (faces, couples)
-    # rather than always using the geometric center.
-    attachable.variant :marriage_ad, resize_to_fill: [ 600, 800 ], gravity: "North", format: :webp, saver: { quality: 85 }, preprocessed: true
+    # uploaded image's shape — landscape, square or tall are all center-cropped.
+    # NOTE: gravity is intentionally omitted — passing gravity: "North" as a
+    # top-level key causes ActiveStorage to call processor.gravity("North") as a
+    # separate operation which raises NoMethodError, breaking variant generation.
+    attachable.variant :marriage_ad, resize_to_fill: [ 600, 800 ], format: :webp, saver: { quality: 85 }, preprocessed: true
   end
 
   enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5 }

@@ -2,28 +2,20 @@
 <% marriage_ads = (marriage_ads * 10).first(10) if marriage_ads.size.between?(1, 9) %>
 <% if marriage_ads.any? %>
   <%#
-    Ornate wedding picture frame:
-    - Full width on mobile (no side margins)
-    - sm+: rounded corners with gradient border
-    - Images are pre-cropped to 600×800 (3∶4) at upload so the frame is
-      always portrait — no CSS aspect-ratio tricks needed
+    Wedding ad frame — fixed 16:9 aspect ratio.
+    Any image (portrait, landscape, square) fills the frame via object-cover.
+    Variant is pre-cropped to 800×450 at upload to match frame shape.
   %>
-  <div class="mb-4 relative -mx-4 sm:mx-0">
+  <div class="mb-1 -mt-3 relative mx-[3px]">
 
-    <%# 💍 Ring decoration — top-right corner of frame %>
-    <div class="absolute -top-2.5 -right-0 sm:-right-2.5 z-30 w-9 h-9 rounded-full flex items-center justify-center text-base select-none"
-         style="background: linear-gradient(135deg, #fb7185, #f43f5e); box-shadow: 0 2px 10px rgba(244,63,94,0.5)">
-      💍
-    </div>
-
-    <%# Gradient border frame — full-width mobile, rounded on sm+ %>
-    <div class="sm:rounded-[18px]"
+    <%# Gradient border frame %>
+    <div class="rounded-[18px]"
          style="padding: 4px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 25%, #f9a8d4 50%, #fde68a 75%, #fda4af 100%);">
       <%# White mat inner border %>
-      <div class="sm:rounded-[15px]" style="padding: 3px; background: white;">
+      <div class="rounded-[15px]" style="padding: 3px; background: white;">
 
         <%# Carousel — no bottom bar %>
-        <div class="relative overflow-hidden sm:rounded-[13px]"
+        <div class="relative overflow-hidden rounded-[13px]"
              data-controller="carousel"
              data-carousel-autoplay-value="true"
              data-carousel-fixed-height-value="true">
@@ -32,16 +24,16 @@
           <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
             <% marriage_ads.each_with_index do |bb, i| %>
               <% bb.track_impression! %>
-              <%# Image is pre-cropped to 600×800 so it naturally fills the frame %>
               <div class="w-full shrink-0 relative" data-carousel-target="slide">
                 <% if bb.link_url.present? %>
                   <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                     <% if bb.image.attached? %>
                       <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                            class: "w-full h-auto block",
+                            class: "w-full object-cover object-center block",
+                            style: "aspect-ratio: 16/9",
                             loading: i == 0 ? "eager" : "lazy" %>
                     <% else %>
-                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio:3/4">
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 16/9">
                         <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                       </div>
                     <% end %>
@@ -49,10 +41,11 @@
                 <% else %>
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                          class: "w-full h-auto block",
+                          class: "w-full object-cover object-center block",
+                          style: "height: 220px",
                           loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio:3/4">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 16/9">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>

@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["track", "slide", "dot", "counter"]
-  static values = { index: { type: Number, default: 0 }, autoplay: { type: Boolean, default: true } }
+  static values = { index: { type: Number, default: 0 }, autoplay: { type: Boolean, default: true }, fixedHeight: { type: Boolean, default: false } }
 
   connect() {
     this.total = this.slideTargets.length
@@ -47,6 +47,11 @@ export default class extends Controller {
   }
 
   syncHeight(index) {
+    // fixedHeight carousels use CSS (aspect-ratio / explicit height) to size
+    // themselves — JS height-syncing fights that and can lock the wrapper to
+    // a wrong value on first render, making portrait slides look landscape.
+    if (this.fixedHeightValue) return
+
     const slide = this.slideTargets[index]
     if (!slide) return
 

@@ -99,9 +99,9 @@
                            else @featured.region.display_name
                            end
     %>
-    <div class="mb-4">
-      <div class="-mx-4 sm:mx-0 animate-fade-up">
-        <%= link_to featured_path, class: "group block overflow-hidden sm:rounded-2xl glow-hero" do %>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5 mb-4">
+      <div class="lg:col-span-3 -mx-4 sm:mx-0 animate-fade-up">
+        <%= link_to featured_path, class: "group block overflow-hidden sm:rounded-2xl glow-hero h-full" do %>
 
           <%# MOBILE: full cinematic overlay — title ON the image %>
           <div class="sm:hidden">
@@ -184,30 +184,34 @@
 
         <% end %>
       </div>
+
+      <%# 4 latest news items — desktop right column, mobile below hero %>
+      <div class="lg:col-span-2 flex flex-col gap-2.5">
+        <% @news_items.first(4).each_with_index do |item, idx| %>
+          <%= link_to news_path(item), class: "group news-list-row animate-fade-in stagger-#{idx + 1}" do %>
+            <div class="w-[4.25rem] h-[4.25rem] rounded-lg overflow-hidden shrink-0">
+              <% if item.cover_image.attached? %>
+                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                  <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1 min-w-0 flex flex-col justify-center">
+              <span class="text-[10px] font-bold text-orange-600 mb-0.5"><%= item.category.display_name %> · <%= t("feed.ago", time: time_ago_in_words(item.published_at)) %></span>
+              <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+              <span class="text-[10px] text-gray-400 mt-0.5"><%= item.region.display_name %></span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
     </div>
   <% end %>
 
-  <%# ── REGIONS — horizontal scroll tabs (moved above trending) ──── %>
-  <div class="mb-4">
-    <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
-      <%= link_to root_path, class: "region-tab region-tab-active shrink-0" do %>
-        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h8"/></svg>
-        <%= I18n.locale == :hi ? "सभी" : "All" %>
-      <% end %>
-      <% @regions.each do |r| %>
-        <%= link_to r.display_name, region_feed_path(slug: r.slug), class: "region-tab shrink-0" %>
-      <% end %>
-    </div>
-  </div>
-
-  <%# ── AD after hero + regions ────────────────────────────────────── %>
-  <%= render "shared/billboard_feed" %>
-
-  <div class="page-section-break mb-4"></div>
-
   <%# ── TRENDING — full-width numbered list, always visible ────────── %>
   <% if @trending.present? %>
-    <div class="mb-4 lg:mb-6">
+    <div class="mb-4">
       <div class="flex items-center gap-0 border-b border-gray-200 mb-1">
         <div class="w-1 h-6 rounded-full bg-red-500 shrink-0 mr-3 mb-1"></div>
         <span class="px-3 py-2.5 text-sm border-b-2 border-orange-500 text-orange-600 font-black -mb-px">
@@ -243,7 +247,20 @@
     </div>
   <% end %>
 
-  <%# ── AD after trending, before category sections ─────────────── %>
+  <%# ── REGIONS — horizontal scroll tabs ──────────────────────────── %>
+  <div class="mb-4">
+    <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+      <%= link_to root_path, class: "region-tab region-tab-active shrink-0" do %>
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h8"/></svg>
+        <%= I18n.locale == :hi ? "सभी" : "All" %>
+      <% end %>
+      <% @regions.each do |r| %>
+        <%= link_to r.display_name, region_feed_path(slug: r.slug), class: "region-tab shrink-0" %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# ── AD after regions, before category sections ────────────────── %>
   <%= render "shared/billboard_feed" %>
 
   <div class="page-section-break mb-4"></div>
@@ -551,7 +568,7 @@
 
       <% if @news_items.any? %>
         <%# Mobile: list rows | Desktop: 2-column grid — wrapped in infinite scroll controller %>
-        <% start_idx   = @is_home ? 3 : 0 %>
+        <% start_idx   = @is_home ? 4 : 0 %>
         <% total_pages = (@total_count.to_f / @per_page).ceil %>
         <% has_more    = @page < total_pages %>
         <% next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil %>

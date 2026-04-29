@@ -8,20 +8,20 @@
   <% if @trending.present? %>
     <div class="ticker-strip -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 mb-3 mt-3">
       <div class="flex items-center gap-3">
-        <span class="shrink-0 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-orange-400">
+        <span class="shrink-0 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-orange-700">
           <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
           <%= t("feed.trending") %>
         </span>
-        <div class="w-px h-4 bg-white/20 shrink-0"></div>
+        <div class="w-px h-4 bg-gray-300 shrink-0"></div>
         <div class="overflow-hidden flex-1">
           <div class="ticker-scroll flex items-center gap-4">
             <% @trending.each do |item| %>
-              <%= link_to item.display_title, news_path(item), class: "text-xs font-medium text-white/80 shrink-0 whitespace-nowrap" %>
-              <span class="text-white/20 shrink-0">&bull;</span>
+              <%= link_to item.display_title, news_path(item), class: "text-[13px] font-semibold text-gray-900 shrink-0 whitespace-nowrap" %>
+              <span class="text-orange-300 shrink-0">&bull;</span>
             <% end %>
             <% @trending.each do |item| %>
-              <%= link_to item.display_title, news_path(item), class: "text-xs font-medium text-white/80 shrink-0 whitespace-nowrap" %>
-              <span class="text-white/20 shrink-0">&bull;</span>
+              <%= link_to item.display_title, news_path(item), class: "text-[13px] font-semibold text-gray-900 shrink-0 whitespace-nowrap" %>
+              <span class="text-orange-300 shrink-0">&bull;</span>
             <% end %>
           </div>
         </div>
@@ -113,13 +113,12 @@
               <% end %>
               <%# Strong gradient so title is always readable %>
               <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.08) 100%)"></div>
-              <%# LIVE badge — mobile %>
-              <div class="absolute top-3 left-3 z-10 live-badge-wrap">
-                <div class="flex items-center gap-1 rounded-full px-2 py-1 text-[9px] font-black text-white tracking-widest uppercase"
-                     style="background:linear-gradient(135deg,#f97316,#ea580c); box-shadow:0 0 0 2px rgba(249,115,22,0.4), 0 4px 20px rgba(234,88,12,0.75)">
-                  <span class="inline-flex rounded-full h-2 w-2 bg-white shrink-0"></span>
-                  <%= t("feed.live") %>
-                </div>
+              <%# LIVE dot — mobile %>
+              <div class="absolute top-3 left-3 z-10">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-5 w-5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500 opacity-60"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
               </div>
               <%# Title + meta overlaid on image %>
               <div class="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-8">
@@ -145,13 +144,12 @@
               <% end %>
               <div class="absolute inset-0 gradient-dark-strong"></div>
             </div>
-            <%# LIVE badge — desktop %>
-            <div class="absolute top-5 left-5 z-10 live-badge-wrap">
-              <div class="flex items-center gap-1 rounded-full px-2 py-1 text-[9px] font-black text-white tracking-widest uppercase"
-                   style="background:linear-gradient(135deg,#f97316,#ea580c); box-shadow:0 0 0 2px rgba(249,115,22,0.35), 0 4px 20px rgba(234,88,12,0.8)">
-                <span class="inline-flex rounded-full h-2 w-2 bg-white shrink-0"></span>
-                <%= t("feed.live") %>
-              </div>
+            <%# LIVE dot — desktop %>
+            <div class="absolute top-5 left-5 z-10">
+              <span class="relative flex h-3.5 w-3.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500"></span>
+              </span>
             </div>
             <div class="relative h-full flex flex-col justify-end p-8">
               <div class="flex items-center gap-2 mb-3">

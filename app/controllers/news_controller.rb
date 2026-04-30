@@ -52,7 +52,7 @@ class NewsController < ApplicationController
                              .order(published_at: :desc)
                              .limit(4)
 
-      excluded_ids = ([@featured&.id] + @home_side_items.map(&:id)).compact
+      excluded_ids = ([ @featured&.id ] + @home_side_items.map(&:id)).compact
       remaining    = @news_items.where.not(id: excluded_ids)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)

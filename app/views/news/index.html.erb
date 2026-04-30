@@ -236,7 +236,7 @@
   <% end %>
 
   <%# ── REGIONS — horizontal scroll tabs ──────────────────────────── %>
-  <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 rounded-none" style="background-color:#fff8f0; background-image: radial-gradient(circle, rgba(251,146,60,0.3) 1.5px, transparent 1.5px); background-size: 18px 18px; border-top: 1px solid rgba(251,146,60,0.18); border-bottom: 1px solid rgba(251,146,60,0.12)" data-controller="region-tabs">
+  <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1" style="background:#fafaf8; border-top:2px solid #ea580c; border-bottom:1px solid #e5e7eb" data-controller="region-tabs">
     <%# Determine which tab is active: explicit region > auto-detected > all %>
     <% active_region = @region || @auto_region %>
     <div class="relative">
@@ -276,16 +276,16 @@
     <%# ── Region news — all @news_items (side-stack now uses @home_side_items) ── %>
     <% region_extra = @news_items.to_a.first(5) %>
     <% if region_extra.any? %>
-      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 rounded-none" style="background-color:#fffbeb; background-image: repeating-linear-gradient(-45deg, rgba(251,191,36,0.13) 0px, rgba(251,191,36,0.13) 1px, transparent 1px, transparent 14px); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
-        <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
-        <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
-        <%= link_to region_feed_path(slug: active_region_on_home.slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-100 hover:bg-orange-600 hover:text-white px-2.5 py-1 rounded-lg transition-all" do %>
+      <div class="-mx-4 sm:-mx-6">
+      <div class="px-4 sm:px-6 py-2.5 flex items-center gap-3" style="background:#ea580c">
+        <h2 class="text-sm sm:text-base font-black text-white tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
+        <div class="flex-1 h-px bg-white/25"></div>
+        <%= link_to region_feed_path(slug: active_region_on_home.slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-white/90 hover:text-white whitespace-nowrap" do %>
           <%= I18n.locale == :hi ? "और देखें" : "View All" %>
           <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
         <% end %>
       </div>
+      <div class="px-4 sm:px-6 pt-3 pb-1" style="border-bottom:1px solid #e5e7eb">
       <div class="space-y-2.5 mb-4">
         <% region_extra.each do |item| %>
           <%= link_to news_path(item), class: "group news-list-row" do %>
@@ -305,22 +305,23 @@
           <% end %>
         <% end %>
       </div>
-      </div><%# close amber background wrapper %>
+      </div><%# close px wrapper %>
+      </div><%# close full-bleed wrapper %>
     <% end %>
   <% elsif @is_home %>
     <%# ── 5 latest news (सभी active) — @news_items excludes hero + side-stack ── %>
     <% latest_five = @news_items.to_a.first(5) %>
     <% if latest_five.any? %>
-      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4" style="background-color:#fffbeb; background-image: repeating-linear-gradient(-45deg, rgba(251,191,36,0.13) 0px, rgba(251,191,36,0.13) 1px, transparent 1px, transparent 14px); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
-        <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
-        <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
-        <%= link_to root_path(all: 1), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-100 hover:bg-orange-600 hover:text-white px-2.5 py-1 rounded-lg transition-all" do %>
+      <div class="-mx-4 sm:-mx-6">
+      <div class="px-4 sm:px-6 py-2.5 flex items-center gap-3" style="background:#ea580c">
+        <h2 class="text-sm sm:text-base font-black text-white tracking-tight whitespace-nowrap"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
+        <div class="flex-1 h-px bg-white/25"></div>
+        <%= link_to root_path(all: 1), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-white/90 hover:text-white whitespace-nowrap" do %>
           <%= I18n.locale == :hi ? "और देखें" : "View All" %>
           <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
         <% end %>
       </div>
+      <div class="px-4 sm:px-6 pt-3 pb-1" style="border-bottom:1px solid #e5e7eb">
       <div class="space-y-2.5 mb-4">
         <% latest_five.each do |item| %>
           <%= link_to news_path(item), class: "group news-list-row" do %>
@@ -340,7 +341,8 @@
           <% end %>
         <% end %>
       </div>
-      </div><%# close amber background wrapper %>
+      </div><%# close px wrapper %>
+      </div><%# close full-bleed wrapper %>
     <% end %>
   <% end %>
   </turbo-frame>
@@ -353,30 +355,19 @@
         <%= render "shared/billboard_feed" %>
       <% end %>
 
-      <%# Alternating themed full-bleed strips %>
-      <%
-        section_styles = [
-          # 0 — warm cream + graph-paper grid
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#fffdf9; background-image: linear-gradient(rgba(251,146,60,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(251,146,60,0.09) 1px, transparent 1px); background-size: 28px 28px; border-top:1px solid rgba(251,146,60,0.12); border-bottom:1px solid rgba(251,146,60,0.08)" },
-          # 1 — slate cool + cross-hatch (45° + -45°)
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#f8fafc; background-image: repeating-linear-gradient(45deg, rgba(100,116,139,0.1) 0px, rgba(100,116,139,0.1) 1px, transparent 1px, transparent 16px), repeating-linear-gradient(-45deg, rgba(100,116,139,0.07) 0px, rgba(100,116,139,0.07) 1px, transparent 1px, transparent 16px); border-top:1px solid rgba(148,163,184,0.18); border-bottom:1px solid rgba(148,163,184,0.12)" },
-          # 2 — soft rose/amber + polka dots
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#fff7f5; background-image: radial-gradient(circle, rgba(251,146,60,0.22) 1.5px, transparent 1.5px); background-size: 22px 22px; border-top:1px solid rgba(251,146,60,0.14); border-bottom:1px solid rgba(251,146,60,0.09)" },
-          # 3 — pale sage + diagonal lines
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#f0fdf4; background-image: repeating-linear-gradient(60deg, rgba(52,211,153,0.14) 0px, rgba(52,211,153,0.14) 1px, transparent 1px, transparent 18px); border-top:1px solid rgba(52,211,153,0.14); border-bottom:1px solid rgba(52,211,153,0.09)" },
-        ]
-        s = section_styles[sec_idx % section_styles.size]
-      %>
-      <div class="<%= s[:wrap] %>" style="<%= s[:bg] %>">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
-          <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= section[:category].display_name %></h2>
-          <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
-          <%= link_to category_feed_path(slug: section[:category].slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-100 hover:bg-orange-600 hover:text-white px-2.5 py-1 rounded-lg transition-all" do %>
+      <%# Bold header bar — colour rotates per section %>
+      <% header_colors = %w[#1d4ed8 #15803d #7c3aed #0f766e #b45309 #be123c] %>
+      <% hc = header_colors[sec_idx % header_colors.size] %>
+      <div class="-mx-4 sm:-mx-6">
+        <div class="px-4 sm:px-6 py-2.5 flex items-center gap-3" style="background:<%= hc %>">
+          <h2 class="text-sm sm:text-base font-black text-white tracking-tight whitespace-nowrap"><%= section[:category].display_name %></h2>
+          <div class="flex-1 h-px bg-white/25"></div>
+          <%= link_to category_feed_path(slug: section[:category].slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-white/90 hover:text-white whitespace-nowrap" do %>
             <%= I18n.locale == :hi ? "और देखें" : "View All" %>
             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
           <% end %>
         </div>
+        <div class="px-4 sm:px-6 pt-3 pb-1" style="border-bottom:1px solid #e5e7eb">
 
         <%# Mobile: compact news-list-row (no big image cards) %>
         <div class="sm:hidden space-y-2.5">
@@ -441,7 +432,8 @@
             <% end %>
           </div>
         <% end %>
-      </div>
+        </div><%# close px wrapper %>
+      </div><%# close full-bleed wrapper %>
     <% end %>
   <% end %>
 

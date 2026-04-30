@@ -597,35 +597,38 @@
 
 
 <% else %>
-  <%# ── TURBO FRAME response for region tab clicks ──────────────── %>
-  <turbo-frame id="region-news">
-    <% if @region.present? %>
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
-        <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= @region.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
-        <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
-      </div>
-    <% end %>
-    <div class="space-y-2.5 mb-4">
-      <% @news_items.first(8).each do |item| %>
-        <%= link_to news_path(item), class: "group news-list-row" do %>
-          <div class="w-20 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
-            <% if item.cover_image.attached? %>
-              <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
-            <% else %>
-              <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
-                <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
-              </div>
-            <% end %>
-          </div>
-          <div class="flex-1 min-w-0 flex flex-col justify-center">
-            <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-0.5"><%= item.display_title %></h3>
-            <span class="text-[11px] text-gray-400"><%= item.region.display_name %> · <%= item.category.display_name %></span>
-          </div>
-        <% end %>
+  <%# ── TURBO FRAME response — only rendered for Turbo Frame tab clicks ── %>
+  <%# On direct URL visits (!@is_home), the full news grid below handles rendering %>
+  <% if request.headers["Turbo-Frame"].present? %>
+    <turbo-frame id="region-news">
+      <% if @region.present? %>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
+          <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= @region.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
+          <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
+        </div>
       <% end %>
-    </div>
-  </turbo-frame>
+      <div class="space-y-2.5 mb-4">
+        <% @news_items.first(8).each do |item| %>
+          <%= link_to news_path(item), class: "group news-list-row" do %>
+            <div class="w-20 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
+              <% if item.cover_image.attached? %>
+                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                  <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1 min-w-0 flex flex-col justify-center">
+              <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-0.5"><%= item.display_title %></h3>
+              <span class="text-[11px] text-gray-400"><%= item.region.display_name %> · <%= item.category.display_name %></span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </turbo-frame>
+  <% end %>
 <% end %>
 
 <%# ═══════════════════════════════════════════════════════════════════

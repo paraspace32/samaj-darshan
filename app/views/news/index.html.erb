@@ -247,7 +247,9 @@
         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h8"/></svg>
         <%= I18n.locale == :hi ? "सभी" : "All" %>
       <% end %>
-      <% @regions.each do |r| %>
+      <%# Active region first, then the rest in original order %>
+      <% sorted_regions = active_region ? ([ @regions.find { |r| r.id == active_region.id } ] + @regions.reject { |r| r.id == active_region.id }).compact : @regions %>
+      <% sorted_regions.each do |r| %>
         <% is_active = active_region&.id == r.id %>
         <%= link_to region_feed_path(slug: r.slug),
               class: "region-tab shrink-0 #{is_active ? 'region-tab-active' : ''}",

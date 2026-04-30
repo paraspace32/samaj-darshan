@@ -10,6 +10,10 @@ class NewsController < ApplicationController
         @category = Category.find_by!(slug: params[:slug])
         @news_items = @news_items.where(category: @category)
       end
+    elsif @region.nil? && @category.nil? && params[:page].blank? && params[:all].blank?
+      # Auto-detect region from visitor IP on homepage (no explicit selection)
+      @auto_region = detect_region_from_ip
+      @news_items = @news_items.where(region: @auto_region) if @auto_region
     end
 
     @regions = Region.active.ordered
@@ -59,6 +63,7 @@ class NewsController < ApplicationController
                              .order(published_at: :desc).limit(5)
       @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
       @latest_magazine  = Magazine.visible.includes(cover_image_attachment: :blob).first
+      @biodata_count    = Biodata.visible.count
 
       begin
         @active_users  = GoogleAnalyticsService.realtime_data
@@ -102,7 +107,8 @@ class NewsController < ApplicationController
         ]
       end
       format.html do
-        fresh_when etag: cache_key_for_index, public: !logged_in?
+        # Auto-region responses are per-visitor — never share in public cache
+        fresh_when etag: cache_key_for_index, public: !logged_in? && @auto_region.nil?
       end
     end
   end
@@ -171,6 +177,29 @@ class NewsController < ApplicationController
     latest_webinar = Webinar.published.maximum(:updated_at) if @is_home
     latest_edu = EducationPost.published.maximum(:updated_at) if @is_home
     latest_job = JobPost.published.category_new_job_news.maximum(:updated_at) if @is_home
-    "news/index/v2/#{@page}/#{params[:slug]}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{latest_edu&.to_i}/#{latest_job&.to_i}/#{I18n.locale}"
+    region_key = @region&.slug || @auto_region&.slug
+    "news/index/v2/#{@page}/#{params[:slug]}/#{region_key}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{latest_edu&.to_i}/#{latest_job&.to_i}/#{I18n.locale}"
+  end
+
+  # Detect visitor's city from IP and find a matching Region record.
+  # Results are cached per-IP for 24 hours. Returns nil on any failure.
+  def detect_region_from_ip
+    ip = request.remote_ip
+    return nil if ip.blank? || ip.match?(/\A(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1)/)
+
+    city = Rails.cache.fetch("geo_city_#{ip}", expires_in: 24.hours) do
+      require "net/http"
+      uri = URI("http://ip-api.com/json/#{CGI.escape(ip)}?fields=city,status&lang=en")
+      res = Net::HTTP.get_response(uri)
+      data = JSON.parse(res.body)
+      data["status"] == "success" ? data["city"].to_s.strip : nil
+    rescue StandardError
+      nil
+    end
+
+    return nil if city.blank?
+
+    city_words = city.downcase.split
+    Region.active.ordered.find { |r| (city_words & r.name_en.downcase.split).any? }
   end
 end

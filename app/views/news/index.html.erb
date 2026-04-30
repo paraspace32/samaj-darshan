@@ -273,16 +273,38 @@
   <turbo-frame id="region-news">
 
   <% if active_region_on_home.present? %>
-    <%# ── Region news heading when auto-detected ─────────────────── %>
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
-      <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
-      <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
-      <%= link_to region_feed_path(slug: active_region_on_home.slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-100 hover:bg-orange-600 hover:text-white px-2.5 py-1 rounded-lg transition-all" do %>
-        <%= I18n.locale == :hi ? "और देखें" : "View All" %>
-        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
-      <% end %>
-    </div>
+    <%# ── Region news — heading + items 5-9 (items 1-4 are in side-stack above) ── %>
+    <% region_extra = @news_items.to_a[4, 5].to_a %>
+    <% if region_extra.any? %>
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
+        <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
+        <div class="flex-1 h-px mx-1" style="background: linear-gradient(90deg,#fed7aa,transparent)"></div>
+        <%= link_to region_feed_path(slug: active_region_on_home.slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 bg-orange-100 hover:bg-orange-600 hover:text-white px-2.5 py-1 rounded-lg transition-all" do %>
+          <%= I18n.locale == :hi ? "और देखें" : "View All" %>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+      <div class="space-y-2.5 mb-4">
+        <% region_extra.each do |item| %>
+          <%= link_to news_path(item), class: "group news-list-row" do %>
+            <div class="w-20 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
+              <% if item.cover_image.attached? %>
+                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                  <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1 min-w-0 flex flex-col justify-center">
+              <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-0.5"><%= item.display_title %></h3>
+              <span class="text-[11px] text-gray-400"><%= item.region.display_name %> · <%= item.category.display_name %></span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
   <% elsif @is_home %>
     <%# ── 5 latest news (सभी active) — items not shown above ─────── %>
     <% latest_five = @news_items.to_a[4, 5].to_a %>

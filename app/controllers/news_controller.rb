@@ -35,18 +35,15 @@ class NewsController < ApplicationController
       @job_listings = JobPost.visible.where.not(category: :new_job_news)
                              .with_attached_cover_image.includes(:author).limit(6)
 
-      # ── Determine featured item (newest across news / edu-news / job-news) ─
-      latest_news_item = @news_items.first
-      latest_education = @education_news.first
-      latest_job       = @job_news.first
+      # ── Hero: globally latest news (not region-filtered) ──────────────────
+      # Using @news_items (region-filtered) produced a poor hero for users
+      # whose region had no recent articles. Always use the global latest.
+      @featured = News.published.with_attached_cover_image
+                      .includes(:region, :category, :author)
+                      .order(published_at: :desc).first
+      @featured_type = :news
 
-      # Hero is always the latest news item — education/job never override it
-      if latest_news_item
-        @featured      = latest_news_item
-        @featured_type = :news
-      end
-
-      remaining    = @news_items.where.not(id: @featured_type == :news ? @featured&.id : nil)
+      remaining    = @news_items.where.not(id: @featured&.id)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)
 

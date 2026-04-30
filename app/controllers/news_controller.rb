@@ -11,9 +11,15 @@ class NewsController < ApplicationController
         @news_items = @news_items.where(category: @category)
       end
     elsif @region.nil? && @category.nil? && params[:page].blank? && params[:all].blank?
-      # Auto-detect region from visitor IP on homepage (no explicit selection)
-      @auto_region = detect_region_from_ip
-      @news_items = @news_items.where(region: @auto_region) if @auto_region
+      # Auto-detect region from visitor IP on homepage (no explicit selection).
+      # Only filter if the region has enough articles to fill the layout (hero
+      # side-stack needs 4, region section needs 5 more = 9 minimum). Regions
+      # with sparse content fall back to the global feed so the page looks full.
+      detected = detect_region_from_ip
+      if detected && @news_items.where(region: detected).count >= 5
+        @auto_region = detected
+        @news_items  = @news_items.where(region: @auto_region)
+      end
     end
 
     @regions = Region.active.ordered

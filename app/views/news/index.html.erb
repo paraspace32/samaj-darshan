@@ -236,7 +236,7 @@
   <% end %>
 
   <%# ── REGIONS — horizontal scroll tabs ──────────────────────────── %>
-  <div class="mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 rounded-none" style="background: linear-gradient(135deg, #fff8f2 0%, #fff3e8 50%, #fff8f2 100%); border-top: 1px solid rgba(251,146,60,0.15); border-bottom: 1px solid rgba(251,146,60,0.1)" data-controller="region-tabs">
+  <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 rounded-none" style="background-color:#fff8f0; background-image: radial-gradient(circle, rgba(251,146,60,0.3) 1.5px, transparent 1.5px); background-size: 18px 18px; border-top: 1px solid rgba(251,146,60,0.18); border-bottom: 1px solid rgba(251,146,60,0.12)" data-controller="region-tabs">
     <%# Determine which tab is active: explicit region > auto-detected > all %>
     <% active_region = @region || @auto_region %>
     <div class="relative">
@@ -269,8 +269,6 @@
   <%# ── AD after regions ───────────────────────────────────────────── %>
   <%= render "shared/billboard_feed" %>
 
-  <div class="page-section-break mb-4"></div>
-
   <% active_region_on_home = @auto_region %>
   <turbo-frame id="region-news">
 
@@ -278,7 +276,7 @@
     <%# ── Region news — all @news_items (side-stack now uses @home_side_items) ── %>
     <% region_extra = @news_items.to_a.first(5) %>
     <% if region_extra.any? %>
-      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 mb-2 rounded-none" style="background: linear-gradient(160deg, #fffbeb 0%, #fef9e0 40%, #fff8ed 100%); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
+      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 rounded-none" style="background-color:#fffbeb; background-image: repeating-linear-gradient(-45deg, rgba(251,191,36,0.13) 0px, rgba(251,191,36,0.13) 1px, transparent 1px, transparent 14px); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
         <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
@@ -313,7 +311,7 @@
     <%# ── 5 latest news (सभी active) — @news_items excludes hero + side-stack ── %>
     <% latest_five = @news_items.to_a.first(5) %>
     <% if latest_five.any? %>
-      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 mb-2" style="background: linear-gradient(160deg, #fffbeb 0%, #fef9e0 40%, #fff8ed 100%); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
+      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4" style="background-color:#fffbeb; background-image: repeating-linear-gradient(-45deg, rgba(251,191,36,0.13) 0px, rgba(251,191,36,0.13) 1px, transparent 1px, transparent 14px); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
         <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
@@ -358,18 +356,18 @@
       <%# Alternating themed full-bleed strips %>
       <%
         section_styles = [
-          # 0 — warm cream
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#fffdf9 0%,#fdf8f0 50%,#fffdf9 100%); border-top:1px solid rgba(251,146,60,0.1); border-bottom:1px solid rgba(251,146,60,0.08)' },
-          # 1 — stone/slate cool
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f8fafc 100%); border-top:1px solid rgba(148,163,184,0.15); border-bottom:1px solid rgba(148,163,184,0.1)' },
-          # 2 — soft rose/amber
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#fff7f5 0%,#fff0eb 50%,#fff7f5 100%); border-top:1px solid rgba(251,146,60,0.12); border-bottom:1px solid rgba(251,146,60,0.08)' },
-          # 3 — pale green/sage
-          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#f7fdf9 0%,#ecfdf5 50%,#f7fdf9 100%); border-top:1px solid rgba(52,211,153,0.12); border-bottom:1px solid rgba(52,211,153,0.08)' },
+          # 0 — warm cream + graph-paper grid
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#fffdf9; background-image: linear-gradient(rgba(251,146,60,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(251,146,60,0.09) 1px, transparent 1px); background-size: 28px 28px; border-top:1px solid rgba(251,146,60,0.12); border-bottom:1px solid rgba(251,146,60,0.08)" },
+          # 1 — slate cool + cross-hatch (45° + -45°)
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#f8fafc; background-image: repeating-linear-gradient(45deg, rgba(100,116,139,0.1) 0px, rgba(100,116,139,0.1) 1px, transparent 1px, transparent 16px), repeating-linear-gradient(-45deg, rgba(100,116,139,0.07) 0px, rgba(100,116,139,0.07) 1px, transparent 1px, transparent 16px); border-top:1px solid rgba(148,163,184,0.18); border-bottom:1px solid rgba(148,163,184,0.12)" },
+          # 2 — soft rose/amber + polka dots
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#fff7f5; background-image: radial-gradient(circle, rgba(251,146,60,0.22) 1.5px, transparent 1.5px); background-size: 22px 22px; border-top:1px solid rgba(251,146,60,0.14); border-bottom:1px solid rgba(251,146,60,0.09)" },
+          # 3 — pale sage + diagonal lines
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: "background-color:#f0fdf4; background-image: repeating-linear-gradient(60deg, rgba(52,211,153,0.14) 0px, rgba(52,211,153,0.14) 1px, transparent 1px, transparent 18px); border-top:1px solid rgba(52,211,153,0.14); border-bottom:1px solid rgba(52,211,153,0.09)" },
         ]
         s = section_styles[sec_idx % section_styles.size]
       %>
-      <div class="<%= s[:wrap] %> mb-2" style="<%= s[:bg] %>">
+      <div class="<%= s[:wrap] %>" style="<%= s[:bg] %>">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
           <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= section[:category].display_name %></h2>

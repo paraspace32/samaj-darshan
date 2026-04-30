@@ -273,8 +273,8 @@
   <turbo-frame id="region-news">
 
   <% if active_region_on_home.present? %>
-    <%# ── Region news — heading + items 5-9 (items 1-4 are in side-stack above) ── %>
-    <% region_extra = @news_items.to_a[4, 5].to_a %>
+    <%# ── Region news — all @news_items (side-stack now uses @home_side_items) ── %>
+    <% region_extra = @news_items.to_a.first(5) %>
     <% if region_extra.any? %>
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
@@ -306,8 +306,8 @@
       </div>
     <% end %>
   <% elsif @is_home %>
-    <%# ── 5 latest news (सभी active) — items not shown above ─────── %>
-    <% latest_five = @news_items.to_a[4, 5].to_a %>
+    <%# ── 5 latest news (सभी active) — @news_items excludes hero + side-stack ── %>
+    <% latest_five = @news_items.to_a.first(5) %>
     <% if latest_five.any? %>
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>

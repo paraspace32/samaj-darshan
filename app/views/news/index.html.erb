@@ -236,7 +236,7 @@
   <% end %>
 
   <%# ── REGIONS — horizontal scroll tabs ──────────────────────────── %>
-  <div class="mb-4" data-controller="region-tabs">
+  <div class="mb-4 -mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 rounded-none" style="background: linear-gradient(135deg, #fff8f2 0%, #fff3e8 50%, #fff8f2 100%); border-top: 1px solid rgba(251,146,60,0.15); border-bottom: 1px solid rgba(251,146,60,0.1)" data-controller="region-tabs">
     <%# Determine which tab is active: explicit region > auto-detected > all %>
     <% active_region = @region || @auto_region %>
     <div class="relative">
@@ -276,6 +276,7 @@
     <%# ── Region news — all @news_items (side-stack now uses @home_side_items) ── %>
     <% region_extra = @news_items.to_a.first(5) %>
     <% if region_extra.any? %>
+      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 mb-2 rounded-none" style="background: linear-gradient(160deg, #fffbeb 0%, #fef9e0 40%, #fff8ed 100%); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
         <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
@@ -304,11 +305,13 @@
           <% end %>
         <% end %>
       </div>
+      </div><%# close amber background wrapper %>
     <% end %>
   <% elsif @is_home %>
     <%# ── 5 latest news (सभी active) — @news_items excludes hero + side-stack ── %>
     <% latest_five = @news_items.to_a.first(5) %>
     <% if latest_five.any? %>
+      <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-4 mb-2" style="background: linear-gradient(160deg, #fffbeb 0%, #fef9e0 40%, #fff8ed 100%); border-top: 1px solid rgba(251,191,36,0.2); border-bottom: 1px solid rgba(251,191,36,0.15)">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
         <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
@@ -337,6 +340,7 @@
           <% end %>
         <% end %>
       </div>
+      </div><%# close amber background wrapper %>
     <% end %>
   <% end %>
   </turbo-frame>
@@ -349,9 +353,21 @@
         <%= render "shared/billboard_feed" %>
       <% end %>
 
-      <%# Alternating white / warm-stone full-bleed strips %>
-      <div class="<%= sec_idx.odd? ? '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4' : 'py-2' %> mb-2"
-           <%= sec_idx.odd? ? 'style="background: linear-gradient(135deg, #fafaf9 0%, #f5f4f2 100%)"' : '' %>>
+      <%# Alternating themed full-bleed strips %>
+      <%
+        section_styles = [
+          # 0 — warm cream
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#fffdf9 0%,#fdf8f0 50%,#fffdf9 100%); border-top:1px solid rgba(251,146,60,0.1); border-bottom:1px solid rgba(251,146,60,0.08)' },
+          # 1 — stone/slate cool
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#f8fafc 0%,#f1f5f9 50%,#f8fafc 100%); border-top:1px solid rgba(148,163,184,0.15); border-bottom:1px solid rgba(148,163,184,0.1)' },
+          # 2 — soft rose/amber
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#fff7f5 0%,#fff0eb 50%,#fff7f5 100%); border-top:1px solid rgba(251,146,60,0.12); border-bottom:1px solid rgba(251,146,60,0.08)' },
+          # 3 — pale green/sage
+          { wrap: '-mx-4 sm:-mx-6 px-4 sm:px-6 py-4', bg: 'background: linear-gradient(160deg,#f7fdf9 0%,#ecfdf5 50%,#f7fdf9 100%); border-top:1px solid rgba(52,211,153,0.12); border-bottom:1px solid rgba(52,211,153,0.08)' },
+        ]
+        s = section_styles[sec_idx % section_styles.size]
+      %>
+      <div class="<%= s[:wrap] %> mb-2" style="<%= s[:bg] %>">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-1.5 h-7 rounded-full shrink-0" style="background: linear-gradient(180deg,#f97316,#ea580c)"></div>
           <h2 class="text-base sm:text-lg font-black text-gray-900 tracking-tight whitespace-nowrap"><%= section[:category].display_name %></h2>

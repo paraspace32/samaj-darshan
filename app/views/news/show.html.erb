@@ -45,7 +45,7 @@
     "inLanguage": <%= (I18n.locale == :hi ? "hi-IN" : "en-IN").to_json %>,
     "author": {
       "@type": "Person",
-      "name": <%= @news_item.author.name.to_json %>
+      "name": <%= (@news_item.author&.name.presence || "Unknown").to_json %>
     },
     "publisher": {
       "@type": "Organization",
@@ -153,10 +153,10 @@
     <%# Author card — single compact line %>
     <div class="flex items-center gap-2.5 animate-fade-up" style="margin-top:0.25rem; margin-bottom:0.25rem">
       <div class="w-5 h-5 rounded-full gradient-brand flex items-center justify-center shadow-sm ring-1 ring-white shrink-0">
-        <span class="text-white font-black text-[9px]"><%= @news_item.author.name[0] %></span>
+        <span class="text-white font-black text-[9px]"><%= (@news_item.author&.name.presence || "?")[0] %></span>
       </div>
       <div class="min-w-0 flex-1 flex items-center gap-1.5 flex-wrap">
-        <span class="text-[12px] font-normal text-stone-600"><%= @news_item.author.name %></span>
+        <span class="text-[12px] font-normal text-stone-600"><%= @news_item.author&.name.presence || "Unknown" %></span>
         <span class="text-stone-300 text-[11px]">·</span>
         <span class="text-[11px] text-stone-400 font-medium"><%= @news_item.region.display_name %></span>
         <span class="text-stone-300 text-[11px]">·</span>

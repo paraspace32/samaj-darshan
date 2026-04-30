@@ -40,16 +40,10 @@ class NewsController < ApplicationController
       latest_education = @education_news.first
       latest_job       = @job_news.first
 
-      candidates = [
-        (latest_news_item ? [ latest_news_item, latest_news_item.published_at, :news ]      : nil),
-        (latest_education ? [ latest_education, latest_education.published_at, :education ] : nil),
-        (latest_job       ? [ latest_job,       latest_job.published_at,       :job ]       : nil)
-      ].compact
-
-      if candidates.any?
-        overall_latest = candidates.max_by { |_, pub_at, _| pub_at || Time.at(0) }
-        @featured      = overall_latest[0]
-        @featured_type = overall_latest[2]
+      # Hero is always the latest news item — education/job never override it
+      if latest_news_item
+        @featured      = latest_news_item
+        @featured_type = :news
       end
 
       remaining    = @news_items.where.not(id: @featured_type == :news ? @featured&.id : nil)

@@ -153,9 +153,9 @@
               <p class="text-[13px] text-white/50 mt-2 line-clamp-2 max-w-2xl"><%= truncate(strip_tags(featured_content), length: 180) %></p>
               <div class="flex items-center gap-2.5 mt-4">
                 <div class="w-8 h-8 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-1 ring-white/20">
-                  <span class="text-white font-bold text-xs"><%= @featured.author.name[0] %></span>
+                  <span class="text-white font-bold text-xs"><%= (@featured.author&.name.presence || "?")[0] %></span>
                 </div>
-                <span class="text-sm text-white/80 font-semibold"><%= @featured.author.name %></span>
+                <span class="text-sm text-white/80 font-semibold"><%= @featured.author&.name.presence || "Unknown" %></span>
                 <span class="text-white/30">&middot;</span>
               </div>
             </div>
@@ -691,7 +691,7 @@
 
       <% if @news_items.any? %>
         <%# Mobile: list rows | Desktop: 2-column grid — wrapped in infinite scroll controller %>
-        <% start_idx   = @is_home ? 4 : 0 %>
+        <% start_idx   = 0 %>
         <% total_pages = (@total_count.to_f / @per_page).ceil %>
         <% has_more    = @page < total_pages %>
         <% next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil %>

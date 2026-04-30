@@ -24,9 +24,9 @@
         <div class="flex items-center justify-between mt-4 pt-3.5 border-t border-gray-100/80">
           <div class="flex items-center gap-2.5">
             <div class="w-6 h-6 rounded-full gradient-brand flex items-center justify-center">
-              <span class="text-white font-bold text-[9px]"><%= news_item.author.name[0] %></span>
+              <span class="text-white font-bold text-[9px]"><%= (news_item.author&.name.presence || "?")[0] %></span>
             </div>
-            <span class="text-xs text-gray-500 font-medium"><%= news_item.author.name %></span>
+            <span class="text-xs text-gray-500 font-medium"><%= news_item.author&.name.presence || "Unknown" %></span>
           </div>
           <div class="flex items-center gap-3 text-xs text-gray-400">
             <span class="inline-flex items-center gap-1">

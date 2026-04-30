@@ -164,9 +164,9 @@
         <% end %>
       </div>
 
-      <%# 4 latest news items — desktop right column, mobile below hero %>
+      <%# 4 globally-latest news items — desktop right column, mobile below hero %>
       <div class="lg:col-span-2 flex flex-col gap-2.5">
-        <% @news_items.first(4).each_with_index do |item, idx| %>
+        <% @home_side_items.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group news-list-row animate-fade-in stagger-#{idx + 1}" do %>
             <div class="w-20 h-[4.25rem] rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>

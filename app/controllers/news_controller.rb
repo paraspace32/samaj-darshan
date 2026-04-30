@@ -11,15 +11,9 @@ class NewsController < ApplicationController
         @news_items = @news_items.where(category: @category)
       end
     elsif @region.nil? && @category.nil? && params[:page].blank? && params[:all].blank?
-      # Auto-detect region from visitor IP on homepage (no explicit selection).
-      # Only filter if the region has enough articles to fill the layout (hero
-      # side-stack needs 4, region section needs 5 more = 9 minimum). Regions
-      # with sparse content fall back to the global feed so the page looks full.
-      detected = detect_region_from_ip
-      if detected && @news_items.where(region: detected).count >= 5
-        @auto_region = detected
-        @news_items  = @news_items.where(region: @auto_region)
-      end
+      # Auto-detect region from visitor IP on homepage (no explicit selection)
+      @auto_region = detect_region_from_ip
+      @news_items  = @news_items.where(region: @auto_region) if @auto_region
     end
 
     @regions = Region.active.ordered
@@ -42,14 +36,24 @@ class NewsController < ApplicationController
                              .with_attached_cover_image.includes(:author).limit(6)
 
       # ── Hero: globally latest news (not region-filtered) ──────────────────
-      # Using @news_items (region-filtered) produced a poor hero for users
-      # whose region had no recent articles. Always use the global latest.
       @featured = News.published.with_attached_cover_image
                       .includes(:region, :category, :author)
                       .order(published_at: :desc).first
       @featured_type = :news
 
-      remaining    = @news_items.where.not(id: @featured&.id)
+      # ── Side stack: always globally latest 4 (not region-filtered) ────────
+      # @news_items may be region-filtered (auto_region). The side stack next
+      # to the hero must always show 4 articles regardless of how many the
+      # detected region has. We load them globally, then exclude their IDs
+      # from @news_items so they don't duplicate in the region section below.
+      @home_side_items = News.published.with_attached_cover_image
+                             .includes(:region, :category)
+                             .where.not(id: @featured&.id)
+                             .order(published_at: :desc)
+                             .limit(4)
+
+      excluded_ids = ([@featured&.id] + @home_side_items.map(&:id)).compact
+      remaining    = @news_items.where.not(id: excluded_ids)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)
 
@@ -74,7 +78,8 @@ class NewsController < ApplicationController
       # This ensures category sections always show distinct content from the bottom grid
       shown_ids = [
         (@featured_type == :news ? @featured&.id : nil),
-        *@news_items.map(&:id),           # full bottom-grid batch, not just first 3
+        *@home_side_items.map(&:id),      # globally-latest side stack
+        *@news_items.map(&:id),           # region section items
         *@trending.map(&:id)
       ].compact.uniq
 

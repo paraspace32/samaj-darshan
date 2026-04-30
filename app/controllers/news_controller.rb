@@ -63,6 +63,7 @@ class NewsController < ApplicationController
                              .order(published_at: :desc).limit(5)
       @upcoming_webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
       @latest_magazine  = Magazine.visible.includes(cover_image_attachment: :blob).first
+      @biodata_count    = Biodata.visible.count
 
       begin
         @active_users  = GoogleAnalyticsService.realtime_data

@@ -30,10 +30,10 @@
                     <% if bb.image.attached? %>
                       <%= optimized_image_tag bb.image, variant: :marriage_ad,
                             class: "w-full object-cover object-center block",
-                            style: "aspect-ratio: 3/2",
+                            style: "aspect-ratio: 11/8",
                             loading: i == 0 ? "eager" : "lazy" %>
                     <% else %>
-                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 3/2">
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
                         <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                       </div>
                     <% end %>
@@ -42,10 +42,10 @@
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad,
                           class: "w-full object-cover object-center block",
-                          style: "aspect-ratio: 3/2",
+                          style: "aspect-ratio: 11/8",
                           loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 3/2">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>

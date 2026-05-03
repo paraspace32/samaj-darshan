@@ -1,5 +1,7 @@
-<% marriage_ads = billboards_for(:marriage_ad).first(10) %>
-<% marriage_ads = (marriage_ads * 10).first(10) if marriage_ads.size.between?(1, 9) %>
+<% marriage_ads_unique = billboards_for(:marriage_ad).first(10) %>
+<% marriage_ads_unique.each { |bb| bb.track_impression! } %>
+<% marriage_ads = (marriage_ads_unique * 10).first(10) if marriage_ads_unique.size.between?(1, 9) %>
+<% marriage_ads ||= marriage_ads_unique %>
 <% if marriage_ads.any? %>
   <%#
     Wedding ad frame — fixed 16:9 aspect ratio.
@@ -23,7 +25,6 @@
           <%# Slides track %>
           <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
             <% marriage_ads.each_with_index do |bb, i| %>
-              <% bb.track_impression! %>
               <div class="w-full shrink-0 relative" data-carousel-target="slide">
                 <% if bb.link_url.present? %>
                   <%= link_to billboard_click_path(bb), class: "block w-full" do %>

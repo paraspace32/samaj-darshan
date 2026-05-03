@@ -9,7 +9,7 @@ class Billboard < ApplicationRecord
     # NOTE: gravity is intentionally omitted — passing gravity: "North" as a
     # top-level key causes ActiveStorage to call processor.gravity("North") as a
     # separate operation which raises NoMethodError, breaking variant generation.
-    attachable.variant :marriage_ad, resize_to_fill: [ 800, 450 ], format: :webp, saver: { quality: 85 }, preprocessed: true
+    attachable.variant :marriage_ad, resize_to_fill: [ 880, 640 ], format: :webp, saver: { quality: 85 }, preprocessed: true
   end
 
   enum :billboard_type, { top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5 }

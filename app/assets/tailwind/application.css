@@ -280,7 +280,7 @@
     transform: translateY(16px);
   }
 
-  /* ── Story card grid (2 per row, scrollable) ─────── */
+  /* ── Story card grid (2 per row) ─────────────────── */
   .story-stack {
     display: grid;
     grid-template-columns: 1fr 1fr;

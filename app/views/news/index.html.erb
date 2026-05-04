@@ -138,7 +138,7 @@
         </div>
       <% end %>
 
-      <%# Mobile side items — story card row %>
+      <%# Mobile side items — 2-per-row story grid %>
       <div class="story-stack mt-2">
         <% @home_side_items.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group story-card" do %>

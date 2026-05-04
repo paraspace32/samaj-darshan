@@ -138,24 +138,24 @@
         </div>
       <% end %>
 
-      <%# Mobile side items — overlapping story card stack %>
-      <div class="story-stack">
+      <%# Mobile side items — story card row %>
+      <div class="story-stack mt-2">
         <% @home_side_items.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group story-card" do %>
-            <div class="relative h-40">
+            <div class="relative h-52">
               <% if item.cover_image.attached? %>
-                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
+                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
               <% else %>
                 <div class="w-full h-full gradient-brand-soft"></div>
               <% end %>
-              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)"></div>
+              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 45%, transparent 100%)"></div>
               <%# Position number %>
               <div class="absolute top-2 right-2">
                 <span class="text-[10px] font-black text-white/25"><%= "%02d" % (idx + 1) %></span>
               </div>
-              <div class="absolute bottom-0 left-0 right-0 p-2.5">
-                <h3 class="text-[12px] font-bold text-white line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-                <span class="text-[9px] text-white/40 mt-0.5 block uppercase tracking-wide font-semibold"><%= item.category.display_name %></span>
+              <div class="absolute bottom-0 left-0 right-0 p-3">
+                <h3 class="text-[13px] font-bold text-white line-clamp-3 leading-snug tracking-tight"><%= item.display_title %></h3>
+                <span class="text-[10px] text-white/45 mt-1 block uppercase tracking-wide font-semibold"><%= item.category.display_name %></span>
               </div>
             </div>
           <% end %>

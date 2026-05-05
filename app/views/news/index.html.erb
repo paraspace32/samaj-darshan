@@ -103,37 +103,40 @@
                            end
     %>
 
-    <%# ── Mobile Hero: immersive full-bleed with depth ── %>
+    <%# ── Mobile Hero: title-first card layout ── %>
     <div class="sm:hidden -mx-4 mb-3 animate-fade-up">
-      <%= link_to featured_path, class: "group block relative overflow-hidden" do %>
-        <div class="relative w-full" style="height: 270px">
-          <% if @featured.cover_image.attached? %>
-            <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover", loading: "eager" %>
-          <% else %>
-            <div class="w-full h-full gradient-hero"></div>
-          <% end %>
-          <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.08) 70%, rgba(0,0,0,0.15) 100%)"></div>
-          <%# Top bar: category + time %>
-          <div class="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-3 z-10">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider text-white bg-white/15 backdrop-blur-md border border-white/10">
+      <%= link_to featured_path, class: "group block bg-white" do %>
+        <%# 1. Heading at top %>
+        <div class="px-4 pt-4 pb-2">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 border border-orange-100">
               <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
               <%= featured_badge_label %>
             </span>
-            <span class="text-[10px] text-white/40 font-medium backdrop-blur-sm"><%= @featured.published_at&.strftime("%d %b") %></span>
+            <span class="text-[11px] text-gray-400 font-medium"><%= @featured.published_at&.strftime("%d %b") %></span>
           </div>
-          <%# Bottom content with more breathing room %>
-          <div class="absolute bottom-0 left-0 right-0 p-4 pb-5">
-            <h2 class="text-[1.25rem] font-black text-white leading-[1.3] line-clamp-3 tracking-tight group-hover:text-orange-200 transition-colors">
-              <%= @featured.display_title %>
-            </h2>
-            <div class="flex items-center gap-2 mt-2.5">
-              <div class="w-6 h-6 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-1 ring-white/10">
-                <span class="text-white font-black text-[9px]"><%= (@featured.author&.name.presence || "?")[0] %></span>
-              </div>
-              <span class="text-[11px] font-semibold text-white/70"><%= @featured.author&.name.presence || "Unknown" %></span>
-              <span class="text-white/25">&middot;</span>
-              <span class="text-[11px] text-white/40"><%= featured_sub_label %></span>
+          <h2 class="text-[1.25rem] font-black text-gray-900 leading-[1.3] line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors">
+            <%= @featured.display_title %>
+          </h2>
+        </div>
+        <%# 2. Image %>
+        <div class="w-full aspect-video overflow-hidden">
+          <% if @featured.cover_image.attached? %>
+            <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "eager" %>
+          <% else %>
+            <div class="w-full h-full gradient-hero"></div>
+          <% end %>
+        </div>
+        <%# 3. Content excerpt (2 lines) %>
+        <div class="px-4 pt-2.5 pb-3">
+          <p class="text-[13px] text-gray-600 leading-relaxed line-clamp-2"><%= truncate(strip_tags(featured_content), length: 160) %></p>
+          <div class="flex items-center gap-2 mt-2">
+            <div class="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
+              <span class="text-orange-600 font-black text-[9px]"><%= (@featured.author&.name.presence || "?")[0] %></span>
             </div>
+            <span class="text-[11px] font-semibold text-gray-500"><%= @featured.author&.name.presence || "Unknown" %></span>
+            <span class="text-gray-300">&middot;</span>
+            <span class="text-[11px] text-gray-400"><%= featured_sub_label %></span>
           </div>
         </div>
       <% end %>
@@ -141,94 +144,94 @@
       <%# Mobile side items — 2-per-row story grid %>
       <div class="story-stack mt-2">
         <% @home_side_items.each_with_index do |item, idx| %>
-          <%= link_to news_path(item), class: "group story-card" do %>
-            <div class="relative h-52">
+          <%= link_to news_path(item), class: "group story-card bg-white overflow-hidden" do %>
+            <%# Image on top %>
+            <div class="w-full aspect-[4/3] overflow-hidden">
               <% if item.cover_image.attached? %>
-                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
+                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
               <% else %>
                 <div class="w-full h-full gradient-brand-soft"></div>
               <% end %>
-              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 45%, transparent 100%)"></div>
-              <%# Position number %>
-              <div class="absolute top-2 right-2">
-                <span class="text-[10px] font-black text-white/25"><%= "%02d" % (idx + 1) %></span>
-              </div>
-              <div class="absolute bottom-0 left-0 right-0 p-3">
-                <h3 class="text-[13px] font-bold text-white line-clamp-3 leading-snug tracking-tight"><%= item.display_title %></h3>
-                <span class="text-[10px] text-white/45 mt-1 block uppercase tracking-wide font-semibold"><%= item.region.display_name %></span>
-              </div>
+            </div>
+            <%# Title + excerpt below %>
+            <div class="p-2.5">
+              <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+              <p class="text-[11px] text-gray-400 mt-1 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(item.display_content), length: 80) %></p>
             </div>
           <% end %>
         <% end %>
       </div>
     </div>
 
-    <%# ── Desktop Hero: bento grid ── %>
+    <%# ── Desktop Hero: title-first bento grid ── %>
     <div class="hidden sm:grid sm:grid-cols-12 gap-4 mb-6 animate-fade-up">
       <%# Main hero — spans 8 cols %>
       <div class="col-span-8">
-        <%= link_to featured_path, class: "group block relative overflow-hidden rounded-2xl h-full" do %>
-          <div class="absolute inset-0">
+        <%= link_to featured_path, class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50/50 transition-all h-full" do %>
+          <%# 1. Title at top %>
+          <div class="p-5 lg:p-6 pb-3">
+            <div class="flex items-center gap-2 mb-2.5">
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 border border-orange-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                <%= featured_badge_label %>
+              </span>
+              <span class="text-[12px] text-gray-400 font-medium"><%= @featured.published_at&.strftime("%d %b") %></span>
+            </div>
+            <h2 class="text-2xl lg:text-[1.75rem] font-black text-gray-900 leading-tight line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors">
+              <%= @featured.display_title %>
+            </h2>
+          </div>
+          <%# 2. Image %>
+          <div class="w-full aspect-video overflow-hidden">
             <% if @featured.cover_image.attached? %>
-              <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+              <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "eager" %>
             <% else %>
               <div class="w-full h-full gradient-hero"></div>
             <% end %>
-            <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.05) 100%)"></div>
           </div>
-          <%# Category badge %>
-          <div class="absolute top-4 left-4 z-10">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold text-white bg-white/15 backdrop-blur-md border border-white/10">
-              <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-              <%= featured_badge_label %>
-            </span>
-          </div>
-          <div class="relative min-h-[400px] flex flex-col justify-end p-6 lg:p-8">
-            <h2 class="text-2xl lg:text-[1.75rem] font-black text-white leading-tight line-clamp-3 tracking-tight group-hover:text-orange-200 transition-colors max-w-xl">
-              <%= @featured.display_title %>
-            </h2>
-            <p class="text-sm text-white/40 mt-2 line-clamp-2 max-w-lg"><%= truncate(strip_tags(featured_content), length: 160) %></p>
-            <div class="flex items-center gap-3 mt-4">
-              <div class="w-7 h-7 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center ring-1 ring-white/15">
-                <span class="text-white font-bold text-[11px]"><%= (@featured.author&.name.presence || "?")[0] %></span>
+          <%# 3. Content excerpt %>
+          <div class="p-5 lg:p-6 pt-3">
+            <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(featured_content), length: 200) %></p>
+            <div class="flex items-center gap-3 mt-3">
+              <div class="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+                <span class="text-orange-600 font-bold text-[11px]"><%= (@featured.author&.name.presence || "?")[0] %></span>
               </div>
-              <span class="text-[13px] text-white/70 font-medium"><%= @featured.author&.name.presence || "Unknown" %></span>
-              <span class="text-white/25">&middot;</span>
-              <span class="text-[12px] text-white/40"><%= featured_sub_label %></span>
+              <span class="text-[13px] text-gray-600 font-medium"><%= @featured.author&.name.presence || "Unknown" %></span>
+              <span class="text-gray-300">&middot;</span>
+              <span class="text-[12px] text-gray-400"><%= featured_sub_label %></span>
             </div>
           </div>
         <% end %>
       </div>
 
-      <%# Side stack — 4 items in 4 cols %>
+      <%# Side stack — items in 4 cols, title-first cards %>
       <div class="col-span-4 grid grid-rows-2 gap-4">
         <% @home_side_items.first(2).each_with_index do |item, idx| %>
-          <%= link_to news_path(item), class: "group block relative overflow-hidden rounded-2xl" do %>
-            <div class="absolute inset-0">
+          <%= link_to news_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50/50 transition-all" do %>
+            <div class="w-full aspect-[16/10] overflow-hidden">
               <% if item.cover_image.attached? %>
-                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: idx == 0 ? "eager" : "lazy" %>
+                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: idx == 0 ? "eager" : "lazy" %>
               <% else %>
                 <div class="w-full h-full gradient-brand-soft"></div>
               <% end %>
-              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.2) 55%, transparent 100%)"></div>
             </div>
-            <div class="relative min-h-[190px] flex flex-col justify-end p-4">
-              <h3 class="text-[14px] font-bold text-white leading-snug line-clamp-2 tracking-tight group-hover:text-orange-200 transition-colors"><%= item.display_title %></h3>
-              <span class="text-[11px] text-white/40 mt-1"><%= item.region.display_name %></span>
+            <div class="p-3">
+              <h3 class="text-[14px] font-bold text-gray-900 leading-snug line-clamp-2 tracking-tight group-hover:text-orange-600 transition-colors"><%= item.display_title %></h3>
+              <p class="text-[11px] text-gray-400 mt-1 line-clamp-1 leading-relaxed"><%= truncate(strip_tags(item.display_content), length: 80) %></p>
             </div>
           <% end %>
         <% end %>
       </div>
     </div>
 
-    <%# Desktop: remaining 2 side items as text rows below hero %>
+    <%# Desktop: remaining side items as text rows below hero %>
     <% if @home_side_items.size > 2 %>
       <div class="hidden sm:grid sm:grid-cols-2 gap-3 mb-6">
         <% @home_side_items.drop(2).each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
             <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
-                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+                <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300", loading: "lazy" %>
               <% else %>
                 <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
                   <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
@@ -237,7 +240,7 @@
             </div>
             <div class="flex-1 min-w-0 flex flex-col justify-center">
               <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-              <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region.display_name %></span>
+              <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1"><%= truncate(strip_tags(item.display_content), length: 80) %></p>
             </div>
           <% end %>
         <% end %>

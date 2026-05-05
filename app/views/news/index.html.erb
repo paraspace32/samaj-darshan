@@ -121,8 +121,8 @@
           <% end %>
           <div class="absolute top-2.5 left-3">
             <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-md shadow-black/20"></span>
             </span>
           </div>
         </div>
@@ -132,11 +132,12 @@
         </div>
       <% end %>
 
-      <%# Mobile side items — 2-per-row story grid %>
+      <%# Mobile side items — first row (2 items) %>
+      <% first_row = @home_side_items.first(2) %>
+      <% remaining_items = @home_side_items.drop(2) %>
       <div class="story-stack mt-2">
-        <% @home_side_items.each_with_index do |item, idx| %>
+        <% first_row.each do |item| %>
           <%= link_to news_path(item), class: "group story-card bg-white overflow-hidden" do %>
-            <%# Image on top %>
             <div class="w-full aspect-[4/3] overflow-hidden">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
@@ -144,7 +145,6 @@
                 <div class="w-full h-full gradient-brand-soft"></div>
               <% end %>
             </div>
-            <%# Title + excerpt below %>
             <div class="p-2.5">
               <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
               <p class="text-[11px] text-gray-400 mt-1 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(item.display_content), length: 80) %></p>
@@ -152,6 +152,44 @@
           <% end %>
         <% end %>
       </div>
+
+      <%# विवाह परिचय link between rows %>
+      <%= link_to biodatas_path, class: "block group my-2 mx-1" do %>
+        <div class="rounded-xl relative overflow-hidden text-white px-4 py-2.5 flex items-center gap-3"
+             style="background: linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%); box-shadow: 0 4px 16px -4px rgba(180,83,9,0.45)">
+          <svg class="w-5 h-5 text-white shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+          </svg>
+          <span class="font-black text-[13px] leading-tight"><%= t("nav.marriage") %></span>
+          <% if @biodata_count&.positive? %>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full" style="background: rgba(255,255,255,0.18)">
+              <%= @biodata_count %>+ <%= I18n.locale == :hi ? "प्रोफाइल" : "Profiles" %>
+            </span>
+          <% end %>
+          <svg class="w-4 h-4 text-white/70 ml-auto shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      <% end %>
+
+      <%# Remaining side items %>
+      <% if remaining_items.any? %>
+        <div class="story-stack">
+          <% remaining_items.each do |item| %>
+            <%= link_to news_path(item), class: "group story-card bg-white overflow-hidden" do %>
+              <div class="w-full aspect-[4/3] overflow-hidden">
+                <% if item.cover_image.attached? %>
+                  <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
+                <% else %>
+                  <div class="w-full h-full gradient-brand-soft"></div>
+                <% end %>
+              </div>
+              <div class="p-2.5">
+                <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                <p class="text-[11px] text-gray-400 mt-1 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(item.display_content), length: 80) %></p>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <%# ── Desktop Hero: title-first bento grid ── %>
@@ -174,8 +212,8 @@
             <% end %>
             <div class="absolute top-3 left-4">
               <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-md shadow-black/20"></span>
               </span>
             </div>
           </div>

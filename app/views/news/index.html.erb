@@ -1,12 +1,9 @@
 <% if @is_home %>
-  <%# ── Marriage ad — first thing below the header ─────────────────── %>
-  <%= render "shared/billboard_marriage" %>
-
   <%# ═══════════════════════════════════════════════════════════════════
       TRENDING TICKER — horizontal scrolling breaking news
       ═══════════════════════════════════════════════════════════════════ %>
   <% if @trending.present? %>
-    <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-5 border-b border-gray-100" style="background: linear-gradient(90deg, #fff7ed 0%, white 50%, #fff7ed 100%)">
+    <div class="-mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-3 border-b border-gray-100" style="background: linear-gradient(90deg, #fff7ed 0%, white 50%, #fff7ed 100%)">
       <div class="flex items-center gap-3">
         <span class="shrink-0 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-red-600">
           <span class="relative flex h-2 w-2">
@@ -31,6 +28,9 @@
       </div>
     </div>
   <% end %>
+
+  <%# ── Marriage ad — below the ticker ─────────────────── %>
+  <%= render "shared/billboard_marriage" %>
 <% end %>
 
 <%# ═══════════════════════════════════════════════════════════════════

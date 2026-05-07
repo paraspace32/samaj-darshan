@@ -1,0 +1,36 @@
+<%# ═══════════════════════════════════════════════════════════════════
+    REGIONS TABS — horizontal scroll region filter bar
+    Requires: @region, @auto_region, @regions
+    ═══════════════════════════════════════════════════════════════════ %>
+<div class="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 bg-white border-b border-gray-100" data-controller="region-tabs">
+  <%# Determine which tab is active: explicit region > auto-detected > all %>
+  <% active_region = @region || @auto_region %>
+  <div class="relative">
+    <div class="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
+      <%= link_to root_path(all: 1),
+            class: "region-tab shrink-0 #{active_region.nil? ? 'region-tab-active' : ''}",
+            data: { region_tabs_target: "tab", action: "region-tabs#select", turbo_frame: "region-news" } do %>
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M4 6h16M4 10h16M4 14h8"/></svg>
+        <%= I18n.locale == :hi ? "सभी" : "All" %>
+      <% end %>
+      <%# Active region first, then the rest in original order %>
+      <% sorted_regions = active_region ? ([ @regions.find { |r| r.id == active_region.id } ] + @regions.reject { |r| r.id == active_region.id }).compact : @regions %>
+      <% sorted_regions.each do |r| %>
+        <% is_active = active_region&.id == r.id %>
+        <%= link_to region_feed_path(slug: r.slug),
+              class: "region-tab shrink-0 #{is_active ? 'region-tab-active' : ''}",
+              data: { region_tabs_target: "tab", action: "region-tabs#select", turbo_frame: "region-news" } do %>
+          <%= r.display_name %>
+          <% if @auto_region&.id == r.id %>
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-300 inline-block ml-0.5 align-middle" title="Auto-detected from your location"></span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <%# Fade hint — only on mobile %>
+    <div class="absolute right-0 top-0 bottom-2 w-10 pointer-events-none sm:hidden rounded-r-lg" style="background: linear-gradient(90deg, transparent, white 90%)"></div>
+  </div>
+</div>
+
+<%# ── AD after regions ───────────────────────────────────────────── %>
+<%= render "shared/billboard_feed" %>

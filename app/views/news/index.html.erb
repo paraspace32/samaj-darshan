@@ -61,14 +61,18 @@
 
 <%# ── Scroll-reveal observer ───────────────────────────────────── %>
 <script>
-document.addEventListener("turbo:load", function() {
-  var els = document.querySelectorAll("[data-reveal],[data-reveal-stagger]");
-  if (!els.length) return;
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) { e.target.classList.add("revealed"); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
-  els.forEach(function(el) { io.observe(el); });
-});
+(function() {
+  function initReveal() {
+    var els = document.querySelectorAll("[data-reveal]:not(.revealed),[data-reveal-stagger]:not(.revealed)");
+    if (!els.length) return;
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add("revealed"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
+    els.forEach(function(el) { io.observe(el); });
+  }
+  document.addEventListener("turbo:load", initReveal);
+  document.addEventListener("turbo:frame-load", initReveal);
+})();
 </script>

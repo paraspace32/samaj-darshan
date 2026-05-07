@@ -60,7 +60,7 @@
     <% remaining_items = @home_side_items.drop(2) %>
     <div class="story-stack mt-2">
       <% first_row.each do |item| %>
-        <%= link_to news_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
+        <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
           <div class="w-full aspect-[4/3] overflow-hidden">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
@@ -112,7 +112,7 @@
     <% if remaining_items.any? %>
       <div class="story-stack">
         <% remaining_items.each do |item| %>
-          <%= link_to news_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
+          <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
             <div class="w-full aspect-[4/3] overflow-hidden">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
@@ -164,7 +164,7 @@
     <%# Side stack — items in 4 cols, title-first cards %>
     <div class="col-span-4 grid grid-rows-2 gap-4">
       <% @home_side_items.first(2).each_with_index do |item, idx| %>
-        <%= link_to news_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50/50 transition-all" do %>
+        <%= link_to commentable_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50/50 transition-all" do %>
           <div class="w-full aspect-[16/10] overflow-hidden">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: idx == 0 ? "eager" : "lazy" %>
@@ -184,7 +184,7 @@
   <% if @home_side_items.size > 2 %>
     <div class="hidden sm:grid sm:grid-cols-2 gap-3 mb-6">
       <% @home_side_items.drop(2).each_with_index do |item, idx| %>
-        <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
+        <%= link_to commentable_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
           <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300", loading: "lazy" %>

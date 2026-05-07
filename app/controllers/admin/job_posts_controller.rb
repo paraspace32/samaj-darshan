@@ -70,7 +70,8 @@ module Admin
       params.require(:job_post).permit(
         :title_en, :title_hi, :description_en, :description_hi,
         :category, :company_name, :location, :deadline,
-        :application_url, :cover_image
+        :application_url, :cover_image,
+        :hero_eligible
       )
     end
   end

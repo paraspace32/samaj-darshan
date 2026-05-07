@@ -31,6 +31,7 @@ class JobPost < ApplicationRecord
   scope :visible, -> { published.order(published_at: :desc, created_at: :desc) }
   scope :recent, -> { order(created_at: :desc) }
   scope :by_category, ->(cat) { where(category: cat) }
+  scope :hero_eligible, -> { published.where(hero_eligible: true).with_attached_cover_image }
 
   def publish!
     update!(status: :published, published_at: Time.current)

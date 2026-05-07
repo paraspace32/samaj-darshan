@@ -53,10 +53,10 @@ class NewsController < ApplicationController
 
       @featured = hero_candidates.first
       @featured_type = case @featured
-                       when EducationPost then :education
-                       when JobPost then :job
-                       else :news
-                       end
+      when EducationPost then :education
+      when JobPost then :job
+      else :news
+      end
 
       @home_side_items = hero_candidates.drop(1).first(4)
 

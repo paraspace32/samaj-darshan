@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_033806) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_07_121510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -144,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_033806) do
     t.text "content_hi", null: false
     t.datetime "created_at", null: false
     t.date "exam_date"
+    t.boolean "hero_eligible", default: false, null: false
     t.integer "likes_count", default: 0, null: false
     t.string "official_url"
     t.string "organization_name"
@@ -171,6 +172,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_033806) do
     t.date "deadline"
     t.text "description_en", null: false
     t.text "description_hi", null: false
+    t.boolean "hero_eligible", default: false, null: false
     t.integer "likes_count", default: 0, null: false
     t.string "location"
     t.datetime "published_at"

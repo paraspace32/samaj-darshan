@@ -35,25 +35,34 @@ class NewsController < ApplicationController
       @job_listings = JobPost.visible.where.not(category: :new_job_news)
                              .with_attached_cover_image.includes(:author).limit(6)
 
-      # ── Hero: globally latest news (not region-filtered) ──────────────────
-      @featured = News.published.with_attached_cover_image
-                      .includes(:region, :category, :author)
-                      .order(published_at: :desc).first
-      @featured_type = :news
+      # ── Hero + Side stack: latest 10 across News, Education, Job ─────────
+      # Combine latest news with hero-eligible education/job posts,
+      # sort by published_at, and pick the top items for the hero area.
+      hero_candidates = News.published.with_attached_cover_image
+                            .includes(:region, :category, :author)
+                            .order(published_at: :desc).limit(10).to_a
 
-      # ── Side stack: always globally latest 4 (not region-filtered) ────────
-      # @news_items may be region-filtered (auto_region). The side stack next
-      # to the hero must always show 4 articles regardless of how many the
-      # detected region has. We load them globally, then exclude their IDs
-      # from @news_items so they don't duplicate in the region section below.
-      @home_side_items = News.published.with_attached_cover_image
-                             .includes(:region, :category)
-                             .where.not(id: @featured&.id)
-                             .order(published_at: :desc)
-                             .limit(4)
+      hero_candidates += EducationPost.hero_eligible.includes(:author)
+                                      .order(published_at: :desc).limit(10).to_a
 
-      excluded_ids = ([ @featured&.id ] + @home_side_items.map(&:id)).compact
-      remaining    = @news_items.where.not(id: excluded_ids)
+      hero_candidates += JobPost.hero_eligible.includes(:author)
+                                .order(published_at: :desc).limit(10).to_a
+
+      hero_candidates.sort_by! { |item| -(item.published_at&.to_i || 0) }
+      hero_candidates = hero_candidates.first(10)
+
+      @featured = hero_candidates.first
+      @featured_type = case @featured
+      when EducationPost then :education
+      when JobPost then :job
+      else :news
+      end
+
+      @home_side_items = hero_candidates.drop(1).first(4)
+
+      # Exclude hero items that are News records from the region section below
+      excluded_news_ids = hero_candidates.first(5).select { |i| i.is_a?(News) }.map(&:id)
+      remaining = @news_items.where.not(id: excluded_news_ids)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)
 

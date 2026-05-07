@@ -70,7 +70,8 @@ module Admin
       params.require(:education_post).permit(
         :title_en, :title_hi, :content_en, :content_hi,
         :category, :organization_name, :exam_date,
-        :registration_deadline, :official_url, :cover_image
+        :registration_deadline, :official_url, :cover_image,
+        :hero_eligible
       )
     end
   end

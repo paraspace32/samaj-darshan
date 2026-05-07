@@ -19,21 +19,20 @@ class NewsController < ApplicationController
     @regions = Region.active.ordered
     @categories = Category.active.ordered
 
-    @per_page = 12
     @page = [ params[:page].to_i, 1 ].max
-
     @is_home = @page == 1 && @region.nil? && @category.nil?
+    @per_page = @is_home ? 5 : 12
 
     if @is_home
       # ── Education: degree news only on homepage ──
       @education_news = EducationPost.visible.category_degree_news
-                                     .with_attached_cover_image.includes(:author).limit(4)
+                                     .with_attached_cover_image.includes(:author).limit(5)
 
       # ── Jobs: split news-style (new_job_news) vs actual job listings ──────
       @job_news     = JobPost.visible.category_new_job_news
-                             .with_attached_cover_image.includes(:author).limit(4)
+                             .with_attached_cover_image.includes(:author).limit(5)
       @job_listings = JobPost.visible.where.not(category: :new_job_news)
-                             .with_attached_cover_image.includes(:author).limit(6)
+                             .with_attached_cover_image.includes(:author).limit(5)
 
       # ── Hero + Side stack: latest 10 across News, Education, Job ─────────
       # Combine latest news with hero-eligible education/job posts,
@@ -95,7 +94,7 @@ class NewsController < ApplicationController
       @category_sections = @categories.filter_map do |cat|
         items = News.published.where(category: cat).where.not(id: shown_ids)
                     .includes(:region, :category, :author).with_attached_cover_image
-                    .order(published_at: :desc).limit(6)
+                    .order(published_at: :desc).limit(5)
         next if items.empty?
 
         shown_ids.concat(items.map(&:id))

@@ -1,0 +1,33 @@
+<%# ═══════════════════════════════════════════════════════════════════
+    TRENDING TICKER — horizontal scrolling breaking news
+    Requires: @trending
+    ═══════════════════════════════════════════════════════════════════ %>
+<% if @trending.present? %>
+  <div class="-mx-4 sm:-mx-6 -mt-4 sm:-mt-8 px-4 sm:px-6 py-2.5 mb-2 border-b border-gray-100" style="background: linear-gradient(90deg, #fff7ed 0%, white 50%, #fff7ed 100%)">
+    <div class="flex items-center gap-3">
+      <span class="shrink-0 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-red-600">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+        </span>
+        <%= t("feed.trending") %>
+      </span>
+      <div class="w-px h-4 bg-gray-200 shrink-0"></div>
+      <div class="overflow-hidden flex-1">
+        <div class="ticker-scroll flex items-center gap-5">
+          <% @trending.each do |item| %>
+            <%= link_to item.display_title, news_path(item), class: "text-[13px] font-semibold text-gray-700 hover:text-orange-600 shrink-0 whitespace-nowrap transition-colors" %>
+            <span class="text-gray-300 shrink-0">|</span>
+          <% end %>
+          <% @trending.each do |item| %>
+            <%= link_to item.display_title, news_path(item), class: "text-[13px] font-semibold text-gray-700 hover:text-orange-600 shrink-0 whitespace-nowrap transition-colors" %>
+            <span class="text-gray-300 shrink-0">|</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# ── Marriage ad — below the ticker ─────────────────── %>
+<%= render "shared/billboard_marriage" %>

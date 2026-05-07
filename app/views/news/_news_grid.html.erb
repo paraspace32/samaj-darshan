@@ -1,0 +1,84 @@
+<%# ═══════════════════════════════════════════════════════════════════
+    NEWS GRID + SIDEBAR — for filtered views (region/category/paged)
+    Requires: @news_items, @featured, @is_home, @regions, @categories,
+              @region, @category, @total_count, @per_page, @page
+    ═══════════════════════════════════════════════════════════════════ %>
+<% if !@is_home && (@news_items.any? || @featured.present?) %>
+  <div class="flex flex-col lg:flex-row gap-5 lg:gap-6">
+    <div class="flex-1 min-w-0">
+      <% if @featured.present? && !@is_home %>
+        <div class="mb-8 -mx-4 sm:mx-0 animate-fade-up">
+          <%= link_to news_path(@featured), class: "group block relative overflow-hidden sm:rounded-2xl shadow-xl shadow-gray-300/30" do %>
+            <div class="aspect-[16/9] sm:aspect-[2/1]">
+              <% if @featured.cover_image.attached? %>
+                <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+              <% else %>
+                <div class="w-full h-full gradient-hero flex items-center justify-center">
+                  <span class="text-6xl text-white/10 font-black"><%= t("brand.logo_letter") %></span>
+                </div>
+              <% end %>
+              <div class="absolute inset-0 gradient-dark-strong"></div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
+              <h2 class="text-lg sm:text-2xl font-black text-white leading-snug group-hover:text-orange-200 transition-colors line-clamp-2 tracking-tight"><%= @featured.display_title %></h2>
+              <p class="text-sm text-white/60 mt-2 line-clamp-2 hidden sm:block"><%= truncate(strip_tags(@featured.display_content), length: 180) %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @news_items.empty? && @featured.blank? %>
+        <div class="surface-elevated rounded-2xl px-6 py-16 sm:py-20 text-center">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+          </div>
+          <p class="text-gray-400 font-medium text-sm"><%= t("feed.no_articles") %></p>
+        </div>
+      <% end %>
+
+      <% if @news_items.any? %>
+        <% start_idx   = 0 %>
+        <% total_pages = (@total_count.to_f / @per_page).ceil %>
+        <% has_more    = @page < total_pages %>
+        <% next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil %>
+
+        <div>
+          <%# MOBILE — compact list view (visible < sm) %>
+          <div id="news-grid-mobile" class="sm:hidden space-y-2">
+            <% @news_items.drop(start_idx).each_with_index do |news_item, idx| %>
+              <% if idx == 4 || idx == 9 %>
+                <%= render "shared/billboard_feed" %>
+              <% end %>
+              <%= render "news/news_mobile_item", news_item: news_item, idx: idx %>
+            <% end %>
+          </div>
+
+          <%# DESKTOP — 2-column card grid (visible >= sm) %>
+          <div id="news-grid-desktop" class="hidden sm:grid sm:grid-cols-2 gap-6">
+            <% @news_items.drop(start_idx).each_with_index do |news_item, idx| %>
+              <% if idx == 4 || idx == 9 %>
+                <div class="col-span-2">
+                  <%= render "shared/billboard_feed" %>
+                </div>
+              <% end %>
+              <%= render "news/news_desktop_item", news_item: news_item, idx: idx %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @is_home %>
+      <%= render "news/home_sidebar" %>
+    <% else %>
+      <%= render "news/news_sidebar" %>
+    <% end %>
+  </div>
+<% elsif @news_items.empty? && @featured.blank? && !@is_home %>
+  <div class="surface-elevated rounded-2xl px-6 py-16 sm:py-20 text-center">
+    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+      <svg class="w-6 h-6 sm:w-7 sm:h-7 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+    </div>
+    <p class="text-gray-400 font-medium text-sm"><%= t("feed.no_articles") %></p>
+  </div>
+<% end %>

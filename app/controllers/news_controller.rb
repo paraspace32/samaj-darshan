@@ -106,15 +106,21 @@ class NewsController < ApplicationController
     end
 
     respond_to do |format|
-      format.turbo_stream do
-        total_pages = (@total_count.to_f / @per_page).ceil
-        has_more    = @page < total_pages
-        next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil
-        render turbo_stream: [
-          turbo_stream.append("news-grid-mobile",  partial: "news/news_mobile_item",  collection: @news_items, as: :news_item),
-          turbo_stream.append("news-grid-desktop", partial: "news/news_desktop_item", collection: @news_items, as: :news_item),
-          turbo_stream.replace("news-sentinel",    partial: "news/news_sentinel",     locals: { has_more: has_more, next_url: next_url })
-        ]
+      # Only serve Turbo Stream for pagination requests (infinite scroll).
+      # Without this guard, post-login redirects to / match turbo_stream
+      # (because Turbo sends Accept: text/vnd.turbo-stream.html) and return
+      # stream actions instead of the full HTML page — breaking navigation.
+      if params[:page].present?
+        format.turbo_stream do
+          total_pages = (@total_count.to_f / @per_page).ceil
+          has_more    = @page < total_pages
+          next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil
+          render turbo_stream: [
+            turbo_stream.append("news-grid-mobile",  partial: "news/news_mobile_item",  collection: @news_items, as: :news_item),
+            turbo_stream.append("news-grid-desktop", partial: "news/news_desktop_item", collection: @news_items, as: :news_item),
+            turbo_stream.replace("news-sentinel",    partial: "news/news_sentinel",     locals: { has_more: has_more, next_url: next_url })
+          ]
+        end
       end
       format.html do
         # Auto-region responses are per-visitor — never share in public cache

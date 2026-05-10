@@ -24,6 +24,9 @@
   }
 }
 
+/* ── Prose paragraph spacing — tighter than prose-lg default ── */
+.prose-tight p { margin-top: 0.75rem !important; margin-bottom: 0.75rem !important; }
+
 @layer components {
   /* ── Line clamps ────────────────────────────────────── */
   .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }

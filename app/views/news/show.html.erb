@@ -151,7 +151,7 @@
     <% end %>
 
     <%# Author card — single compact line %>
-    <div class="flex items-center gap-2.5 animate-fade-up" style="margin-top:0.25rem; margin-bottom:0.25rem">
+    <div class="flex items-center gap-2.5 mt-3 mb-3 animate-fade-up">
       <div class="w-5 h-5 rounded-full gradient-brand flex items-center justify-center shadow-sm ring-1 ring-white shrink-0">
         <span class="text-white font-black text-[9px]"><%= (@news_item.author&.name.presence || "?")[0] %></span>
       </div>
@@ -181,7 +181,7 @@
       <% end %>
     </div>
 
-    <div class="section-divider mb-0"></div>
+    <div class="section-divider mb-4"></div>
 
     <%= render "shared/billboard_article_top" %>
 

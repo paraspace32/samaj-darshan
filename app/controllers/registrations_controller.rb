@@ -12,7 +12,7 @@ class RegistrationsController < ApplicationController
 
     if @user.save
       session[:user_id] = @user.id
-      redirect_to root_path, notice: t("signup.success")
+      redirect_to root_path, notice: t("signup.success"), status: :see_other
     else
       if @user.errors[:phone].any? && User.exists?(phone: @user.phone)
         flash.now[:alert] = t("signup.already_registered")

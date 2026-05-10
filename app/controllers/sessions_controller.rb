@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       else
         session[:user_id] = user.id
         return_to = session.delete(:return_to)
-        redirect_to return_to || (user.admin_panel_access? ? admin_root_path : root_path), notice: t("flash.welcome_back", name: user.name)
+        redirect_to return_to || (user.admin_panel_access? ? admin_root_path : root_path), notice: t("flash.welcome_back", name: user.name), status: :see_other
       end
     else
       flash.now[:alert] = t("flash.invalid_credentials")
@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
 
   def destroy
     reset_session
-    redirect_to login_path, notice: t("flash.logged_out")
+    redirect_to login_path, notice: t("flash.logged_out"), status: :see_other
   end
 
   private

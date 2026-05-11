@@ -18,7 +18,20 @@ export default class extends Controller {
 
   connect() {
     if (!this.supported) return
+    // Auto-hide if already subscribed
+    if (localStorage.getItem("fcm_subscribed") === "true") {
+      this.element.classList.add("hidden")
+      return
+    }
+    this._hideOnSubscribe = () => this.element.classList.add("hidden")
+    document.addEventListener("push:subscribed", this._hideOnSubscribe)
     this.checkCurrentPermission()
+  }
+
+  disconnect() {
+    if (this._hideOnSubscribe) {
+      document.removeEventListener("push:subscribed", this._hideOnSubscribe)
+    }
   }
 
   get supported() {
@@ -44,6 +57,7 @@ export default class extends Controller {
       if (permission === "granted") {
         await this.registerToken()
         this.showStatus("subscribed")
+        document.dispatchEvent(new CustomEvent("push:subscribed"))
         if (typeof dismissPushBar === "function") dismissPushBar()
       } else {
         this.showStatus("blocked")

@@ -1,0 +1,45 @@
+<%# Inline push notification CTA — shown after article body for unsubscribed users %>
+<div id="push-inline-cta"
+     data-controller="push-notification"
+     data-push-notification-vapid-key-value="<%= firebase_vapid_key %>"
+     data-push-notification-config-value="<%= firebase_js_config_json %>"
+     data-push-notification-save-url-value="<%= push_subscription_path %>"
+     class="hidden my-6 rounded-2xl overflow-hidden border border-orange-200/60"
+     style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)">
+
+  <div class="px-5 py-4 flex items-center gap-4">
+    <%# Bell icon %>
+    <div class="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center shadow-sm"
+         style="background: linear-gradient(135deg, #f97316, #ea580c)">
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+    </div>
+
+    <div class="flex-1 min-w-0">
+      <p class="text-[14px] font-black text-gray-900 leading-snug">
+        <%= I18n.locale == :hi ? "इस तरह की खबरें सीधे फोन पर पाएं" : "Get stories like this on your phone" %>
+      </p>
+      <p class="text-[12px] text-gray-500 mt-0.5">
+        <%= I18n.locale == :hi ? "एक क्लिक में नोटिफिकेशन चालू करें" : "Enable notifications in one tap" %>
+      </p>
+    </div>
+
+    <button data-push-notification-target="button"
+            data-action="click->push-notification#subscribe"
+            class="shrink-0 text-[13px] font-black text-white px-4 py-2 rounded-xl transition-all active:scale-95 shadow-sm whitespace-nowrap"
+            style="background: linear-gradient(135deg, #f97316, #dc2626)">
+      <%= I18n.locale == :hi ? "चालू करें" : "Enable" %> 🔔
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  if (typeof Notification === 'undefined') return;
+  if (localStorage.getItem('fcm_subscribed') === 'true') return;
+  if (Notification.permission !== 'default') return;
+  var el = document.getElementById('push-inline-cta');
+  if (el) el.classList.remove('hidden');
+})();
+</script>

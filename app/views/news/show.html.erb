@@ -182,6 +182,8 @@
     <% end %>
     <div class="mb-6"></div>
 
+    <%= render "shared/push_notification_inline_cta" if firebase_configured? %>
+
     <%= render "shared/billboard_article_mid" %>
 
     <%# Engagement card — pass locale-aware share_url to fix copy link %>

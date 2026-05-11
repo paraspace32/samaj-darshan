@@ -16,7 +16,7 @@ module ApplicationHelper
   def format_with_links(text)
     return "".html_safe if text.blank?
 
-    clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
+    clean = text.to_s.gsub(/\r\n/, "\n").gsub(/\n{3,}/, "\n\n").strip
     paragraphs = clean.split(/\n\n+/)
 
     html = paragraphs.map do |para|
@@ -32,7 +32,7 @@ module ApplicationHelper
   def split_into_paragraphs(text)
     return [] if text.blank?
 
-    clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
+    clean = text.to_s.gsub(/\r\n/, "\n").gsub(/\n{3,}/, "\n\n").strip
     clean.split(/\n\n+/)
   end
 

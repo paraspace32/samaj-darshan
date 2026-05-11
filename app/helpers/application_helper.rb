@@ -27,18 +27,13 @@ module ApplicationHelper
     html.html_safe
   end
 
-  # Split content into first paragraph and rest, for inserting
-  # an inline image slider between them on show pages.
-  def split_content_after_first_paragraph(text)
-    return { first: "", rest: "" } if text.blank?
+  # Split content into individual paragraphs for interleaving images.
+  # Returns an array of paragraph strings.
+  def split_into_paragraphs(text)
+    return [] if text.blank?
 
     clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
-    paragraphs = clean.split(/\n\n+/)
-
-    {
-      first: paragraphs.first.to_s,
-      rest: paragraphs[1..].join("\n\n")
-    }
+    clean.split(/\n\n+/)
   end
 
   private

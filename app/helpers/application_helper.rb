@@ -27,6 +27,20 @@ module ApplicationHelper
     html.html_safe
   end
 
+  # Split content into first paragraph and rest, for inserting
+  # an inline image slider between them on show pages.
+  def split_content_after_first_paragraph(text)
+    return { first: "", rest: "" } if text.blank?
+
+    clean = text.to_s.gsub(/\n{3,}/, "\n\n").strip
+    paragraphs = clean.split(/\n\n+/)
+
+    {
+      first: paragraphs.first.to_s,
+      rest: paragraphs[1..].join("\n\n")
+    }
+  end
+
   private
 
   def linkify_segment(text)

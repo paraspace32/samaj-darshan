@@ -7,6 +7,11 @@ class EducationPost < ApplicationRecord
   has_many :comments, as: :commentable, dependent: :destroy
   has_many :likes, as: :likeable, dependent: :destroy
 
+  has_many_attached :images do |attachable|
+    attachable.variant :carousel, resize_to_limit: [ 1600, 1000 ], format: :webp, saver: { quality: 85 }
+    attachable.variant :thumb,    resize_to_limit: [ 300, 300 ],   format: :webp, saver: { quality: 75 }
+  end
+
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
     attachable.variant :card,  resize_to_limit: [ 800, 450 ],  format: :webp, saver: { quality: 80 }

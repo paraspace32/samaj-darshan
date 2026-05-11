@@ -39,6 +39,12 @@ module Admin
     end
 
     def update
+      if params[:remove_image_id].present?
+        @job_post.images.find_by(id: params[:remove_image_id])&.purge
+        redirect_to edit_admin_job_post_path(@job_post), notice: "Image removed."
+        return
+      end
+
       if @job_post.update(job_post_params)
         redirect_to admin_job_post_path(@job_post), notice: "Job post updated successfully."
       else
@@ -71,7 +77,8 @@ module Admin
         :title_en, :title_hi, :description_en, :description_hi,
         :category, :company_name, :location, :deadline,
         :application_url, :cover_image,
-        :hero_eligible
+        :hero_eligible,
+        images: []
       )
     end
   end

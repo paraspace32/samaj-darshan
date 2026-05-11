@@ -1,0 +1,46 @@
+<%# Locals: images (ActiveStorage attachments collection) %>
+<% slider_images = images.to_a %>
+<% if slider_images.size == 1 %>
+  <div class="my-6 -mx-4 sm:mx-0 overflow-hidden rounded-none sm:rounded-2xl border border-gray-200/40 shadow-lg shadow-stone-900/[0.06]">
+    <%= optimized_image_tag slider_images.first, variant: :carousel, class: "w-full h-56 sm:h-72 lg:h-96 object-cover", loading: "lazy" %>
+  </div>
+<% elsif slider_images.size > 1 %>
+  <div class="my-6 -mx-4 sm:mx-0 relative rounded-none sm:rounded-2xl overflow-hidden border border-gray-200/40 shadow-lg shadow-stone-900/[0.06] group"
+       data-controller="carousel" data-carousel-autoplay-value="true">
+    <div class="relative">
+      <div class="overflow-hidden">
+        <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
+          <% slider_images.each do |img| %>
+            <div class="w-full shrink-0" data-carousel-target="slide">
+              <%= optimized_image_tag img, variant: :carousel, class: "w-full h-56 sm:h-72 lg:h-96 object-cover", loading: "lazy" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Nav arrows %>
+      <button data-action="carousel#prev"
+              class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-xl bg-black/30 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/50 cursor-pointer shadow-lg border border-white/10">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <button data-action="carousel#next"
+              class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-xl bg-black/30 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black/50 cursor-pointer shadow-lg border border-white/10">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+
+      <%# Dots %>
+      <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5">
+        <% slider_images.each_with_index do |_, i| %>
+          <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                  class="h-1.5 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-5 shadow-md' : 'bg-white/40 w-1.5 hover:bg-white/60' %>"></button>
+        <% end %>
+      </div>
+
+      <%# Counter %>
+      <div class="absolute top-3 right-3 z-10 rounded-xl bg-black/40 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 border border-white/10 shadow-lg"
+           data-carousel-target="counter">
+        1 / <%= slider_images.size %>
+      </div>
+    </div>
+  </div>
+<% end %>

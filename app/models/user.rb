@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
 
-  SECTIONS = %w[news magazines webinars education jobs billboards].freeze
+  SECTIONS = %w[news magazines webinars education jobs billboards kanyadaan].freeze
 
   has_many :news, foreign_key: :author_id, dependent: :restrict_with_error
   has_many :webinars, foreign_key: :host_id, dependent: :restrict_with_error
@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def can_manage_kanyadaan?
-    super_admin? || female_president?
+    super_admin? || female_president? || (editor? && has_section_access?("kanyadaan"))
   end
 
   def can_access_news_section?

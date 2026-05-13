@@ -21,8 +21,15 @@ RSpec.describe "Admin::KanyadaanApplications", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "denies editor access to index" do
+    it "allows editor with kanyadaan section access" do
       login_as(editor)
+      get admin_kanyadaan_applications_path
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "denies editor without kanyadaan section access" do
+      editor_no_kanyadaan = create(:user, :editor, allowed_sections: %w[news])
+      login_as(editor_no_kanyadaan)
       get admin_kanyadaan_applications_path
       expect(response).to redirect_to(root_path)
     end

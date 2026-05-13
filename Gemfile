@@ -70,6 +70,6 @@ group :development do
   gem "web-console"
 end
 
-gem "google-cloud-storage", "~> 1.59"
+gem "google-cloud-storage", "~> 1.60"
 gem "google-apis-analyticsdata_v1beta", "~> 0.27"
 gem "googleauth"

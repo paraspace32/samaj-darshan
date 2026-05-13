@@ -131,6 +131,9 @@
       setTimeout(function() { bar.classList.add('hidden'); }, 300);
     }
     localStorage.setItem('push_dismissed', Date.now());
+    if (typeof gtag === 'function') {
+      gtag('event', 'notification_dismiss', { event_category: 'Growth', page_path: location.pathname });
+    }
   }
 
   function dismissUnblockBar() {

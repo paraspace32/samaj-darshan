@@ -65,11 +65,27 @@
         function gtag(){ dataLayer.push(arguments); }
         gtag('js', new Date());
 
-        // Initialise without auto-firing a pageview — turbo:load fires it instead,
-        // covering both the first page load and every subsequent Turbo navigation.
-        gtag('config', '<%= ga_id %>', { send_page_view: false });
+        // ── User properties ────────────────────────────────────────
+        var _isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        var _pushOn = localStorage.getItem('fcm_subscribed') === 'true';
+        var _os = /Android/i.test(navigator.userAgent) ? 'android' : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'desktop';
+        var _visits = parseInt(localStorage.getItem('sd_visit_count') || '0') + 1;
+        localStorage.setItem('sd_visit_count', _visits);
+        var _freq = _visits <= 1 ? 'new' : _visits <= 5 ? 'returning' : 'regular';
 
-        // Fire one pageview per Turbo navigation (and the initial load).
+        gtag('config', '<%= ga_id %>', {
+          send_page_view: false,
+          user_properties: {
+            user_type:          '<%= logged_in? ? "logged_in" : "anonymous" %>',
+            preferred_language: '<%= I18n.locale %>',
+            pwa_user:           _isPWA ? 'yes' : 'no',
+            push_enabled:       _pushOn ? 'yes' : 'no',
+            device_os:          _os,
+            visit_frequency:    _freq
+          }
+        });
+
+        // ── Page views (Turbo-aware) ──────────────────────────────────
         document.addEventListener('turbo:load', function() {
           gtag('event', 'page_view', {
             page_path:     window.location.pathname + window.location.search,
@@ -78,20 +94,88 @@
           });
         });
 
-        // ── PWA install tracking ──────────────────────────────────────
-        // 1. Track exact install moment (Android Chrome only)
-        window.addEventListener('appinstalled', function() {
-          gtag('event', 'pwa_installed', {
-            event_category: 'PWA',
-            event_label: navigator.userAgent.slice(0, 100)
+        // ── Article read (75% scroll depth) ───────────────────────────
+        (function() {
+          var fired = {};
+          document.addEventListener('turbo:load', function() {
+            var key = location.pathname;
+            if (fired[key]) return;
+            // Only track on article pages
+            if (!/^\/(news|education|jobs)\/\d+/.test(key)) return;
+            function onScroll() {
+              var h = document.documentElement.scrollHeight - window.innerHeight;
+              if (h > 0 && (window.scrollY / h) >= 0.75) {
+                fired[key] = true;
+                gtag('event', 'article_read', {
+                  event_category: 'Engagement',
+                  page_path: key,
+                  page_title: document.title
+                });
+                window.removeEventListener('scroll', onScroll);
+              }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            document.addEventListener('turbo:before-visit', function() {
+              window.removeEventListener('scroll', onScroll);
+            }, { once: true });
+          });
+        })();
+
+        // ── Share click tracking ──────────────────────────────────────
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"], [data-controller="copy-link"]');
+          if (!link) return;
+          var method = link.href && link.href.indexOf('wa.me') > -1 ? 'whatsapp' : 'copy_link';
+          gtag('event', 'share_click', {
+            event_category: 'Engagement',
+            method: method,
+            page_path: location.pathname
           });
         });
 
-        // 2. Track standalone (PWA) sessions — works on all platforms
-        if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true) {
+        // ── Language switch tracking ──────────────────────────────────
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a[href*="locale"]');
+          if (!link) return;
+          gtag('event', 'language_switch', {
+            event_category: 'Engagement',
+            from_language: '<%= I18n.locale %>',
+            to_language: '<%= I18n.locale == :hi ? "en" : "hi" %>'
+          });
+        });
+
+        // ── Push notification subscribe/dismiss ──────────────────────
+        document.addEventListener('push:subscribed', function() {
+          gtag('event', 'notification_subscribe', {
+            event_category: 'Growth',
+            page_path: location.pathname
+          });
+        });
+
+        // ── Outbound link clicks ─────────────────────────────────────
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a[href^="http"]');
+          if (!link) return;
+          if (link.hostname === location.hostname) return;
+          gtag('event', 'outbound_click', {
+            event_category: 'Engagement',
+            url: link.href,
+            page_path: location.pathname
+          });
+        });
+
+        // ── PWA install tracking ─────────────────────────────────────
+        window.addEventListener('appinstalled', function() {
+          gtag('event', 'pwa_installed', {
+            event_category: 'PWA',
+            event_label: _os
+          });
+        });
+
+        if (_isPWA) {
           gtag('event', 'pwa_session', {
             event_category: 'PWA',
-            event_label: /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'ios' : /Android/.test(navigator.userAgent) ? 'android' : 'desktop'
+            event_label: _os
           });
         }
       </script>

@@ -170,6 +170,15 @@
     if (typeof Notification === 'undefined') return;
     if (localStorage.getItem('fcm_subscribed') === 'true') return;
 
+    // Show nav bell icons for unsubscribed users (permission=default)
+    if (Notification.permission === 'default') {
+      var bells = document.querySelectorAll('#nav-push-bell, #nav-push-bell-mobile');
+      bells.forEach(function(b) { b.classList.remove('hidden'); });
+      document.addEventListener('push:subscribed', function() {
+        bells.forEach(function(b) { b.classList.add('hidden'); });
+      });
+    }
+
     if (Notification.permission === 'denied') {
       // Show unblock bar once per week
       var dismissed = parseInt(localStorage.getItem('push_unblock_dismissed') || '0');
@@ -182,7 +191,26 @@
 
     // permission === 'default'
     var dismissed = parseInt(localStorage.getItem('push_dismissed') || '0');
-    if (Date.now() - dismissed < 259200000) return;  // 3-day cooldown
-    setTimeout(function() { showBar('push-bar'); }, 1000);
+    if (Date.now() - dismissed < 43200000) return;  // 12-hour cooldown
+
+    // Show after 40% scroll or 15 seconds (whichever comes first)
+    var shown = false;
+    function maybeShowBar() {
+      if (shown) return;
+      shown = true;
+      showBar('push-bar');
+      window.removeEventListener('scroll', onPushScroll);
+      clearTimeout(pushTimer);
+    }
+    var pushTimer = setTimeout(maybeShowBar, 15000);
+    function onPushScroll() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      if (h > 0 && (window.scrollY / h) >= 0.4) maybeShowBar();
+    }
+    window.addEventListener('scroll', onPushScroll, { passive: true });
+    document.addEventListener('turbo:before-visit', function() {
+      window.removeEventListener('scroll', onPushScroll);
+      clearTimeout(pushTimer);
+    }, { once: true });
   })();
 </script>

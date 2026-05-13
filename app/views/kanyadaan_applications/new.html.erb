@@ -1,7 +1,7 @@
 <% content_for(:title, t("kanyadaan.page_title")) %>
 <% content_for(:og_title, t("kanyadaan.title")) %>
 <% content_for(:description, t("kanyadaan.subtitle")) %>
-<% content_for(:og_image, image_url("kanyadaan-banner.jpg")) %>
+<% content_for(:og_image, "#{request.base_url}#{image_path('kanyadaan-banner.jpg')}") %>
 
 <div class="max-w-lg mx-auto py-8 px-4">
   <%# Banner %>

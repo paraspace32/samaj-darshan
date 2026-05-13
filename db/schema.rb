@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_07_121510) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_13_052921) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -186,6 +186,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_121510) do
     t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
     t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
     t.index ["status"], name: "index_job_posts_on_status"
+  end
+
+  create_table "kanyadaan_applications", force: :cascade do |t|
+    t.string "contact", null: false
+    t.datetime "created_at", null: false
+    t.string "girl_name", null: false
+    t.string "location", null: false
+    t.text "notes"
+    t.string "parent_name", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_kanyadaan_applications_on_created_at"
+    t.index ["status"], name: "index_kanyadaan_applications_on_status"
   end
 
   create_table "likes", force: :cascade do |t|

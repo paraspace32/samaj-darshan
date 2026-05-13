@@ -23,6 +23,10 @@ Rails.application.routes.draw do
   # User profile
   resource :profile, only: [ :edit, :update ], controller: "profiles"
 
+  # Kanyadaan Yojna
+  resources :kanyadaan_applications, only: [ :new, :create ], path: "kanyadaan"
+  get "kanyadaan/success" => "kanyadaan_applications#success", as: :kanyadaan_success
+
   # Admin
   namespace :admin do
     get "/" => "dashboard#show", as: :root
@@ -79,6 +83,9 @@ Rails.application.routes.draw do
       collection { post :send_notification }
     end
     post "news/:news_id/push", to: "push_notifications#send_for_news", as: :news_push
+
+    # Kanyadaan Yojna
+    resources :kanyadaan_applications, only: [ :index, :show, :update ]
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

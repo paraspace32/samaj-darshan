@@ -58,7 +58,7 @@ RSpec.describe KanyadaanApplication, type: :model do
       old_app = create(:kanyadaan_application, created_at: 2.days.ago)
       new_app = create(:kanyadaan_application, created_at: 1.hour.ago)
 
-      expect(KanyadaanApplication.newest_first).to eq([new_app, old_app])
+      expect(KanyadaanApplication.newest_first).to eq([ new_app, old_app ])
     end
   end
 end

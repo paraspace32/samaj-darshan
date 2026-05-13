@@ -1,0 +1,59 @@
+<% content_for(:title, t("kanyadaan.page_title")) %>
+
+<div class="max-w-lg mx-auto py-8 px-4">
+  <%# Banner %>
+  <div class="rounded-2xl overflow-hidden mb-8 shadow-lg">
+    <div class="relative">
+      <%= image_tag "kanyadaan-banner.jpg", class: "w-full h-48 sm:h-56 object-cover", alt: "Kanyadaan ceremony" %>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-5 text-center">
+        <h1 class="text-2xl font-black text-white tracking-tight drop-shadow-lg"><%= t("kanyadaan.title") %></h1>
+        <p class="text-sm text-white/80 mt-1.5 leading-relaxed max-w-sm mx-auto drop-shadow"><%= t("kanyadaan.subtitle") %></p>
+      </div>
+    </div>
+  </div>
+
+  <%# Errors %>
+  <% if @application.errors.any? %>
+    <div class="rounded-2xl border border-red-200/80 bg-red-50 px-5 py-4 mb-6 shadow-sm">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <ul class="space-y-1 text-sm text-red-800/90">
+          <% @application.errors.full_messages.each do |msg| %>
+            <li class="flex gap-2 items-start"><span class="text-red-400 mt-1.5 shrink-0">&bull;</span> <%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Form %>
+  <%= form_with model: @application, url: kanyadaan_applications_path, class: "space-y-5" do |f| %>
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-1.5"><%= t("kanyadaan.girl_name") %> <span class="text-red-500">*</span></label>
+      <%= f.text_field :girl_name, class: "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none transition-all", placeholder: t("kanyadaan.girl_name_placeholder") %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-1.5"><%= t("kanyadaan.parent_name") %> <span class="text-red-500">*</span></label>
+      <%= f.text_field :parent_name, class: "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none transition-all", placeholder: t("kanyadaan.parent_name_placeholder") %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-1.5"><%= t("kanyadaan.contact") %> <span class="text-red-500">*</span></label>
+      <%= f.telephone_field :contact, class: "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none transition-all", placeholder: t("kanyadaan.contact_placeholder"), maxlength: 10 %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-1.5"><%= t("kanyadaan.location") %> <span class="text-red-500">*</span></label>
+      <%= f.text_field :location, class: "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none transition-all", placeholder: t("kanyadaan.location_placeholder") %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-1.5"><%= t("kanyadaan.notes") %></label>
+      <%= f.text_area :notes, rows: 3, class: "w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none transition-all resize-none", placeholder: t("kanyadaan.notes_placeholder") %>
+    </div>
+
+    <%= f.submit t("kanyadaan.submit"), class: "w-full py-3 rounded-xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-[0.98] transition-all", style: "background: linear-gradient(135deg, #f97316, #dc2626)" %>
+  <% end %>
+</div>

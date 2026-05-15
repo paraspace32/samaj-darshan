@@ -108,6 +108,26 @@
       </div>
     <% end %>
 
+    <%# Remaining side items %>
+    <% if remaining_items.any? %>
+      <div class="story-stack">
+        <% remaining_items.each do |item| %>
+          <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
+            <div class="w-full aspect-[4/3] overflow-hidden">
+              <% if item.cover_image.attached? %>
+                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft"></div>
+              <% end %>
+            </div>
+            <div class="p-2.5 bg-orange-50/60">
+              <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight"><%= item.display_title %></h3>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
     <%# श्रद्धांजलि / Tribute banner %>
     <%= link_to tributes_path, class: "block group my-2 mx-4" do %>
       <div class="rounded-xl relative overflow-hidden text-white px-4 py-3 flex items-center gap-3"
@@ -129,26 +149,6 @@
         <svg class="w-4 h-4 shrink-0 relative z-10 group-hover:translate-x-0.5 transition-transform" style="color:rgba(255,255,255,0.45)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" d="M9 5l7 7-7 7"/>
         </svg>
-      </div>
-    <% end %>
-
-    <%# Remaining side items %>
-    <% if remaining_items.any? %>
-      <div class="story-stack">
-        <% remaining_items.each do |item| %>
-          <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
-            <div class="w-full aspect-[4/3] overflow-hidden">
-              <% if item.cover_image.attached? %>
-                <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
-              <% else %>
-                <div class="w-full h-full gradient-brand-soft"></div>
-              <% end %>
-            </div>
-            <div class="p-2.5 bg-orange-50/60">
-              <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight"><%= item.display_title %></h3>
-            </div>
-          <% end %>
-        <% end %>
       </div>
     <% end %>
   </div>

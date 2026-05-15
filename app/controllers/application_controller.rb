@@ -27,4 +27,9 @@ class ApplicationController < ActionController::Base
     set_locale_path(locale: new_locale)
   end
   helper_method :switch_locale_path
+
+  def visitor_city
+    @visitor_city ||= GeolocationService.lookup(request.remote_ip)[:city]
+  end
+  helper_method :visitor_city
 end

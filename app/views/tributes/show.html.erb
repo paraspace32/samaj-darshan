@@ -56,9 +56,9 @@
   </div>
 
   <%# Name and description %>
-  <div class="text-center mb-8">
-    <h1 class="text-3xl font-black text-gray-900 tracking-tight"><%= @tribute.display_name %></h1>
-    <div class="mt-3 text-gray-600 leading-relaxed space-y-3">
+  <div class="mb-8">
+    <h1 class="text-2xl font-black text-gray-900 tracking-tight text-center"><%= @tribute.display_name %></h1>
+    <div class="mt-4 text-gray-600 leading-relaxed space-y-4 text-[15px]">
       <% split_into_paragraphs(@tribute.display_description).each do |para| %>
         <p><%= para %></p>
       <% end %>

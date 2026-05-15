@@ -8,6 +8,7 @@ export default class extends Controller {
 
   connect() {
     this.platform = this.detectPlatform()
+    this.managed = document.body.hasAttribute("data-managed-prompts")
 
     if (this.isStandalone()) {
       this.hideNavButtons()
@@ -21,7 +22,7 @@ export default class extends Controller {
     this._onBeforeInstall = (e) => {
       e.preventDefault()
       window.__pwaPrompt = e
-      this.showStickyBar()
+      if (!this.managed) this.showStickyBar()
     }
 
     this._onAppInstalled = () => {
@@ -33,16 +34,18 @@ export default class extends Controller {
     window.addEventListener("beforeinstallprompt", this._onBeforeInstall)
     window.addEventListener("appinstalled", this._onAppInstalled)
 
-    if (window.__pwaPrompt) {
-      this.showStickyBar()
-    }
+    if (!this.managed) {
+      if (window.__pwaPrompt) {
+        this.showStickyBar()
+      }
 
-    if (!this.isSnoozed()) {
-      this._fallbackTimer = setTimeout(() => {
-        if (!window.__pwaPrompt) {
-          this.showStickyBar()
-        }
-      }, 2000)
+      if (!this.isSnoozed()) {
+        this._fallbackTimer = setTimeout(() => {
+          if (!window.__pwaPrompt) {
+            this.showStickyBar()
+          }
+        }, 2000)
+      }
     }
   }
 
@@ -104,6 +107,7 @@ export default class extends Controller {
     localStorage.setItem(SNOOZE_KEY, (Date.now() + SNOOZE_MS).toString())
     this.hideStickyBar()
     this.closeOverlay()
+    document.dispatchEvent(new CustomEvent("prompt:dismissed", { detail: { type: "pwa" } }))
   }
 
   stopPropagation(e) {

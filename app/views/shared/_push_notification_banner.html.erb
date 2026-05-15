@@ -131,6 +131,7 @@
       setTimeout(function() { bar.classList.add('hidden'); }, 300);
     }
     localStorage.setItem('push_dismissed', Date.now());
+    document.dispatchEvent(new CustomEvent('prompt:dismissed', { detail: { type: 'push' } }));
     if (typeof gtag === 'function') {
       gtag('event', 'notification_dismiss', { event_category: 'Growth', page_path: location.pathname });
     }
@@ -170,6 +171,8 @@
   }
 
   (function() {
+    var managed = document.body.hasAttribute('data-managed-prompts');
+
     if (typeof Notification === 'undefined') return;
     if (localStorage.getItem('fcm_subscribed') === 'true') return;
 
@@ -181,6 +184,8 @@
         bells.forEach(function(b) { b.classList.add('hidden'); });
       });
     }
+
+    if (managed) return;  // prompt-queue controller will show bars
 
     if (Notification.permission === 'denied') {
       // Show unblock bar once per week

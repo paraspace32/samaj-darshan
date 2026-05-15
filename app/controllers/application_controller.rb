@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
+  include Trackable
 
   allow_browser versions: { safari: 14, chrome: 80, firefox: 80, opera: 70, ie: false }
   stale_when_importmap_changes

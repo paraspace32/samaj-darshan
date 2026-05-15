@@ -1,0 +1,129 @@
+<% content_for(:page_title, "Visitor Analytics") %>
+
+<%# Header %>
+<div class="gradient-hero rounded-xl sm:rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-teal-500 blur-3xl"></div>
+    <div class="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-blue-500 blur-3xl"></div>
+  </div>
+  <div class="relative z-10">
+    <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
+    <p class="text-gray-400 text-sm">Server-side tracking — accurate unique visitor counts, bot-filtered.</p>
+  </div>
+</div>
+
+<%# Unique Visitors stats %>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique Today</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-700"><%= @stats[:today][:unique] %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= @stats[:today][:views] %> page views</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique This Week</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-blue-700"><%= @stats[:week][:unique] %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= @stats[:week][:views] %> page views</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique This Month</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-violet-700"><%= @stats[:month][:unique] %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= @stats[:month][:views] %> page views</p>
+  </div>
+</div>
+
+<%# Registered vs Anonymous + Bots blocked %>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Registered Visitors</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-orange-700"><%= @registered_count %></p>
+    <p class="text-xs text-gray-400 mt-1">this month (logged in)</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Anonymous Visitors</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-gray-700"><%= @anonymous_count %></p>
+    <p class="text-xs text-gray-400 mt-1">this month (not logged in)</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
+    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Bots Blocked Today</p>
+    <p class="text-2xl sm:text-3xl font-extrabold text-red-600"><%= @bot_count_today %></p>
+    <p class="text-xs text-gray-400 mt-1">crawlers, scrapers filtered</p>
+  </div>
+</div>
+
+<%# Daily trend chart (last 30 days) %>
+<% if @daily_uniques.any? %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Daily Unique Visitors</h2>
+      <p class="text-xs text-gray-400 mt-0.5">Last 30 days (bots excluded)</p>
+    </div>
+    <div class="px-4 sm:px-6 py-5">
+      <% max_count = @daily_uniques.map { |d| d[:count] }.max.to_f %>
+      <div class="flex items-end gap-1 h-40">
+        <% @daily_uniques.each do |day| %>
+          <% height = max_count > 0 ? (day[:count] / max_count * 100).round : 0 %>
+          <div class="flex-1 flex flex-col items-center gap-1 group relative">
+            <div class="w-full rounded-t bg-gradient-to-t from-orange-500 to-orange-400 transition-all hover:from-orange-600 hover:to-orange-500"
+                 style="height: <%= [height, 3].max %>%"></div>
+            <div class="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
+              <%= day[:day].strftime("%d %b") %>: <%= day[:count] %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-[10px] text-gray-400"><%= @daily_uniques.first[:day].strftime("%d %b") %></span>
+        <span class="text-[10px] text-gray-400"><%= @daily_uniques.last[:day].strftime("%d %b") %></span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+  <%# Top Pages %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Top Pages</h2>
+      <p class="text-xs text-gray-400 mt-0.5">This week</p>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @top_pages.each_with_index do |page, i| %>
+        <div class="px-4 sm:px-6 py-3 flex items-center gap-3">
+          <span class="text-xs font-bold text-gray-400 w-5"><%= i + 1 %></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate"><%= page[:path] %></p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-sm font-bold text-gray-900"><%= page[:uniques] %></p>
+            <p class="text-[10px] text-gray-400"><%= page[:views] %> views</p>
+          </div>
+        </div>
+      <% end %>
+      <% if @top_pages.empty? %>
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No data yet</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Top Cities %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Top Cities</h2>
+      <p class="text-xs text-gray-400 mt-0.5">This month (unique visitors)</p>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @top_cities.each_with_index do |city, i| %>
+        <div class="px-4 sm:px-6 py-3 flex items-center gap-3">
+          <span class="text-xs font-bold text-gray-400 w-5"><%= i + 1 %></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900"><%= city[:city] %></p>
+          </div>
+          <p class="text-sm font-bold text-gray-900"><%= city[:count] %></p>
+        </div>
+      <% end %>
+      <% if @top_cities.empty? %>
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No data yet — cities will appear as visits are recorded</div>
+      <% end %>
+    </div>
+  </div>
+</div>

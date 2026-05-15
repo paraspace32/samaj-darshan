@@ -89,6 +89,9 @@ Rails.application.routes.draw do
 
     # Tributes
     resources :tributes, except: [ :show ]
+
+    # Analytics
+    resource :analytics, only: [ :show ], controller: "analytics"
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

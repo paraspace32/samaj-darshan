@@ -66,6 +66,7 @@
       <% end %>
       <% if current_user.super_admin? %>
         <%= admin_nav_link "Push Notifications", admin_push_notifications_path, "bell" %>
+        <%= admin_nav_link "Analytics", admin_analytics_path, "chart-bar" %>
       <% end %>
     <% end %>
   </nav>

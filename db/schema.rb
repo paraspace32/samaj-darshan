@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_15_063044) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_15_095814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -365,6 +365,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_063044) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  create_table "visits", force: :cascade do |t|
+    t.boolean "bot", default: false, null: false
+    t.string "city"
+    t.string "country"
+    t.string "ip_address"
+    t.string "path", null: false
+    t.string "referrer"
+    t.string "user_agent", limit: 512
+    t.bigint "user_id"
+    t.datetime "visited_at", null: false
+    t.string "visitor_token", null: false
+    t.index ["city"], name: "index_visits_on_city"
+    t.index ["path"], name: "index_visits_on_path"
+    t.index ["user_id"], name: "index_visits_on_user_id"
+    t.index ["visited_at", "bot"], name: "index_visits_on_visited_at_and_bot"
+    t.index ["visited_at"], name: "index_visits_on_visited_at"
+    t.index ["visitor_token", "visited_at"], name: "index_visits_on_visitor_token_and_visited_at"
+  end
+
   create_table "webinars", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description_en", null: false
@@ -406,5 +425,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_063044) do
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"
   add_foreign_key "tributes", "users", column: "created_by_id"
+  add_foreign_key "visits", "users"
   add_foreign_key "webinars", "users", column: "host_id"
 end

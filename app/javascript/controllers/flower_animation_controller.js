@@ -9,27 +9,25 @@ export default class extends Controller {
 
   throwFlowersOnImage() {
     const canvas = this.canvasTarget
-    const container = this.imageContainerTarget
-    const rect = container.getBoundingClientRect()
     const emojis = ["🌸", "🌺", "🌷", "🌹", "💐", "🌻", "🪷", "🌼"]
-    const count = 40
+    const count = 45
 
     for (let i = 0; i < count; i++) {
       const flower = document.createElement("div")
       const emoji = emojis[Math.floor(Math.random() * emojis.length)]
-      const size = 18 + Math.random() * 22
-      const delay = Math.random() * 0.8
+      const size = 18 + Math.random() * 24
+      const delay = Math.random() * 1.5 // stagger over 1.5s
 
-      // Start from bottom center of the image (where the button is)
-      const startX = 40 + Math.random() * 20 // 40-60% horizontal
-      const startY = 90 + Math.random() * 10 // near bottom
+      // Start from bottom center
+      const startX = 35 + Math.random() * 30
+      const startY = 85 + Math.random() * 15
 
       // Land at random position across the image
       const endX = 5 + Math.random() * 90
-      const endY = 5 + Math.random() * 70
+      const endY = 5 + Math.random() * 75
 
-      // Arc height — flowers burst upward then fall
-      const arcHeight = 30 + Math.random() * 40
+      // Arc height
+      const arcHeight = 35 + Math.random() * 45
 
       flower.textContent = emoji
       flower.style.cssText = `
@@ -45,41 +43,41 @@ export default class extends Controller {
       `
       canvas.appendChild(flower)
 
-      // Phase 1: burst upward
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          // Arc midpoint
+          // Phase 1: burst upward (slow arc ~1s)
           const midX = (startX + endX) / 2 + (Math.random() - 0.5) * 20
           const midY = Math.min(startY, endY) - arcHeight
 
-          flower.style.transition = `all ${0.4 + Math.random() * 0.3}s cubic-bezier(0.2, 0.8, 0.3, 1)`
+          flower.style.transition = `all ${0.8 + Math.random() * 0.5}s cubic-bezier(0.2, 0.8, 0.3, 1)`
           flower.style.transitionDelay = `${delay}s`
           flower.style.left = `${midX}%`
           flower.style.top = `${midY}%`
           flower.style.opacity = "1"
-          flower.style.transform = `scale(1.2) rotate(${(Math.random() - 0.5) * 180}deg)`
+          flower.style.transform = `scale(1.3) rotate(${(Math.random() - 0.5) * 200}deg)`
 
-          // Phase 2: fall to resting position
-          const fallDelay = (delay + 0.4 + Math.random() * 0.3) * 1000
+          // Phase 2: float down to resting position (~1s)
+          const fallDelay = (delay + 0.8 + Math.random() * 0.5) * 1000
           setTimeout(() => {
-            flower.style.transition = `all ${0.5 + Math.random() * 0.4}s cubic-bezier(0.4, 0, 0.6, 1)`
+            flower.style.transition = `all ${0.8 + Math.random() * 0.6}s cubic-bezier(0.4, 0, 0.6, 1)`
             flower.style.transitionDelay = "0s"
             flower.style.left = `${endX}%`
             flower.style.top = `${endY}%`
             flower.style.transform = `scale(1) rotate(${Math.random() * 360}deg)`
-            flower.style.opacity = "0.9"
+            flower.style.opacity = "0.95"
           }, fallDelay)
 
-          // Phase 3: fade out gently
+          // Phase 3: rest on image for a while, then fade out slowly
+          const restDuration = 2500 + Math.random() * 1500
           setTimeout(() => {
-            flower.style.transition = "opacity 1.5s ease-out"
+            flower.style.transition = "opacity 2s ease-out"
             flower.style.opacity = "0"
-          }, fallDelay + 2000)
+          }, fallDelay + restDuration)
 
           // Cleanup
           setTimeout(() => {
             flower.remove()
-          }, fallDelay + 4000)
+          }, fallDelay + restDuration + 2500)
         })
       })
     }

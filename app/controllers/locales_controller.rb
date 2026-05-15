@@ -17,9 +17,13 @@ class LocalesController < ApplicationController
   def set_region
     if params[:slug] == "auto"
       cookies.delete(:region)
+      Rails.cache.delete("ip_region/#{request.remote_ip}")
     else
       region = Region.active.find_by(slug: params[:slug])
-      cookies[:region] = { value: region.slug, expires: 1.year.from_now } if region
+      if region
+        cookies[:region] = { value: region.slug, expires: 1.year.from_now }
+        Rails.cache.write("ip_region/#{request.remote_ip}", region.slug, expires_in: 30.days)
+      end
     end
     redirect_to(request.referer || root_path, status: 303)
   end

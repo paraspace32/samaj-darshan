@@ -36,6 +36,8 @@ class ApplicationController < ActionController::Base
   def visitor_region
     @visitor_region ||= if cookies[:region].present?
       Region.active.find_by(slug: cookies[:region])
+    elsif (cached_slug = Rails.cache.read("ip_region/#{request.remote_ip}"))
+      Region.active.find_by(slug: cached_slug)
     elsif visitor_city.present?
       Region.active.ordered.where("name_en ILIKE ?", "%#{visitor_city}%").first
     end
@@ -43,7 +45,7 @@ class ApplicationController < ActionController::Base
   helper_method :visitor_region
 
   def visitor_location_name
-    if cookies[:region].present? && visitor_region
+    if visitor_region
       visitor_region.send(I18n.locale == :hi ? :name_hi : :name_en).presence || visitor_region.name_en
     else
       visitor_city

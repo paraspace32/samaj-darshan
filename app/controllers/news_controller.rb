@@ -48,7 +48,7 @@ class NewsController < ApplicationController
                                 .order(published_at: :desc).limit(10).to_a
 
       hero_candidates.sort_by! { |item| -(item.published_at&.to_i || 0) }
-      hero_candidates = hero_candidates.first(10)
+      hero_candidates = hero_candidates.first(12)
 
       @featured = hero_candidates.first
       @featured_type = case @featured
@@ -57,10 +57,10 @@ class NewsController < ApplicationController
       else :news
       end
 
-      @home_side_items = hero_candidates.drop(1).first(4)
+      @home_side_items = hero_candidates.drop(1).first(8)
 
       # Exclude hero items that are News records from the region section below
-      excluded_news_ids = hero_candidates.first(5).select { |i| i.is_a?(News) }.map(&:id)
+      excluded_news_ids = hero_candidates.first(9).select { |i| i.is_a?(News) }.map(&:id)
       remaining = @news_items.where.not(id: excluded_news_ids)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)

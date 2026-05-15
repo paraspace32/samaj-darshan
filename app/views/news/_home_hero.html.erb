@@ -55,11 +55,11 @@
       </div>
     <% end %>
 
-    <%# Mobile side items — first row (2 items) %>
-    <% first_row = @home_side_items.first(2) %>
-    <% remaining_items = @home_side_items.drop(2) %>
+    <%# Mobile side items — rows of 2, banners between %>
+    <% row1 = @home_side_items.first(2) %>
+    <% mid_items = @home_side_items.drop(2).first(4) %>
     <div class="story-stack mt-2">
-      <% first_row.each do |item| %>
+      <% row1.each do |item| %>
         <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
           <div class="w-full aspect-[4/3] overflow-hidden">
             <% if item.cover_image.attached? %>
@@ -75,7 +75,7 @@
       <% end %>
     </div>
 
-    <%# विवाह परिचय banner between rows %>
+    <%# विवाह परिचय banner %>
     <%= link_to biodatas_path, class: "block group my-2 mx-4" do %>
       <div class="rounded-xl relative overflow-hidden text-white px-4 py-3 flex items-center gap-3"
            style="background: linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%); box-shadow: 0 6px 28px -6px rgba(180,83,9,0.55); border: 1.5px solid rgba(245,200,151,0.25)">
@@ -108,10 +108,10 @@
       </div>
     <% end %>
 
-    <%# Remaining side items %>
-    <% if remaining_items.any? %>
+    <%# Middle cards — between marriage and tribute banners %>
+    <% if mid_items.any? %>
       <div class="story-stack">
-        <% remaining_items.each do |item| %>
+        <% mid_items.each do |item| %>
           <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
             <div class="w-full aspect-[4/3] overflow-hidden">
               <% if item.cover_image.attached? %>
@@ -151,6 +151,7 @@
         </svg>
       </div>
     <% end %>
+
   </div>
 
   <%# ── Desktop Hero: title-first bento grid ── %>

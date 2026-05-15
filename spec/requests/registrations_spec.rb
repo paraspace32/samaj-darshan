@@ -77,7 +77,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include(I18n.t("errors.messages.taken"))
+        expect(response.body).to include(I18n.t("activerecord.errors.models.user.attributes.phone.taken"))
         expect(response.body).to include(I18n.t("signup.already_registered"))
       end
 
@@ -94,7 +94,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include(I18n.t("errors.messages.taken"))
+        expect(response.body).to include(I18n.t("activerecord.errors.models.user.attributes.email.taken"))
       end
 
       it "rejects registration with the same phone and email and shows both error messages" do
@@ -110,7 +110,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include(I18n.t("errors.messages.taken"))
+        expect(response.body).to include(I18n.t("activerecord.errors.models.user.attributes.phone.taken"))
       end
 
       it "does not alter the existing user's data" do

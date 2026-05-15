@@ -8,9 +8,20 @@ RSpec.describe Region, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:name_en) }
+    it "is invalid without name_en when name_hi is also blank" do
+      region = build(:region, name_en: nil, name_hi: nil)
+      expect(region).not_to be_valid
+      expect(region.errors[:name_en]).to be_present
+    end
+
     it { is_expected.to validate_uniqueness_of(:name_en) }
-    it { is_expected.to validate_presence_of(:name_hi) }
+
+    it "is invalid without name_hi when name_en is also blank" do
+      region = build(:region, name_en: nil, name_hi: nil)
+      expect(region).not_to be_valid
+      expect(region.errors[:name_hi]).to be_present
+    end
+
     it { is_expected.to validate_uniqueness_of(:name_hi).case_insensitive }
     it { is_expected.to validate_uniqueness_of(:slug) }
   end

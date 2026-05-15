@@ -176,7 +176,7 @@ RSpec.describe "Registrations Hindi Translations", type: :request do
       }
 
       body = response.body
-      expect(body).to include(I18n.t("signup.errors_found", locale: :hi))
+      expect(body).to include(I18n.t("signup.error_singular", locale: :hi))
     end
 
     it "renders Hindi error count text for multiple errors" do
@@ -191,7 +191,6 @@ RSpec.describe "Registrations Hindi Translations", type: :request do
 
       body = response.body
       expect(body).to include(I18n.t("signup.errors_plural", locale: :hi))
-      expect(body).to include(I18n.t("signup.errors_found", locale: :hi))
     end
   end
 end

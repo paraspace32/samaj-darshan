@@ -54,7 +54,7 @@ RSpec.describe "Admin::Regions", type: :request do
     end
 
     it "rejects invalid update" do
-      patch admin_region_path(target_region), params: { region: { name_en: "" } }
+      patch admin_region_path(target_region), params: { region: { name_en: "", name_hi: "" } }
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end

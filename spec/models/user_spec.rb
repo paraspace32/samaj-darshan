@@ -48,7 +48,7 @@ RSpec.describe User, type: :model do
   end
 
   describe "enums" do
-    it { is_expected.to define_enum_for(:role).with_values(super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4) }
+    it { is_expected.to define_enum_for(:role).with_values(super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4, female_president: 5) }
     it { is_expected.to define_enum_for(:status).with_values(active: 0, blocked: 1).with_prefix(:account) }
   end
 

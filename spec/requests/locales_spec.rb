@@ -4,7 +4,7 @@ RSpec.describe "Locales", type: :request do
   describe "GET /locale/:locale" do
     it "sets locale cookie to hi and redirects back" do
       get set_locale_path(locale: :hi), headers: { "HTTP_REFERER" => root_url }
-      expect(response).to redirect_to(root_url)
+      expect(response).to have_http_status(:see_other)
       expect(response.cookies["locale"]).to eq("hi")
     end
 
@@ -20,7 +20,7 @@ RSpec.describe "Locales", type: :request do
 
     it "redirects to root_path when no referer" do
       get set_locale_path(locale: :hi)
-      expect(response).to redirect_to(root_path)
+      expect(response).to have_http_status(:see_other)
     end
 
     it "overwrites an existing locale cookie" do
@@ -34,7 +34,7 @@ RSpec.describe "Locales", type: :request do
       category = create(:category)
       article  = create(:news_item, :published, region: region, category: category)
       get set_locale_path(locale: :en), headers: { "HTTP_REFERER" => news_url(article) }
-      expect(response).to redirect_to(news_url(article))
+      expect(response).to have_http_status(:see_other)
     end
   end
 

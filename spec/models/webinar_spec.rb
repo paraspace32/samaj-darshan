@@ -2,10 +2,18 @@ require "rails_helper"
 
 RSpec.describe Webinar, type: :model do
   describe "validations" do
-    it { is_expected.to validate_presence_of(:title_en) }
-    it { is_expected.to validate_presence_of(:title_hi) }
-    it { is_expected.to validate_presence_of(:description_en) }
-    it { is_expected.to validate_presence_of(:description_hi) }
+    it "is invalid without title_en and title_hi" do
+      webinar = build(:webinar, title_en: nil, title_hi: nil)
+      expect(webinar).not_to be_valid
+      expect(webinar.errors[:title_en]).to be_present
+    end
+
+    it "is invalid without description_en and description_hi" do
+      webinar = build(:webinar, description_en: nil, description_hi: nil)
+      expect(webinar).not_to be_valid
+      expect(webinar.errors[:description_en]).to be_present
+    end
+
     it { is_expected.to validate_presence_of(:speaker_name) }
     it { is_expected.to validate_presence_of(:starts_at) }
     it { is_expected.to validate_presence_of(:duration_minutes) }

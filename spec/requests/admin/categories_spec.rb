@@ -49,7 +49,7 @@ RSpec.describe "Admin::Categories", type: :request do
     end
 
     it "rejects invalid update" do
-      patch admin_category_path(target_cat), params: { category: { name_en: "" } }
+      patch admin_category_path(target_cat), params: { category: { name_en: "", name_hi: "" } }
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end

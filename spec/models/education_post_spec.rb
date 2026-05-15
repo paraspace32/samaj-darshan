@@ -2,10 +2,17 @@ require "rails_helper"
 
 RSpec.describe EducationPost, type: :model do
   describe "validations" do
-    it { is_expected.to validate_presence_of(:title_en) }
-    it { is_expected.to validate_presence_of(:title_hi) }
-    it { is_expected.to validate_presence_of(:content_en) }
-    it { is_expected.to validate_presence_of(:content_hi) }
+    it "is invalid without title_en and title_hi" do
+      post = build(:education_post, title_en: nil, title_hi: nil)
+      expect(post).not_to be_valid
+      expect(post.errors[:title_en]).to be_present
+    end
+
+    it "is invalid without content_en and content_hi" do
+      post = build(:education_post, content_en: nil, content_hi: nil)
+      expect(post).not_to be_valid
+      expect(post.errors[:content_en]).to be_present
+    end
   end
 
   describe "associations" do

@@ -1,6 +1,6 @@
 <% content_for(:title, @tribute.display_name) %>
 <% if @tribute.image.attached? %>
-  <% content_for(:og_image, rails_blob_url(@tribute.image, host: request.base_url)) %>
+  <% content_for(:og_image, rails_representation_url(@tribute.image.variant(:hero), host: request.base_url)) %>
 <% end %>
 
 <div class="max-w-2xl mx-auto py-8 px-4" data-controller="flower-animation">

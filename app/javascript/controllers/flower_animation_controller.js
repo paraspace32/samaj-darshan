@@ -28,7 +28,7 @@ export default class extends Controller {
         // After animation settles, reload to show updated state
         setTimeout(() => {
           window.Turbo.visit(window.location.href, { action: "replace" })
-        }, 5000)
+        }, 8000)
       })
     }
   }
@@ -48,9 +48,9 @@ export default class extends Controller {
       const startX = 35 + Math.random() * 30
       const startY = 85 + Math.random() * 15
 
-      // Land at random position across the image
+      // Land at bottom of image, spread across horizontally
       const endX = 5 + Math.random() * 90
-      const endY = 5 + Math.random() * 75
+      const endY = 80 + Math.random() * 15 // stack near bottom (80-95%)
 
       // Arc height
       const arcHeight = 35 + Math.random() * 45
@@ -93,17 +93,17 @@ export default class extends Controller {
             flower.style.opacity = "0.95"
           }, fallDelay)
 
-          // Phase 3: rest on image for a while, then fade out slowly
-          const restDuration = 2500 + Math.random() * 1500
+          // Phase 3: rest at bottom, then slowly fade out
+          const restDuration = 3000 + Math.random() * 2000
           setTimeout(() => {
-            flower.style.transition = "opacity 2s ease-out"
+            flower.style.transition = "opacity 2.5s ease-out"
             flower.style.opacity = "0"
           }, fallDelay + restDuration)
 
           // Cleanup
           setTimeout(() => {
             flower.remove()
-          }, fallDelay + restDuration + 2500)
+          }, fallDelay + restDuration + 3000)
         })
       })
     }

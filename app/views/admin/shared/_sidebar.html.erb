@@ -46,6 +46,9 @@
     <% if current_user.can_manage_kanyadaan? %>
       <%= admin_nav_link "Kanyadaan", admin_kanyadaan_applications_path, "heart" %>
     <% end %>
+    <% if current_user.can_manage_tributes? %>
+      <%= admin_nav_link "Tributes", admin_tributes_path, "heart" %>
+    <% end %>
 
     <% if current_user.can_manage_regions? || current_user.can_manage_categories? || current_user.can_manage_users? || current_user.can_manage_billboards? %>
       <p class="px-3 text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3 mt-6">Manage</p>

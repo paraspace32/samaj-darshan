@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :biodatas, dependent: :destroy
   has_many :shortlists, dependent: :destroy
   has_many :shortlisted_biodatas, through: :shortlists, source: :biodata
+  has_many :flowers, dependent: :destroy
 
   enum :role, { super_admin: 0, editor: 1, co_editor: 2, moderator: 3, user: 4, female_president: 5 }
   enum :status, { active: 0, blocked: 1 }, prefix: :account
@@ -41,6 +42,10 @@ class User < ApplicationRecord
 
   def can_manage_kanyadaan?
     super_admin? || female_president? || (editor? && has_section_access?("kanyadaan"))
+  end
+
+  def can_manage_tributes?
+    super_admin? || editor?
   end
 
   def can_access_news_section?

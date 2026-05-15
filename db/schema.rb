@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_15_063044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -160,6 +160,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
     t.index ["status", "category"], name: "index_education_posts_on_status_and_category"
     t.index ["status", "published_at"], name: "index_education_posts_on_status_and_published_at"
     t.index ["status"], name: "index_education_posts_on_status"
+  end
+
+  create_table "flowers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "tribute_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["tribute_id", "user_id"], name: "index_flowers_on_tribute_id_and_user_id", unique: true
+    t.index ["tribute_id"], name: "index_flowers_on_tribute_id"
+    t.index ["user_id"], name: "index_flowers_on_user_id"
   end
 
   create_table "job_posts", force: :cascade do |t|
@@ -328,6 +338,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
     t.index ["user_id"], name: "index_shortlists_on_user_id"
   end
 
+  create_table "tributes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false
+    t.text "description_en", null: false
+    t.text "description_hi"
+    t.integer "flowers_count", default: 0, null: false
+    t.string "name_en", null: false
+    t.string "name_hi"
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_tributes_on_created_by_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.jsonb "allowed_sections", default: [], null: false
     t.datetime "created_at", null: false
@@ -369,6 +391,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
   add_foreign_key "biodatas", "users"
   add_foreign_key "comments", "users"
   add_foreign_key "education_posts", "users", column: "author_id"
+  add_foreign_key "flowers", "tributes"
+  add_foreign_key "flowers", "users"
   add_foreign_key "job_posts", "users", column: "author_id"
   add_foreign_key "likes", "users"
   add_foreign_key "magazine_articles", "magazines"
@@ -381,5 +405,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
   add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"
+  add_foreign_key "tributes", "users", column: "created_by_id"
   add_foreign_key "webinars", "users", column: "host_id"
 end

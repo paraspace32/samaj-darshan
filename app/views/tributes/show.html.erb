@@ -1,0 +1,81 @@
+<% content_for(:title, @tribute.display_name) %>
+<% if @tribute.image.attached? %>
+  <% content_for(:og_image, "#{request.base_url}#{url_for(@tribute.image)}") %>
+<% end %>
+
+<div class="max-w-2xl mx-auto py-8 px-4" data-controller="flower-animation">
+  <%# Back link %>
+  <div class="mb-5">
+    <%= link_to tributes_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-600 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+      <%= t("tributes.back_to_tributes") %>
+    <% end %>
+  </div>
+
+  <%# Hero image %>
+  <% if @tribute.image.attached? %>
+    <div class="rounded-2xl overflow-hidden shadow-lg mb-6">
+      <%= image_tag @tribute.image.variant(:hero), class: "w-full max-h-96 object-cover" %>
+    </div>
+  <% end %>
+
+  <%# Name and description %>
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-black text-gray-900 tracking-tight"><%= @tribute.display_name %></h1>
+    <p class="text-gray-600 mt-3 leading-relaxed"><%= @tribute.display_description %></p>
+  </div>
+
+  <%# Give Flowers button %>
+  <div class="text-center mb-10">
+    <% if logged_in? %>
+      <% if @user_gave_flower %>
+        <div class="inline-flex flex-col items-center gap-2">
+          <span class="text-3xl">🌸</span>
+          <p class="text-sm font-bold text-pink-600"><%= t("tributes.you_gave_flowers") %></p>
+          <%= button_to tribute_flower_path(@tribute), method: :delete,
+                class: "text-xs text-gray-400 hover:text-red-500 transition-colors" do %>
+            <%= t("tributes.remove_flower") %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= button_to tribute_flower_path(@tribute), method: :post,
+              class: "inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-95 transition-all hover:shadow-xl",
+              style: "background: linear-gradient(135deg, #ec4899, #f97316)",
+              data: { action: "click->flower-animation#animate" } do %>
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.give_flowers") %></span>
+          <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= link_to login_path, class: "inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl text-white font-bold text-sm shadow-lg transition-all hover:shadow-xl",
+            style: "background: linear-gradient(135deg, #ec4899, #f97316)" do %>
+        <span class="text-xl">🌸</span>
+        <span><%= t("tributes.login_to_give") %></span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Flower animation canvas %>
+  <div data-flower-animation-target="canvas" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+
+  <%# Who gave flowers %>
+  <% if @tribute.flowers.any? %>
+    <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-black text-gray-900"><%= t("tributes.who_gave_flowers") %> (<%= @tribute.flowers_count %>)</h3>
+      </div>
+      <div class="px-5 py-4">
+        <div class="flex flex-wrap gap-2">
+          <% @tribute.flowers.includes(:user).order(created_at: :desc).each do |flower| %>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-100">
+              <span class="text-sm">🌸</span>
+              <span class="text-sm font-semibold text-pink-800"><%= flower.user.name %></span>
+              <span class="text-[10px] text-pink-400"><%= time_ago_in_words(flower.created_at) %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

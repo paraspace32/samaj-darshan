@@ -86,6 +86,9 @@ Rails.application.routes.draw do
 
     # Kanyadaan Yojna
     resources :kanyadaan_applications, only: [ :index, :show, :update ]
+
+    # Tributes
+    resources :tributes, except: [ :show ]
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -169,6 +172,11 @@ Rails.application.routes.draw do
     resource :like, only: [], controller: "likes" do
       post :toggle
     end
+  end
+
+  # Tributes
+  resources :tributes, only: [ :index, :show ] do
+    resource :flower, only: [ :create, :destroy ]
   end
 
   get "offline" => "pages#offline"

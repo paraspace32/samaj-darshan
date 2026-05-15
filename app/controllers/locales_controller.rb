@@ -13,4 +13,14 @@ class LocalesController < ApplicationController
     back_url.query = Rack::Utils.build_query(query)
     redirect_to back_url.to_s, status: 303
   end
+
+  def set_region
+    if params[:slug] == "auto"
+      cookies.delete(:region)
+    else
+      region = Region.active.find_by(slug: params[:slug])
+      cookies[:region] = { value: region.slug, expires: 1.year.from_now } if region
+    end
+    redirect_to(request.referer || root_path, status: 303)
+  end
 end

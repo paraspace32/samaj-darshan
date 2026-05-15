@@ -201,8 +201,6 @@ class NewsController < ApplicationController
   end
 
   def detect_region_from_ip
-    return nil if visitor_city.blank?
-
-    Region.active.ordered.where("name_en ILIKE ?", "%#{visitor_city}%").first
+    visitor_region
   end
 end

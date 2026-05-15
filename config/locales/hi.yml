@@ -76,6 +76,7 @@ hi:
     new_article: "नई ख़बर"
     news: "समाचार"
     regions: "क्षेत्र"
+    select_region: "क्षेत्र चुनें"
     categories: "श्रेणियाँ"
     users: "उपयोगकर्ता"
     back: "वापस"

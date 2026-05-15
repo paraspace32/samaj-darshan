@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   # Locale switching
   get "locale/:locale" => "locales#update", as: :set_locale
+  get "set_region/:slug" => "locales#set_region", as: :set_region
 
   # Authentication
   get  "login" => "sessions#new",     as: :login

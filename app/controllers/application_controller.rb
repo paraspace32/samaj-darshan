@@ -32,4 +32,22 @@ class ApplicationController < ActionController::Base
     @visitor_city ||= GeolocationService.lookup(request.remote_ip)[:city]
   end
   helper_method :visitor_city
+
+  def visitor_region
+    @visitor_region ||= if cookies[:region].present?
+      Region.active.find_by(slug: cookies[:region])
+    elsif visitor_city.present?
+      Region.active.ordered.where("name_en ILIKE ?", "%#{visitor_city}%").first
+    end
+  end
+  helper_method :visitor_region
+
+  def visitor_location_name
+    if cookies[:region].present? && visitor_region
+      visitor_region.send(I18n.locale == :hi ? :name_hi : :name_en).presence || visitor_region.name_en
+    else
+      visitor_city
+    end
+  end
+  helper_method :visitor_location_name
 end

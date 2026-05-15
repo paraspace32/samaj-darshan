@@ -17,6 +17,7 @@ en:
     new_article: "New News"
     news: "News"
     regions: "Regions"
+    select_region: "Select Region"
     categories: "Categories"
     users: "Users"
     back: "Back"

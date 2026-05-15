@@ -40,6 +40,7 @@
         <%= button_to tribute_flower_path(@tribute), method: :post,
               class: "inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-95 transition-all hover:shadow-xl",
               style: "background: linear-gradient(135deg, #ec4899, #f97316)",
+              form: { data: { turbo: false } },
               data: { action: "click->flower-animation#animate" } do %>
           <span class="text-xl">🌸</span>
           <span><%= t("tributes.give_flowers") %></span>

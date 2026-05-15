@@ -1,10 +1,36 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["canvas", "imageContainer"]
+  static targets = ["canvas", "imageContainer", "flowerButton"]
 
   animate(event) {
+    // Prevent Turbo form submission — we'll handle it via fetch
+    event.preventDefault()
+    event.stopPropagation()
+
+    const form = event.target.closest("form")
+
+    // Fire animation immediately
     this.throwFlowersOnImage()
+
+    // Submit the flower via fetch in background (no page reload)
+    if (form) {
+      const formData = new FormData(form)
+      fetch(form.action, {
+        method: form.method || "POST",
+        body: formData,
+        headers: {
+          "Accept": "text/html",
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        credentials: "same-origin"
+      }).then(() => {
+        // After animation settles, reload to show updated state
+        setTimeout(() => {
+          window.Turbo.visit(window.location.href, { action: "replace" })
+        }, 5000)
+      })
+    }
   }
 
   throwFlowersOnImage() {

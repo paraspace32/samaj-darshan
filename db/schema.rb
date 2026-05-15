@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_13_052921) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_15_033605) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -267,6 +267,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_052921) do
     t.index ["status"], name: "index_news_on_status"
   end
 
+  create_table "push_notification_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "failed_count", default: 0, null: false
+    t.integer "removed_count", default: 0, null: false
+    t.integer "sent_count", default: 0, null: false
+    t.string "title", null: false
+    t.integer "total_subscribers", default: 0, null: false
+    t.bigint "triggered_by_id"
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["created_at"], name: "index_push_notification_logs_on_created_at"
+    t.index ["triggered_by_id"], name: "index_push_notification_logs_on_triggered_by_id"
+  end
+
   create_table "push_subscriptions", force: :cascade do |t|
     t.string "browser"
     t.datetime "created_at", null: false
@@ -362,6 +376,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_13_052921) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "push_notification_logs", "users", column: "triggered_by_id"
   add_foreign_key "push_subscriptions", "users"
   add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"

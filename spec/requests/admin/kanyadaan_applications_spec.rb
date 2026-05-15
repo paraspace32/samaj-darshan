@@ -81,10 +81,10 @@ RSpec.describe "Admin::KanyadaanApplications", type: :request do
     it "shows application details" do
       get admin_kanyadaan_application_path(application)
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(application.girl_name)
-      expect(response.body).to include(application.parent_name)
+      expect(response.body).to include(ERB::Util.html_escape(application.girl_name))
+      expect(response.body).to include(ERB::Util.html_escape(application.parent_name))
       expect(response.body).to include(application.contact)
-      expect(response.body).to include(application.location)
+      expect(response.body).to include(ERB::Util.html_escape(application.location))
     end
   end
 

@@ -8,45 +8,44 @@
   </div>
   <div class="relative z-10">
     <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
-    <p class="text-gray-400 text-sm">Server-side tracking — accurate unique visitor counts, bot-filtered.</p>
+    <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, IP-based deduplication.</p>
   </div>
 </div>
 
-<%# Unique Visitors stats %>
-<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique Today</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-700"><%= @stats[:today][:unique] %></p>
-    <p class="text-xs text-gray-400 mt-1"><%= @stats[:today][:views] %> page views</p>
-  </div>
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique This Week</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-blue-700"><%= @stats[:week][:unique] %></p>
-    <p class="text-xs text-gray-400 mt-1"><%= @stats[:week][:views] %> page views</p>
-  </div>
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Unique This Month</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-violet-700"><%= @stats[:month][:unique] %></p>
-    <p class="text-xs text-gray-400 mt-1"><%= @stats[:month][:views] %> page views</p>
+<%# Unique Visitors — main numbers %>
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
+  <div class="grid grid-cols-3 divide-x divide-gray-100">
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-emerald-600"><%= number_with_delimiter(@stats[:today][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">Today</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:today][:views]) %> views</p>
+    </div>
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-blue-600"><%= number_with_delimiter(@stats[:week][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">This Week</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:week][:views]) %> views</p>
+    </div>
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-violet-600"><%= number_with_delimiter(@stats[:month][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">This Month</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:month][:views]) %> views</p>
+    </div>
   </div>
 </div>
 
-<%# Registered vs Anonymous + Bots blocked %>
-<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Registered Visitors</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-orange-700"><%= @registered_count %></p>
-    <p class="text-xs text-gray-400 mt-1">this month (logged in)</p>
+<%# Registered vs Anonymous vs Bots %>
+<div class="grid grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-orange-600"><%= number_with_delimiter(@registered_count) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Logged In</p>
   </div>
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Anonymous Visitors</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-gray-700"><%= @anonymous_count %></p>
-    <p class="text-xs text-gray-400 mt-1">this month (not logged in)</p>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-gray-600"><%= number_with_delimiter(@anonymous_count) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Anonymous</p>
   </div>
-  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm">
-    <p class="text-xs sm:text-sm font-medium text-gray-500 mb-2">Bots Blocked Today</p>
-    <p class="text-2xl sm:text-3xl font-extrabold text-red-600"><%= @bot_count_today %></p>
-    <p class="text-xs text-gray-400 mt-1">crawlers, scrapers filtered</p>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-red-500"><%= number_with_delimiter(@bot_count_today) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Bots Blocked</p>
   </div>
 </div>
 
@@ -55,7 +54,7 @@
   <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
     <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
       <h2 class="font-bold text-gray-900">Daily Unique Visitors</h2>
-      <p class="text-xs text-gray-400 mt-0.5">Last 30 days (bots excluded)</p>
+      <p class="text-xs text-gray-400 mt-0.5">Last 30 days</p>
     </div>
     <div class="px-4 sm:px-6 py-5">
       <% max_count = @daily_uniques.map { |d| d[:count] }.max.to_f %>
@@ -66,7 +65,7 @@
             <div class="w-full rounded-t bg-gradient-to-t from-orange-500 to-orange-400 transition-all hover:from-orange-600 hover:to-orange-500"
                  style="height: <%= [height, 3].max %>%"></div>
             <div class="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
-              <%= day[:day].strftime("%d %b") %>: <%= day[:count] %>
+              <%= day[:day].strftime("%d %b") %> — <%= number_with_delimiter(day[:count]) %> visitors
             </div>
           </div>
         <% end %>
@@ -94,8 +93,8 @@
             <p class="text-sm font-medium text-gray-900 truncate"><%= page[:path] %></p>
           </div>
           <div class="text-right shrink-0">
-            <p class="text-sm font-bold text-gray-900"><%= page[:uniques] %></p>
-            <p class="text-[10px] text-gray-400"><%= page[:views] %> views</p>
+            <p class="text-sm font-bold text-gray-900"><%= number_with_delimiter(page[:uniques]) %> <span class="text-[10px] font-normal text-gray-400">unique</span></p>
+            <p class="text-[10px] text-gray-400"><%= number_with_delimiter(page[:views]) %> views</p>
           </div>
         </div>
       <% end %>
@@ -109,7 +108,7 @@
   <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
     <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
       <h2 class="font-bold text-gray-900">Top Cities</h2>
-      <p class="text-xs text-gray-400 mt-0.5">This month (unique visitors)</p>
+      <p class="text-xs text-gray-400 mt-0.5">This month</p>
     </div>
     <div class="divide-y divide-gray-50">
       <% @top_cities.each_with_index do |city, i| %>
@@ -118,11 +117,11 @@
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900"><%= city[:city] %></p>
           </div>
-          <p class="text-sm font-bold text-gray-900"><%= city[:count] %></p>
+          <p class="text-sm font-bold text-gray-900"><%= number_with_delimiter(city[:count]) %> <span class="text-[10px] font-normal text-gray-400">visitors</span></p>
         </div>
       <% end %>
       <% if @top_cities.empty? %>
-        <div class="px-6 py-8 text-center text-gray-400 text-sm">No data yet — cities will appear as visits are recorded</div>
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">Cities will appear as visits are recorded</div>
       <% end %>
     </div>
   </div>

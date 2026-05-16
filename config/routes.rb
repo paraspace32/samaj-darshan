@@ -185,6 +185,7 @@ Rails.application.routes.draw do
 
   # Tributes
   resources :tributes, only: [ :index, :show ] do
+    collection { post :guest_flower }
     resource :flower, only: [ :create, :destroy ]
   end
 

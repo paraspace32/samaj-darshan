@@ -7,4 +7,9 @@ class TributesController < ApplicationController
     @tribute = Tribute.includes(flowers: :user).find(params[:id])
     @user_gave_flower = logged_in? && @tribute.flowers.exists?(user: current_user)
   end
+
+  def guest_flower
+    session[:guest_flower_given] = true
+    head :no_content
+  end
 end

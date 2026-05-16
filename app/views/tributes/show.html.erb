@@ -48,10 +48,46 @@
         <% end %>
       <% end %>
     <% else %>
-      <%= link_to login_path, class: "inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg transition-all hover:shadow-xl",
-            style: "background: linear-gradient(135deg, #ec4899, #f97316)" do %>
-        <span class="text-xl">🌸</span>
-        <span><%= t("tributes.login_to_give") %></span>
+      <% if session[:guest_flower_given] %>
+        <%= link_to login_path, class: "inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg transition-all hover:shadow-xl",
+              style: "background: linear-gradient(135deg, #ec4899, #f97316)" do %>
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.login_to_give") %></span>
+          <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        <% end %>
+      <% else %>
+        <button type="button" id="guest-flower-btn"
+              class="inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-95 transition-all hover:shadow-xl"
+              style="background: linear-gradient(135deg, #ec4899, #f97316)"
+              data-action="click->flower-animation#animate">
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.give_flowers") %></span>
+          <span id="guest-flower-count" class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        </button>
+        <script>
+        document.getElementById('guest-flower-btn').addEventListener('click', function() {
+          var count = document.getElementById('guest-flower-count');
+          count.textContent = parseInt(count.textContent) + 1;
+          this.disabled = true;
+          this.style.opacity = '0.7';
+          var loginUrl = '<%= login_path %>';
+          var loginText = '<%= j t("tributes.login_to_give") %>';
+          var btn = this;
+          setTimeout(function() {
+            var a = document.createElement('a');
+            a.href = loginUrl;
+            a.className = btn.className.replace('cursor-pointer active:scale-95', '');
+            a.style = btn.style.cssText;
+            a.style.opacity = '1';
+            a.innerHTML = '<span class="text-xl">🌸</span><span>' + loginText + '</span>';
+            btn.replaceWith(a);
+          }, 2500);
+          var csrf = document.querySelector('meta[name="csrf-token"]');
+          if (csrf) {
+            fetch('<%= guest_flower_tributes_path %>', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf.content } });
+          }
+        }, { once: true });
+        </script>
       <% end %>
     <% end %>
   </div>

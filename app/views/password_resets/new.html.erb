@@ -192,7 +192,7 @@ window.sendOTP = function() {
     })
     .catch(function(error) {
       console.error('sendOTP error:', error);
-      showError(strings.send_failed);
+      showError(strings.send_failed + ' (' + (error.code || error.message) + ')');
       btn.disabled = false;
       btn.innerHTML = strings.send_otp + ' &nbsp;→';
       if (window.recaptchaVerifier) {

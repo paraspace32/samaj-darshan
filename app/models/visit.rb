@@ -11,7 +11,8 @@ class Visit < ApplicationRecord
     mediapartners|google-read-aloud|headlesschrome|phantomjs|selenium|
     curl|wget|python-requests|go-http-client|java\/|httpie|postman|
     ahrefsbot|semrushbot|dotbot|mj12bot|yandexbot|baiduspider|
-    sogou|exabot|ia_archiver|archive\.org_bot|gptbot|claudebot/ix.freeze
+    sogou|exabot|ia_archiver|archive\.org_bot|gptbot|claudebot|
+    nexus\s*5x\s*build\/mmb29p|sm-g955u\s*build\/r16nw/ix.freeze
 
   def self.bot_user_agent?(ua)
     return true if ua.blank?

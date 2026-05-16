@@ -178,12 +178,15 @@ window.sendOTP = function() {
   btn.innerHTML = strings.sending + ' &nbsp;⏳';
 
   try {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
+    if (window.recaptchaVerifier) {
+      try { window.recaptchaVerifier.clear(); } catch(_) {}
+      window.recaptchaVerifier = null;
     }
+    document.getElementById('recaptcha-container').innerHTML = '';
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
   } catch (e) {
     console.error('reCAPTCHA init error:', e);
-    showError(strings.send_failed + ' (recaptcha: ' + (e.code || e.message) + ')');
+    showError(strings.send_failed + ' (' + (e.code || e.message) + ')');
     btn.disabled = false;
     btn.innerHTML = strings.send_otp + ' &nbsp;→';
     return;
@@ -203,10 +206,6 @@ window.sendOTP = function() {
       showError(strings.send_failed + ' (' + (error.code || error.message) + ')');
       btn.disabled = false;
       btn.innerHTML = strings.send_otp + ' &nbsp;→';
-      if (window.recaptchaVerifier) {
-        try { window.recaptchaVerifier.clear(); } catch(_) {}
-        window.recaptchaVerifier = null;
-      }
     });
 };
 

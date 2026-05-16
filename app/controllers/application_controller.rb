@@ -52,4 +52,19 @@ class ApplicationController < ActionController::Base
     end
   end
   helper_method :visitor_location_name
+
+  def rate_limited?(key, limit:, period:)
+    counter_key = "rate_limit_#{key}"
+    reset_key = "rate_limit_#{key}_reset"
+    now = Time.current.to_i
+
+    if session[reset_key].nil? || session[reset_key] < now
+      session[counter_key] = 1
+      session[reset_key] = now + period.to_i
+      false
+    else
+      session[counter_key] = (session[counter_key] || 0) + 1
+      session[counter_key] > limit
+    end
+  end
 end

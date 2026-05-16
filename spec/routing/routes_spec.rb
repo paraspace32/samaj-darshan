@@ -4,9 +4,8 @@ RSpec.describe "Routes", type: :routing do
   describe "authentication" do
     it { expect(get: "/login").to route_to("sessions#new") }
     it { expect(post: "/login").to route_to("sessions#create") }
-    it { expect(get: "/logout").to route_to("sessions#destroy") }
-    it { expect(get: "/signup").to route_to("registrations#new") }
-    it { expect(post: "/signup").to route_to("registrations#create") }
+    it { expect(delete: "/logout").to route_to("sessions#destroy") }
+    it { expect(post: "/login/check").to route_to("sessions#check") }
   end
 
   describe "locale" do

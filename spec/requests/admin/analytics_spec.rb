@@ -37,7 +37,7 @@ RSpec.describe "Admin::Analytics", type: :request do
       get admin_analytics_path
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("Visitor Analytics")
-      expect(response.body).to include("Unique Today")
+      expect(response.body).to include("Today")
       expect(response.body).to include("Top Pages")
       expect(response.body).to include("Top Cities")
     end

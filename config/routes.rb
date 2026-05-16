@@ -20,9 +20,11 @@ Rails.application.routes.draw do
   # Authentication
   get  "login" => "sessions#new",     as: :login
   post "login" => "sessions#create"
-  get  "logout" => "sessions#destroy", as: :logout
-  get  "signup" => "registrations#new", as: :signup
-  post "signup" => "registrations#create"
+  post "login/check" => "sessions#check", as: :login_check
+  delete "logout" => "sessions#destroy", as: :logout
+  get  "signup" => redirect("/login"), as: :signup
+  get  "password_reset" => "password_resets#new", as: :password_reset
+  post "password_reset" => "password_resets#update"
 
   # User profile
   resource :profile, only: [ :edit, :update ], controller: "profiles"

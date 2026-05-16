@@ -44,7 +44,7 @@
               </div>
               <span class="text-sm font-medium text-gray-700 hidden md:inline"><%= current_user.name %></span>
             </div>
-            <%= link_to "Logout", logout_path, class: "text-xs sm:text-sm text-gray-400 hover:text-red-600 transition-colors" %>
+            <%= link_to "Logout", logout_path, data: { turbo_method: :delete }, class: "text-xs sm:text-sm text-gray-400 hover:text-red-600 transition-colors" %>
           </div>
         </header>
 

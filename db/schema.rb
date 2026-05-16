@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_15_095814) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_15_172949) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -367,9 +367,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_15_095814) do
 
   create_table "visits", force: :cascade do |t|
     t.boolean "bot", default: false, null: false
+    t.string "browser"
     t.string "city"
     t.string "country"
+    t.string "device_type"
+    t.integer "duration_seconds"
     t.string "ip_address"
+    t.boolean "new_visitor", default: true
+    t.string "os"
     t.string "path", null: false
     t.string "referrer"
     t.string "user_agent", limit: 512

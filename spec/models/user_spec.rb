@@ -10,7 +10,17 @@ RSpec.describe User, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:name) }
+    it "validates name presence on update" do
+      user = create(:user)
+      user.name = ""
+      expect(user).not_to be_valid
+    end
+
+    it "allows blank name on create (OTP signup)" do
+      user = build(:user, name: nil)
+      expect(user).to be_valid
+    end
+
     it { is_expected.to validate_presence_of(:phone) }
     it { is_expected.to validate_uniqueness_of(:phone).case_insensitive }
     it { is_expected.to validate_presence_of(:role) }

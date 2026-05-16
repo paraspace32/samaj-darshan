@@ -17,14 +17,11 @@ Rails.application.routes.draw do
   # Visit duration ping
   post "visit_ping" => "visits#ping"
 
-  # Authentication
+  # Authentication (OTP-only via Firebase Phone Auth)
   get  "login" => "sessions#new",     as: :login
   post "login" => "sessions#create"
-  post "login/check" => "sessions#check", as: :login_check
+  post "login/set_name" => "sessions#set_name", as: :set_name
   delete "logout" => "sessions#destroy", as: :logout
-  get  "signup" => redirect("/login"), as: :signup
-  get  "password_reset" => "password_resets#new", as: :password_reset
-  post "password_reset" => "password_resets#update"
 
   # User profile
   resource :profile, only: [ :edit, :update ], controller: "profiles"

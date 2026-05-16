@@ -2,7 +2,7 @@
 <% slider_images = images.to_a %>
 <% if slider_images.size == 1 %>
   <div class="my-6 -mx-4 sm:mx-0 overflow-hidden rounded-none sm:rounded-2xl border border-gray-200/40 shadow-lg shadow-stone-900/[0.06]">
-    <%= optimized_image_tag slider_images.first, variant: :carousel, class: "w-full h-56 sm:h-72 lg:h-96 object-cover", loading: "lazy" %>
+    <%= optimized_image_tag slider_images.first, variant: :carousel, class: "w-full max-h-[520px] object-contain", loading: "lazy" %>
   </div>
 <% elsif slider_images.size > 1 %>
   <div class="my-6 -mx-4 sm:mx-0 relative rounded-none sm:rounded-2xl overflow-hidden border border-gray-200/40 shadow-lg shadow-stone-900/[0.06] group"
@@ -12,7 +12,7 @@
         <div class="flex transition-transform duration-500 ease-out" data-carousel-target="track">
           <% slider_images.each do |img| %>
             <div class="w-full shrink-0" data-carousel-target="slide">
-              <%= optimized_image_tag img, variant: :carousel, class: "w-full h-56 sm:h-72 lg:h-96 object-cover", loading: "lazy" %>
+              <%= optimized_image_tag img, variant: :carousel, class: "w-full max-h-[520px] object-contain", loading: "lazy" %>
             </div>
           <% end %>
         </div>

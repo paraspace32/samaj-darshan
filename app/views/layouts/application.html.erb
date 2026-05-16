@@ -524,6 +524,28 @@
       if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
         document.querySelectorAll('[data-pwa-install-btn]').forEach(function(btn) { btn.style.display = 'none'; });
       }
+
+      // Page duration tracking
+      (function() {
+        var startTime = Date.now();
+        var pagePath = window.location.pathname;
+        var sent = false;
+        function sendDuration() {
+          if (sent) return;
+          sent = true;
+          var seconds = Math.round((Date.now() - startTime) / 1000);
+          if (seconds < 2) return;
+          var csrf = document.querySelector('meta[name="csrf-token"]');
+          navigator.sendBeacon('/visit_ping', new URLSearchParams({
+            duration: seconds, path: pagePath, authenticity_token: csrf ? csrf.content : ''
+          }));
+        }
+        document.addEventListener('visibilitychange', function() {
+          if (document.visibilityState === 'hidden') sendDuration();
+        });
+        document.addEventListener('turbo:before-visit', sendDuration);
+        window.addEventListener('pagehide', sendDuration);
+      })();
     </script>
   </body>
 </html>

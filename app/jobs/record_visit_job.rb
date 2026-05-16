@@ -5,6 +5,8 @@ class RecordVisitJob < ApplicationJob
     is_bot = Visit.bot_user_agent?(user_agent)
     token  = Visit.generate_token(ip, user_agent)
     geo    = is_bot ? { city: nil, country: nil } : GeolocationService.lookup(ip)
+    device = Visit.parse_device(user_agent)
+    new_visitor = !Visit.where(visitor_token: token).exists?
 
     Visit.create!(
       visitor_token: token,
@@ -16,7 +18,11 @@ class RecordVisitJob < ApplicationJob
       country:       geo[:country],
       user_id:       user_id,
       bot:           is_bot,
-      visited_at:    visited_at
+      visited_at:    visited_at,
+      device_type:   device[:device_type],
+      browser:       device[:browser],
+      os:            device[:os],
+      new_visitor:   new_visitor
     )
   end
 end

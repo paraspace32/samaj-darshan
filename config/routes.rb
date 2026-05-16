@@ -14,6 +14,9 @@ Rails.application.routes.draw do
   get "locale/:locale" => "locales#update", as: :set_locale
   get "set_region/:slug" => "locales#set_region", as: :set_region
 
+  # Visit duration ping
+  post "visit_ping" => "visits#ping"
+
   # Authentication
   get  "login" => "sessions#new",     as: :login
   post "login" => "sessions#create"

@@ -32,12 +32,41 @@ module Admin
 
       @bot_count_today = Visit.where(bot: true).today.count
 
+      # Device & browser breakdown (this month)
+      @device_stats = human.this_month.where.not(device_type: nil)
+                        .group(:device_type).order(Arel.sql("COUNT(*) DESC"))
+                        .pluck(:device_type, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                        .map { |type, count| { type: type, count: count } }
+
+      @browser_stats = human.this_month.where.not(browser: nil)
+                         .group(:browser).order(Arel.sql("COUNT(*) DESC"))
+                         .limit(6)
+                         .pluck(:browser, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                         .map { |name, count| { name: name, count: count } }
+
+      @os_stats = human.this_month.where.not(os: nil)
+                    .group(:os).order(Arel.sql("COUNT(*) DESC"))
+                    .limit(6)
+                    .pluck(:os, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                    .map { |name, count| { name: name, count: count } }
+
+      # New vs returning
+      @new_visitors = human.this_month.where(new_visitor: true).unique_count
+      @returning_visitors = human.this_month.where(new_visitor: false).unique_count
+
+      # Average page duration
+      durations = human.this_month.where.not(duration_seconds: nil).where("duration_seconds > 0")
+      @avg_duration = durations.any? ? durations.average(:duration_seconds).to_i : 0
+
       @daily_uniques = human
                          .where(visited_at: 30.days.ago..)
                          .group(Arel.sql("DATE(visited_at)"))
                          .order(Arel.sql("DATE(visited_at)"))
                          .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
                          .map { |day, count| { day: day, count: count } }
+
+      @ga_realtime = GoogleAnalyticsService.realtime_data
+      @ga_reporting = GoogleAnalyticsService.reporting_data
     end
 
     private

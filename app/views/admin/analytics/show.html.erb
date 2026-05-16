@@ -33,8 +33,8 @@
   </div>
 </div>
 
-<%# Registered vs Anonymous vs Bots %>
-<div class="grid grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+<%# Registered vs Anonymous vs Bots + Engagement %>
+<div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
   <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
     <p class="text-xl sm:text-2xl font-black text-orange-600"><%= number_with_delimiter(@registered_count) %></p>
     <p class="text-[11px] font-semibold text-gray-500 mt-1">Logged In</p>
@@ -45,7 +45,19 @@
   </div>
   <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
     <p class="text-xl sm:text-2xl font-black text-red-500"><%= number_with_delimiter(@bot_count_today) %></p>
-    <p class="text-[11px] font-semibold text-gray-500 mt-1">Bots Blocked</p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Bot Visits</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-green-600"><%= number_with_delimiter(@new_visitors) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">New Visitors</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-indigo-600"><%= number_with_delimiter(@returning_visitors) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Returning</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-teal-600"><%= @avg_duration > 0 ? "#{@avg_duration / 60}m #{@avg_duration % 60}s" : "—" %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Avg. Time</p>
   </div>
 </div>
 
@@ -77,6 +89,63 @@
     </div>
   </div>
 <% end %>
+
+<%# Device / Browser / OS breakdown %>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+  <%# Devices %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Devices</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @device_stats.each do |d| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700 capitalize"><%= d[:type] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(d[:count]) %></span>
+        </div>
+      <% end %>
+      <% if @device_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Browsers %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Browsers</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @browser_stats.each do |b| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700"><%= b[:name] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(b[:count]) %></span>
+        </div>
+      <% end %>
+      <% if @browser_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# OS %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Operating Systems</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @os_stats.each do |o| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700"><%= o[:name] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(o[:count]) %></span>
+        </div>
+      <% end %>
+      <% if @os_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
   <%# Top Pages %>

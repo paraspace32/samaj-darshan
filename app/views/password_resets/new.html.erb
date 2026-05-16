@@ -182,7 +182,10 @@ window.sendOTP = function() {
       try { window.recaptchaVerifier.clear(); } catch(_) {}
       window.recaptchaVerifier = null;
     }
-    document.getElementById('recaptcha-container').innerHTML = '';
+    var oldEl = document.getElementById('recaptcha-container');
+    var newEl = document.createElement('div');
+    newEl.id = 'recaptcha-container';
+    oldEl.replaceWith(newEl);
     window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
   } catch (e) {
     console.error('reCAPTCHA init error:', e);

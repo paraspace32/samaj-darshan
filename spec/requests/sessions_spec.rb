@@ -33,6 +33,57 @@ RSpec.describe "Sessions", type: :request do
       post login_path, params: { phone: "123", firebase_id_token: "token" }, as: :json
       expect(response).to have_http_status(:unprocessable_entity)
     end
+
+    it "logs in an existing user and returns redirect" do
+      post login_path, params: { phone: user.phone, firebase_id_token: "test_token" }, as: :json
+      expect(response).to have_http_status(:ok)
+      json = response.parsed_body
+      expect(json["redirect_to"]).to eq(root_path)
+      expect(session[:user_id]).to eq(user.id)
+    end
+
+    it "returns needs_name for a new phone number" do
+      post login_path, params: { phone: "7777777777", firebase_id_token: "test_token" }, as: :json
+      expect(response).to have_http_status(:ok)
+      json = response.parsed_body
+      expect(json["needs_name"]).to eq(true)
+      expect(session[:verified_phone]).to eq("7777777777")
+    end
+
+    it "blocks a blocked user" do
+      user.update!(status: :blocked)
+      post login_path, params: { phone: user.phone, firebase_id_token: "test_token" }, as: :json
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe "POST /login/set_name (full signup flow)" do
+    it "creates a new user after OTP verification" do
+      post login_path, params: { phone: "7777777777", firebase_id_token: "test_token" }, as: :json
+      expect(response.parsed_body["needs_name"]).to eq(true)
+
+      expect {
+        post set_name_path, params: { name: "Mamta Asati" }, as: :json
+      }.to change(User, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body["redirect_to"]).to eq(root_path)
+
+      new_user = User.find_by(phone: "7777777777")
+      expect(new_user.name).to eq("Mamta Asati")
+      expect(session[:user_id]).to eq(new_user.id)
+    end
+
+    it "fails without a prior verified phone in session" do
+      post set_name_path, params: { name: "Test User" }, as: :json
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "fails with blank name" do
+      post login_path, params: { phone: "7777777777", firebase_id_token: "test_token" }, as: :json
+      post set_name_path, params: { name: "  " }, as: :json
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 
   describe "DELETE /logout" do

@@ -177,8 +177,16 @@ window.sendOTP = function() {
   btn.disabled = true;
   btn.innerHTML = strings.sending + ' &nbsp;⏳';
 
-  if (!window.recaptchaVerifier) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
+  try {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'invisible' });
+    }
+  } catch (e) {
+    console.error('reCAPTCHA init error:', e);
+    showError(strings.send_failed + ' (recaptcha: ' + (e.code || e.message) + ')');
+    btn.disabled = false;
+    btn.innerHTML = strings.send_otp + ' &nbsp;→';
+    return;
   }
 
   signInWithPhoneNumber(auth, '+91' + phone, window.recaptchaVerifier)
@@ -196,7 +204,7 @@ window.sendOTP = function() {
       btn.disabled = false;
       btn.innerHTML = strings.send_otp + ' &nbsp;→';
       if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
+        try { window.recaptchaVerifier.clear(); } catch(_) {}
         window.recaptchaVerifier = null;
       }
     });

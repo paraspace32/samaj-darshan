@@ -13,12 +13,11 @@ Rails.application.routes.draw do
   # Locale switching
   get "locale/:locale" => "locales#update", as: :set_locale
 
-  # Authentication
+  # Authentication (OTP-only via Firebase Phone Auth)
   get  "login" => "sessions#new",     as: :login
   post "login" => "sessions#create"
-  get  "logout" => "sessions#destroy", as: :logout
-  get  "signup" => "registrations#new", as: :signup
-  post "signup" => "registrations#create"
+  post "login/set_name" => "sessions#set_name", as: :set_name
+  delete "logout" => "sessions#destroy", as: :logout
 
   # User profile
   resource :profile, only: [ :edit, :update ], controller: "profiles"

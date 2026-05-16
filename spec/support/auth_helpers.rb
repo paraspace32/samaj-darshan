@@ -1,6 +1,6 @@
 module AuthHelpers
   def login_as(user)
-    post login_path, params: { phone: user.phone, password: "password123" }
+    post login_path, params: { phone: user.phone, firebase_id_token: "test_token" }, as: :json
   end
 end
 

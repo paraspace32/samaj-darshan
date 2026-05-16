@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_secure_password
+  has_secure_password validations: false
 
   SECTIONS = %w[news magazines webinars education jobs billboards].freeze
 
@@ -19,7 +19,7 @@ class User < ApplicationRecord
 
   before_validation { self.email = nil if email.blank? }
 
-  validates :name, presence: true
+  validates :name, presence: true, on: :update
   validates :phone, presence: true, uniqueness: true,
                     format: { with: /\A[6-9]\d{9}\z/, message: "must be a valid 10-digit Indian mobile number" }
   validates :email, uniqueness: true, allow_blank: true,

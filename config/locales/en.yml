@@ -12,6 +12,7 @@ en:
     marriage: "Marriage Section"
     education: "Education"
     jobs: "Jobs"
+    tributes: "Tributes"
     admin: "Admin Panel"
     new_article: "New News"
     news: "News"
@@ -422,6 +423,10 @@ en:
     apply_now: "Apply Now"
     closed: "Closed"
     deadline_passed: "Application deadline has passed"
+
+  tributes:
+    title: "Tributes"
+    subtitle: "Remembering our loved ones"
 
   profile:
     edit_title: "Edit Profile"

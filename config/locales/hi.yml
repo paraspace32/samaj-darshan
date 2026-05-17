@@ -71,6 +71,7 @@ hi:
     marriage: "विवाह परिचय"
     education: "शिक्षा"
     jobs: "नौकरियाँ"
+    tributes: "श्रद्धांजलि"
     admin: "एडमिन पैनल"
     new_article: "नई ख़बर"
     news: "समाचार"
@@ -521,6 +522,10 @@ hi:
     apply_now: "अभी आवेदन करें"
     closed: "बंद"
     deadline_passed: "आवेदन की अंतिम तिथि बीत चुकी है"
+
+  tributes:
+    title: "श्रद्धांजलि"
+    subtitle: "अपनों की स्मृति में"
 
   profile:
     edit_title: "प्रोफ़ाइल संपादित करें"

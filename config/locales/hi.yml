@@ -526,7 +526,7 @@ hi:
   tributes:
     title: "श्रद्धांजलि"
     subtitle: "अपनों की स्मृति में"
-    page_title: "श्रद्धांजलि — %{brand}"
+    page_title: "श्रद्धांजलि"
     no_tributes: "अभी कोई श्रद्धांजलि नहीं है।"
     back_to_tributes: "← श्रद्धांजलि पर वापस"
     give_flowers: "फूल चढ़ाएं"
@@ -539,7 +539,7 @@ hi:
   kanyadaan:
     title: "कन्यादान"
     subtitle: "समाज के कन्यादान समारोह के लिए अपनी बेटी का पंजीकरण करें"
-    page_title: "कन्यादान पंजीकरण — %{brand}"
+    page_title: "कन्यादान पंजीकरण"
     girl_name: "कन्या का नाम"
     girl_name_placeholder: "कन्या का पूरा नाम लिखें"
     parent_name: "अभिभावक का नाम"

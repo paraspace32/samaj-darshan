@@ -427,7 +427,7 @@ en:
   tributes:
     title: "Tributes"
     subtitle: "Remembering our loved ones"
-    page_title: "Tributes — %{brand}"
+    page_title: "Tributes"
     no_tributes: "No tributes yet."
     back_to_tributes: "← Back to Tributes"
     give_flowers: "Give Flowers"
@@ -440,7 +440,7 @@ en:
   kanyadaan:
     title: "Kanyadaan"
     subtitle: "Register your daughter for the community Kanyadaan ceremony"
-    page_title: "Kanyadaan Registration — %{brand}"
+    page_title: "Kanyadaan Registration"
     girl_name: "Girl Name"
     girl_name_placeholder: "Enter girl's full name"
     parent_name: "Parent Name"

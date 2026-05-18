@@ -25,6 +25,8 @@ Rails.application.routes.draw do
   # Admin
   namespace :admin do
     get "/" => "dashboard#show", as: :root
+    get "analytics" => "analytics#show", as: :analytics
+    get "analytics/reports" => "analytics#reports", as: :analytics_reports
     resources :news do
       member do
         patch :publish

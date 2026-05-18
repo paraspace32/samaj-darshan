@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_07_121510) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_121510) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "analytics_daily_reports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.jsonb "devices"
+    t.integer "ga_new_users"
+    t.integer "ga_pageviews"
+    t.integer "ga_sessions"
+    t.integer "ga_users"
+    t.jsonb "top_cities"
+    t.jsonb "top_pages"
+    t.datetime "updated_at", null: false
+    t.float "user_delta_pct"
+    t.float "view_delta_pct"
+    t.integer "visit_avg_duration"
+    t.integer "visit_bots"
+    t.integer "visit_new"
+    t.integer "visit_returning"
+    t.integer "visit_unique"
+    t.integer "visit_views"
+    t.index ["date"], name: "index_analytics_daily_reports_on_date", unique: true
   end
 
   create_table "billboards", force: :cascade do |t|

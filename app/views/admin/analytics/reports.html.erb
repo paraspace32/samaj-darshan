@@ -1,0 +1,136 @@
+<% content_for(:page_title, "Daily Analytics Reports") %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-extrabold text-white">Daily Analytics Reports</h1>
+  <%= link_to "Back to Analytics", admin_analytics_path, class: "text-orange-400 hover:text-orange-300 text-sm" %>
+</div>
+
+<p class="text-gray-400 text-sm mb-6">
+  Nightly comparison of our Visit-based analytics vs Google Analytics. Runs automatically at 2 AM.
+</p>
+
+<% if @reports.empty? %>
+  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-8 text-center">
+    <p class="text-gray-400">No reports yet. The first report will be generated tonight at 2 AM.</p>
+  </div>
+<% else %>
+  <div class="overflow-x-auto rounded-xl border border-gray-700/50">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-800/80 text-gray-400 text-xs uppercase tracking-wider">
+        <tr>
+          <th class="px-4 py-3 text-left">Date</th>
+          <th class="px-4 py-3 text-right">Visit Unique</th>
+          <th class="px-4 py-3 text-right">Visit Views</th>
+          <th class="px-4 py-3 text-right">GA Users</th>
+          <th class="px-4 py-3 text-right">GA Pageviews</th>
+          <th class="px-4 py-3 text-right">User Delta</th>
+          <th class="px-4 py-3 text-right">View Delta</th>
+          <th class="px-4 py-3 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700/30">
+        <% @reports.each do |report| %>
+          <tr class="bg-gray-800/30 hover:bg-gray-800/50 transition">
+            <td class="px-4 py-3 text-gray-300 font-medium"><%= report.date.strftime("%b %d, %Y") %></td>
+            <td class="px-4 py-3 text-right text-white"><%= number_with_delimiter(report.visit_unique) %></td>
+            <td class="px-4 py-3 text-right text-white"><%= number_with_delimiter(report.visit_views) %></td>
+            <% if report.ga_available? %>
+              <td class="px-4 py-3 text-right text-white"><%= number_with_delimiter(report.ga_users) %></td>
+              <td class="px-4 py-3 text-right text-white"><%= number_with_delimiter(report.ga_pageviews) %></td>
+              <td class="px-4 py-3 text-right">
+                <% delta = report.user_delta %>
+                <span class="<%= delta && delta >= 0 ? 'text-green-400' : 'text-red-400' %>">
+                  <%= delta ? "#{delta >= 0 ? '+' : ''}#{delta} (#{report.user_delta_pct}%)" : '-' %>
+                </span>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <% vdelta = report.view_delta %>
+                <span class="<%= vdelta && vdelta >= 0 ? 'text-green-400' : 'text-red-400' %>">
+                  <%= vdelta ? "#{vdelta >= 0 ? '+' : ''}#{vdelta} (#{report.view_delta_pct}%)" : '-' %>
+                </span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <% if report.alert? %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-900/50 text-red-300 border border-red-700/50">Alert</span>
+                <% else %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-900/50 text-green-300 border border-green-700/50">OK</span>
+                <% end %>
+              </td>
+            <% else %>
+              <td class="px-4 py-3 text-right text-gray-500" colspan="4">GA unavailable</td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-900/50 text-yellow-300 border border-yellow-700/50">No GA</span>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%# Detail cards for each report %>
+  <div class="mt-8 space-y-4">
+    <% @reports.first(7).each do |report| %>
+      <details class="bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden group">
+        <summary class="px-5 py-4 cursor-pointer flex items-center justify-between hover:bg-gray-800/70 transition">
+          <span class="text-white font-medium"><%= report.date.strftime("%A, %b %d") %></span>
+          <span class="text-gray-400 text-xs">Click to expand</span>
+        </summary>
+        <div class="px-5 pb-5 pt-2 border-t border-gray-700/30">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <p class="text-gray-500 text-xs">New Visitors</p>
+              <p class="text-white font-semibold"><%= report.visit_new %></p>
+            </div>
+            <div>
+              <p class="text-gray-500 text-xs">Returning</p>
+              <p class="text-white font-semibold"><%= report.visit_returning %></p>
+            </div>
+            <div>
+              <p class="text-gray-500 text-xs">Bots Filtered</p>
+              <p class="text-white font-semibold"><%= report.visit_bots %></p>
+            </div>
+            <div>
+              <p class="text-gray-500 text-xs">Avg Duration</p>
+              <p class="text-white font-semibold"><%= report.visit_avg_duration %>s</p>
+            </div>
+          </div>
+
+          <% if report.top_pages.present? %>
+            <div class="mb-3">
+              <p class="text-gray-500 text-xs mb-1">Top Pages</p>
+              <% report.top_pages.each do |page| %>
+                <div class="flex justify-between text-sm py-1">
+                  <span class="text-gray-300 truncate mr-2"><%= page["path"] %></span>
+                  <span class="text-gray-500 whitespace-nowrap"><%= page["uniques"] %> unique</span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <% if report.top_cities.present? %>
+            <div class="mb-3">
+              <p class="text-gray-500 text-xs mb-1">Top Cities</p>
+              <div class="flex flex-wrap gap-2">
+                <% report.top_cities.each do |city| %>
+                  <span class="bg-gray-700/50 text-gray-300 text-xs px-2 py-1 rounded"><%= city["city"] %> (<%= city["count"] %>)</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <% if report.devices.present? %>
+            <div>
+              <p class="text-gray-500 text-xs mb-1">Devices</p>
+              <div class="flex flex-wrap gap-2">
+                <% report.devices.each do |dev| %>
+                  <span class="bg-gray-700/50 text-gray-300 text-xs px-2 py-1 rounded"><%= dev["type"]&.capitalize %>: <%= dev["count"] %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+  </div>
+<% end %>

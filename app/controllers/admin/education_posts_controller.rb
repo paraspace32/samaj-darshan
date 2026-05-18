@@ -39,6 +39,12 @@ module Admin
     end
 
     def update
+      if params[:remove_image_id].present?
+        @education_post.images.find_by(id: params[:remove_image_id])&.purge
+        redirect_to edit_admin_education_post_path(@education_post), notice: "Image removed."
+        return
+      end
+
       if @education_post.update(education_post_params)
         redirect_to admin_education_post_path(@education_post), notice: "Education post updated successfully."
       else
@@ -71,7 +77,8 @@ module Admin
         :title_en, :title_hi, :content_en, :content_hi,
         :category, :organization_name, :exam_date,
         :registration_deadline, :official_url, :cover_image,
-        :hero_eligible
+        :hero_eligible,
+        images: []
       )
     end
   end

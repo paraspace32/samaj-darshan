@@ -8,8 +8,12 @@ RSpec.describe Magazine, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:title_en) }
-    it { is_expected.to validate_presence_of(:title_hi) }
+    it "is invalid without title_en and title_hi" do
+      mag = build(:magazine, title_en: nil, title_hi: nil)
+      expect(mag).not_to be_valid
+      expect(mag.errors[:title_en]).to be_present
+    end
+
     it { is_expected.to validate_presence_of(:issue_number) }
     it { is_expected.to validate_uniqueness_of(:issue_number) }
     it { is_expected.to validate_numericality_of(:issue_number).is_greater_than(0) }

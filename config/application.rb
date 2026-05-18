@@ -31,6 +31,9 @@ module SamajDarshan
 
     config.time_zone = "Asia/Kolkata"
 
+    # Trust Docker-internal proxy (Caddy) so request.remote_ip returns the real visitor IP
+    config.action_dispatch.trusted_proxies = ActionDispatch::RemoteIp::TRUSTED_PROXIES + [ "172.16.0.0/12" ]
+
     config.i18n.available_locales = [ :en, :hi ]
     config.i18n.default_locale = :hi
     config.i18n.fallbacks = true

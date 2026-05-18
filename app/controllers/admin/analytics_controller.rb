@@ -9,12 +9,14 @@ module Admin
     def show
       human = Visit.human
 
+      # ── Summary cards (always unfiltered) ─────────────────────────────────
       @stats = {
         today: { unique: human.today.unique_count, views: human.today.count },
         week:  { unique: human.this_week.unique_count, views: human.this_week.count },
         month: { unique: human.this_month.unique_count, views: human.this_month.count }
       }
 
+      # ── Filters ───────────────────────────────────────────────────────────
       @date_range = params[:range].presence || "this_month"
       filtered = apply_date_range(human, @date_range)
       filtered = filtered.where(city: params[:city]) if params[:city].present?
@@ -23,6 +25,7 @@ module Admin
 
       @filter_active = params[:city].present? || params[:device].present? || params[:path].present? || !%w[this_month].include?(@date_range)
 
+      # ── Filtered stats ────────────────────────────────────────────────────
       @filtered_unique = filtered.unique_count
       @filtered_views  = filtered.count
 
@@ -36,6 +39,7 @@ module Admin
       durations = filtered.where.not(duration_seconds: nil).where("duration_seconds > 0")
       @avg_duration = durations.any? ? durations.average(:duration_seconds).to_i : 0
 
+      # ── Top pages & cities ────────────────────────────────────────────────
       @top_pages = filtered
                      .group(:path)
                      .order(Arel.sql("COUNT(*) DESC"))
@@ -51,6 +55,7 @@ module Admin
                       .pluck(:city, Arel.sql("COUNT(DISTINCT visitor_token)"))
                       .map { |city, count| { city: city, count: count } }
 
+      # ── Device / Browser / OS breakdown ───────────────────────────────────
       @device_stats = filtered.where.not(device_type: nil)
                         .group(:device_type).order(Arel.sql("COUNT(*) DESC"))
                         .pluck(:device_type, Arel.sql("COUNT(DISTINCT visitor_token)"))
@@ -68,12 +73,14 @@ module Admin
                     .pluck(:os, Arel.sql("COUNT(DISTINCT visitor_token)"))
                     .map { |name, count| { name: name, count: count } }
 
+      # ── Daily trend chart ─────────────────────────────────────────────────
       @daily_uniques = filtered
                          .group(Arel.sql("DATE(visited_at)"))
                          .order(Arel.sql("DATE(visited_at)"))
                          .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
                          .map { |day, count| { day: day, count: count } }
 
+      # ── Filter dropdown options (from actual data) ────────────────────────
       @available_cities = human.this_month.where.not(city: [ nil, "" ])
                             .group(:city).order(Arel.sql("COUNT(*) DESC")).limit(30)
                             .pluck(:city)
@@ -116,11 +123,25 @@ module Admin
 
     def log_dashboard_view
       filters = { range: @date_range, city: params[:city], device: params[:device], path: params[:path] }.compact_blank
+      ga_total = @ga_reporting&.dig(:total_users)
+      ga_realtime = @ga_realtime&.dig(:total)
+      top_page = @top_pages.first
+      top_city = @top_cities.first
+
       ANALYTICS_LOG.info(
         "DASHBOARD | user=#{current_user.id} | filters=#{filters.any? ? filters.to_json : "none"} | " \
         "today_unique=#{@stats[:today][:unique]} today_views=#{@stats[:today][:views]} | " \
+        "week_unique=#{@stats[:week][:unique]} week_views=#{@stats[:week][:views]} | " \
+        "month_unique=#{@stats[:month][:unique]} month_views=#{@stats[:month][:views]} | " \
         "filtered_unique=#{@filtered_unique} filtered_views=#{@filtered_views} | " \
-        "ga_realtime=#{@ga_realtime&.dig(:total) || "nil"} ga_total_users=#{@ga_reporting&.dig(:total_users) || "nil"}"
+        "registered=#{@registered_count} anonymous=#{@anonymous_count} bots_today=#{@bot_count_today} | " \
+        "new=#{@new_visitors} returning=#{@returning_visitors} avg_duration=#{@avg_duration}s | " \
+        "devices=#{@device_stats.map { |d| "#{d[:type]}:#{d[:count]}" }.join(",")} | " \
+        "browsers=#{@browser_stats.map { |b| "#{b[:name]}:#{b[:count]}" }.join(",")} | " \
+        "os=#{@os_stats.map { |o| "#{o[:name]}:#{o[:count]}" }.join(",")} | " \
+        "top_page=#{top_page ? "#{top_page[:path]}(#{top_page[:uniques]})" : "none"} | " \
+        "top_city=#{top_city ? "#{top_city[:city]}(#{top_city[:count]})" : "none"} | " \
+        "ga_realtime=#{ga_realtime || "nil"} ga_total_users=#{ga_total || "nil"}"
       )
     rescue => e
       ANALYTICS_LOG.error "LOG_ERROR | #{e.class}: #{e.message}"

@@ -3,5 +3,13 @@ samaj-darshan.com {
 }
 
 www.samaj-darshan.com {
-    reverse_proxy web:80
+    request_body {
+        max_size 50MB
+    }
+    reverse_proxy web:80 {
+        transport http {
+            read_timeout 120s
+            write_timeout 120s
+        }
+    }
 }

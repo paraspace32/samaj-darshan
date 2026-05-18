@@ -9,6 +9,10 @@ class GoogleAnalyticsService
     l.formatter = proc { |_sev, time, _prog, msg| "#{time.strftime('%Y-%m-%d %H:%M:%S')} #{msg}\n" }
   end
 
+  GA_LOGGER = Logger.new(Rails.root.join("log", "ga_analytics.log"), "daily").tap do |l|
+    l.formatter = proc { |sev, time, _prog, msg| "#{time.strftime('%Y-%m-%d %H:%M:%S')} [#{sev}] #{msg}\n" }
+  end
+
   REALTIME_CACHE_KEY  = "ga_realtime_active_users"
   REPORTING_CACHE_KEY = "ga_reporting_visitors"
   REALTIME_TTL        = 60.seconds
@@ -72,22 +76,6 @@ class GoogleAnalyticsService
 
   def self.reporting_data
     Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL, skip_nil: true) { fetch_reporting }
-  end
-
-  # Returns the number of active users currently on a specific page path.
-  # Cached for 60 seconds. Returns nil if GA is unavailable.
-  def self.active_readers(path)
-    cache_key = "ga_active_readers/#{Digest::MD5.hexdigest(path)}"
-    Rails.cache.fetch(cache_key, expires_in: REALTIME_TTL, skip_nil: true) do
-      fetch_active_readers(path)
-    end
-  rescue StandardError => e
-    Rails.logger.error "[GA Active Readers] #{e.class}: #{e.message}"
-    nil
-  end
-
-  GA_LOGGER = Logger.new(Rails.root.join("log", "ga_analytics.log"), "daily").tap do |l|
-    l.formatter = proc { |sev, time, _, msg| "#{time.strftime('%Y-%m-%d %H:%M:%S')} [#{sev}] #{msg}\n" }
   end
 
   def self.daily_users(start_date:, end_date: nil)
@@ -233,32 +221,6 @@ class GoogleAnalyticsService
     "Ankara" => [ 39.921, 32.854 ], "Istanbul" => [ 41.013, 28.948 ]
   }.freeze
 
-  def self.fetch_active_readers(path)
-    service = build_service
-    return nil unless service
-
-    request = Google::Apis::AnalyticsdataV1beta::RunRealtimeReportRequest.new(
-      dimension_filter: Google::Apis::AnalyticsdataV1beta::FilterExpression.new(
-        filter: Google::Apis::AnalyticsdataV1beta::Filter.new(
-          field_name: "unifiedPagePathScreen",
-          string_filter: Google::Apis::AnalyticsdataV1beta::StringFilter.new(
-            match_type: "EXACT",
-            value: path
-          )
-        )
-      ),
-      metrics: [
-        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "activeUsers")
-      ]
-    )
-
-    response = service.run_property_realtime_report("properties/#{PROPERTY_ID}", request)
-    (response.rows&.first&.metric_values&.first&.value || 0).to_i
-  rescue StandardError => e
-    Rails.logger.error "[GA Active Readers] #{e.class}: #{e.message}"
-    nil
-  end
-
   def self.fetch_realtime
     service = build_service
     return nil unless service
@@ -276,8 +238,11 @@ class GoogleAnalyticsService
     )
 
     response = service.run_property_realtime_report("properties/#{PROPERTY_ID}", request)
-    parse_cities(response.rows, metric_index: 0)
+    result = parse_cities(response.rows, metric_index: 0)
+    GA_LOGGER.info "REALTIME | active_users=#{result[:total]} | countries=#{result[:countries].size} | map_points=#{result[:map_points].size}"
+    result
   rescue StandardError => e
+    GA_LOGGER.error "REALTIME | #{e.class}: #{e.message}"
     Rails.logger.error "[GA Realtime] #{e.class}: #{e.message}"
     nil
   end
@@ -318,6 +283,8 @@ class GoogleAnalyticsService
     total_events  = total_response.rows&.first&.metric_values&.dig(1)&.value.to_i
     city_data     = parse_cities(city_response.rows, metric_index: 0)
 
+    GA_LOGGER.info "REPORTING | total_users=#{total_users} | total_events=#{total_events} | countries=#{city_data[:countries].size} | map_points=#{city_data[:map_points].size}"
+
     {
       total_users:  total_users,
       total_events: total_events,
@@ -326,6 +293,7 @@ class GoogleAnalyticsService
       fetched_at:   Time.current
     }
   rescue StandardError => e
+    GA_LOGGER.error "REPORTING | #{e.class}: #{e.message}"
     Rails.logger.error "[GA Reporting] #{e.class}: #{e.message}"
     nil
   end

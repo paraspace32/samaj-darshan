@@ -4,7 +4,7 @@ RSpec.describe Billboard, type: :model do
   subject { build(:billboard) }
 
   describe "enums" do
-    it { is_expected.to define_enum_for(:billboard_type).with_values(top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4) }
+    it { is_expected.to define_enum_for(:billboard_type).with_values(top_banner: 0, feed_inline: 1, fullscreen_splash: 2, article_top: 3, article_mid: 4, marriage_ad: 5) }
   end
 
   describe "validations" do

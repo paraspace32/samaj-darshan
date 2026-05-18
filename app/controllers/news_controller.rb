@@ -48,7 +48,7 @@ class NewsController < ApplicationController
                                 .order(published_at: :desc).limit(10).to_a
 
       hero_candidates.sort_by! { |item| -(item.published_at&.to_i || 0) }
-      hero_candidates = hero_candidates.first(10)
+      hero_candidates = hero_candidates.first(12)
 
       @featured = hero_candidates.first
       @featured_type = case @featured
@@ -57,10 +57,10 @@ class NewsController < ApplicationController
       else :news
       end
 
-      @home_side_items = hero_candidates.drop(1).first(4)
+      @home_side_items = hero_candidates.drop(1).first(8)
 
       # Exclude hero items that are News records from the region section below
-      excluded_news_ids = hero_candidates.first(5).select { |i| i.is_a?(News) }.map(&:id)
+      excluded_news_ids = hero_candidates.first(9).select { |i| i.is_a?(News) }.map(&:id)
       remaining = @news_items.where.not(id: excluded_news_ids)
       @total_count = remaining.count
       @news_items  = remaining.offset(0).limit(@per_page)
@@ -106,15 +106,21 @@ class NewsController < ApplicationController
     end
 
     respond_to do |format|
-      format.turbo_stream do
-        total_pages = (@total_count.to_f / @per_page).ceil
-        has_more    = @page < total_pages
-        next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil
-        render turbo_stream: [
-          turbo_stream.append("news-grid-mobile",  partial: "news/news_mobile_item",  collection: @news_items, as: :news_item),
-          turbo_stream.append("news-grid-desktop", partial: "news/news_desktop_item", collection: @news_items, as: :news_item),
-          turbo_stream.replace("news-sentinel",    partial: "news/news_sentinel",     locals: { has_more: has_more, next_url: next_url })
-        ]
+      # Only serve Turbo Stream for pagination requests (infinite scroll).
+      # Without this guard, post-login redirects to / match turbo_stream
+      # (because Turbo sends Accept: text/vnd.turbo-stream.html) and return
+      # stream actions instead of the full HTML page — breaking navigation.
+      if params[:page].present?
+        format.turbo_stream do
+          total_pages = (@total_count.to_f / @per_page).ceil
+          has_more    = @page < total_pages
+          next_url    = has_more ? url_for(request.query_parameters.merge(page: @page + 1)) : nil
+          render turbo_stream: [
+            turbo_stream.append("news-grid-mobile",  partial: "news/news_mobile_item",  collection: @news_items, as: :news_item),
+            turbo_stream.append("news-grid-desktop", partial: "news/news_desktop_item", collection: @news_items, as: :news_item),
+            turbo_stream.replace("news-sentinel",    partial: "news/news_sentinel",     locals: { has_more: has_more, next_url: next_url })
+          ]
+        end
       end
       format.html do
         # Auto-region responses are per-visitor — never share in public cache
@@ -129,15 +135,9 @@ class NewsController < ApplicationController
     # Increment view counter — skip for admins, count everyone else
     News.update_counters(@news_item.id, views_count: 1) unless current_user&.admin_panel_access?
 
-    # Live reader counts from GA
-    # @active_readers → people on THIS article right now (per-page filter)
-    # @site_active_users → people on the whole site right now (always shows something)
-    @active_readers   = GoogleAnalyticsService.active_readers(request.path)
-    @site_active_users = begin
-      GoogleAnalyticsService.realtime_data&.dig(:total)
-    rescue
-      nil
-    end
+    # GA4 realtime API doesn't support per-page path filtering,
+    # so we show site-wide active users count instead.
+    @site_active_users = GoogleAnalyticsService.realtime_data&.dig(:total)
 
     @comments = @news_item.comments.includes(:user).recent
     @liked = current_user ? @news_item.likes.exists?(user: current_user) : false
@@ -194,25 +194,7 @@ class NewsController < ApplicationController
     "news/index/v2/#{@page}/#{params[:slug]}/#{region_key}/#{latest_news&.to_i}/#{latest_webinar&.to_i}/#{latest_edu&.to_i}/#{latest_job&.to_i}/#{I18n.locale}"
   end
 
-  # Detect visitor's city from IP and find a matching Region record.
-  # Results are cached per-IP for 24 hours. Returns nil on any failure.
   def detect_region_from_ip
-    ip = request.remote_ip
-    return nil if ip.blank? || ip.match?(/\A(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1)/)
-
-    city = Rails.cache.fetch("geo_city_#{ip}", expires_in: 24.hours) do
-      require "net/http"
-      uri = URI("http://ip-api.com/json/#{CGI.escape(ip)}?fields=city,status&lang=en")
-      res = Net::HTTP.get_response(uri)
-      data = JSON.parse(res.body)
-      data["status"] == "success" ? data["city"].to_s.strip : nil
-    rescue StandardError
-      nil
-    end
-
-    return nil if city.blank?
-
-    city_words = city.downcase.split
-    Region.active.ordered.find { |r| (city_words & r.name_en.downcase.split).any? }
+    visitor_region
   end
 end

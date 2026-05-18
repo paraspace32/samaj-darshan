@@ -17,3 +17,7 @@ production:
   analytics_daily_report:
     class: AnalyticsDailyReportJob
     schedule: at 2am every day
+
+  cleanup_visits:
+    class: CleanupVisitsJob
+    schedule: every day at 3am Asia/Kolkata

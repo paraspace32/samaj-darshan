@@ -1,133 +1,275 @@
 <% content_for(:page_title, "Visitor Analytics") %>
 
-<div class="flex items-center justify-between mb-6">
-  <h1 class="text-2xl font-extrabold text-white">Visitor Analytics</h1>
-  <%= link_to "Daily Reports", admin_analytics_reports_path, class: "px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition" %>
-</div>
-
-<%# Summary cards %>
-<div class="grid grid-cols-3 gap-4 mb-8">
-  <% [
-    ["Today", @stats[:today]],
-    ["This Week", @stats[:week]],
-    ["This Month", @stats[:month]]
-  ].each do |label, data| %>
-    <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
-      <p class="text-gray-400 text-xs uppercase tracking-wider mb-1"><%= label %></p>
-      <p class="text-2xl font-bold text-white"><%= number_with_delimiter(data[:unique]) %></p>
-      <p class="text-gray-500 text-xs"><%= number_with_delimiter(data[:views]) %> page views</p>
+<%# Header %>
+<div class="gradient-hero rounded-xl sm:rounded-2xl p-5 sm:p-8 mb-6 sm:mb-8 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-teal-500 blur-3xl"></div>
+    <div class="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-blue-500 blur-3xl"></div>
+  </div>
+  <div class="relative z-10 flex items-center justify-between">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
+      <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, IP-based deduplication.</p>
     </div>
-  <% end %>
+    <%= link_to "Daily Reports", admin_analytics_reports_path, class: "px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition" %>
+  </div>
 </div>
 
-<%# Filters %>
-<div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5 mb-6">
-  <div class="flex items-center justify-between mb-3">
-    <h3 class="text-sm font-semibold text-gray-300">Filters</h3>
+<%# Unique Visitors — summary cards (always unfiltered) %>
+<div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
+  <div class="grid grid-cols-3 divide-x divide-gray-100">
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-emerald-600"><%= number_with_delimiter(@stats[:today][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">Today</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:today][:views]) %> views</p>
+    </div>
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-blue-600"><%= number_with_delimiter(@stats[:week][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">This Week</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:week][:views]) %> views</p>
+    </div>
+    <div class="px-4 sm:px-6 py-5 text-center">
+      <p class="text-2xl sm:text-3xl font-black text-violet-600"><%= number_with_delimiter(@stats[:month][:unique]) %></p>
+      <p class="text-xs font-semibold text-gray-500 mt-1">This Month</p>
+      <p class="text-[10px] text-gray-400"><%= number_with_delimiter(@stats[:month][:views]) %> views</p>
+    </div>
+  </div>
+</div>
+
+<%# ── Filter bar ──────────────────────────────────────────────────────────── %>
+<%= form_tag(admin_analytics_path, method: :get, class: "bg-white rounded-2xl border border-gray-200/60 shadow-sm mb-6 sm:mb-8") do %>
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <h2 class="font-bold text-gray-900 text-sm">Filters</h2>
     <% if @filter_active %>
-      <%= link_to "Clear all", admin_analytics_path, class: "text-orange-400 text-xs hover:text-orange-300" %>
+      <%= link_to "Clear all", admin_analytics_path, class: "text-xs text-orange-600 hover:text-orange-700 font-medium" %>
     <% end %>
   </div>
-  <%= form_tag admin_analytics_path, method: :get, class: "grid grid-cols-2 lg:grid-cols-5 gap-3" do %>
+  <div class="px-4 sm:px-6 py-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
+    <%# Date range %>
     <div>
-      <label class="text-xs text-gray-400 block mb-1">Date Range</label>
-      <select name="range" class="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2">
-        <% [["This Month", "this_month"], ["Today", "today"], ["Yesterday", "yesterday"], ["This Week", "this_week"], ["Last 7 Days", "last_7"], ["Last 30 Days", "last_30"], ["Last 90 Days", "last_90"]].each do |label, val| %>
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Date Range</label>
+      <select name="range" onchange="toggleCustomDates(this.value)" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
+        <% { "today" => "Today", "yesterday" => "Yesterday", "this_week" => "This Week", "last_7" => "Last 7 Days", "this_month" => "This Month", "last_30" => "Last 30 Days", "last_90" => "Last 90 Days", "custom" => "Custom Range" }.each do |val, label| %>
           <option value="<%= val %>" <%= "selected" if @date_range == val %>><%= label %></option>
         <% end %>
       </select>
     </div>
+
+    <%# Custom date inputs %>
+    <div id="custom-dates" class="<%= @date_range == "custom" ? "" : "hidden" %> col-span-2 sm:col-span-1">
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">From / To</label>
+      <div class="flex gap-1.5">
+        <input type="date" name="from" value="<%= params[:from] %>" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500" />
+        <input type="date" name="to" value="<%= params[:to] %>" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500" />
+      </div>
+    </div>
+
+    <%# City filter %>
     <div>
-      <label class="text-xs text-gray-400 block mb-1">City</label>
-      <select name="city" class="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2">
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">City</label>
+      <select name="city" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
         <option value="">All Cities</option>
         <% @available_cities.each do |city| %>
           <option value="<%= city %>" <%= "selected" if params[:city] == city %>><%= city %></option>
         <% end %>
       </select>
     </div>
+
+    <%# Device type filter %>
     <div>
-      <label class="text-xs text-gray-400 block mb-1">Device</label>
-      <select name="device" class="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2">
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Device</label>
+      <select name="device" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
         <option value="">All Devices</option>
-        <% @available_devices.each do |dev| %>
-          <option value="<%= dev %>" <%= "selected" if params[:device] == dev %>><%= dev.capitalize %></option>
+        <% @available_devices.each do |device| %>
+          <option value="<%= device %>" <%= "selected" if params[:device] == device %>><%= device.capitalize %></option>
         <% end %>
       </select>
     </div>
+
+    <%# Path search %>
     <div>
-      <label class="text-xs text-gray-400 block mb-1">Page Path</label>
-      <input type="text" name="path" value="<%= params[:path] %>" placeholder="/news/..." class="w-full bg-gray-900 border border-gray-700 text-white text-sm rounded-lg px-3 py-2">
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Page Path</label>
+      <input type="text" name="path" value="<%= params[:path] %>" placeholder="/news, /jobs..."
+             class="w-full rounded-lg border-gray-300 text-sm py-2 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500" />
     </div>
-    <div class="flex items-end">
-      <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg px-4 py-2 transition">Apply Filters</button>
+  </div>
+
+  <div class="px-4 sm:px-6 pb-4 flex items-center gap-3">
+    <button type="submit" class="px-5 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">
+      Apply Filters
+    </button>
+    <% if @filter_active %>
+      <span class="text-xs text-gray-500">
+        Showing <strong class="text-gray-900"><%= number_with_delimiter(@filtered_unique) %></strong> unique visitors,
+        <strong class="text-gray-900"><%= number_with_delimiter(@filtered_views) %></strong> views
+      </span>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  function toggleCustomDates(val) {
+    document.getElementById('custom-dates').classList.toggle('hidden', val !== 'custom');
+  }
+</script>
+
+<%# Registered vs Anonymous vs Bots + Engagement %>
+<div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-orange-600"><%= number_with_delimiter(@registered_count) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Logged In</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-gray-600"><%= number_with_delimiter(@anonymous_count) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Anonymous</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-red-500"><%= number_with_delimiter(@bot_count_today) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Bot Visits</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-green-600"><%= number_with_delimiter(@new_visitors) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">New Visitors</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-indigo-600"><%= number_with_delimiter(@returning_visitors) %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Returning</p>
+  </div>
+  <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
+    <p class="text-xl sm:text-2xl font-black text-teal-600"><%= @avg_duration > 0 ? "#{@avg_duration / 60}m #{@avg_duration % 60}s" : "—" %></p>
+    <p class="text-[11px] font-semibold text-gray-500 mt-1">Avg. Time</p>
+  </div>
+</div>
+
+<%# Daily trend chart %>
+<% if @daily_uniques.any? %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Daily Unique Visitors</h2>
+      <p class="text-xs text-gray-400 mt-0.5"><%= @daily_uniques.first[:day].strftime("%d %b %Y") %> — <%= @daily_uniques.last[:day].strftime("%d %b %Y") %></p>
     </div>
-  <% end %>
-</div>
-
-<%# Filtered stats %>
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-    <p class="text-gray-400 text-xs">Unique Visitors</p>
-    <p class="text-xl font-bold text-white"><%= number_with_delimiter(@filtered_unique) %></p>
-  </div>
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-    <p class="text-gray-400 text-xs">Page Views</p>
-    <p class="text-xl font-bold text-white"><%= number_with_delimiter(@filtered_views) %></p>
-  </div>
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-    <p class="text-gray-400 text-xs">New / Returning</p>
-    <p class="text-xl font-bold text-white"><%= @new_visitors %> / <%= @returning_visitors %></p>
-  </div>
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
-    <p class="text-gray-400 text-xs">Avg Duration</p>
-    <p class="text-xl font-bold text-white"><%= @avg_duration %>s</p>
-  </div>
-</div>
-
-<%# Top pages %>
-<div class="grid lg:grid-cols-2 gap-6 mb-8">
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
-    <h3 class="text-sm font-semibold text-gray-300 mb-3">Top Pages</h3>
-    <% @top_pages.each do |page| %>
-      <div class="flex justify-between items-center py-2 border-b border-gray-700/30 last:border-0">
-        <span class="text-sm text-gray-300 truncate mr-2"><%= page[:path] %></span>
-        <span class="text-xs text-gray-500 whitespace-nowrap"><%= page[:uniques] %> unique / <%= page[:views] %> views</span>
+    <div class="px-4 sm:px-6 py-5">
+      <% max_count = @daily_uniques.map { |d| d[:count] }.max.to_f %>
+      <div class="flex items-end gap-1 h-40">
+        <% @daily_uniques.each do |day| %>
+          <% height = max_count > 0 ? (day[:count] / max_count * 100).round : 0 %>
+          <div class="flex-1 flex flex-col items-center gap-1 group relative">
+            <div class="w-full rounded-t bg-gradient-to-t from-orange-500 to-orange-400 transition-all hover:from-orange-600 hover:to-orange-500"
+                 style="height: <%= [height, 3].max %>%"></div>
+            <div class="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap z-10">
+              <%= day[:day].strftime("%d %b") %> — <%= number_with_delimiter(day[:count]) %> visitors
+            </div>
+          </div>
+        <% end %>
       </div>
-    <% end %>
-    <% if @top_pages.empty? %>
-      <p class="text-gray-500 text-sm">No data</p>
-    <% end %>
-  </div>
-
-  <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
-    <h3 class="text-sm font-semibold text-gray-300 mb-3">Top Cities</h3>
-    <% @top_cities.each do |city| %>
-      <div class="flex justify-between items-center py-2 border-b border-gray-700/30 last:border-0">
-        <span class="text-sm text-gray-300"><%= city[:city] %></span>
-        <span class="text-xs text-gray-500"><%= city[:count] %> visitors</span>
+      <div class="flex justify-between mt-2">
+        <span class="text-[10px] text-gray-400"><%= @daily_uniques.first[:day].strftime("%d %b") %></span>
+        <span class="text-[10px] text-gray-400"><%= @daily_uniques.last[:day].strftime("%d %b") %></span>
       </div>
-    <% end %>
-    <% if @top_cities.empty? %>
-      <p class="text-gray-500 text-sm">No data</p>
-    <% end %>
+    </div>
   </div>
-</div>
+<% end %>
 
-<%# Device / Browser / OS %>
-<div class="grid lg:grid-cols-3 gap-6">
-  <% [["Devices", @device_stats, :type], ["Browsers", @browser_stats, :name], ["OS", @os_stats, :name]].each do |title, data, key| %>
-    <div class="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
-      <h3 class="text-sm font-semibold text-gray-300 mb-3"><%= title %></h3>
-      <% data.each do |item| %>
-        <div class="flex justify-between items-center py-1.5">
-          <span class="text-sm text-gray-300"><%= item[key]&.capitalize %></span>
-          <span class="text-xs text-gray-500"><%= item[:count] %></span>
+<%# Device / Browser / OS breakdown %>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+  <%# Devices %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Devices</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @device_stats.each do |d| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700 capitalize"><%= d[:type] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(d[:count]) %></span>
         </div>
       <% end %>
-      <% if data.empty? %>
-        <p class="text-gray-500 text-sm">No data</p>
+      <% if @device_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
       <% end %>
     </div>
-  <% end %>
+  </div>
+
+  <%# Browsers %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Browsers</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @browser_stats.each do |b| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700"><%= b[:name] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(b[:count]) %></span>
+        </div>
+      <% end %>
+      <% if @browser_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# OS %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 py-3 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900 text-sm">Operating Systems</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @os_stats.each do |o| %>
+        <div class="px-4 py-2.5 flex items-center justify-between">
+          <span class="text-sm text-gray-700"><%= o[:name] %></span>
+          <span class="text-sm font-bold text-gray-900"><%= number_with_delimiter(o[:count]) %></span>
+        </div>
+      <% end %>
+      <% if @os_stats.empty? %>
+        <div class="px-4 py-6 text-center text-gray-400 text-sm">Collecting data...</div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+  <%# Top Pages %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Top Pages</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @top_pages.each_with_index do |page, i| %>
+        <div class="px-4 sm:px-6 py-3 flex items-center gap-3">
+          <span class="text-xs font-bold text-gray-400 w-5"><%= i + 1 %></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate"><%= page[:path] %></p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-sm font-bold text-gray-900"><%= number_with_delimiter(page[:uniques]) %> <span class="text-[10px] font-normal text-gray-400">unique</span></p>
+            <p class="text-[10px] text-gray-400"><%= number_with_delimiter(page[:views]) %> views</p>
+          </div>
+        </div>
+      <% end %>
+      <% if @top_pages.empty? %>
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">No data yet</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Top Cities %>
+  <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
+      <h2 class="font-bold text-gray-900">Top Cities</h2>
+    </div>
+    <div class="divide-y divide-gray-50">
+      <% @top_cities.each_with_index do |city, i| %>
+        <div class="px-4 sm:px-6 py-3 flex items-center gap-3">
+          <span class="text-xs font-bold text-gray-400 w-5"><%= i + 1 %></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900"><%= city[:city] %></p>
+          </div>
+          <p class="text-sm font-bold text-gray-900"><%= number_with_delimiter(city[:count]) %> <span class="text-[10px] font-normal text-gray-400">visitors</span></p>
+        </div>
+      <% end %>
+      <% if @top_cities.empty? %>
+        <div class="px-6 py-8 text-center text-gray-400 text-sm">Cities will appear as visits are recorded</div>
+      <% end %>
+    </div>
+  </div>
 </div>

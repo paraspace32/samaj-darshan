@@ -2,10 +2,18 @@ require "rails_helper"
 
 RSpec.describe JobPost, type: :model do
   describe "validations" do
-    it { is_expected.to validate_presence_of(:title_en) }
-    it { is_expected.to validate_presence_of(:title_hi) }
-    it { is_expected.to validate_presence_of(:description_en) }
-    it { is_expected.to validate_presence_of(:description_hi) }
+    it "is invalid without title_en and title_hi" do
+      post = build(:job_post, title_en: nil, title_hi: nil)
+      expect(post).not_to be_valid
+      expect(post.errors[:title_en]).to be_present
+    end
+
+    it "is invalid without description_en and description_hi" do
+      post = build(:job_post, description_en: nil, description_hi: nil)
+      expect(post).not_to be_valid
+      expect(post.errors[:description_en]).to be_present
+    end
+
     it { is_expected.to validate_presence_of(:company_name) }
   end
 

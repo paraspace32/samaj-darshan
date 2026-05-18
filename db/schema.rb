@@ -184,6 +184,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.index ["status"], name: "index_education_posts_on_status"
   end
 
+  create_table "flowers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "tribute_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["tribute_id", "user_id"], name: "index_flowers_on_tribute_id_and_user_id", unique: true
+    t.index ["tribute_id"], name: "index_flowers_on_tribute_id"
+    t.index ["user_id"], name: "index_flowers_on_user_id"
+  end
+
   create_table "job_posts", force: :cascade do |t|
     t.string "application_url"
     t.bigint "author_id", null: false
@@ -208,6 +218,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.index ["status", "category"], name: "index_job_posts_on_status_and_category"
     t.index ["status", "published_at"], name: "index_job_posts_on_status_and_published_at"
     t.index ["status"], name: "index_job_posts_on_status"
+  end
+
+  create_table "kanyadaan_applications", force: :cascade do |t|
+    t.string "contact", null: false
+    t.datetime "created_at", null: false
+    t.string "girl_name", null: false
+    t.string "location", null: false
+    t.text "notes"
+    t.string "parent_name", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_kanyadaan_applications_on_created_at"
+    t.index ["status"], name: "index_kanyadaan_applications_on_status"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -276,6 +299,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.index ["status"], name: "index_news_on_status"
   end
 
+  create_table "push_notification_logs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "failed_count", default: 0, null: false
+    t.integer "removed_count", default: 0, null: false
+    t.integer "sent_count", default: 0, null: false
+    t.string "title", null: false
+    t.integer "total_subscribers", default: 0, null: false
+    t.bigint "triggered_by_id"
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["created_at"], name: "index_push_notification_logs_on_created_at"
+    t.index ["triggered_by_id"], name: "index_push_notification_logs_on_triggered_by_id"
+  end
+
   create_table "push_subscriptions", force: :cascade do |t|
     t.string "browser"
     t.datetime "created_at", null: false
@@ -323,12 +360,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.index ["user_id"], name: "index_shortlists_on_user_id"
   end
 
+  create_table "tributes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false
+    t.text "description_en", null: false
+    t.text "description_hi"
+    t.integer "flowers_count", default: 0, null: false
+    t.string "name_en", null: false
+    t.string "name_hi"
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_tributes_on_created_by_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.jsonb "allowed_sections", default: [], null: false
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name", null: false
-    t.string "password_digest", null: false
+    t.string "password_digest"
     t.string "phone", null: false
     t.integer "role", default: 0, null: false
     t.integer "status", default: 0, null: false
@@ -336,6 +385,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["role"], name: "index_users_on_role"
+  end
+
+  create_table "visits", force: :cascade do |t|
+    t.boolean "bot", default: false, null: false
+    t.string "browser"
+    t.string "city"
+    t.string "country"
+    t.string "device_type"
+    t.integer "duration_seconds"
+    t.string "ip_address"
+    t.boolean "new_visitor", default: true
+    t.string "os"
+    t.string "path", null: false
+    t.string "referrer"
+    t.string "user_agent", limit: 512
+    t.bigint "user_id"
+    t.datetime "visited_at", null: false
+    t.string "visitor_token", null: false
+    t.index ["city"], name: "index_visits_on_city"
+    t.index ["path"], name: "index_visits_on_path"
+    t.index ["user_id"], name: "index_visits_on_user_id"
+    t.index ["visited_at", "bot"], name: "index_visits_on_visited_at_and_bot"
+    t.index ["visited_at"], name: "index_visits_on_visited_at"
+    t.index ["visitor_token", "visited_at"], name: "index_visits_on_visitor_token_and_visited_at"
   end
 
   create_table "webinars", force: :cascade do |t|
@@ -364,6 +437,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
   add_foreign_key "biodatas", "users"
   add_foreign_key "comments", "users"
   add_foreign_key "education_posts", "users", column: "author_id"
+  add_foreign_key "flowers", "tributes"
+  add_foreign_key "flowers", "users"
   add_foreign_key "job_posts", "users", column: "author_id"
   add_foreign_key "likes", "users"
   add_foreign_key "magazine_articles", "magazines"
@@ -371,9 +446,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
   add_foreign_key "news", "categories"
   add_foreign_key "news", "regions"
   add_foreign_key "news", "users", column: "author_id"
+  add_foreign_key "push_notification_logs", "users", column: "triggered_by_id"
   add_foreign_key "push_subscriptions", "users"
   add_foreign_key "relatives", "biodatas"
   add_foreign_key "shortlists", "biodatas"
   add_foreign_key "shortlists", "users"
+  add_foreign_key "tributes", "users", column: "created_by_id"
+  add_foreign_key "visits", "users"
   add_foreign_key "webinars", "users", column: "host_id"
 end

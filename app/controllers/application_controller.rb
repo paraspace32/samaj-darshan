@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Authentication
   include Authorization
+  include Trackable
 
   allow_browser versions: { safari: 14, chrome: 80, firefox: 80, opera: 70, ie: false }
   stale_when_importmap_changes
@@ -26,4 +27,44 @@ class ApplicationController < ActionController::Base
     set_locale_path(locale: new_locale)
   end
   helper_method :switch_locale_path
+
+  def visitor_city
+    @visitor_city ||= GeolocationService.lookup(request.remote_ip)[:city]
+  end
+  helper_method :visitor_city
+
+  def visitor_region
+    @visitor_region ||= if cookies[:region].present?
+      Region.active.find_by(slug: cookies[:region])
+    elsif (cached_slug = Rails.cache.read("ip_region/#{request.remote_ip}"))
+      Region.active.find_by(slug: cached_slug)
+    elsif visitor_city.present?
+      Region.active.ordered.where("name_en ILIKE ?", "%#{visitor_city}%").first
+    end
+  end
+  helper_method :visitor_region
+
+  def visitor_location_name
+    if visitor_region
+      visitor_region.send(I18n.locale == :hi ? :name_hi : :name_en).presence || visitor_region.name_en
+    else
+      visitor_city
+    end
+  end
+  helper_method :visitor_location_name
+
+  def rate_limited?(key, limit:, period:)
+    counter_key = "rate_limit_#{key}"
+    reset_key = "rate_limit_#{key}_reset"
+    now = Time.current.to_i
+
+    if session[reset_key].nil? || session[reset_key] < now
+      session[counter_key] = 1
+      session[reset_key] = now + period.to_i
+      false
+    else
+      session[counter_key] = (session[counter_key] || 0) + 1
+      session[counter_key] > limit
+    end
+  end
 end

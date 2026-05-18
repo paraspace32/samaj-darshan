@@ -63,6 +63,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "faker"
   gem "shoulda-matchers"
+  gem "webmock"
 end
 
 group :development do
@@ -70,6 +71,6 @@ group :development do
   gem "web-console"
 end
 
-gem "google-cloud-storage", "~> 1.59"
+gem "google-cloud-storage", "~> 1.60"
 gem "google-apis-analyticsdata_v1beta", "~> 0.27"
 gem "googleauth"

@@ -43,9 +43,9 @@
           <div class="w-full h-full gradient-hero"></div>
         <% end %>
         <div class="absolute top-2.5 left-3">
-          <span class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-md shadow-black/20"></span>
+          <span class="relative flex items-center justify-center h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500 shadow-md shadow-black/20"></span>
           </span>
         </div>
       </div>
@@ -55,11 +55,11 @@
       </div>
     <% end %>
 
-    <%# Mobile side items — first row (2 items) %>
-    <% first_row = @home_side_items.first(2) %>
-    <% remaining_items = @home_side_items.drop(2) %>
+    <%# Mobile side items — rows of 2, banners between %>
+    <% row1 = @home_side_items.first(2) %>
+    <% mid_items = @home_side_items.drop(2).first(4) %>
     <div class="story-stack mt-2">
-      <% first_row.each do |item| %>
+      <% row1.each do |item| %>
         <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
           <div class="w-full aspect-[4/3] overflow-hidden">
             <% if item.cover_image.attached? %>
@@ -75,7 +75,7 @@
       <% end %>
     </div>
 
-    <%# विवाह परिचय banner between rows %>
+    <%# विवाह परिचय banner %>
     <%= link_to biodatas_path, class: "block group my-2 mx-4" do %>
       <div class="rounded-xl relative overflow-hidden text-white px-4 py-3 flex items-center gap-3"
            style="background: linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%); box-shadow: 0 6px 28px -6px rgba(180,83,9,0.55); border: 1.5px solid rgba(245,200,151,0.25)">
@@ -108,10 +108,10 @@
       </div>
     <% end %>
 
-    <%# Remaining side items %>
-    <% if remaining_items.any? %>
+    <%# Middle cards — between marriage and tribute banners %>
+    <% if mid_items.any? %>
       <div class="story-stack">
-        <% remaining_items.each do |item| %>
+        <% mid_items.each do |item| %>
           <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
             <div class="w-full aspect-[4/3] overflow-hidden">
               <% if item.cover_image.attached? %>
@@ -127,6 +127,31 @@
         <% end %>
       </div>
     <% end %>
+
+    <%# श्रद्धांजलि / Tribute banner %>
+    <%= link_to tributes_path, class: "block group my-2 mx-4" do %>
+      <div class="rounded-xl relative overflow-hidden text-white px-4 py-3 flex items-center gap-3"
+           style="background: linear-gradient(150deg,#831843 0%,#be185d 35%,#ec4899 65%,#f9a8d4 100%); box-shadow: 0 6px 28px -6px rgba(190,24,93,0.55); border: 1.5px solid rgba(249,168,212,0.25)">
+        <div class="absolute top-0 left-0 right-0 h-[3px] pointer-events-none" style="background: linear-gradient(90deg,#831843,#be185d,#ec4899,#f472b6,#ec4899,#be185d,#831843)"></div>
+        <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          <div class="absolute -top-8 -left-8 w-40 h-40 rounded-full" style="border: 16px solid rgba(255,255,255,0.08)"></div>
+          <div class="absolute -bottom-12 left-20 w-32 h-32 rounded-full" style="border: 12px solid rgba(255,255,255,0.06)"></div>
+          <div class="absolute top-1/2 -translate-y-1/2 -right-8 w-28 h-28 rounded-full" style="border: 10px solid rgba(255,255,255,0.07)"></div>
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 relative z-10"
+             style="background: rgba(255,255,255,0.15); box-shadow: 0 0 18px rgba(255,255,255,0.1)">
+          <span class="text-xl">🌸</span>
+        </div>
+        <div class="flex-1 min-w-0 relative z-10">
+          <h3 class="font-black text-[13px] leading-tight"><%= t("nav.tributes") %></h3>
+          <p class="text-[11px] leading-snug" style="color: rgba(255,255,255,0.65)"><%= t("tributes.subtitle") %></p>
+        </div>
+        <svg class="w-4 h-4 shrink-0 relative z-10 group-hover:translate-x-0.5 transition-transform" style="color:rgba(255,255,255,0.45)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </div>
+    <% end %>
+
   </div>
 
   <%# ── Desktop Hero: title-first bento grid ── %>
@@ -148,9 +173,9 @@
             <div class="w-full h-full gradient-hero"></div>
           <% end %>
           <div class="absolute top-3 left-4">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-md shadow-black/20"></span>
+            <span class="relative flex items-center justify-center h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500 shadow-md shadow-black/20"></span>
             </span>
           </div>
         </div>

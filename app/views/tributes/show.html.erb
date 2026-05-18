@@ -1,0 +1,124 @@
+<% content_for(:title, @tribute.display_name) %>
+<% if @tribute.image.attached? %>
+  <% content_for(:og_image, rails_representation_url(@tribute.image.variant(:hero), host: request.base_url)) %>
+<% end %>
+
+<div class="max-w-2xl mx-auto py-8 px-4" data-controller="flower-animation">
+  <%# Back link %>
+  <div class="mb-5">
+    <%= link_to tributes_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-orange-600 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
+      <%= t("tributes.back_to_tributes") %>
+    <% end %>
+  </div>
+
+  <%# Hero image with flower animation overlay %>
+  <div class="relative rounded-2xl overflow-hidden shadow-lg mb-4" data-flower-animation-target="imageContainer">
+    <% if @tribute.image.attached? %>
+      <%= image_tag @tribute.image.variant(:hero), class: "w-full max-h-96 object-cover" %>
+    <% end %>
+    <%# Flower animation canvas (overlays the image) %>
+    <div data-flower-animation-target="canvas" class="absolute inset-0 pointer-events-none overflow-hidden z-10"></div>
+  </div>
+
+  <%# Give Flowers button — below image %>
+  <div class="text-center mb-6">
+    <% if logged_in? %>
+      <% if @user_gave_flower %>
+        <div class="inline-flex items-center gap-3">
+          <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-pink-50 border border-pink-100 text-pink-700 font-bold text-sm">
+            <span class="text-lg">🌸</span>
+            <%= t("tributes.you_gave_flowers") %>
+            <span class="bg-pink-200/50 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+          </span>
+          <%= button_to tribute_flower_path(@tribute), method: :delete,
+                class: "text-xs text-gray-400 hover:text-red-500 transition-colors underline" do %>
+            <%= t("tributes.remove_flower") %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= button_to tribute_flower_path(@tribute), method: :post,
+              class: "inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-95 transition-all hover:shadow-xl",
+              style: "background: linear-gradient(135deg, #ec4899, #f97316)",
+              form: { data: { turbo: false } },
+              data: { action: "click->flower-animation#animate" } do %>
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.give_flowers") %></span>
+          <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if session[:guest_flower_given] %>
+        <%= link_to login_path, class: "inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg transition-all hover:shadow-xl",
+              style: "background: linear-gradient(135deg, #ec4899, #f97316)" do %>
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.login_to_give") %></span>
+          <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        <% end %>
+      <% else %>
+        <button type="button" id="guest-flower-btn"
+              class="inline-flex items-center gap-2.5 px-8 py-3 rounded-2xl text-white font-bold text-sm shadow-lg cursor-pointer active:scale-95 transition-all hover:shadow-xl"
+              style="background: linear-gradient(135deg, #ec4899, #f97316)"
+              data-action="click->flower-animation#animate">
+          <span class="text-xl">🌸</span>
+          <span><%= t("tributes.give_flowers") %></span>
+          <span id="guest-flower-count" class="bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @tribute.flowers_count %></span>
+        </button>
+        <script>
+        document.getElementById('guest-flower-btn').addEventListener('click', function() {
+          var count = document.getElementById('guest-flower-count');
+          count.textContent = parseInt(count.textContent) + 1;
+          this.disabled = true;
+          this.style.opacity = '0.7';
+          var loginUrl = '<%= login_path %>';
+          var loginText = '<%= j t("tributes.login_to_give") %>';
+          var btn = this;
+          setTimeout(function() {
+            var a = document.createElement('a');
+            a.href = loginUrl;
+            a.className = btn.className.replace('cursor-pointer active:scale-95', '');
+            a.style = btn.style.cssText;
+            a.style.opacity = '1';
+            a.innerHTML = '<span class="text-xl">🌸</span><span>' + loginText + '</span>';
+            btn.replaceWith(a);
+          }, 2500);
+          var csrf = document.querySelector('meta[name="csrf-token"]');
+          if (csrf) {
+            fetch('<%= guest_flower_tributes_path %>', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf.content } });
+          }
+        }, { once: true });
+        </script>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Name and description %>
+  <div class="mb-8">
+    <h1 class="text-2xl font-black text-gray-900 tracking-tight text-center"><%= @tribute.display_name %></h1>
+    <div class="mt-4 text-gray-600 leading-relaxed space-y-4 text-[15px]">
+      <% split_into_paragraphs(@tribute.display_description).each do |para| %>
+        <p><%= para %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Who gave flowers %>
+  <% if @tribute.flowers.any? %>
+    <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-black text-gray-900"><%= t("tributes.who_gave_flowers") %> (<%= @tribute.flowers_count %>)</h3>
+      </div>
+      <div class="px-5 py-4">
+        <div class="flex flex-wrap gap-2">
+          <% @tribute.flowers.includes(:user).order(created_at: :desc).each do |flower| %>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-pink-50 border border-pink-100">
+              <span class="text-sm">🌸</span>
+              <span class="text-sm font-semibold text-pink-800"><%= flower.user.name %></span>
+              <span class="text-[10px] text-pink-400"><%= time_ago_in_words(flower.created_at) %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

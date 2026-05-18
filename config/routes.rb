@@ -12,6 +12,10 @@ Rails.application.routes.draw do
 
   # Locale switching
   get "locale/:locale" => "locales#update", as: :set_locale
+  get "set_region/:slug" => "locales#set_region", as: :set_region
+
+  # Visit duration ping
+  post "visit_ping" => "visits#ping"
 
   # Authentication (OTP-only via Firebase Phone Auth)
   get  "login" => "sessions#new",     as: :login
@@ -21,6 +25,10 @@ Rails.application.routes.draw do
 
   # User profile
   resource :profile, only: [ :edit, :update ], controller: "profiles"
+
+  # Kanyadaan Yojna
+  resources :kanyadaan_applications, only: [ :new, :create ], path: "kanyadaan"
+  get "kanyadaan/success" => "kanyadaan_applications#success", as: :kanyadaan_success
 
   # Admin
   namespace :admin do
@@ -80,6 +88,13 @@ Rails.application.routes.draw do
       collection { post :send_notification }
     end
     post "news/:news_id/push", to: "push_notifications#send_for_news", as: :news_push
+
+    # Kanyadaan Yojna
+    resources :kanyadaan_applications, only: [ :index, :show, :update ]
+
+    # Tributes
+    resources :tributes, except: [ :show ]
+
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click
@@ -163,6 +178,12 @@ Rails.application.routes.draw do
     resource :like, only: [], controller: "likes" do
       post :toggle
     end
+  end
+
+  # Tributes
+  resources :tributes, only: [ :index, :show ] do
+    collection { post :guest_flower }
+    resource :flower, only: [ :create, :destroy ]
   end
 
   get "offline" => "pages#offline"

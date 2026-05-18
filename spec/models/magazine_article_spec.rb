@@ -9,10 +9,18 @@ RSpec.describe MagazineArticle, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:title_en) }
-    it { is_expected.to validate_presence_of(:title_hi) }
-    it { is_expected.to validate_presence_of(:content_en) }
-    it { is_expected.to validate_presence_of(:content_hi) }
+    it "is invalid without title_en and title_hi" do
+      article = build(:magazine_article, title_en: nil, title_hi: nil)
+      expect(article).not_to be_valid
+      expect(article.errors[:title_en]).to be_present
+    end
+
+    it "is invalid without content_en and content_hi" do
+      article = build(:magazine_article, content_en: nil, content_hi: nil)
+      expect(article).not_to be_valid
+      expect(article.errors[:content_en]).to be_present
+    end
+
     it { is_expected.to validate_presence_of(:position) }
     it { is_expected.to validate_numericality_of(:position).is_greater_than_or_equal_to(0) }
   end

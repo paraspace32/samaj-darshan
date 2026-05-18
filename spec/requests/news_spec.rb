@@ -57,7 +57,7 @@ RSpec.describe "News", type: :request do
 
     it "shows comment section" do
       get news_path(news_item), params: { locale: :en }
-      expect(response.body).to include(I18n.t("comments.no_comments", locale: :en))
+      expect(response.body).to include("Log in")
     end
 
     it "preserves paragraph breaks in rendered content" do

@@ -10,6 +10,7 @@ class Admin::PushNotificationsController < Admin::BaseController
     @anonymous_count     = PushSubscription.anonymous.count
     @logged_in_count     = PushSubscription.logged_in.count
     @recent              = PushSubscription.order(created_at: :desc).limit(10)
+    @logs                = PushNotificationLog.recent.limit(20)
   end
 
   # POST /admin/push_notifications/send
@@ -17,7 +18,10 @@ class Admin::PushNotificationsController < Admin::BaseController
     title = params[:title].presence || t("brand.name")
     url   = params[:url].presence
 
-    SendPushNotificationsJob.perform_later(title: title, body: nil, url: url, image: nil)
+    SendPushNotificationsJob.perform_later(
+      title: title, body: nil, url: url, image: nil,
+      triggered_by_id: current_user.id
+    )
     redirect_to admin_push_notifications_path,
                 notice: "Push notification queued for #{PushSubscription.count} subscribers."
   rescue => e
@@ -37,7 +41,10 @@ class Admin::PushNotificationsController < Admin::BaseController
     title = @news_item.display_title.truncate(80, separator: " ")
     url   = news_url(@news_item)
 
-    SendPushNotificationsJob.perform_later(title: title, body: nil, url: url, image: nil)
+    SendPushNotificationsJob.perform_later(
+      title: title, body: nil, url: url, image: nil,
+      triggered_by_id: current_user.id
+    )
     redirect_to admin_news_path(@news_item),
                 notice: "Push notification queued for #{PushSubscription.count} subscribers."
   rescue => e

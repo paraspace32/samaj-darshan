@@ -1,0 +1,40 @@
+<% content_for(:title, "#{t('tributes.page_title')} — #{t('brand.name')}") %>
+
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="text-center mb-8">
+    <h1 class="text-2xl font-black text-gray-900 tracking-tight"><%= t("tributes.page_title") %></h1>
+    <p class="text-sm text-gray-500 mt-2"><%= t("tributes.subtitle") %></p>
+  </div>
+
+  <% if @tributes.any? %>
+    <div class="space-y-6">
+      <% @tributes.each do |tribute| %>
+        <%= link_to tribute_path(tribute), class: "block group" do %>
+          <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden hover:shadow-md transition-all">
+            <div class="flex flex-col sm:flex-row">
+              <% if tribute.image.attached? %>
+                <div class="sm:w-48 sm:shrink-0">
+                  <%= image_tag tribute.image.variant(:card), class: "w-full h-48 sm:h-full object-cover", loading: "lazy" %>
+                </div>
+              <% end %>
+              <div class="p-5 flex-1">
+                <h2 class="text-lg font-black text-gray-900 group-hover:text-orange-600 transition-colors"><%= tribute.display_name %></h2>
+                <p class="text-sm text-gray-500 mt-2 leading-relaxed line-clamp-3"><%= tribute.display_description %></p>
+                <div class="flex items-center gap-4 mt-4">
+                  <span class="inline-flex items-center gap-1.5 text-sm font-bold text-pink-600">
+                    <span>🌸</span> <%= tribute.flowers_count %> <%= t("tributes.flowers") %>
+                  </span>
+                  <span class="text-xs text-gray-400"><%= time_ago_in_words(tribute.created_at) %> ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-16">
+      <p class="text-gray-400"><%= t("tributes.no_tributes") %></p>
+    </div>
+  <% end %>
+</div>

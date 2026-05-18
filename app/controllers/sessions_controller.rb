@@ -54,12 +54,14 @@ class SessionsController < ApplicationController
     name = params[:name].to_s.strip
 
     unless phone.present? && name.present?
+      Rails.logger.warn "[set_name] Missing data — phone=#{phone.present?} name=#{name.present?}"
       render json: { error: t("auth.name_required") }, status: :unprocessable_entity
       return
     end
 
     user = User.new(phone: phone, name: name, role: :user, status: :active)
     unless user.save
+      Rails.logger.warn "[set_name] Save failed — #{user.errors.full_messages}"
       render json: { error: user.errors.full_messages.first || t("auth.signup_failed") }, status: :unprocessable_entity
       return
     end

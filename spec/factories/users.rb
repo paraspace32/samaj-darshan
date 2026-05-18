@@ -24,6 +24,10 @@ FactoryBot.define do
       role { :moderator }
     end
 
+    trait :female_president do
+      role { :female_president }
+    end
+
     trait :blocked do
       status { :blocked }
     end

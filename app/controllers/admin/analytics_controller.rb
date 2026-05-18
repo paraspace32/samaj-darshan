@@ -1,5 +1,9 @@
 module Admin
   class AnalyticsController < BaseController
+    ANALYTICS_LOG = Logger.new(Rails.root.join("log", "analytics_dashboard.log"), "daily").tap do |l|
+      l.formatter = proc { |sev, time, _, msg| "#{time.strftime('%Y-%m-%d %H:%M:%S')} [#{sev}] #{msg}\n" }
+    end
+
     before_action :require_super_admin
 
     def show
@@ -86,6 +90,8 @@ module Admin
 
       @ga_realtime  = GoogleAnalyticsService.realtime_data
       @ga_reporting = GoogleAnalyticsService.reporting_data
+
+      log_dashboard_view
     end
 
     private
@@ -109,6 +115,32 @@ module Admin
 
       range = DATE_RANGES[range_key]&.call || DATE_RANGES["this_month"].call
       scope.where(visited_at: range)
+    end
+
+    def log_dashboard_view
+      filters = { range: @date_range, city: params[:city], device: params[:device], path: params[:path] }.compact_blank
+      ga_total = @ga_reporting&.dig(:total_users)
+      ga_realtime = @ga_realtime&.dig(:total)
+      top_page = @top_pages.first
+      top_city = @top_cities.first
+
+      ANALYTICS_LOG.info(
+        "DASHBOARD | user=#{current_user.id} | filters=#{filters.any? ? filters.to_json : "none"} | " \
+        "today_unique=#{@stats[:today][:unique]} today_views=#{@stats[:today][:views]} | " \
+        "week_unique=#{@stats[:week][:unique]} week_views=#{@stats[:week][:views]} | " \
+        "month_unique=#{@stats[:month][:unique]} month_views=#{@stats[:month][:views]} | " \
+        "filtered_unique=#{@filtered_unique} filtered_views=#{@filtered_views} | " \
+        "registered=#{@registered_count} anonymous=#{@anonymous_count} bots_today=#{@bot_count_today} | " \
+        "new=#{@new_visitors} returning=#{@returning_visitors} avg_duration=#{@avg_duration}s | " \
+        "devices=#{@device_stats.map { |d| "#{d[:type]}:#{d[:count]}" }.join(",")} | " \
+        "browsers=#{@browser_stats.map { |b| "#{b[:name]}:#{b[:count]}" }.join(",")} | " \
+        "os=#{@os_stats.map { |o| "#{o[:name]}:#{o[:count]}" }.join(",")} | " \
+        "top_page=#{top_page ? "#{top_page[:path]}(#{top_page[:uniques]})" : "none"} | " \
+        "top_city=#{top_city ? "#{top_city[:city]}(#{top_city[:count]})" : "none"} | " \
+        "ga_realtime=#{ga_realtime || "nil"} ga_total_users=#{ga_total || "nil"}"
+      )
+    rescue => e
+      ANALYTICS_LOG.error "LOG_ERROR | #{e.class}: #{e.message}"
     end
 
     def require_super_admin

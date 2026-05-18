@@ -94,7 +94,6 @@ Rails.application.routes.draw do
 
     # Tributes
     resources :tributes, except: [ :show ]
-
   end
 
   get "click/:id" => "billboard_clicks#show", as: :billboard_click

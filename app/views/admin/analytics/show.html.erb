@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<%# Unique Visitors — main numbers %>
+<%# Unique Visitors — summary cards (always unfiltered) %>
 <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
   <div class="grid grid-cols-3 divide-x divide-gray-100">
     <div class="px-4 sm:px-6 py-5 text-center">
@@ -32,6 +32,83 @@
     </div>
   </div>
 </div>
+
+<%# ── Filter bar ──────────────────────────────────────────────────────────── %>
+<%= form_tag(admin_analytics_path, method: :get, class: "bg-white rounded-2xl border border-gray-200/60 shadow-sm mb-6 sm:mb-8") do %>
+  <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <h2 class="font-bold text-gray-900 text-sm">Filters</h2>
+    <% if @filter_active %>
+      <%= link_to "Clear all", admin_analytics_path, class: "text-xs text-orange-600 hover:text-orange-700 font-medium" %>
+    <% end %>
+  </div>
+  <div class="px-4 sm:px-6 py-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
+    <%# Date range %>
+    <div>
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Date Range</label>
+      <select name="range" onchange="toggleCustomDates(this.value)" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
+        <% { "today" => "Today", "yesterday" => "Yesterday", "this_week" => "This Week", "last_7" => "Last 7 Days", "this_month" => "This Month", "last_30" => "Last 30 Days", "last_90" => "Last 90 Days", "custom" => "Custom Range" }.each do |val, label| %>
+          <option value="<%= val %>" <%= "selected" if @date_range == val %>><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <%# Custom date inputs %>
+    <div id="custom-dates" class="<%= @date_range == "custom" ? "" : "hidden" %> col-span-2 sm:col-span-1">
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">From / To</label>
+      <div class="flex gap-1.5">
+        <input type="date" name="from" value="<%= params[:from] %>" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500" />
+        <input type="date" name="to" value="<%= params[:to] %>" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500" />
+      </div>
+    </div>
+
+    <%# City filter %>
+    <div>
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">City</label>
+      <select name="city" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
+        <option value="">All Cities</option>
+        <% @available_cities.each do |city| %>
+          <option value="<%= city %>" <%= "selected" if params[:city] == city %>><%= city %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <%# Device type filter %>
+    <div>
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Device</label>
+      <select name="device" class="w-full rounded-lg border-gray-300 text-sm py-2 focus:border-orange-500 focus:ring-orange-500">
+        <option value="">All Devices</option>
+        <% @available_devices.each do |device| %>
+          <option value="<%= device %>" <%= "selected" if params[:device] == device %>><%= device.capitalize %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <%# Path search %>
+    <div>
+      <label class="block text-[11px] font-semibold text-gray-500 mb-1">Page Path</label>
+      <input type="text" name="path" value="<%= params[:path] %>" placeholder="/news, /jobs..."
+             class="w-full rounded-lg border-gray-300 text-sm py-2 placeholder:text-gray-400 focus:border-orange-500 focus:ring-orange-500" />
+    </div>
+  </div>
+
+  <div class="px-4 sm:px-6 pb-4 flex items-center gap-3">
+    <button type="submit" class="px-5 py-2 bg-orange-600 text-white text-sm font-semibold rounded-lg hover:bg-orange-700 transition">
+      Apply Filters
+    </button>
+    <% if @filter_active %>
+      <span class="text-xs text-gray-500">
+        Showing <strong class="text-gray-900"><%= number_with_delimiter(@filtered_unique) %></strong> unique visitors,
+        <strong class="text-gray-900"><%= number_with_delimiter(@filtered_views) %></strong> views
+      </span>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  function toggleCustomDates(val) {
+    document.getElementById('custom-dates').classList.toggle('hidden', val !== 'custom');
+  }
+</script>
 
 <%# Registered vs Anonymous vs Bots + Engagement %>
 <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -61,12 +138,12 @@
   </div>
 </div>
 
-<%# Daily trend chart (last 30 days) %>
+<%# Daily trend chart %>
 <% if @daily_uniques.any? %>
   <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm mb-6 sm:mb-8">
     <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
       <h2 class="font-bold text-gray-900">Daily Unique Visitors</h2>
-      <p class="text-xs text-gray-400 mt-0.5">Last 30 days</p>
+      <p class="text-xs text-gray-400 mt-0.5"><%= @daily_uniques.first[:day].strftime("%d %b %Y") %> — <%= @daily_uniques.last[:day].strftime("%d %b %Y") %></p>
     </div>
     <div class="px-4 sm:px-6 py-5">
       <% max_count = @daily_uniques.map { |d| d[:count] }.max.to_f %>
@@ -152,7 +229,6 @@
   <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
     <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
       <h2 class="font-bold text-gray-900">Top Pages</h2>
-      <p class="text-xs text-gray-400 mt-0.5">This week</p>
     </div>
     <div class="divide-y divide-gray-50">
       <% @top_pages.each_with_index do |page, i| %>
@@ -177,7 +253,6 @@
   <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
     <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100">
       <h2 class="font-bold text-gray-900">Top Cities</h2>
-      <p class="text-xs text-gray-400 mt-0.5">This month</p>
     </div>
     <div class="divide-y divide-gray-50">
       <% @top_cities.each_with_index do |city, i| %>

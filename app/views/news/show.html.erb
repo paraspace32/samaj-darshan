@@ -131,8 +131,7 @@
         <span class="text-[11px] text-stone-400 font-medium"><%= smart_date %></span>
       </div>
       <%# Live readers %>
-      <% live_count  = @active_readers.to_i > 0 ? @active_readers : nil %>
-      <% live_count ||= @site_active_users.to_i > 0 ? @site_active_users : nil %>
+      <% live_count = @site_active_users.to_i > 0 ? @site_active_users : nil %>
       <% if live_count %>
         <div class="shrink-0 flex items-center gap-1.5">
           <span class="relative flex h-1 w-1 shrink-0">

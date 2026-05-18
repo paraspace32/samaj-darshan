@@ -78,6 +78,31 @@ class GoogleAnalyticsService
     Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL, skip_nil: true) { fetch_reporting }
   end
 
+  def self.daily_users(start_date:, end_date: nil)
+    end_date ||= start_date
+    service = build_service
+    return nil unless service
+
+    request = Google::Apis::AnalyticsdataV1beta::RunReportRequest.new(
+      date_ranges: [ Google::Apis::AnalyticsdataV1beta::DateRange.new(
+        start_date: start_date.to_s, end_date: end_date.to_s
+      ) ],
+      metrics: [
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "totalUsers"),
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "sessions"),
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "screenPageViews"),
+        Google::Apis::AnalyticsdataV1beta::Metric.new(name: "newUsers")
+      ]
+    )
+
+    response = service.run_property_report("properties/#{PROPERTY_ID}", request)
+    row = response.rows&.first
+    values = row&.metric_values&.map { |v| v.value.to_i } || [ 0, 0, 0, 0 ]
+    { users: values[0], sessions: values[1], pageviews: values[2], new_users: values[3] }
+  rescue StandardError => e
+    GA_LOGGER.error "DAILY_USERS | #{start_date}..#{end_date} | #{e.class}: #{e.message}"
+    nil
+  end
 
   # ── Private ───────────────────────────────────────────────────────────────
   private

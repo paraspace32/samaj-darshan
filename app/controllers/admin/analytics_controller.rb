@@ -94,6 +94,10 @@ module Admin
       log_dashboard_view
     end
 
+    def reports
+      @reports = AnalyticsDailyReport.recent.limit(30)
+    end
+
     private
 
     DATE_RANGES = {

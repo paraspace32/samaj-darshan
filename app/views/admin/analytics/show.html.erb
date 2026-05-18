@@ -6,9 +6,12 @@
     <div class="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-teal-500 blur-3xl"></div>
     <div class="absolute bottom-0 left-20 w-48 h-48 rounded-full bg-blue-500 blur-3xl"></div>
   </div>
-  <div class="relative z-10">
-    <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
-    <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, IP-based deduplication.</p>
+  <div class="relative z-10 flex items-center justify-between">
+    <div>
+      <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
+      <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, IP-based deduplication.</p>
+    </div>
+    <%= link_to "Daily Reports", admin_analytics_reports_path, class: "px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition" %>
   </div>
 </div>
 

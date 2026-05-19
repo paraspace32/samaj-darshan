@@ -29,7 +29,7 @@ module Admin
       @filtered_unique = filtered.unique_count
       @filtered_views  = filtered.count
 
-      @registered_count = filtered.where.not(user_id: nil).unique_count
+      @registered_count = filtered.where.not(user_id: nil).select(:user_id).distinct.count
       @anonymous_count  = filtered.where(user_id: nil).unique_count
       @bot_count_today  = Visit.where(bot: true).today.count
 

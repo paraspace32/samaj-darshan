@@ -17,12 +17,12 @@ class AnalyticsDailyReportJob < ApplicationJob
     visit_bots    = Visit.where(bot: true, visited_at: range).count
 
     top_pages = human.group(:path).order(Arel.sql("COUNT(*) DESC")).limit(5)
-                  .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
+                  .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                   .map { |p, v, u| { path: p, views: v, uniques: u } }
 
     top_cities = human.where.not(city: [ nil, "" ])
-                   .group(:city).order(Arel.sql("COUNT(DISTINCT visitor_token) DESC")).limit(5)
-                   .pluck(:city, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                   .group(:city).order(Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL}) DESC")).limit(5)
+                   .pluck(:city, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                    .map { |c, n| { city: c, count: n } }
 
     device_data = human.where.not(device_type: nil)

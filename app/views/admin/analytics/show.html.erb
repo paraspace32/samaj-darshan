@@ -9,7 +9,7 @@
   <div class="relative z-10 flex items-center justify-between">
     <div>
       <h2 class="text-xl sm:text-2xl font-extrabold text-white mb-1">Visitor Analytics</h2>
-      <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, IP-based deduplication.</p>
+      <p class="text-gray-400 text-sm">Real visitor counts — bots filtered, cookie-based deduplication.</p>
     </div>
     <%= link_to "Daily Reports", admin_analytics_reports_path, class: "px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-medium transition" %>
   </div>
@@ -124,7 +124,7 @@
     <p class="text-[11px] font-semibold text-gray-500 mt-1">Anonymous</p>
   </div>
   <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">
-    <p class="text-xl sm:text-2xl font-black text-red-500"><%= number_with_delimiter(@bot_count_today) %></p>
+    <p class="text-xl sm:text-2xl font-black text-red-500"><%= number_with_delimiter(@bot_count) %></p>
     <p class="text-[11px] font-semibold text-gray-500 mt-1">Bot Visits</p>
   </div>
   <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-200/60 p-3 sm:p-5 shadow-sm text-center">

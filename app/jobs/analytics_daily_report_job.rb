@@ -69,7 +69,7 @@ class AnalyticsDailyReportJob < ApplicationJob
   private
 
   def log_report(date, report, ga)
-    REPORT_LOG.info "DAILY REPORT | date=#{date} | visit_unique=#{report.visit_unique} visit_views=#{report.visit_views} | ga_users=#{ga&.dig(:users) || 'nil'} ga_pageviews=#{ga&.dig(:pageviews) || 'nil'} | user_delta=#{report.user_delta_pct}% view_delta=#{report.view_delta_pct}%"
+    REPORT_LOG.info "DAILY REPORT | date=#{date} | visit_unique=#{report.visit_unique} visit_views=#{report.visit_views} | ga_users=#{ga&.dig(:users) || 'nil'} ga_pageviews=#{ga&.dig(:pageviews) || 'nil'} | user_delta=#{report.user_delta_pct || 'n/a'} view_delta=#{report.view_delta_pct || 'n/a'}"
   rescue => e
     REPORT_LOG.error "LOG_ERROR | #{e.class}: #{e.message}"
   end

@@ -11,6 +11,7 @@ class JobsController < ApplicationController
 
   def show
     @job_post = JobPost.published.find(params[:id])
+    @login_gate = true unless logged_in?
     @liked    = current_user ? @job_post.likes.exists?(user: current_user) : false
     @comments = @job_post.comments.includes(:user).recent
     @site_active_users = begin

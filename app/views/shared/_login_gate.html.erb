@@ -1,0 +1,65 @@
+<%# Full-screen login gate — shown after 2 free article views for anonymous users %>
+<div data-controller="login-gate">
+  <div data-login-gate-target="overlay"
+       class="hidden fixed inset-0 z-[999] flex items-end sm:items-center justify-center">
+
+    <%# Backdrop — blurred dark overlay %>
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+    <%# Card %>
+    <div class="relative w-full max-w-md mx-4 mb-0 sm:mb-0 bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-fade-in">
+
+      <%# Gradient top bar %>
+      <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #b91c1c, #ea580c, #d97706);"></div>
+
+      <div class="px-6 pt-8 pb-6 text-center">
+
+        <%# Icon %>
+        <div class="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
+             style="background: linear-gradient(135deg, #ea580c, #dc2626)">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+
+        <%# Title %>
+        <h2 class="text-xl font-black text-gray-900 mb-2">
+          <%= I18n.locale == :hi ? "पढ़ना जारी रखें" : "Continue Reading" %>
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-6 leading-relaxed">
+          <%= I18n.locale == :hi ?
+            "आपने अपने मुफ़्त लेख पढ़ लिए हैं। सभी समाचार, शिक्षा और नौकरी की जानकारी पढ़ने के लिए लॉगिन करें।" :
+            "You've read your free articles. Log in to access all news, education and job updates." %>
+        </p>
+
+        <%# Benefits %>
+        <div class="flex flex-col gap-2.5 mb-7 text-left">
+          <% [
+            [I18n.locale == :hi ? "सभी समाचार पढ़ें" : "Read all articles", "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"],
+            [I18n.locale == :hi ? "लाइक और कमेंट करें" : "Like & comment on posts", "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"],
+            [I18n.locale == :hi ? "नई सूचनाएं पाएं" : "Get push notifications", "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"]
+          ].each do |text, icon_path| %>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" d="<%= icon_path %>"/>
+                </svg>
+              </div>
+              <span class="text-sm font-semibold text-gray-700"><%= text %></span>
+            </div>
+          <% end %>
+        </div>
+
+        <%# CTA button %>
+        <%= link_to login_path, class: "block w-full text-center text-white font-bold text-base py-3.5 rounded-2xl shadow-lg transition-all active:scale-[0.98]", style: "background: linear-gradient(135deg, #ea580c, #dc2626)" do %>
+          <%= I18n.locale == :hi ? "📱 फ़ोन नंबर से लॉगिन करें" : "📱 Log in with phone number" %>
+        <% end %>
+
+        <p class="text-[11px] text-gray-400 mt-4">
+          <%= I18n.locale == :hi ? "लॉगिन मुफ़्त है — सिर्फ़ फ़ोन नंबर चाहिए" : "It's free — just your phone number" %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

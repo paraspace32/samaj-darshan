@@ -1,9 +1,13 @@
 class RecordVisitJob < ApplicationJob
   queue_as :default
 
-  def perform(ip:, user_agent:, path:, referrer:, user_id:, visited_at:)
+  def perform(ip:, user_agent:, path:, referrer:, user_id:, visited_at:, visitor_cookie: nil)
     is_bot = Visit.bot_user_agent?(user_agent)
-    token  = Visit.generate_token(ip, user_agent)
+    token  = if visitor_cookie.present? && !is_bot
+               Digest::SHA256.hexdigest(visitor_cookie)
+             else
+               Visit.generate_token(ip, user_agent)
+             end
     geo    = is_bot ? { city: nil, country: nil } : GeolocationService.lookup(ip)
     device = Visit.parse_device(user_agent)
     new_visitor = !Visit.where(visitor_token: token).exists?

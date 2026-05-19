@@ -11,6 +11,7 @@ class EducationController < ApplicationController
 
   def show
     @education_post = EducationPost.published.find(params[:id])
+    @login_gate = true unless logged_in?
     @comments = @education_post.comments.includes(:user).recent
     @liked = current_user ? @education_post.likes.exists?(user: current_user) : false
     @site_active_users = begin

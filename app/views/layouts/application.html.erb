@@ -462,6 +462,9 @@
 
     <% unless logged_in? %>
       <%= render "shared/login_prompt_bar" %>
+      <% if @login_gate %>
+        <%= render "shared/login_gate" %>
+      <% end %>
     <% end %>
     <%= render "shared/pwa_install_banner" %>
     <%= render "shared/push_notification_banner" if firebase_configured? %>

@@ -29,9 +29,9 @@ module Admin
       @filtered_unique = filtered.unique_count
       @filtered_views  = filtered.count
 
-      @registered_count = filtered.where.not(user_id: nil).unique_count
+      @registered_count = filtered.where.not(user_id: nil).select(:user_id).distinct.count
       @anonymous_count  = filtered.where(user_id: nil).unique_count
-      @bot_count_today  = Visit.where(bot: true).today.count
+      @bot_count = apply_date_range(Visit.where(bot: true), @date_range).count
 
       @new_visitors       = filtered.where(new_visitor: true).unique_count
       @returning_visitors = filtered.where(new_visitor: false).unique_count
@@ -44,40 +44,40 @@ module Admin
                      .group(:path)
                      .order(Arel.sql("COUNT(*) DESC"))
                      .limit(10)
-                     .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
+                     .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                      .map { |path, views, uniques| { path: path, views: views, uniques: uniques } }
 
       @top_cities = filtered
                       .where.not(city: [ nil, "" ])
                       .group(:city)
-                      .order(Arel.sql("COUNT(DISTINCT visitor_token) DESC"))
+                      .order(Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL}) DESC"))
                       .limit(10)
-                      .pluck(:city, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                      .pluck(:city, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                       .map { |city, count| { city: city, count: count } }
 
       # ── Device / Browser / OS breakdown ───────────────────────────────────
       @device_stats = filtered.where.not(device_type: nil)
                         .group(:device_type).order(Arel.sql("COUNT(*) DESC"))
-                        .pluck(:device_type, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                        .pluck(:device_type, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                         .map { |type, count| { type: type, count: count } }
 
       @browser_stats = filtered.where.not(browser: nil)
                          .group(:browser).order(Arel.sql("COUNT(*) DESC"))
                          .limit(6)
-                         .pluck(:browser, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                         .pluck(:browser, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                          .map { |name, count| { name: name, count: count } }
 
       @os_stats = filtered.where.not(os: nil)
                     .group(:os).order(Arel.sql("COUNT(*) DESC"))
                     .limit(6)
-                    .pluck(:os, Arel.sql("COUNT(DISTINCT visitor_token)"))
+                    .pluck(:os, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                     .map { |name, count| { name: name, count: count } }
 
       # ── Daily trend chart ─────────────────────────────────────────────────
       @daily_uniques = filtered
                          .group(Arel.sql("DATE(visited_at)"))
                          .order(Arel.sql("DATE(visited_at)"))
-                         .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
+                         .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
                          .map { |day, count| { day: day, count: count } }
 
       # ── Filter dropdown options (from actual data) ────────────────────────
@@ -134,7 +134,7 @@ module Admin
         "week_unique=#{@stats[:week][:unique]} week_views=#{@stats[:week][:views]} | " \
         "month_unique=#{@stats[:month][:unique]} month_views=#{@stats[:month][:views]} | " \
         "filtered_unique=#{@filtered_unique} filtered_views=#{@filtered_views} | " \
-        "registered=#{@registered_count} anonymous=#{@anonymous_count} bots_today=#{@bot_count_today} | " \
+        "registered=#{@registered_count} anonymous=#{@anonymous_count} bots=#{@bot_count} | " \
         "new=#{@new_visitors} returning=#{@returning_visitors} avg_duration=#{@avg_duration}s | " \
         "devices=#{@device_stats.map { |d| "#{d[:type]}:#{d[:count]}" }.join(",")} | " \
         "browsers=#{@browser_stats.map { |b| "#{b[:name]}:#{b[:count]}" }.join(",")} | " \

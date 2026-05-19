@@ -462,6 +462,9 @@
 
     <% unless logged_in? %>
       <%= render "shared/login_prompt_bar" %>
+      <% if @login_gate %>
+        <%= render "shared/login_gate" %>
+      <% end %>
     <% end %>
     <%= render "shared/pwa_install_banner" %>
     <%= render "shared/push_notification_banner" if firebase_configured? %>
@@ -526,19 +529,21 @@
         var sent = false;
         function sendDuration() {
           if (sent) return;
-          sent = true;
           var seconds = Math.round((Date.now() - startTime) / 1000);
           if (seconds < 2) return;
+          sent = true;
           var csrf = document.querySelector('meta[name="csrf-token"]');
-          navigator.sendBeacon('/visit_ping', new URLSearchParams({
+          var data = new URLSearchParams({
             duration: seconds, path: pagePath, authenticity_token: csrf ? csrf.content : ''
-          }));
+          });
+          try { navigator.sendBeacon('/visit_ping', data); } catch(e) {}
         }
         document.addEventListener('visibilitychange', function() {
           if (document.visibilityState === 'hidden') sendDuration();
         });
         document.addEventListener('turbo:before-visit', sendDuration);
         window.addEventListener('pagehide', sendDuration);
+        window.addEventListener('beforeunload', sendDuration);
       })();
     </script>
   </body>

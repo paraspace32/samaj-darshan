@@ -18,6 +18,10 @@ production:
     class: AnalyticsDailyReportJob
     schedule: at 2am every day
 
+  flag_bot_visitors:
+    class: FlagBotVisitorsJob
+    schedule: every day at 2:30am Asia/Kolkata
+
   cleanup_visits:
     class: CleanupVisitsJob
     schedule: every day at 3am Asia/Kolkata

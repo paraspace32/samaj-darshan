@@ -1,8 +1,8 @@
 class FlagBotVisitorsJob < ApplicationJob
   queue_as :default
 
-  DAILY_VIEW_THRESHOLD = 50
-  ZERO_DURATION_VIEW_THRESHOLD = 10
+  DAILY_VIEW_THRESHOLD = 20
+  ZERO_DURATION_VIEW_THRESHOLD = 5
 
   def perform(date = Date.yesterday)
     date = Date.parse(date) if date.is_a?(String)
@@ -38,14 +38,14 @@ class FlagBotVisitorsJob < ApplicationJob
   def zero_duration_tokens(range)
     Visit.human.where(visited_at: range)
          .group(:visitor_token)
-         .having("COUNT(*) > ? AND COUNT(duration_seconds) = 0", ZERO_DURATION_VIEW_THRESHOLD)
+         .having("COUNT(*) - COUNT(duration_seconds) > ?", ZERO_DURATION_VIEW_THRESHOLD)
          .pluck(:visitor_token)
   end
 
   def multi_token_ips(range)
     Visit.human.where(visited_at: range)
          .group(:ip_address)
-         .having("COUNT(DISTINCT visitor_token) > 10")
+         .having("COUNT(DISTINCT visitor_token) > 3")
          .pluck(:ip_address)
   end
 end

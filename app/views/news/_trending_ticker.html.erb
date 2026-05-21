@@ -29,5 +29,7 @@
   </div>
 <% end %>
 
-<%# ── Marriage ad — below the ticker ─────────────────── %>
-<%= render "shared/billboard_marriage" %>
+<%# ── Marriage ad — below the ticker (mobile only, desktop renders inside flex column) ─────────────────── %>
+<div class="lg:hidden">
+  <%= render "shared/billboard_marriage" %>
+</div>

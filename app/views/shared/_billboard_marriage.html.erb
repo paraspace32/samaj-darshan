@@ -8,7 +8,7 @@
     Any image (portrait, landscape, square) fills the frame via object-cover.
     Variant is pre-cropped to 800×450 at upload to match frame shape.
   %>
-  <div class="-mt-2 mb-2 lg:mt-0 lg:mb-6 relative -mx-4 sm:mx-[3px] lg:max-w-md lg:mx-auto">
+  <div class="-mt-2 mb-2 lg:mt-0 lg:mb-6 relative -mx-4 sm:mx-[3px] lg:mx-0">
 
     <%# Gradient border frame %>
     <div class="rounded-[18px]"
@@ -30,11 +30,11 @@
                   <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                     <% if bb.image.attached? %>
                       <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                            class: "w-full object-cover object-center block",
+                            class: "w-full object-cover object-center block marriage-ad-img",
                             style: "aspect-ratio: 11/8",
                             loading: i == 0 ? "eager" : "lazy" %>
                     <% else %>
-                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center marriage-ad-img" style="aspect-ratio: 11/8">
                         <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                       </div>
                     <% end %>
@@ -42,11 +42,11 @@
                 <% else %>
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                          class: "w-full object-cover object-center block",
+                          class: "w-full object-cover object-center block marriage-ad-img",
                           style: "aspect-ratio: 11/8",
                           loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center marriage-ad-img" style="aspect-ratio: 11/8">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>

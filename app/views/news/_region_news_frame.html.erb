@@ -9,10 +9,10 @@
   <%# ── Region news section ── %>
   <% region_extra = @news_items.to_a %>
   <% if region_extra.any? %>
-    <div class="py-3 sm:py-5">
-      <div class="flex items-center gap-3 mb-3">
+    <div class="py-3 sm:py-5 lg:py-8">
+      <div class="flex items-center gap-3 mb-3 lg:mb-5">
         <div class="w-1 h-6 rounded-full shrink-0" style="background: linear-gradient(180deg, #f97316, #ea580c)"></div>
-        <h2 class="text-base sm:text-xl font-black text-gray-900 tracking-tight"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
+        <h2 class="text-base sm:text-xl lg:text-2xl font-black text-gray-900 tracking-tight"><%= active_region_on_home.display_name %> <%= I18n.locale == :hi ? "समाचार" : "News" %></h2>
         <div class="flex-1 h-px bg-gray-100"></div>
         <%= link_to region_feed_path(slug: active_region_on_home.slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 hover:text-orange-700 px-2.5 py-1 rounded-full bg-orange-50 hover:bg-orange-100 transition-all" do %>
           <%= I18n.locale == :hi ? "और देखें" : "View All" %>
@@ -39,9 +39,9 @@
           <% end %>
         <% end %>
       </div>
-      <div class="hidden sm:grid sm:grid-cols-2 gap-3">
+      <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5">
         <% region_extra.each do |item| %>
-          <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
+          <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
             <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
@@ -64,10 +64,10 @@
   <%# ── Latest news (सभी active) ── %>
   <% latest_all = @news_items.to_a %>
   <% if latest_all.any? %>
-    <div class="py-3 sm:py-5">
-      <div class="flex items-center gap-3 mb-3">
+    <div class="py-3 sm:py-5 lg:py-8">
+      <div class="flex items-center gap-3 mb-3 lg:mb-5">
         <div class="w-1 h-6 rounded-full shrink-0" style="background: linear-gradient(180deg, #f97316, #ea580c)"></div>
-        <h2 class="text-base sm:text-xl font-black text-gray-900 tracking-tight"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
+        <h2 class="text-base sm:text-xl lg:text-2xl font-black text-gray-900 tracking-tight"><%= I18n.locale == :hi ? "ताज़ा समाचार" : "Latest News" %></h2>
         <div class="flex-1 h-px bg-gray-100"></div>
       </div>
       <div class="space-y-1.5 sm:hidden">
@@ -90,9 +90,9 @@
           <% end %>
         <% end %>
       </div>
-      <div class="hidden sm:grid sm:grid-cols-2 gap-3">
+      <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5">
         <% latest_all.each do |item| %>
-          <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
+          <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
             <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>

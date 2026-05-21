@@ -19,32 +19,51 @@
 <% end %>
 
 <% if @is_home %>
-  <%# ── Hero bento: featured story + side stack ──────────────────── %>
-  <%= render "news/home_hero" %>
+  <%# ── Desktop: 2-column newspaper layout with sidebar ──────────── %>
+  <div class="lg:flex lg:gap-0">
+    <div class="lg:flex-1 lg:min-w-0 lg:pr-8">
+      <%# ── Marriage ad (desktop — inside content column) ────────── %>
+      <div class="hidden lg:block">
+        <%= render "shared/billboard_marriage" %>
+      </div>
 
-  <%# ── Regions tabs + billboard ─────────────────────────────────── %>
-  <%= render "news/regions_tabs" %>
+      <%# ── Hero bento: featured story + side stack ──────────────── %>
+      <%= render "news/home_hero" %>
 
-  <%# ── Region / latest news turbo-frame ────────────────────────── %>
-  <%= render "news/region_news_frame" %>
+      <%# ── Regions tabs + billboard ─────────────────────────────── %>
+      <%= render "news/regions_tabs" %>
 
-  <%# ── Education CTA banner ─────────────────────────────────────── %>
-  <%= render "news/education_banner" %>
+      <%# ── Region / latest news turbo-frame ─────────────────────── %>
+      <div class="section-band-gray">
+        <%= render "news/region_news_frame" %>
+      </div>
 
-  <%# ── Trending dark section ────────────────────────────────────── %>
-  <%= render "news/trending_section" %>
+      <%# ── Education CTA banner ─────────────────────────────────── %>
+      <%= render "news/education_banner" %>
 
-  <%# ── Category sections (alternating layouts) ─────────────────── %>
-  <%= render "news/category_sections" %>
+      <%# ── Trending dark section ────────────────────────────────── %>
+      <%= render "news/trending_section" %>
 
-  <%# ── Education news list ──────────────────────────────────────── %>
-  <%= render "news/education_news_section" %>
+      <%# ── Category sections (alternating layouts) ──────────────── %>
+      <%= render "news/category_sections" %>
 
-  <%# ── Job news list ────────────────────────────────────────────── %>
-  <%= render "news/job_news_section" %>
+      <%# ── Education news list ──────────────────────────────────── %>
+      <div class="section-band-gray">
+        <%= render "news/education_news_section" %>
+      </div>
 
-  <%# ── Job listings slider ──────────────────────────────────────── %>
-  <%= render "news/job_listings_section" %>
+      <%# ── Job news list ────────────────────────────────────────── %>
+      <%= render "news/job_news_section" %>
+
+      <%# ── Job listings slider ──────────────────────────────────── %>
+      <div class="section-band-gray">
+        <%= render "news/job_listings_section" %>
+      </div>
+    </div>
+
+    <%# ── Sidebar: trending + latest + quick links (desktop only) ── %>
+    <%= render "news/home_sidebar" %>
+  </div>
 
 <% else %>
   <%# ── Turbo Frame response for region tab clicks (non-home) ────── %>

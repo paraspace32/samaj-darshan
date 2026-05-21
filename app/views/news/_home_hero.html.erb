@@ -154,51 +154,47 @@
 
   </div>
 
-  <%# ── Desktop Hero: title-first bento grid ── %>
-  <div class="hidden sm:grid sm:grid-cols-12 gap-4 mb-6 animate-fade-up">
-    <%# Main hero — spans 8 cols %>
-    <div class="col-span-8">
-      <%= link_to featured_path, class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50/50 transition-all h-full" do %>
-        <%# 1. Title at top %>
-        <div class="p-5 lg:p-6 pb-3">
-          <h2 class="text-xl lg:text-2xl font-black text-gray-900 leading-tight line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors">
+  <%# ── Desktop Hero: overlay bento grid ── %>
+  <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-10 animate-fade-up">
+    <%# Main hero — spans 2 cols, overlay text on image %>
+    <div class="col-span-2">
+      <%= link_to featured_path, class: "group block rounded-2xl overflow-hidden relative lg:h-[420px] h-72 card-lift" do %>
+        <% if @featured.cover_image.attached? %>
+          <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover img-zoom", loading: "eager" %>
+        <% else %>
+          <div class="w-full h-full gradient-hero"></div>
+        <% end %>
+        <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.1) 100%)"></div>
+        <div class="absolute top-4 left-5 flex items-center gap-2.5">
+          <span class="relative flex items-center justify-center h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+          </span>
+          <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-md text-white/90 uppercase tracking-wider" style="background: rgba(249,115,22,0.7)"><%= featured_badge_label %></span>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-5 lg:p-8">
+          <h2 class="text-xl lg:text-3xl font-black text-white leading-tight line-clamp-3 tracking-tight group-hover:text-orange-200 transition-colors drop-shadow-lg">
             <%= @featured.display_title %>
           </h2>
-        </div>
-        <%# 2. Image with pulse dot %>
-        <div class="w-full aspect-[2/1] overflow-hidden relative">
-          <% if @featured.cover_image.attached? %>
-            <%= optimized_image_tag @featured.cover_image, variant: :hero, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "eager" %>
-          <% else %>
-            <div class="w-full h-full gradient-hero"></div>
-          <% end %>
-          <div class="absolute top-3 left-4">
-            <span class="relative flex items-center justify-center h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500 shadow-md shadow-black/20"></span>
-            </span>
-          </div>
-        </div>
-        <%# 3. Content excerpt %>
-        <div class="p-5 lg:p-6 pt-3">
-          <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(featured_content), length: 200) %></p>
+          <p class="text-sm text-white/60 line-clamp-2 leading-relaxed mt-2 lg:mt-3"><%= truncate(strip_tags(featured_content), length: 200) %></p>
         </div>
       <% end %>
     </div>
 
-    <%# Side stack — items in 4 cols, title-first cards %>
-    <div class="col-span-4 grid grid-rows-2 gap-4">
+    <%# Side stack — 1 col, overlay cards %>
+    <div class="col-span-1 grid grid-rows-2 gap-4 lg:gap-6">
       <% @home_side_items.first(2).each_with_index do |item, idx| %>
-        <%= link_to commentable_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50/50 transition-all" do %>
-          <div class="w-full aspect-[16/10] overflow-hidden">
+        <%= link_to commentable_path(item), class: "group block rounded-2xl overflow-hidden relative card-lift" do %>
+          <div class="w-full h-full overflow-hidden">
             <% if item.cover_image.attached? %>
-              <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: idx == 0 ? "eager" : "lazy" %>
+              <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: idx == 0 ? "eager" : "lazy" %>
             <% else %>
               <div class="w-full h-full gradient-brand-soft"></div>
             <% end %>
           </div>
-          <div class="p-3">
-            <h3 class="text-[14px] font-bold text-gray-900 leading-snug line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors"><%= item.display_title %></h3>
+          <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-4">
+            <h3 class="text-[14px] lg:text-base font-bold text-white leading-snug line-clamp-3 tracking-tight group-hover:text-orange-200 transition-colors drop-shadow-md"><%= item.display_title %></h3>
           </div>
         <% end %>
       <% end %>
@@ -207,9 +203,9 @@
 
   <%# Desktop: remaining side items as text rows below hero %>
   <% if @home_side_items.size > 2 %>
-    <div class="hidden sm:grid sm:grid-cols-2 gap-3 mb-6">
+    <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5 mb-6 lg:mb-10">
       <% @home_side_items.drop(2).each_with_index do |item, idx| %>
-        <%= link_to commentable_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
+        <%= link_to commentable_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
           <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300", loading: "lazy" %>

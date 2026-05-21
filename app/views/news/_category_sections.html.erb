@@ -11,10 +11,10 @@
     <% end %>
 
     <% accent = section_accents[sec_idx % section_accents.size] %>
-    <div class="py-3 sm:py-5 <%= sec_idx > 0 ? 'border-t border-gray-100' : '' %>" data-reveal>
-      <div class="flex items-center gap-3 mb-3">
+    <div class="py-3 sm:py-5 lg:py-8 <%= sec_idx > 0 ? 'border-t border-gray-100 section-divider' : '' %>" data-reveal>
+      <div class="flex items-center gap-3 mb-3 lg:mb-5">
         <div class="w-1 h-6 rounded-full shrink-0" style="background: <%= accent %>"></div>
-        <h2 class="text-base sm:text-xl font-black text-gray-900 tracking-tight"><%= section[:category].display_name %></h2>
+        <h2 class="text-base sm:text-xl lg:text-2xl font-black text-gray-900 tracking-tight"><%= section[:category].display_name %></h2>
         <div class="flex-1 h-px bg-gray-100"></div>
         <%= link_to category_feed_path(slug: section[:category].slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold hover:opacity-80 px-2.5 py-1 rounded-full transition-all", style: "color: #{accent}; background: #{accent}12" do %>
           <%= I18n.locale == :hi ? "और देखें" : "View All" %>
@@ -99,34 +99,93 @@
         <% end %>
       </div>
 
-      <%# Desktop: lead + grid layout for even, 3-col grid for odd %>
-      <% if sec_idx.even? && section[:items].size > 1 %>
-        <div class="hidden sm:grid sm:grid-cols-12 gap-4">
-          <%# Lead story — large card %>
-          <% lead = section[:items].first %>
-          <div class="col-span-6">
-            <%= link_to news_path(lead), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100 transition-all h-full" do %>
-              <div class="relative h-48 overflow-hidden">
-                <% if lead.cover_image.attached? %>
-                  <%= optimized_image_tag lead.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
-                <% else %>
-                  <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
-                    <span class="text-2xl text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
-                  </div>
-                <% end %>
-                <div class="absolute bottom-0 inset-x-0 h-16" style="background: linear-gradient(to top, rgba(0,0,0,0.06), transparent)"></div>
+      <%# Desktop: B1S3 layout — 1 big overlay + 3 small cards (alternating position) %>
+      <% if section[:items].size > 3 %>
+        <% lead = section[:items].first %>
+        <% smalls = section[:items].drop(1).first(3) %>
+        <div class="hidden sm:grid sm:grid-cols-12 gap-4 lg:gap-5">
+          <%# Big card — overlay style %>
+          <div class="col-span-7 <%= sec_idx.odd? ? 'sm:order-2' : '' %>">
+            <%= link_to news_path(lead), class: "group block rounded-2xl overflow-hidden relative h-full min-h-[320px] lg:min-h-[380px] card-lift" do %>
+              <% if lead.cover_image.attached? %>
+                <%= optimized_image_tag lead.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom absolute inset-0", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft absolute inset-0"></div>
+              <% end %>
+              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)"></div>
+              <div class="absolute top-3 left-3">
+                <span class="text-[9px] font-black px-2 py-0.5 rounded-md text-white/90 uppercase tracking-wider" style="background: <%= accent %>cc"><%= section[:category].display_name %></span>
               </div>
-              <div class="p-4">
-                <h3 class="text-base font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-1.5"><%= lead.display_title %></h3>
-                <span class="text-[11px] text-gray-400"><%= lead.region.display_name %></span>
+              <div class="absolute bottom-0 left-0 right-0 p-5 lg:p-6">
+                <h3 class="text-lg lg:text-xl font-black text-white group-hover:text-orange-200 transition-colors line-clamp-3 leading-snug tracking-tight mb-2 drop-shadow-md"><%= lead.display_title %></h3>
+                <p class="text-[12px] text-white/50 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(lead.respond_to?(:display_content) ? lead.display_content : ''), length: 120) %></p>
               </div>
             <% end %>
           </div>
-          <%# Remaining items — stacked list %>
-          <div class="col-span-6 flex flex-col gap-2.5">
+          <%# 3 small cards — stacked vertically %>
+          <div class="col-span-5 flex flex-col gap-3 <%= sec_idx.odd? ? 'sm:order-1' : '' %>">
+            <% smalls.each do |item| %>
+              <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift flex-1" do %>
+                <div class="w-24 h-20 rounded-lg overflow-hidden shrink-0">
+                  <% if item.cover_image.attached? %>
+                    <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+                  <% else %>
+                    <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                      <span class="text-base text-orange-200/60 font-black"><%= t("brand.logo_letter") %></span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                  <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                  <span class="text-[11px] text-gray-400 mt-1"><%= item.region.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <%# Remaining items beyond the B1S3 — horizontal row %>
+        <% remaining = section[:items].drop(4) %>
+        <% if remaining.any? %>
+          <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-5 mt-5">
+            <% remaining.each do |item| %>
+              <%= link_to news_path(item), class: "group block rounded-xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all card-lift" do %>
+                <div class="relative h-32 lg:h-40 overflow-hidden">
+                  <% if item.cover_image.attached? %>
+                    <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+                  <% else %>
+                    <div class="w-full h-full gradient-brand-soft"></div>
+                  <% end %>
+                </div>
+                <div class="p-3">
+                  <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      <% elsif section[:items].size > 1 %>
+        <div class="hidden sm:grid sm:grid-cols-12 gap-4 lg:gap-5">
+          <% lead = section[:items].first %>
+          <div class="col-span-6 <%= sec_idx.odd? ? 'sm:order-2' : '' %>">
+            <%= link_to news_path(lead), class: "group block rounded-2xl overflow-hidden relative h-full min-h-[280px] lg:min-h-[340px] card-lift" do %>
+              <% if lead.cover_image.attached? %>
+                <%= optimized_image_tag lead.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom absolute inset-0", loading: "lazy" %>
+              <% else %>
+                <div class="w-full h-full gradient-brand-soft absolute inset-0"></div>
+              <% end %>
+              <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)"></div>
+              <div class="absolute top-3 left-3">
+                <span class="text-[9px] font-black px-2 py-0.5 rounded-md text-white/90 uppercase tracking-wider" style="background: <%= accent %>cc"><%= section[:category].display_name %></span>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 p-5">
+                <h3 class="text-base lg:text-xl font-black text-white group-hover:text-orange-200 transition-colors line-clamp-2 leading-snug tracking-tight mb-1.5 drop-shadow-md"><%= lead.display_title %></h3>
+              </div>
+            <% end %>
+          </div>
+          <div class="col-span-6 flex flex-col gap-2.5 <%= sec_idx.odd? ? 'sm:order-1' : '' %>">
             <% section[:items].drop(1).each do |item| %>
-              <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
-                <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
+              <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
+                <div class="w-24 h-20 rounded-lg overflow-hidden shrink-0">
                   <% if item.cover_image.attached? %>
                     <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
                   <% else %>
@@ -144,10 +203,10 @@
           </div>
         </div>
       <% else %>
-        <div class="hidden sm:grid sm:grid-cols-3 gap-4">
+        <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-5">
           <% section[:items].each do |item| %>
-            <%= link_to news_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100 transition-all" do %>
-              <div class="relative h-36 overflow-hidden">
+            <%= link_to news_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100 transition-all card-lift" do %>
+              <div class="relative h-36 lg:h-48 overflow-hidden">
                 <% if item.cover_image.attached? %>
                   <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
                 <% else %>

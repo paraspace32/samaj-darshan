@@ -20,8 +20,8 @@
 
 <% if @is_home %>
   <%# ── Desktop: 2-column newspaper layout with sidebar ──────────── %>
-  <div class="lg:flex lg:gap-8">
-    <div class="lg:flex-1 lg:min-w-0">
+  <div class="lg:flex lg:gap-0">
+    <div class="lg:flex-1 lg:min-w-0 lg:pr-8">
       <%# ── Hero bento: featured story + side stack ──────────────── %>
       <%= render "news/home_hero" %>
 
@@ -29,7 +29,9 @@
       <%= render "news/regions_tabs" %>
 
       <%# ── Region / latest news turbo-frame ─────────────────────── %>
-      <%= render "news/region_news_frame" %>
+      <div class="section-band-gray">
+        <%= render "news/region_news_frame" %>
+      </div>
 
       <%# ── Education CTA banner ─────────────────────────────────── %>
       <%= render "news/education_banner" %>
@@ -41,13 +43,17 @@
       <%= render "news/category_sections" %>
 
       <%# ── Education news list ──────────────────────────────────── %>
-      <%= render "news/education_news_section" %>
+      <div class="section-band-gray">
+        <%= render "news/education_news_section" %>
+      </div>
 
       <%# ── Job news list ────────────────────────────────────────── %>
       <%= render "news/job_news_section" %>
 
       <%# ── Job listings slider ──────────────────────────────────── %>
-      <%= render "news/job_listings_section" %>
+      <div class="section-band-gray">
+        <%= render "news/job_listings_section" %>
+      </div>
     </div>
 
     <%# ── Sidebar: trending + latest + quick links (desktop only) ── %>

@@ -382,6 +382,15 @@
       border-top-width: 2px;
       border-color: rgba(229,231,235,0.6);
     }
+    .section-band-gray {
+      background: #f8f9fa;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      border-top: 1px solid rgba(229,231,235,0.5);
+      border-bottom: 1px solid rgba(229,231,235,0.5);
+    }
   }
 
   /* ── Navbar logo ────────────────────────────────────── */

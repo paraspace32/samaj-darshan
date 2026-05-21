@@ -2,7 +2,7 @@
 <% if feed_bbs.any? %>
   <% bb = feed_bbs.sample %>
   <% bb.track_impression! %>
-  <div class="my-3 animate-fade-in">
+  <div class="my-3 lg:my-6 animate-fade-in">
     <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm relative">
       <span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/40 text-white/80 backdrop-blur-sm">Ad</span>
       <% if bb.link_url.present? %>

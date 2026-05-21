@@ -11,10 +11,10 @@
     <% end %>
 
     <% accent = section_accents[sec_idx % section_accents.size] %>
-    <div class="py-3 sm:py-5 <%= sec_idx > 0 ? 'border-t border-gray-100' : '' %>" data-reveal>
-      <div class="flex items-center gap-3 mb-3">
+    <div class="py-3 sm:py-5 lg:py-8 <%= sec_idx > 0 ? 'border-t border-gray-100' : '' %>" data-reveal>
+      <div class="flex items-center gap-3 mb-3 lg:mb-5">
         <div class="w-1 h-6 rounded-full shrink-0" style="background: <%= accent %>"></div>
-        <h2 class="text-base sm:text-xl font-black text-gray-900 tracking-tight"><%= section[:category].display_name %></h2>
+        <h2 class="text-base sm:text-xl lg:text-2xl font-black text-gray-900 tracking-tight"><%= section[:category].display_name %></h2>
         <div class="flex-1 h-px bg-gray-100"></div>
         <%= link_to category_feed_path(slug: section[:category].slug), class: "shrink-0 inline-flex items-center gap-1 text-[11px] font-bold hover:opacity-80 px-2.5 py-1 rounded-full transition-all", style: "color: #{accent}; background: #{accent}12" do %>
           <%= I18n.locale == :hi ? "और देखें" : "View All" %>
@@ -101,12 +101,12 @@
 
       <%# Desktop: lead + grid layout for even, 3-col grid for odd %>
       <% if sec_idx.even? && section[:items].size > 1 %>
-        <div class="hidden sm:grid sm:grid-cols-12 gap-4">
+        <div class="hidden sm:grid sm:grid-cols-12 gap-4 lg:gap-6">
           <%# Lead story — large card %>
           <% lead = section[:items].first %>
           <div class="col-span-6">
             <%= link_to news_path(lead), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100 transition-all h-full" do %>
-              <div class="relative h-48 overflow-hidden">
+              <div class="relative h-48 lg:h-60 overflow-hidden">
                 <% if lead.cover_image.attached? %>
                   <%= optimized_image_tag lead.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
                 <% else %>
@@ -144,10 +144,10 @@
           </div>
         </div>
       <% else %>
-        <div class="hidden sm:grid sm:grid-cols-3 gap-4">
+        <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-6">
           <% section[:items].each do |item| %>
             <%= link_to news_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100 transition-all" do %>
-              <div class="relative h-36 overflow-hidden">
+              <div class="relative h-36 lg:h-48 overflow-hidden">
                 <% if item.cover_image.attached? %>
                   <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
                 <% else %>

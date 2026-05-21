@@ -155,13 +155,13 @@
   </div>
 
   <%# ── Desktop Hero: title-first bento grid ── %>
-  <div class="hidden sm:grid sm:grid-cols-12 gap-4 mb-6 animate-fade-up">
-    <%# Main hero — spans 8 cols %>
-    <div class="col-span-8">
+  <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-10 animate-fade-up">
+    <%# Main hero — spans 2 cols %>
+    <div class="col-span-2">
       <%= link_to featured_path, class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-lg hover:shadow-orange-50/50 transition-all h-full" do %>
         <%# 1. Title at top %>
-        <div class="p-5 lg:p-6 pb-3">
-          <h2 class="text-xl lg:text-2xl font-black text-gray-900 leading-tight line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors">
+        <div class="p-5 lg:p-7 pb-3 lg:pb-4">
+          <h2 class="text-xl lg:text-3xl font-black text-gray-900 leading-tight line-clamp-3 tracking-tight group-hover:text-orange-600 transition-colors">
             <%= @featured.display_title %>
           </h2>
         </div>
@@ -180,14 +180,14 @@
           </div>
         </div>
         <%# 3. Content excerpt %>
-        <div class="p-5 lg:p-6 pt-3">
+        <div class="p-5 lg:p-7 pt-3 lg:pt-4">
           <p class="text-sm text-gray-500 line-clamp-2 leading-relaxed"><%= truncate(strip_tags(featured_content), length: 200) %></p>
         </div>
       <% end %>
     </div>
 
-    <%# Side stack — items in 4 cols, title-first cards %>
-    <div class="col-span-4 grid grid-rows-2 gap-4">
+    <%# Side stack — 1 col, title-first cards %>
+    <div class="col-span-1 grid grid-rows-2 gap-4">
       <% @home_side_items.first(2).each_with_index do |item, idx| %>
         <%= link_to commentable_path(item), class: "group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50/50 transition-all" do %>
           <div class="w-full aspect-[16/10] overflow-hidden">
@@ -207,7 +207,7 @@
 
   <%# Desktop: remaining side items as text rows below hero %>
   <% if @home_side_items.size > 2 %>
-    <div class="hidden sm:grid sm:grid-cols-2 gap-3 mb-6">
+    <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5 mb-6 lg:mb-10">
       <% @home_side_items.drop(2).each_with_index do |item, idx| %>
         <%= link_to commentable_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all" do %>
           <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">

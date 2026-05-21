@@ -2,7 +2,7 @@
     REGIONS TABS — horizontal scroll region filter bar
     Requires: @region, @auto_region, @regions
     ═══════════════════════════════════════════════════════════════════ %>
-<div class="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-3 pb-1 bg-white border-b border-gray-100" data-controller="region-tabs">
+<div class="-mx-4 lg:mx-0 px-4 lg:px-0 pt-3 pb-1 lg:pt-4 lg:pb-2 bg-white border-b border-gray-100 lg:rounded-t-xl" data-controller="region-tabs">
   <%# Determine which tab is active: explicit region > auto-detected > all %>
   <% active_region = @region || @auto_region %>
   <div class="relative">

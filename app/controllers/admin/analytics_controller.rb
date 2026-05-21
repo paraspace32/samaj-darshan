@@ -44,40 +44,40 @@ module Admin
                      .group(:path)
                      .order(Arel.sql("COUNT(*) DESC"))
                      .limit(10)
-                     .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                     .pluck(:path, Arel.sql("COUNT(*)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
                      .map { |path, views, uniques| { path: path, views: views, uniques: uniques } }
 
       @top_cities = filtered
                       .where.not(city: [ nil, "" ])
                       .group(:city)
-                      .order(Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL}) DESC"))
+                      .order(Arel.sql("COUNT(DISTINCT visitor_token) DESC"))
                       .limit(10)
-                      .pluck(:city, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                      .pluck(:city, Arel.sql("COUNT(DISTINCT visitor_token)"))
                       .map { |city, count| { city: city, count: count } }
 
       # ── Device / Browser / OS breakdown ───────────────────────────────────
       @device_stats = filtered.where.not(device_type: nil)
                         .group(:device_type).order(Arel.sql("COUNT(*) DESC"))
-                        .pluck(:device_type, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                        .pluck(:device_type, Arel.sql("COUNT(DISTINCT visitor_token)"))
                         .map { |type, count| { type: type, count: count } }
 
       @browser_stats = filtered.where.not(browser: nil)
                          .group(:browser).order(Arel.sql("COUNT(*) DESC"))
                          .limit(6)
-                         .pluck(:browser, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                         .pluck(:browser, Arel.sql("COUNT(DISTINCT visitor_token)"))
                          .map { |name, count| { name: name, count: count } }
 
       @os_stats = filtered.where.not(os: nil)
                     .group(:os).order(Arel.sql("COUNT(*) DESC"))
                     .limit(6)
-                    .pluck(:os, Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                    .pluck(:os, Arel.sql("COUNT(DISTINCT visitor_token)"))
                     .map { |name, count| { name: name, count: count } }
 
       # ── Daily trend chart ─────────────────────────────────────────────────
       @daily_uniques = filtered
                          .group(Arel.sql("DATE(visited_at)"))
                          .order(Arel.sql("DATE(visited_at)"))
-                         .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT #{Visit::UNIQUE_KEY_SQL})"))
+                         .pluck(Arel.sql("DATE(visited_at)"), Arel.sql("COUNT(DISTINCT visitor_token)"))
                          .map { |day, count| { day: day, count: count } }
 
       # ── Filter dropdown options (from actual data) ────────────────────────

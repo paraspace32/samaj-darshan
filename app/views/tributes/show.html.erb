@@ -1,6 +1,6 @@
 <% content_for(:title, @tribute.display_name) %>
 <% if @tribute.image.attached? %>
-  <% content_for(:og_image, rails_representation_url(@tribute.image.variant(:hero), host: request.base_url)) %>
+  <% content_for(:og_image, og_image_url(@tribute.image)) %>
 <% end %>
 <% content_for(:mobile_bar_share_text) { "#{@tribute.display_name}\n\n#{request.original_url}" } %>
 

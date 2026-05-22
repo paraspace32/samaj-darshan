@@ -42,7 +42,7 @@
                   <div class="absolute bottom-0 left-0 right-0 p-3">
                     <h3 class="text-[13px] font-bold text-white line-clamp-2 leading-snug tracking-tight group-hover:text-orange-200 transition-colors"><%= item.display_title %></h3>
                     <div class="flex items-center gap-1.5 mt-1.5">
-                      <span class="text-[10px] text-white/40"><%= item.region.display_name %></span>
+                      <span class="text-[10px] text-white/40"><%= item.region&.display_name %></span>
                       <span class="text-white/20">&middot;</span>
                       <span class="text-[10px] text-white/30"><%= item.published_at&.strftime("%d %b") %></span>
                     </div>
@@ -69,7 +69,7 @@
                 <div class="absolute bottom-0 left-0 right-0 p-3">
                   <h3 class="text-[15px] font-black text-white line-clamp-2 leading-snug tracking-tight group-hover:text-orange-200 transition-colors"><%= mobile_lead.display_title %></h3>
                   <div class="flex items-center gap-1.5 mt-1.5">
-                    <span class="text-[10px] text-white/40"><%= mobile_lead.region.display_name %></span>
+                    <span class="text-[10px] text-white/40"><%= mobile_lead.region&.display_name %></span>
                     <span class="text-white/20">&middot;</span>
                     <span class="text-[10px] text-white/30"><%= mobile_lead.published_at&.strftime("%d %b") %></span>
                   </div>
@@ -120,7 +120,7 @@
                   </div>
                   <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
                     <h3 class="text-base lg:text-lg font-black text-white group-hover:text-orange-200 transition-colors line-clamp-3 leading-snug tracking-tight drop-shadow-md"><%= lead.display_title %></h3>
-                    <p class="text-[12px] text-white/50 line-clamp-1 leading-relaxed mt-1"><%= lead.region.display_name %> &middot; <%= lead.published_at&.strftime("%d %b") %></p>
+                    <p class="text-[12px] text-white/50 line-clamp-1 leading-relaxed mt-1"><%= lead.region&.display_name %> &middot; <%= lead.published_at&.strftime("%d %b") %></p>
                   </div>
                 </div>
               <% end %>
@@ -133,7 +133,7 @@
                     <span class="text-lg font-black w-6 text-center shrink-0" style="color: <%= accent %><%= idx < 3 ? '66' : '33' %>"><%= idx + 2 %></span>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-                      <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>
+                      <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region&.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>
                     </div>
                     <div class="w-16 h-12 rounded-lg overflow-hidden shrink-0">
                       <% if item.cover_image.attached? %>

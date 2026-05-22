@@ -3,26 +3,67 @@
 <% marriage_ads = (marriage_ads_unique * 10).first(10) if marriage_ads_unique.size.between?(1, 9) %>
 <% marriage_ads ||= marriage_ads_unique %>
 <% if marriage_ads.any? %>
-  <%#
-    Wedding ad frame — fixed 16:9 aspect ratio.
-    Any image (portrait, landscape, square) fills the frame via object-cover.
-    Variant is pre-cropped to 800×450 at upload to match frame shape.
-  %>
-  <div class="-mt-2 mb-2 lg:mt-0 lg:mb-6 relative -mx-4 sm:mx-[3px] lg:mx-auto lg:max-w-xl">
+  <%# Desktop (sidebar): clean card matching sidebar modules %>
+  <div class="hidden lg:block bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    <div class="px-4 pt-3 pb-2">
+      <div class="flex items-center gap-2.5">
+        <div class="w-1 h-5 rounded-full bg-orange-500 shrink-0"></div>
+        <h3 class="text-[13px] font-black text-gray-900">विवाह विज्ञापन</h3>
+      </div>
+    </div>
+    <div class="px-2 pb-2">
+      <div class="relative overflow-hidden rounded-lg"
+           data-controller="carousel"
+           data-carousel-autoplay-value="true"
+           data-carousel-fixed-height-value="true">
+        <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
+          <% marriage_ads.each_with_index do |bb, i| %>
+            <div class="w-full shrink-0 relative" data-carousel-target="slide">
+              <% if bb.link_url.present? %>
+                <%= link_to billboard_click_path(bb), class: "block w-full" do %>
+                  <% if bb.image.attached? %>
+                    <%= optimized_image_tag bb.image, variant: :marriage_ad,
+                          class: "w-full object-cover object-center block rounded-lg",
+                          loading: i == 0 ? "eager" : "lazy" %>
+                  <% else %>
+                    <div class="w-full aspect-[4/5] bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center rounded-lg">
+                      <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
+                    </div>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <% if bb.image.attached? %>
+                  <%= optimized_image_tag bb.image, variant: :marriage_ad,
+                        class: "w-full object-cover object-center block rounded-lg",
+                        loading: i == 0 ? "eager" : "lazy" %>
+                <% else %>
+                  <div class="w-full aspect-[4/5] bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center rounded-lg">
+                    <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+          <% (0...(marriage_ads.size / 2)).each do |i| %>
+            <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                    class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-3' : 'bg-white/45 w-1.5' %>"></button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <%# Gradient border frame %>
-    <div class="rounded-[18px]"
+  <%# Mobile: gradient border frame %>
+  <div class="lg:hidden -mt-2 mb-2 relative -mx-4 sm:mx-[3px]">
+    <div class="rounded-none sm:rounded-[18px]"
          style="padding: 4px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 25%, #f9a8d4 50%, #fde68a 75%, #fda4af 100%);">
-      <%# White mat inner border %>
-      <div class="rounded-[15px]" style="padding: 3px; background: white;">
-
-        <%# Carousel — no bottom bar %>
-        <div class="relative overflow-hidden rounded-[13px]"
+      <div class="rounded-none sm:rounded-[15px]" style="padding: 3px; background: white;">
+        <div class="relative overflow-hidden rounded-none sm:rounded-[13px]"
              data-controller="carousel"
              data-carousel-autoplay-value="true"
              data-carousel-fixed-height-value="true">
-
-          <%# Slides track %>
           <div class="flex items-start transition-transform duration-500 ease-out" data-carousel-target="track">
             <% marriage_ads.each_with_index do |bb, i| %>
               <div class="w-full shrink-0 relative" data-carousel-target="slide">
@@ -30,11 +71,11 @@
                   <%= link_to billboard_click_path(bb), class: "block w-full" do %>
                     <% if bb.image.attached? %>
                       <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                            class: "w-full object-cover object-center block marriage-ad-img",
+                            class: "w-full object-cover object-center block",
                             style: "aspect-ratio: 11/8",
                             loading: i == 0 ? "eager" : "lazy" %>
                     <% else %>
-                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center marriage-ad-img" style="aspect-ratio: 11/8">
+                      <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
                         <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                       </div>
                     <% end %>
@@ -42,28 +83,24 @@
                 <% else %>
                   <% if bb.image.attached? %>
                     <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                          class: "w-full object-cover object-center block marriage-ad-img",
+                          class: "w-full object-cover object-center block",
                           style: "aspect-ratio: 11/8",
                           loading: i == 0 ? "eager" : "lazy" %>
                   <% else %>
-                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center marriage-ad-img" style="aspect-ratio: 11/8">
+                    <div class="w-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center" style="aspect-ratio: 11/8">
                       <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
                     </div>
                   <% end %>
                 <% end %>
-                <%# No "Ad" badge on marriage billboards %>
               </div>
             <% end %>
           </div>
-
-          <%# Dot indicators at bottom of image (autoplay only — no manual arrows) %>
           <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
             <% (0...(marriage_ads.size / 2)).each do |i| %>
               <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
                       class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
             <% end %>
           </div>
-
         </div>
       </div>
     </div>

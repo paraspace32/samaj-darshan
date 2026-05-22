@@ -13,8 +13,10 @@
           <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden hover:shadow-md transition-all">
             <div class="flex flex-col sm:flex-row">
               <% if tribute.image.attached? %>
-                <div class="sm:w-48 sm:shrink-0">
-                  <%= image_tag tribute.image.variant(:card), class: "w-full h-48 sm:h-full object-cover", loading: "lazy" %>
+                <div class="sm:w-44 sm:shrink-0 overflow-hidden">
+                  <div class="aspect-[3/4] sm:aspect-[3/4]">
+                    <%= image_tag tribute.image.variant(:card), class: "w-full h-full object-cover object-top", loading: "lazy" %>
+                  </div>
                 </div>
               <% end %>
               <div class="p-5 flex-1">

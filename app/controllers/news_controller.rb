@@ -91,13 +91,17 @@ class NewsController < ApplicationController
         *@trending.map(&:id)
       ].compact.uniq
 
+      # Only exclude the featured hero item from category sections — allow items
+      # shown in side stack / region / trending to reappear under their category.
+      hero_id = (@featured_type == :news ? @featured&.id : nil)
+      category_exclude_ids = [hero_id].compact
+
       @category_sections = @categories.filter_map do |cat|
-        items = News.published.where(category: cat).where.not(id: shown_ids)
+        items = News.published.where(category: cat).where.not(id: category_exclude_ids)
                     .includes(:region, :category, :author).with_attached_cover_image
-                    .order(published_at: :desc).limit(5)
+                    .order(published_at: :desc).limit(7)
         next if items.empty?
 
-        shown_ids.concat(items.map(&:id))
         { category: cat, items: items.to_a }
       end
     else

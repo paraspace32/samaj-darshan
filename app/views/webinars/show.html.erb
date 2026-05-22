@@ -67,6 +67,24 @@
       </div>
     <% end %>
 
+    <%# Registration embed (Zoho etc.) — for upcoming webinars %>
+    <% if @webinar.registration_url.present? && @webinar.upcoming? %>
+      <div class="mb-10">
+        <h3 class="text-lg font-black text-gray-900 mb-4 text-center">
+          <%= I18n.locale == :hi ? "रजिस्ट्रेशन करें" : "Register Now" %>
+        </h3>
+        <div class="rounded-2xl overflow-hidden border border-gray-200/60 shadow-lg bg-white">
+          <iframe
+            src="<%= @webinar.registration_url %>"
+            class="w-full border-0"
+            style="min-height: 500px;"
+            loading="lazy"
+            allow="clipboard-write">
+          </iframe>
+        </div>
+      </div>
+    <% end %>
+
     <%# Join button — only for non-embedded platforms (Zoom, Google Meet, etc.) %>
     <% if @webinar.meeting_url.present? && !@webinar.ended? && !@webinar.embeddable? %>
       <div class="text-center mb-10">

@@ -66,7 +66,12 @@
       </div>
       <div>
         <label for="webinar_meeting_url" class="block text-sm font-semibold text-gray-600 mb-1.5">Meeting URL</label>
-        <%= f.url_field :meeting_url, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "https://..." %>
+        <%= f.url_field :meeting_url, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "https://zoom.us/..." %>
+      </div>
+      <div>
+        <label for="webinar_registration_url" class="block text-sm font-semibold text-gray-600 mb-1.5">Registration Embed URL <span class="text-xs text-gray-400 font-normal">(Zoho / external)</span></label>
+        <%= f.url_field :registration_url, class: "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none bg-gray-50/50", placeholder: "https://webinar.zoho.in/meeting/register/embed?sessionId=..." %>
+        <p class="text-xs text-gray-400 mt-1">Paste the Zoho embed src URL (not the full iframe tag)</p>
       </div>
       <div>
         <label for="webinar_starts_at" class="block text-sm font-semibold text-gray-600 mb-1.5">Start Date & Time</label>

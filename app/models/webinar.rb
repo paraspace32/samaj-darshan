@@ -11,7 +11,7 @@ class Webinar < ApplicationRecord
   end
 
   enum :status, { draft: 0, published: 1, cancelled: 2 }
-  enum :platform, { zoom: 0, google_meet: 1, youtube_live: 2, other: 3 }
+  enum :platform, { zoom: 0, google_meet: 1, youtube_live: 2, other: 3, zoho: 4 }
 
   validates :title_en,       presence: true
   validates :description_en, presence: true

@@ -3,44 +3,49 @@
 <% marriage_ads = (marriage_ads_unique * 10).first(10) if marriage_ads_unique.size.between?(1, 9) %>
 <% marriage_ads ||= marriage_ads_unique %>
 <% if marriage_ads.any? %>
-  <div class="h-full rounded-2xl overflow-hidden relative"
-       data-controller="carousel"
-       data-carousel-autoplay-value="true"
-       data-carousel-fixed-height-value="true">
-    <div class="flex items-start h-full transition-transform duration-500 ease-out" data-carousel-target="track">
-      <% marriage_ads.each_with_index do |bb, i| %>
-        <div class="w-full h-full shrink-0 relative" data-carousel-target="slide">
-          <% if bb.link_url.present? %>
-            <%= link_to billboard_click_path(bb), class: "block w-full h-full" do %>
-              <% if bb.image.attached? %>
-                <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                      class: "w-full h-full object-cover object-center block",
-                      loading: i == 0 ? "eager" : "lazy" %>
+  <div class="h-full rounded-[18px]"
+       style="padding: 4px; background: linear-gradient(135deg, #fda4af 0%, #fde68a 25%, #f9a8d4 50%, #fde68a 75%, #fda4af 100%);">
+    <div class="h-full rounded-[15px]" style="padding: 3px; background: white;">
+      <div class="h-full relative overflow-hidden rounded-[13px]"
+           data-controller="carousel"
+           data-carousel-autoplay-value="true"
+           data-carousel-fixed-height-value="true">
+        <div class="flex items-start h-full transition-transform duration-500 ease-out" data-carousel-target="track">
+          <% marriage_ads.each_with_index do |bb, i| %>
+            <div class="w-full h-full shrink-0 relative bg-white" data-carousel-target="slide">
+              <% if bb.link_url.present? %>
+                <%= link_to billboard_click_path(bb), class: "block w-full h-full flex items-center justify-center" do %>
+                  <% if bb.image.attached? %>
+                    <%= optimized_image_tag bb.image, variant: :marriage_ad,
+                          class: "w-full h-full object-contain block",
+                          loading: i == 0 ? "eager" : "lazy" %>
+                  <% else %>
+                    <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                      <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
+                    </div>
+                  <% end %>
+                <% end %>
               <% else %>
-                <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
-                  <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
-                </div>
+                <% if bb.image.attached? %>
+                  <%= optimized_image_tag bb.image, variant: :marriage_ad,
+                        class: "w-full h-full object-contain block",
+                        loading: i == 0 ? "eager" : "lazy" %>
+                <% else %>
+                  <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
+                    <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
+                  </div>
+                <% end %>
               <% end %>
-            <% end %>
-          <% else %>
-            <% if bb.image.attached? %>
-              <%= optimized_image_tag bb.image, variant: :marriage_ad,
-                    class: "w-full h-full object-cover object-center block",
-                    loading: i == 0 ? "eager" : "lazy" %>
-            <% else %>
-              <div class="w-full h-full bg-gradient-to-br from-rose-50 to-pink-100 flex items-center justify-center">
-                <span class="text-rose-400 text-lg font-semibold"><%= bb.title %></span>
-              </div>
-            <% end %>
+            </div>
           <% end %>
         </div>
-      <% end %>
-    </div>
-    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
-      <% (0...(marriage_ads.size / 2)).each do |i| %>
-        <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
-                class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
-      <% end %>
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+          <% (0...(marriage_ads.size / 2)).each do |i| %>
+            <button data-carousel-target="dot" data-action="carousel#goToSlide" data-index="<%= i %>"
+                    class="h-1 rounded-full transition-all duration-300 cursor-pointer <%= i == 0 ? 'bg-white w-4' : 'bg-white/45 w-1.5' %>"></button>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>

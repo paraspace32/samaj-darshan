@@ -99,13 +99,14 @@
         <% end %>
       </div>
 
-      <%# Desktop: lead image + list layout %>
+      <%# Desktop: lead card + numbered list (same pattern as mobile) %>
       <% lead = section[:items].first %>
       <% rest = section[:items].drop(1) %>
       <div class="hidden sm:block">
         <% if lead %>
           <div class="<%= rest.any? ? 'flex gap-5' : '' %>">
-            <div class="<%= rest.any? ? 'w-1/2 shrink-0' : 'w-full' %>">
+            <%# Lead card — alternating left/right position %>
+            <div class="<%= rest.any? ? 'w-1/2 shrink-0' : 'w-full' %> <%= sec_idx.odd? ? 'order-2' : '' %>">
               <%= link_to news_path(lead), class: "group block rounded-xl overflow-hidden card-lift" do %>
                 <div class="relative aspect-[16/10] overflow-hidden">
                   <% if lead.cover_image.attached? %>
@@ -114,6 +115,9 @@
                     <div class="w-full h-full gradient-brand-soft"></div>
                   <% end %>
                   <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)"></div>
+                  <div class="absolute top-3 left-3">
+                    <span class="text-[9px] font-black px-2 py-0.5 rounded-md text-white/90 uppercase tracking-wider" style="background: <%= accent %>cc"><%= section[:category].display_name %></span>
+                  </div>
                   <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
                     <h3 class="text-base lg:text-lg font-black text-white group-hover:text-orange-200 transition-colors line-clamp-3 leading-snug tracking-tight drop-shadow-md"><%= lead.display_title %></h3>
                     <p class="text-[12px] text-white/50 line-clamp-1 leading-relaxed mt-1"><%= lead.region.display_name %> &middot; <%= lead.published_at&.strftime("%d %b") %></p>
@@ -121,20 +125,22 @@
                 </div>
               <% end %>
             </div>
+            <%# Numbered list — same as mobile pattern %>
             <% if rest.any? %>
-              <div class="flex-1 min-w-0 flex flex-col gap-1">
-                <% rest.each do |item| %>
-                  <%= link_to news_path(item), class: "group flex gap-3 p-2.5 rounded-lg hover:bg-orange-50/60 transition-colors" do %>
-                    <div class="w-20 h-14 rounded-lg overflow-hidden shrink-0">
+              <div class="flex-1 min-w-0 flex flex-col gap-0.5 <%= sec_idx.odd? ? 'order-1' : '' %>">
+                <% rest.each_with_index do |item, idx| %>
+                  <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-lg hover:bg-orange-50/60 transition-colors" do %>
+                    <span class="text-lg font-black w-6 text-center shrink-0" style="color: <%= accent %><%= idx < 3 ? '66' : '33' %>"><%= idx + 2 %></span>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+                      <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>
+                    </div>
+                    <div class="w-16 h-12 rounded-lg overflow-hidden shrink-0">
                       <% if item.cover_image.attached? %>
                         <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
                       <% else %>
                         <div class="w-full h-full gradient-brand-soft"></div>
                       <% end %>
-                    </div>
-                    <div class="flex-1 min-w-0 flex flex-col justify-center">
-                      <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-                      <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>
                     </div>
                   <% end %>
                 <% end %>

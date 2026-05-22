@@ -19,12 +19,12 @@
 <% end %>
 
 <% if @is_home %>
+  <%# ── Hero: featured story + marriage ad (full width) ──────────── %>
+  <%= render "news/home_hero" %>
+
   <%# ── Desktop: 2-column newspaper layout with sidebar ──────────── %>
   <div class="lg:flex lg:gap-0">
     <div class="lg:flex-1 lg:min-w-0 lg:pr-8">
-      <%# ── Hero bento: featured story + side stack ──────────────── %>
-      <%= render "news/home_hero" %>
-
       <%# ── Regions tabs + billboard ─────────────────────────────── %>
       <%= render "news/regions_tabs" %>
 

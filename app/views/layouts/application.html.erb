@@ -282,11 +282,11 @@
               <%= link_to t("nav.sign_in"), login_path, class: "btn-primary !py-1.5 !px-4 !text-[13px] !rounded-lg" %>
             <% end %>
 
-            <div class="w-px h-5 bg-white/20 mx-1.5"></div>
+            <div class="w-px h-5 bg-white/20 mx-1.5 lg:hidden"></div>
 
-            <%# ── Download App (far right) ── %>
+            <%# ── Download App (far right, mobile/tablet only) ── %>
             <button data-pwa-install-btn onclick="pwaInstallFromNav()"
-                    class="pwa-nav-btn inline-flex items-center gap-1.5 text-[13px] font-bold text-white gradient-brand rounded-lg px-3 py-1.5 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                    class="pwa-nav-btn lg:hidden inline-flex items-center gap-1.5 text-[13px] font-bold text-white gradient-brand rounded-lg px-3 py-1.5 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               <%= t("pwa.download_app") %>
             </button>

@@ -11,7 +11,7 @@
     <% end %>
 
     <% accent = section_accents[sec_idx % section_accents.size] %>
-    <div class="py-3 sm:py-5 lg:py-8 <%= sec_idx > 0 ? 'border-t border-gray-100 section-divider' : '' %>" data-reveal>
+    <div class="py-4 sm:py-6 lg:py-8 <%= sec_idx > 0 ? 'mt-2 border-t border-gray-100' : '' %>">
       <div class="flex items-center gap-3 mb-3 lg:mb-5">
         <div class="w-1 h-6 rounded-full shrink-0" style="background: <%= accent %>"></div>
         <h2 class="text-base sm:text-xl lg:text-2xl font-black text-gray-900 tracking-tight"><%= section[:category].display_name %></h2>

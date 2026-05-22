@@ -405,9 +405,16 @@
 
     <%= render "shared/billboard_banner" %>
 
-    <main class="max-w-6xl lg:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-8 lg:py-10">
+    <main class="max-w-6xl lg:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-8 lg:py-10 pb-20 sm:pb-8 lg:pb-10">
       <%= yield %>
     </main>
+
+    <%# Mobile bottom navigation — app-wide %>
+    <%= render "shared/mobile_bottom_bar",
+          toggle_path: content_for?(:mobile_bar_toggle_path) ? yield(:mobile_bar_toggle_path) : nil,
+          liked:       content_for?(:mobile_bar_liked) ? yield(:mobile_bar_liked) == "true" : false,
+          likes_count: content_for?(:mobile_bar_likes_count) ? yield(:mobile_bar_likes_count).to_i : nil,
+          share_text:  content_for?(:mobile_bar_share_text) ? yield(:mobile_bar_share_text) : nil %>
 
     <%# Footer %>
     <footer class="bg-gray-950 mt-8 sm:mt-12 no-print">

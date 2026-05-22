@@ -37,15 +37,15 @@
        style="background:linear-gradient(90deg,#f97316,#dc2626); box-shadow:0 0 10px rgba(249,115,22,0.7); transition:none"></div>
 </div>
 
-<%# ── Sticky mobile bottom bar ──────────────────────────────────────────────── %>
-<%= render "shared/mobile_bottom_bar",
-      toggle_path: (is_news_style ? toggle_job_like_path(@job_post) : nil),
-      liked: (is_news_style ? @liked : false),
-      likes_count: (is_news_style ? @job_post.likes_count : nil),
-      share_text: share_text %>
+<% if is_news_style %>
+  <% content_for(:mobile_bar_toggle_path) { toggle_job_like_path(@job_post) } %>
+  <% content_for(:mobile_bar_liked) { @liked.to_s } %>
+  <% content_for(:mobile_bar_likes_count) { @job_post.likes_count.to_s } %>
+<% end %>
+<% content_for(:mobile_bar_share_text) { share_text } %>
 
 <%# ── Main layout ─────────────────────────────────────────────────────────────── %>
-<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20 pb-20 sm:pb-0">
+<div class="flex flex-col lg:flex-row gap-12 lg:gap-16 xl:gap-20">
 
   <%# ════ Main article ════════════════════════════════════════════════════════ %>
   <article class="flex-1 min-w-0 animate-fade-in">

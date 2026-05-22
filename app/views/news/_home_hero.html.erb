@@ -154,26 +154,6 @@
 
   </div>
 
-  <%# ── Desktop: side items row above hero ── %>
-  <% if @home_side_items.present? %>
-    <div class="hidden sm:grid sm:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4 animate-fade-up">
-      <% @home_side_items.first(4).each_with_index do |item, idx| %>
-        <%= link_to commentable_path(item), class: "group block rounded-xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all card-lift" do %>
-          <div class="relative h-28 lg:h-32 overflow-hidden">
-            <% if item.cover_image.attached? %>
-              <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: idx < 2 ? "eager" : "lazy" %>
-            <% else %>
-              <div class="w-full h-full gradient-brand-soft"></div>
-            <% end %>
-          </div>
-          <div class="p-2.5">
-            <h3 class="text-[12px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-          </div>
-        <% end %>
-      <% end %>
-    </div>
-  <% end %>
-
   <%# ── Desktop Hero: featured story + marriage ad beside it ── %>
   <div class="hidden sm:grid sm:grid-cols-3 gap-4 lg:gap-5 mb-4 lg:mb-4 animate-fade-up">
     <%# Main hero — spans 2 cols %>
@@ -206,4 +186,24 @@
       <%= render "shared/billboard_marriage_hero" %>
     </div>
   </div>
+
+  <%# ── Desktop: side items row below hero ── %>
+  <% if @home_side_items.present? %>
+    <div class="hidden sm:grid sm:grid-cols-4 gap-3 lg:gap-4 mt-3 lg:mt-4 mb-4 animate-fade-up">
+      <% @home_side_items.first(4).each_with_index do |item, idx| %>
+        <%= link_to commentable_path(item), class: "group block rounded-xl overflow-hidden bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md transition-all card-lift" do %>
+          <div class="relative h-28 lg:h-32 overflow-hidden">
+            <% if item.cover_image.attached? %>
+              <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
+            <% else %>
+              <div class="w-full h-full gradient-brand-soft"></div>
+            <% end %>
+          </div>
+          <div class="p-2.5">
+            <h3 class="text-[12px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>

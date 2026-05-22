@@ -74,7 +74,7 @@ module Admin
       params.require(:webinar).permit(
         :title_en, :title_hi, :description_en, :description_hi,
         :speaker_name, :speaker_bio, :platform, :starts_at,
-        :duration_minutes, :meeting_url, :cover_image
+        :duration_minutes, :meeting_url, :registration_url, :cover_image
       )
     end
   end

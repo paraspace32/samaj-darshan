@@ -26,7 +26,7 @@
           </div>
           <div class="flex-1 min-w-0 flex flex-col justify-center">
             <h3 class="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-0.5"><%= item.display_title %></h3>
-            <span class="text-[11px] text-gray-400"><%= item.region.display_name %></span>
+            <span class="text-[11px] text-gray-400"><%= item.region&.display_name %></span>
           </div>
         <% end %>
       <% end %>

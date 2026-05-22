@@ -16,13 +16,13 @@
     featured_badge_label = case @featured_type
                            when :education then t("education.title")
                            when :job then t("feed.job_news")
-                           else @featured.region.display_name
+                           else @featured.region&.display_name
                            end
     featured_badge_color = "#f97316"
     featured_sub_label = case @featured_type
                          when :education then t("education.title")
                          when :job then @featured.company_name
-                         else @featured.region.display_name
+                         else @featured.region&.display_name
                          end
   %>
 

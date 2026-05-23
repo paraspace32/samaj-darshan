@@ -11,7 +11,7 @@
     <%# Hero card for next scheduled webinar %>
     <%= link_to webinar_path(next_webinar), class: "group block relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg" do %>
       <% if next_webinar.cover_image.attached? %>
-        <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto group-hover:scale-[1.02] transition-transform duration-700", loading: "eager" %>
+        <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[70vh] sm:w-auto mx-auto group-hover:scale-[1.02] transition-transform duration-700", loading: "eager" %>
       <% else %>
         <div class="w-full aspect-video bg-gradient-to-br from-orange-600 via-amber-500 to-orange-700"></div>
       <% end %>

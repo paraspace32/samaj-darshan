@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_22_100350) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -419,6 +419,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_092101) do
     t.bigint "host_id", null: false
     t.string "meeting_url"
     t.integer "platform", default: 0, null: false
+    t.string "registration_url"
     t.string "speaker_bio"
     t.string "speaker_name", null: false
     t.datetime "starts_at", null: false

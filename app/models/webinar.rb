@@ -48,6 +48,16 @@ class Webinar < ApplicationRecord
     youtube_embed_url.present?
   end
 
+  # Converts registration URL to embed version for iframe use
+  # e.g. webinar.zoho.in/meeting/register?sessionId=123
+  #   -> webinar.zoho.in/meeting/register/embed?sessionId=123
+  def registration_embed_url
+    return nil if registration_url.blank?
+
+    url = registration_url.strip
+    url.sub(%r{/register(\?|$)}, '/register/embed\1')
+  end
+
   def youtube_embed_url
     return nil if meeting_url.blank?
 

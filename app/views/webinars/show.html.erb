@@ -32,11 +32,12 @@
   <% if @webinar.registration_url.present? && @webinar.upcoming? %>
     <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/60 shadow-lg bg-white">
       <iframe
-        src="<%= @webinar.registration_url %>"
+        src="<%= @webinar.registration_embed_url %>"
         class="w-full border-0"
         style="min-height: 70vh;"
         loading="eager"
         allow="clipboard-write"
+        sandbox="allow-scripts allow-forms allow-same-origin">
       </iframe>
     </div>
   <% end %>

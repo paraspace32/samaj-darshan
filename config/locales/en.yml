@@ -110,7 +110,7 @@ en:
     share: "Share"
     registration_closed: "Registration is closed for this webinar."
     fill_all_fields: "Please fill in all fields."
-    registration_success: "You have been registered successfully! Check your email for the joining link."
+    registration_success: "You have been registered successfully! You will receive the joining link before the webinar."
     register_now: "Register Now"
     name: "Name"
     phone: "Phone Number"

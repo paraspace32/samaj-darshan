@@ -28,8 +28,8 @@
     </div>
   <% end %>
 
-  <%# ── REGISTRATION FORM — Native form + Zoho API ── %>
-  <% if @webinar.zoho_session_id.present? && @webinar.upcoming? %>
+  <%# ── REGISTRATION FORM ── %>
+  <% if @webinar.upcoming? %>
     <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/60 shadow-lg bg-white p-6 sm:p-10">
       <h2 class="text-xl sm:text-2xl font-black text-gray-900 mb-2 text-center">
         <%= t("webinar.register_for_webinar") %>

@@ -3,6 +3,7 @@ class Webinar < ApplicationRecord
   bilingual_field :title, :description
 
   belongs_to :host, class_name: "User"
+  has_many :webinar_registrations, dependent: :destroy
 
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }

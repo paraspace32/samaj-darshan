@@ -26,7 +26,7 @@ RSpec.describe Webinar, type: :model do
 
   describe "enums" do
     it { is_expected.to define_enum_for(:status).with_values(draft: 0, published: 1, cancelled: 2) }
-    it { is_expected.to define_enum_for(:platform).with_values(zoom: 0, google_meet: 1, youtube_live: 2, other: 3) }
+    it { is_expected.to define_enum_for(:platform).with_values(zoom: 0, google_meet: 1, youtube_live: 2, other: 3, zoho: 4) }
   end
 
   describe "scopes" do
@@ -80,6 +80,80 @@ RSpec.describe Webinar, type: :model do
     it "#joinable? returns true when webinar is live" do
       webinar.starts_at = 30.minutes.ago
       expect(webinar.joinable?).to be true
+    end
+  end
+
+  describe "#primary_action" do
+    context "upcoming webinar with registration URL" do
+      let(:webinar) { build(:webinar, :upcoming, :with_registration) }
+
+      it "returns :registration" do
+        expect(webinar.primary_action).to eq(:registration)
+      end
+    end
+
+    context "upcoming webinar with YouTube live URL" do
+      let(:webinar) { build(:webinar, :upcoming, :with_youtube_live) }
+
+      it "returns :youtube_live" do
+        expect(webinar.primary_action).to eq(:youtube_live)
+      end
+    end
+
+    context "upcoming webinar with registration AND YouTube" do
+      let(:webinar) { build(:webinar, :upcoming, :with_registration, :with_youtube) }
+
+      it "prioritizes :registration over youtube" do
+        expect(webinar.primary_action).to eq(:registration)
+      end
+    end
+
+    context "live webinar with YouTube embed" do
+      let(:webinar) { build(:webinar, :live, :with_youtube_live) }
+
+      it "returns :youtube_live" do
+        expect(webinar.primary_action).to eq(:youtube_live)
+      end
+    end
+
+    context "live webinar with Zoom link" do
+      let(:webinar) { build(:webinar, :live, meeting_url: "https://zoom.us/j/123") }
+
+      it "returns :join_link" do
+        expect(webinar.primary_action).to eq(:join_link)
+      end
+    end
+
+    context "upcoming webinar with no links" do
+      let(:webinar) { build(:webinar, :upcoming, meeting_url: nil, registration_url: nil) }
+
+      it "returns :info" do
+        expect(webinar.primary_action).to eq(:info)
+      end
+    end
+
+    context "ended webinar with YouTube recording" do
+      let(:webinar) { build(:webinar, :past_with_recording) }
+
+      it "returns :recording" do
+        expect(webinar.primary_action).to eq(:recording)
+      end
+    end
+
+    context "ended webinar without recording" do
+      let(:webinar) { build(:webinar, :past, meeting_url: "https://zoom.us/j/123") }
+
+      it "returns :ended" do
+        expect(webinar.primary_action).to eq(:ended)
+      end
+    end
+
+    context "ended webinar with no meeting URL" do
+      let(:webinar) { build(:webinar, :past, meeting_url: nil) }
+
+      it "returns :ended" do
+        expect(webinar.primary_action).to eq(:ended)
+      end
     end
   end
 

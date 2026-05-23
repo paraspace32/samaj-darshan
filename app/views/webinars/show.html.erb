@@ -1,10 +1,12 @@
 <% content_for(:title, @webinar.display_title) %>
 <% content_for(:mobile_bar_share_text) { "#{@webinar.display_title}\n\n#{request.original_url}" } %>
 
+<% action = @webinar.primary_action %>
+
 <div class="max-w-3xl mx-auto animate-fade-in">
   <div class="surface-elevated rounded-3xl border border-gray-200/40 p-6 sm:p-8 lg:p-10 shadow-2xl shadow-gray-900/5">
     <%# Back link %>
-    <div class="mb-8">
+    <div class="mb-6">
       <%= link_to webinars_path, class: "btn-ghost !py-2 !px-3 !text-sm text-gray-600 hover:text-orange-600" do %>
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 19l-7-7 7-7"/></svg>
         <%= t("webinar.back_to_webinars") %>
@@ -12,7 +14,7 @@
     </div>
 
     <%# Status badge %>
-    <div class="flex flex-wrap items-center gap-2.5 mb-6">
+    <div class="flex flex-wrap items-center gap-2.5 mb-4">
       <% if @webinar.live_now? %>
         <span class="badge badge-live pulse-glow shadow-xl">
           <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
@@ -27,10 +29,10 @@
     </div>
 
     <%# Title %>
-    <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 mb-6 leading-[1.15]"><%= @webinar.display_title %></h1>
+    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-gray-900 mb-5 leading-[1.15]"><%= @webinar.display_title %></h1>
 
     <%# Meta row %>
-    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-8 pb-8 border-b border-gray-200/40">
+    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-6 pb-6 border-b border-gray-200/40">
       <div class="flex items-center gap-2">
         <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
         <span class="font-bold text-gray-700"><%= @webinar.speaker_name %></span>
@@ -45,9 +47,32 @@
       </div>
     </div>
 
-    <%# Embedded video (YouTube Live) %>
-    <% if @webinar.embeddable? %>
-      <div class="mb-10 rounded-3xl overflow-hidden border-2 border-gray-200/50 bg-black shadow-2xl ring-1 ring-black/10">
+    <%# ════════════════════════════════════════════════════════════════
+        PRIMARY ACTION — the main content block, shown first
+        ════════════════════════════════════════════════════════════════ %>
+
+    <% case action %>
+
+    <% when :registration %>
+      <%# Zoho / external registration form — full width, prominent %>
+      <div class="mb-8">
+        <h3 class="text-lg font-black text-gray-900 mb-4 text-center">
+          <%= I18n.locale == :hi ? "रजिस्ट्रेशन करें" : "Register Now" %>
+        </h3>
+        <div class="rounded-2xl overflow-hidden border border-gray-200/60 shadow-lg bg-white">
+          <iframe
+            src="<%= @webinar.registration_url %>"
+            class="w-full border-0"
+            style="min-height: 520px;"
+            loading="eager"
+            allow="clipboard-write">
+          </iframe>
+        </div>
+      </div>
+
+    <% when :youtube_live %>
+      <%# YouTube Live embed — large, autoplay-ready %>
+      <div class="mb-8 rounded-3xl overflow-hidden border-2 border-gray-200/50 bg-black shadow-2xl ring-1 ring-black/10">
         <div class="relative w-full bg-gradient-to-b from-gray-900 to-black" style="padding-bottom: 56.25%;">
           <iframe
             src="<%= @webinar.youtube_embed_url %>?autoplay=0&rel=0"
@@ -58,33 +83,15 @@
           </iframe>
         </div>
       </div>
-    <% elsif @webinar.cover_image.attached? %>
-      <div class="mb-10 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl group">
-        <%= optimized_image_tag @webinar.cover_image, variant: :hero, class: "img-zoom w-full object-cover", loading: "lazy" %>
-      </div>
-    <% end %>
 
-    <%# Registration embed (Zoho etc.) — for upcoming webinars %>
-    <% if @webinar.registration_url.present? && @webinar.upcoming? %>
-      <div class="mb-10">
-        <h3 class="text-lg font-black text-gray-900 mb-4 text-center">
-          <%= I18n.locale == :hi ? "रजिस्ट्रेशन करें" : "Register Now" %>
-        </h3>
-        <div class="rounded-2xl overflow-hidden border border-gray-200/60 shadow-lg bg-white">
-          <iframe
-            src="<%= @webinar.registration_url %>"
-            class="w-full border-0"
-            style="min-height: 500px;"
-            loading="lazy"
-            allow="clipboard-write">
-          </iframe>
+    <% when :join_link %>
+      <%# Join button for Zoom / Google Meet / other platforms %>
+      <% if @webinar.cover_image.attached? %>
+        <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">
+          <%= optimized_image_tag @webinar.cover_image, variant: :hero, class: "w-full object-cover", loading: "eager" %>
         </div>
-      </div>
-    <% end %>
-
-    <%# Join button — only for non-embedded platforms (Zoom, Google Meet, etc.) %>
-    <% if @webinar.meeting_url.present? && !@webinar.ended? && !@webinar.embeddable? %>
-      <div class="text-center mb-10">
+      <% end %>
+      <div class="text-center mb-8">
         <%= link_to sanitize_url(@webinar.meeting_url), target: "_blank", rel: "noopener noreferrer",
             class: "btn-primary !inline-flex !items-center !gap-3 !px-10 !py-4 !text-lg !rounded-2xl !shadow-xl #{@webinar.live_now? ? 'pulse-glow !shadow-red-500/25' : ''}" do %>
           <% if @webinar.live_now? %>
@@ -96,18 +103,53 @@
           <% end %>
         <% end %>
       </div>
-    <% elsif @webinar.ended? %>
-      <div class="text-center mb-10">
+
+    <% when :recording %>
+      <%# Past webinar — YouTube recording %>
+      <div class="mb-8 rounded-3xl overflow-hidden border-2 border-gray-200/50 bg-black shadow-2xl ring-1 ring-black/10">
+        <div class="relative w-full bg-gradient-to-b from-gray-900 to-black" style="padding-bottom: 56.25%;">
+          <iframe
+            src="<%= @webinar.youtube_embed_url %>?autoplay=0&rel=0"
+            class="absolute inset-0 w-full h-full"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+    <% when :ended %>
+      <%# Ended, no recording available %>
+      <% if @webinar.cover_image.attached? %>
+        <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">
+          <%= optimized_image_tag @webinar.cover_image, variant: :hero, class: "w-full object-cover", loading: "lazy" %>
+        </div>
+      <% end %>
+      <div class="text-center mb-8">
         <div class="inline-flex items-center gap-2.5 rounded-2xl surface-raised border border-gray-200/40 px-8 py-4 text-gray-500 font-semibold shadow-inner">
           <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <%= t("webinar.webinar_ended") %>
+        </div>
+      </div>
+
+    <% when :info %>
+      <%# Upcoming but no links yet — show cover + info %>
+      <% if @webinar.cover_image.attached? %>
+        <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">
+          <%= optimized_image_tag @webinar.cover_image, variant: :hero, class: "w-full object-cover", loading: "eager" %>
+        </div>
+      <% end %>
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2.5 rounded-2xl bg-amber-50 border border-amber-200/60 px-8 py-4 text-amber-700 font-semibold shadow-sm">
+          <svg class="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <%= t("webinar.join_available_before") %>
         </div>
       </div>
     <% end %>
 
     <%# Speaker bio %>
     <% if @webinar.speaker_bio.present? %>
-      <div class="card-premium rounded-3xl border border-gray-200/40 p-6 sm:p-7 mb-10 bg-gradient-to-br from-white via-orange-50/30 to-amber-50/20 shadow-lg">
+      <div class="card-premium rounded-3xl border border-gray-200/40 p-6 sm:p-7 mb-8 bg-gradient-to-br from-white via-orange-50/30 to-amber-50/20 shadow-lg">
         <p class="text-[11px] font-black text-orange-600 uppercase tracking-widest mb-3"><%= t("webinar.about_speaker") %></p>
         <p class="text-sm sm:text-base text-gray-700 leading-relaxed"><%= @webinar.speaker_bio %></p>
       </div>

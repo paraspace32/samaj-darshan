@@ -61,5 +61,46 @@ RSpec.describe "Webinars", type: :request do
       get webinar_path(webinar)
       expect(response).to have_http_status(:not_found)
     end
+
+    context "upcoming webinar with Zoho registration" do
+      it "shows registration iframe" do
+        webinar = create(:webinar, :upcoming, :with_registration)
+        get webinar_path(webinar)
+        expect(response.body).to include("webinar.zoho.in/meeting/register/embed")
+        expect(response.body).to include("<iframe")
+      end
+    end
+
+    context "upcoming webinar with YouTube live URL" do
+      it "shows YouTube embed" do
+        webinar = create(:webinar, :upcoming, :with_youtube_live)
+        get webinar_path(webinar)
+        expect(response.body).to include("youtube.com/embed/abc123live")
+      end
+    end
+
+    context "live webinar with Zoom link" do
+      it "shows join button" do
+        webinar = create(:webinar, :live, meeting_url: "https://zoom.us/j/999")
+        get webinar_path(webinar)
+        expect(response.body).to include("zoom.us/j/999")
+      end
+    end
+
+    context "ended webinar with YouTube recording" do
+      it "shows YouTube recording embed" do
+        webinar = create(:webinar, :past_with_recording)
+        get webinar_path(webinar)
+        expect(response.body).to include("youtube.com/embed/recorded123")
+      end
+    end
+
+    context "ended webinar without recording" do
+      it "shows ended message" do
+        webinar = create(:webinar, :past)
+        get webinar_path(webinar)
+        expect(response).to have_http_status(:ok)
+      end
+    end
   end
 end

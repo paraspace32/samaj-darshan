@@ -68,4 +68,29 @@ class Webinar < ApplicationRecord
   def starts_within_15_min?
     upcoming? && starts_at <= 15.minutes.from_now
   end
+
+  # Determines what the show page should display as the primary action.
+  #
+  # Returns a symbol:
+  #   :registration  — upcoming + has Zoho/external registration URL
+  #   :youtube_live  — live now or upcoming + YouTube embed available
+  #   :join_link     — live/upcoming + non-YouTube meeting URL
+  #   :recording     — ended + YouTube embed available (saved recording)
+  #   :ended         — ended, no recording
+  #   :info          — upcoming, no links configured
+  def primary_action
+    if upcoming? || live_now?
+      if registration_url.present? && upcoming?
+        :registration
+      elsif embeddable?
+        :youtube_live
+      elsif meeting_url.present?
+        :join_link
+      else
+        :info
+      end
+    else
+      embeddable? ? :recording : :ended
+    end
+  end
 end

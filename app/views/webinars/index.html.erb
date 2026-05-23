@@ -13,7 +13,7 @@
       <%= link_to webinar_path(next_webinar), class: "group block relative" do %>
         <div class="relative w-full overflow-hidden bg-gradient-to-br from-orange-600 via-amber-500 to-orange-700">
           <% if next_webinar.cover_image.attached? %>
-            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[28rem] sm:w-full sm:object-cover sm:object-top group-hover:scale-[1.02] transition-transform duration-700", loading: "eager" %>
+            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[28rem] sm:w-full sm:object-contain group-hover:scale-[1.02] transition-transform duration-700", loading: "eager" %>
           <% end %>
           <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%)"></div>
 

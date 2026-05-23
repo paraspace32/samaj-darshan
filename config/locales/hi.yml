@@ -146,6 +146,8 @@ hi:
     live: "लाइव"
     ended: "समाप्त"
     no_webinars: "अभी तक कोई वेबिनार निर्धारित नहीं है।"
+    no_scheduled: "कोई आगामी वेबिनार नहीं"
+    no_scheduled_subtitle: "जल्द ही अगले वेबिनार की घोषणा होगी!"
     back_to_webinars: "← वेबिनार पर वापस"
     join_webinar: "वेबिनार में शामिल हों"
     join_now: "अभी शामिल हों — लाइव"

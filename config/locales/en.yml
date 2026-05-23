@@ -87,6 +87,8 @@ en:
     live: "LIVE"
     ended: "Ended"
     no_webinars: "No webinars scheduled yet."
+    no_scheduled: "No Upcoming Webinar"
+    no_scheduled_subtitle: "Stay tuned — we'll announce the next webinar soon!"
     back_to_webinars: "← Back to Webinars"
     join_webinar: "Join Webinar"
     join_now: "Join Now — Live"

@@ -51,9 +51,7 @@
         PRIMARY ACTION — the main content block, shown first
         ════════════════════════════════════════════════════════════════ %>
 
-    <% case action %>
-
-    <% when :registration %>
+    <% if action == :registration %>
       <%# Zoho / external registration form — full width, prominent %>
       <div class="mb-8">
         <h3 class="text-lg font-black text-gray-900 mb-4 text-center">
@@ -70,7 +68,7 @@
         </div>
       </div>
 
-    <% when :youtube_live %>
+    <% elsif action == :youtube_live %>
       <%# YouTube Live embed — large, autoplay-ready %>
       <div class="mb-8 rounded-3xl overflow-hidden border-2 border-gray-200/50 bg-black shadow-2xl ring-1 ring-black/10">
         <div class="relative w-full bg-gradient-to-b from-gray-900 to-black" style="padding-bottom: 56.25%;">
@@ -84,7 +82,7 @@
         </div>
       </div>
 
-    <% when :join_link %>
+    <% elsif action == :join_link %>
       <%# Join button for Zoom / Google Meet / other platforms %>
       <% if @webinar.cover_image.attached? %>
         <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">
@@ -104,7 +102,7 @@
         <% end %>
       </div>
 
-    <% when :recording %>
+    <% elsif action == :recording %>
       <%# Past webinar — YouTube recording %>
       <div class="mb-8 rounded-3xl overflow-hidden border-2 border-gray-200/50 bg-black shadow-2xl ring-1 ring-black/10">
         <div class="relative w-full bg-gradient-to-b from-gray-900 to-black" style="padding-bottom: 56.25%;">
@@ -118,7 +116,7 @@
         </div>
       </div>
 
-    <% when :ended %>
+    <% elsif action == :ended %>
       <%# Ended, no recording available %>
       <% if @webinar.cover_image.attached? %>
         <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">
@@ -132,7 +130,7 @@
         </div>
       </div>
 
-    <% when :info %>
+    <% elsif action == :info %>
       <%# Upcoming but no links yet — show cover + info %>
       <% if @webinar.cover_image.attached? %>
         <div class="mb-6 rounded-3xl overflow-hidden border border-gray-200/40 shadow-xl">

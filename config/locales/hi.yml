@@ -167,6 +167,14 @@ hi:
     meeting_link: "मीटिंग लिंक"
     copy_link: "कॉपी"
     share: "शेयर"
+    registration_closed: "इस वेबिनार के लिए पंजीकरण बंद है।"
+    fill_all_fields: "कृपया सभी फ़ील्ड भरें।"
+    registration_success: "आपका पंजीकरण सफल रहा! जॉइनिंग लिंक के लिए अपना ईमेल जांचें।"
+    register_now: "अभी पंजीकरण करें"
+    first_name: "पहला नाम"
+    last_name: "अंतिम नाम"
+    email: "ईमेल पता"
+    register_for_webinar: "इस वेबिनार के लिए पंजीकरण करें"
 
   article:
     read_other_lang: "Read in English"

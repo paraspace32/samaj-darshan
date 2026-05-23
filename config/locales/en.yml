@@ -108,6 +108,14 @@ en:
     meeting_link: "Meeting Link"
     copy_link: "Copy"
     share: "Share"
+    registration_closed: "Registration is closed for this webinar."
+    fill_all_fields: "Please fill in all fields."
+    registration_success: "You have been registered successfully! Check your email for the joining link."
+    register_now: "Register Now"
+    first_name: "First Name"
+    last_name: "Last Name"
+    email: "Email Address"
+    register_for_webinar: "Register for this Webinar"
 
   article:
     read_other_lang: "हिंदी में पढ़ें"

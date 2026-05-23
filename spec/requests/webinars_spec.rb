@@ -63,11 +63,13 @@ RSpec.describe "Webinars", type: :request do
     end
 
     context "upcoming webinar with Zoho registration" do
-      it "shows registration iframe" do
+      it "shows native registration form" do
         webinar = create(:webinar, :upcoming, :with_registration)
         get webinar_path(webinar)
-        expect(response.body).to include("webinar.zoho.in/meeting/register/embed")
-        expect(response.body).to include("<iframe")
+        expect(response.body).to include("first_name")
+        expect(response.body).to include("last_name")
+        expect(response.body).to include("email")
+        expect(response.body).not_to include("<iframe")
       end
     end
 
@@ -101,6 +103,23 @@ RSpec.describe "Webinars", type: :request do
         get webinar_path(webinar)
         expect(response).to have_http_status(:ok)
       end
+    end
+  end
+
+  describe "POST /webinars/:id/register" do
+    let(:webinar) { create(:webinar, :upcoming, :with_registration) }
+
+    it "redirects with alert when fields are missing" do
+      post register_webinar_path(webinar), params: { first_name: "", last_name: "", email: "" }
+      expect(response).to redirect_to(webinar_path(webinar))
+      follow_redirect!
+      expect(response.body).to include(I18n.t("webinar.fill_all_fields"))
+    end
+
+    it "redirects with alert for past webinars" do
+      past_webinar = create(:webinar, :past, registration_url: "https://webinar.zoho.in/meeting/register?sessionId=123")
+      post register_webinar_path(past_webinar), params: { first_name: "Test", last_name: "User", email: "test@example.com" }
+      expect(response).to redirect_to(webinar_path(past_webinar))
     end
   end
 end

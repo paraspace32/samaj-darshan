@@ -141,7 +141,9 @@ Rails.application.routes.draw do
   resources :magazines, only: [ :index, :show ]
 
   # Webinars
-  resources :webinars, only: [ :index, :show ]
+  resources :webinars, only: [ :index, :show ] do
+    member { post :register }
+  end
 
   # Marriage Section / Biodata
   get "shortlists", to: "shortlists#index", as: :shortlists

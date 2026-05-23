@@ -30,8 +30,11 @@
 
   <%# ── REGISTRATION FORM — Zoho embed ── %>
   <% if @webinar.registration_url.present? && @webinar.upcoming? %>
+    <!-- DEBUG: registration_url = <%= @webinar.registration_url %> -->
+    <!-- DEBUG: registration_embed_url = <%= @webinar.registration_embed_url %> -->
     <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/60 shadow-lg bg-white">
       <iframe
+        id="zoho-reg-iframe"
         src="<%= @webinar.registration_embed_url %>"
         class="w-full border-0"
         style="min-height: 70vh;"
@@ -40,6 +43,50 @@
         sandbox="allow-scripts allow-forms allow-same-origin">
       </iframe>
     </div>
+    <script>
+      (function() {
+        var iframe = document.getElementById('zoho-reg-iframe');
+        var src = iframe.getAttribute('src');
+        var sandbox = iframe.getAttribute('sandbox');
+        console.log('[Zoho Debug] iframe src:', src);
+        console.log('[Zoho Debug] sandbox:', sandbox);
+
+        iframe.addEventListener('load', function() {
+          console.log('[Zoho Debug] iframe loaded, current src:', iframe.src);
+          try {
+            var doc = iframe.contentDocument || iframe.contentWindow.document;
+            console.log('[Zoho Debug] Can access iframe document (same-origin)');
+            console.log('[Zoho Debug] iframe title:', doc.title);
+            console.log('[Zoho Debug] iframe URL:', doc.location.href);
+
+            // Find all forms and log their targets
+            var forms = doc.querySelectorAll('form');
+            forms.forEach(function(f, i) {
+              console.log('[Zoho Debug] Form ' + i + ':', {action: f.action, method: f.method, target: f.target});
+            });
+
+            // Find all links and log targets
+            var links = doc.querySelectorAll('a[target]');
+            links.forEach(function(a, i) {
+              console.log('[Zoho Debug] Link ' + i + ':', {href: a.href, target: a.target, text: a.textContent.trim()});
+            });
+
+            // Find buttons
+            var buttons = doc.querySelectorAll('button, input[type="submit"]');
+            buttons.forEach(function(b, i) {
+              console.log('[Zoho Debug] Button ' + i + ':', {type: b.type, text: b.textContent.trim(), onclick: b.getAttribute('onclick')});
+            });
+          } catch(e) {
+            console.log('[Zoho Debug] Cannot access iframe document (cross-origin):', e.message);
+          }
+        });
+
+        // Listen for blocked popup/navigation attempts
+        window.addEventListener('message', function(event) {
+          console.log('[Zoho Debug] postMessage from:', event.origin, 'data:', JSON.stringify(event.data).substring(0, 500));
+        });
+      })();
+    </script>
   <% end %>
 
 </div>

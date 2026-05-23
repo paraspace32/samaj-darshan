@@ -13,7 +13,7 @@
       <%= link_to webinar_path(next_webinar), class: "group block relative" do %>
         <div class="relative w-full overflow-hidden">
           <% if next_webinar.cover_image.attached? %>
-            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[28rem] sm:w-full sm:object-contain group-hover:scale-[1.02] transition-transform duration-700 mx-auto", loading: "eager" %>
+            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[18rem] sm:w-auto sm:object-contain group-hover:scale-[1.02] transition-transform duration-700 mx-auto", loading: "eager" %>
           <% end %>
 
         </div>

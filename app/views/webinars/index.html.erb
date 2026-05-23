@@ -9,39 +9,36 @@
 <section class="mb-10 sm:mb-14 animate-fade-in">
   <% if next_webinar %>
     <%# Hero card for next scheduled webinar %>
-    <div class="surface-elevated rounded-3xl border border-gray-200/40 overflow-hidden shadow-2xl shadow-gray-900/5">
+    <div class="rounded-3xl border border-gray-200/40 overflow-hidden shadow-lg bg-white">
       <%= link_to webinar_path(next_webinar), class: "group block relative" do %>
-        <div class="relative w-full overflow-hidden bg-white">
+        <div class="relative w-full overflow-hidden">
           <% if next_webinar.cover_image.attached? %>
-            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[28rem] sm:w-full sm:object-contain group-hover:scale-[1.02] transition-transform duration-700", loading: "eager" %>
+            <%= optimized_image_tag next_webinar.cover_image, variant: :hero, class: "w-full h-auto sm:max-h-[28rem] sm:w-full sm:object-contain group-hover:scale-[1.02] transition-transform duration-700 mx-auto", loading: "eager" %>
           <% end %>
-          <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%)"></div>
 
-          <div class="absolute top-4 left-5 flex items-center gap-2.5">
-            <% if next_webinar.live_now? %>
-              <span class="relative flex items-center justify-center h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-              </span>
-              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-md text-white/90 uppercase tracking-wider bg-red-500/80"><%= t("webinar.live") %></span>
-            <% else %>
-              <span class="relative flex items-center justify-center h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-md text-white/90 uppercase tracking-wider bg-emerald-500/70"><%= t("webinar.upcoming_badge") %></span>
-            <% end %>
-          </div>
-
-          <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
-            <h1 class="text-xl sm:text-3xl lg:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-lg group-hover:text-orange-200 transition-colors line-clamp-2">
-              <%= next_webinar.display_title %>
-            </h1>
-          </div>
         </div>
       <% end %>
 
       <div class="p-5 sm:p-8">
+        <div class="flex items-center gap-2.5 mb-4">
+          <% if next_webinar.live_now? %>
+            <span class="relative flex items-center justify-center h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-md text-white uppercase tracking-wider bg-red-500"><%= t("webinar.live") %></span>
+          <% else %>
+            <span class="relative flex items-center justify-center h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-md text-white uppercase tracking-wider bg-emerald-500"><%= t("webinar.upcoming_badge") %></span>
+          <% end %>
+        </div>
+
+        <h1 class="text-xl sm:text-3xl lg:text-4xl font-black text-gray-900 leading-tight tracking-tight group-hover:text-orange-600 transition-colors line-clamp-2 mb-6">
+          <%= link_to next_webinar.display_title, webinar_path(next_webinar) %>
+        </h1>
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-500 mb-6">
           <div class="flex items-center gap-2">
             <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>

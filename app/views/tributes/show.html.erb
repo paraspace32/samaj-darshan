@@ -96,7 +96,7 @@
   <%# Name and description %>
   <div class="mb-8">
     <h1 class="text-2xl font-black text-gray-900 tracking-tight text-center"><%= @tribute.display_name %></h1>
-    <div class="mt-4 text-gray-600 leading-relaxed space-y-4 text-[15px]">
+    <div class="mt-4 text-gray-600 leading-relaxed space-y-4 text-base sm:text-lg">
       <% split_into_paragraphs(@tribute.display_description).each do |para| %>
         <p><%= para %></p>
       <% end %>

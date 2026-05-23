@@ -19,9 +19,14 @@ class ZohoWebinarService
   ZOHO_ACCOUNTS_URL = "https://accounts.zoho.in/oauth/v2/token".freeze
   ZOHO_API_BASE     = "https://webinar.zoho.in/api/v1".freeze
 
-  def register(session_id:, first_name:, last_name:, email:)
+  def register(session_id:, name:, phone:)
     token = access_token
     return { success: false, error: "Failed to obtain Zoho access token" } unless token
+
+    # Split name into first/last for Zoho API
+    parts = name.split(" ", 2)
+    first_name = parts[0]
+    last_name  = parts[1].presence || "."
 
     uri = URI("#{ZOHO_API_BASE}/webinar/#{session_id}/registrant")
     http = Net::HTTP.new(uri.host, uri.port)
@@ -32,7 +37,8 @@ class ZohoWebinarService
     body = {
       firstName: first_name,
       lastName: last_name,
-      email: email
+      email: "#{phone}@samaj-darshan.com",
+      phone: phone
     }.to_json
 
     request = Net::HTTP::Post.new(uri)
@@ -40,7 +46,7 @@ class ZohoWebinarService
     request["Content-Type"]  = "application/json"
     request.body = body
 
-    Rails.logger.info "[ZohoWebinar] Registering #{email} for session #{session_id}"
+    Rails.logger.info "[ZohoWebinar] Registering #{name} (#{phone}) for session #{session_id}"
 
     response = http.request(request)
     parsed = JSON.parse(response.body) rescue {}

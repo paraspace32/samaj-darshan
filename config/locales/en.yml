@@ -112,9 +112,8 @@ en:
     fill_all_fields: "Please fill in all fields."
     registration_success: "You have been registered successfully! Check your email for the joining link."
     register_now: "Register Now"
-    first_name: "First Name"
-    last_name: "Last Name"
-    email: "Email Address"
+    name: "Name"
+    phone: "Phone Number"
     register_for_webinar: "Register for this Webinar"
 
   article:

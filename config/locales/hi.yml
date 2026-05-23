@@ -171,9 +171,8 @@ hi:
     fill_all_fields: "कृपया सभी फ़ील्ड भरें।"
     registration_success: "आपका पंजीकरण सफल रहा! जॉइनिंग लिंक के लिए अपना ईमेल जांचें।"
     register_now: "अभी पंजीकरण करें"
-    first_name: "पहला नाम"
-    last_name: "अंतिम नाम"
-    email: "ईमेल पता"
+    name: "नाम"
+    phone: "फ़ोन नंबर"
     register_for_webinar: "इस वेबिनार के लिए पंजीकरण करें"
 
   article:

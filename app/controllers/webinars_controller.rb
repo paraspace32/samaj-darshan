@@ -16,11 +16,10 @@ class WebinarsController < ApplicationController
       return
     end
 
-    first_name = params[:first_name].to_s.strip
-    last_name  = params[:last_name].to_s.strip
-    email      = params[:email].to_s.strip
+    name  = params[:name].to_s.strip
+    phone = params[:phone].to_s.strip
 
-    if first_name.blank? || last_name.blank? || email.blank?
+    if name.blank? || phone.blank?
       redirect_to webinar_path(@webinar), alert: t("webinar.fill_all_fields")
       return
     end
@@ -28,9 +27,8 @@ class WebinarsController < ApplicationController
     service = ZohoWebinarService.new
     result = service.register(
       session_id: @webinar.zoho_session_id,
-      first_name: first_name,
-      last_name: last_name,
-      email: email
+      name: name,
+      phone: phone
     )
 
     if result[:success]

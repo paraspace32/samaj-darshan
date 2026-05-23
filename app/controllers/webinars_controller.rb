@@ -22,7 +22,7 @@ class WebinarsController < ApplicationController
     )
 
     if registration.save
-      redirect_to webinar_path(@webinar), notice: t("webinar.registration_success")
+      redirect_to webinar_path(@webinar, registered: 1), notice: t("webinar.registration_success")
     else
       redirect_to webinar_path(@webinar), alert: registration.errors.full_messages.join(", ")
     end

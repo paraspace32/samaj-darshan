@@ -78,9 +78,9 @@ class ZohoWebinarService
 
     params = {
       grant_type: "refresh_token",
-      client_id: ENV["ZOHO_CLIENT_ID"],
-      client_secret: ENV["ZOHO_CLIENT_SECRET"],
-      refresh_token: ENV["ZOHO_REFRESH_TOKEN"]
+      client_id: zoho_credential(:client_id),
+      client_secret: zoho_credential(:client_secret),
+      refresh_token: zoho_credential(:refresh_token)
     }
 
     response = Net::HTTP.post_form(uri, params)
@@ -96,5 +96,11 @@ class ZohoWebinarService
   rescue StandardError => e
     Rails.logger.error "[ZohoWebinar] Token refresh error: #{e.class} - #{e.message}"
     nil
+  end
+
+  def zoho_credential(key)
+    # Rails credentials first, then ENV fallback
+    Rails.application.credentials.dig(:zoho, key) ||
+      ENV["ZOHO_#{key.to_s.upcase}"]
   end
 end

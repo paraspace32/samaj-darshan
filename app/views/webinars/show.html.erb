@@ -119,75 +119,18 @@
     <% end %>
   </div>
 
-  <%# ── REGISTRATION / JOIN SECTION ── %>
-  <% if @webinar.upcoming? %>
-    <% if params[:registered].present? %>
-      <%# After successful registration — show success + join link %>
-      <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-emerald-200 shadow-lg bg-white p-6 sm:p-10">
-        <div class="text-center mb-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 mb-4">
-            <svg class="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
-          </div>
-          <h2 class="text-xl sm:text-2xl font-black text-gray-900 mb-2"><%= t("webinar.registration_success").split("!").first %>!</h2>
-          <p class="text-sm text-gray-500"><%= @webinar.display_title %> &middot; <%= @webinar.starts_at.strftime("%d %b %Y, %I:%M %p") %></p>
-        </div>
-
-        <% if @webinar.meeting_url.present? %>
-          <div class="max-w-md mx-auto">
-            <p class="text-sm text-gray-600 text-center mb-4">नीचे बटन पर क्लिक करके वेबिनार में शामिल हों</p>
-            <%= link_to sanitize_url(@webinar.meeting_url), class: "btn-primary w-full !py-4 !text-lg !rounded-2xl !shadow-xl flex items-center justify-center gap-3" do %>
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-              <%= t("webinar.join_webinar") %>
-            <% end %>
-          </div>
+  <%# ── JOIN WEBINAR BUTTON (links to Zoho registration) ── %>
+  <% if @webinar.upcoming? && @webinar.meeting_url.present? %>
+    <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/60 shadow-lg bg-white p-6 sm:p-10">
+      <div class="max-w-md mx-auto text-center">
+        <h2 class="text-xl sm:text-2xl font-black text-gray-900 mb-2"><%= t("webinar.register_for_webinar") %></h2>
+        <p class="text-sm text-gray-500 mb-6"><%= @webinar.display_title %> &middot; <%= @webinar.starts_at.strftime("%d %b %Y, %I:%M %p") %></p>
+        <%= link_to sanitize_url(@webinar.meeting_url), class: "btn-primary w-full !py-4 !text-lg !rounded-2xl !shadow-xl flex items-center justify-center gap-3" do %>
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <%= t("webinar.register_now") %>
         <% end %>
       </div>
-    <% else %>
-      <%# Registration form %>
-      <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/60 shadow-lg bg-white p-6 sm:p-10">
-        <h2 class="text-xl sm:text-2xl font-black text-gray-900 mb-2 text-center">
-          <%= t("webinar.register_for_webinar") %>
-        </h2>
-        <p class="text-sm text-gray-500 mb-8 text-center">
-          <%= @webinar.display_title %> &middot; <%= @webinar.starts_at.strftime("%d %b %Y, %I:%M %p") %>
-        </p>
-
-        <% if flash[:alert] %>
-          <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium text-center">
-            <%= flash[:alert] %>
-          </div>
-        <% end %>
-
-        <% if flash[:notice] %>
-          <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium text-center">
-            <%= flash[:notice] %>
-          </div>
-        <% end %>
-
-        <%= form_tag register_webinar_path(@webinar), method: :post, class: "max-w-md mx-auto space-y-5" do %>
-          <div>
-            <label for="name" class="block text-sm font-semibold text-gray-700 mb-1.5"><%= t("webinar.name") %> <span class="text-red-500">*</span></label>
-            <input type="text" name="name" id="name" required
-                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-colors text-gray-900"
-                   placeholder="<%= t('webinar.name') %>" value="<%= params[:name] %>">
-          </div>
-
-          <div>
-            <label for="phone" class="block text-sm font-semibold text-gray-700 mb-1.5"><%= t("webinar.phone") %> <span class="text-red-500">*</span></label>
-            <input type="tel" name="phone" id="phone" required
-                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-colors text-gray-900"
-                   placeholder="<%= t('webinar.phone') %>" value="<%= params[:phone] %>">
-          </div>
-
-          <div class="pt-2">
-            <button type="submit" class="btn-primary w-full !py-4 !text-lg !rounded-2xl !shadow-xl flex items-center justify-center gap-3">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-              <%= t("webinar.register_now") %>
-            </button>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+    </div>
   <% end %>
 
 </div>

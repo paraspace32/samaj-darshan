@@ -1,7 +1,11 @@
 class WebinarsController < ApplicationController
   def index
-    @upcoming = Webinar.upcoming.includes(:host).with_attached_cover_image.limit(20)
-    @past = Webinar.past.order(starts_at: :desc).includes(:host).with_attached_cover_image.limit(20)
+    webinar = Webinar.upcoming.first || Webinar.past.order(starts_at: :desc).first
+    if webinar
+      redirect_to webinar_path(webinar), status: :moved_permanently
+    else
+      redirect_to root_path
+    end
   end
 
   def show

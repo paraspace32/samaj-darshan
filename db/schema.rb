@@ -411,6 +411,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_22_100350) do
     t.index ["visitor_token", "visited_at"], name: "index_visits_on_visitor_token_and_visited_at"
   end
 
+  create_table "webinar_registrations", force: :cascade do |t|
+    t.bigint "webinar_id", null: false
+    t.string "name", null: false
+    t.string "phone", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["webinar_id", "phone"], name: "index_webinar_registrations_on_webinar_id_and_phone", unique: true
+    t.index ["webinar_id"], name: "index_webinar_registrations_on_webinar_id"
+  end
+
   create_table "webinars", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description_en", null: false
@@ -454,5 +464,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_22_100350) do
   add_foreign_key "shortlists", "users"
   add_foreign_key "tributes", "users", column: "created_by_id"
   add_foreign_key "visits", "users"
+  add_foreign_key "webinar_registrations", "webinars"
   add_foreign_key "webinars", "users", column: "host_id"
 end

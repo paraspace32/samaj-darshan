@@ -79,8 +79,8 @@
               <%= optimized_image_tag @upcoming_webinar.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300", loading: "lazy" %>
             </div>
           <% end %>
-          <h4 class="text-[13px] font-bold text-gray-800 group-hover:text-orange-600 line-clamp-2 leading-snug"><%= @upcoming_webinar.title %></h4>
-          <p class="text-[11px] text-gray-400 mt-1"><%= @upcoming_webinar.scheduled_at&.strftime("%d %b %Y, %I:%M %p") %></p>
+          <h4 class="text-[13px] font-bold text-gray-800 group-hover:text-orange-600 line-clamp-2 leading-snug"><%= @upcoming_webinar.display_title %></h4>
+          <p class="text-[11px] text-gray-400 mt-1"><%= @upcoming_webinar.starts_at&.strftime("%d %b %Y, %I:%M %p") %></p>
         <% end %>
       </div>
     <% end %>

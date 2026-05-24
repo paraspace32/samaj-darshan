@@ -3,7 +3,6 @@ class Webinar < ApplicationRecord
   bilingual_field :title, :description
 
   belongs_to :host, class_name: "User"
-  has_many :webinar_registrations, dependent: :destroy
 
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,  resize_to_limit: [ 1600, 800 ], format: :webp, saver: { quality: 85 }
@@ -49,18 +48,6 @@ class Webinar < ApplicationRecord
     youtube_embed_url.present?
   end
 
-  # Extracts the Zoho session ID from the registration URL
-  # e.g. "https://webinar.zoho.in/meeting/register?sessionId=1385865660" => "1385865660"
-  def zoho_session_id
-    return nil if registration_url.blank?
-
-    uri = URI.parse(registration_url.strip)
-    params = URI.decode_www_form(uri.query || "").to_h
-    params["sessionId"]
-  rescue URI::InvalidURIError
-    nil
-  end
-
   def youtube_embed_url
     return nil if meeting_url.blank?
 
@@ -82,28 +69,4 @@ class Webinar < ApplicationRecord
     upcoming? && starts_at <= 15.minutes.from_now
   end
 
-  # Determines what the show page should display as the primary action.
-  #
-  # Returns a symbol:
-  #   :registration  — upcoming + has Zoho/external registration URL
-  #   :youtube_live  — live now or upcoming + YouTube embed available
-  #   :join_link     — live/upcoming + non-YouTube meeting URL
-  #   :recording     — ended + YouTube embed available (saved recording)
-  #   :ended         — ended, no recording
-  #   :info          — upcoming, no links configured
-  def primary_action
-    if upcoming? || live_now?
-      if registration_url.present? && upcoming?
-        :registration
-      elsif embeddable?
-        :youtube_live
-      elsif meeting_url.present?
-        :join_link
-      else
-        :info
-      end
-    else
-      embeddable? ? :recording : :ended
-    end
-  end
 end

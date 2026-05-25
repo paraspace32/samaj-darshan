@@ -1,15 +1,15 @@
 class WebinarsController < ApplicationController
   def index
-    webinar = Webinar.upcoming.first || Webinar.past.order(starts_at: :desc).first
-    if webinar
-      redirect_to webinar_path(webinar), status: :moved_permanently
-    else
-      redirect_to root_path
-    end
+    @webinar = Webinar.upcoming.includes(:host).with_attached_cover_image.first
+    @past_recordings = Webinar.past.order(starts_at: :desc)
+                              .includes(:host).with_attached_cover_image
+                              .limit(20)
   end
 
   def show
-    @webinar = Webinar.published.find(params[:id])
+    @webinar = Webinar.published.find_by(id: params[:id])
+    redirect_to(webinars_path) and return unless @webinar
+
     @past_recordings = Webinar.past.order(starts_at: :desc)
                               .includes(:host).with_attached_cover_image
                               .where.not(id: @webinar.id)

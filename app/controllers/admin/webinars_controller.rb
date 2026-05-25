@@ -46,8 +46,14 @@ module Admin
     end
 
     def destroy
-      @webinar.destroy
+      # Clear any webinar_registrations to avoid FK constraint
+      ActiveRecord::Base.connection.execute(
+        "DELETE FROM webinar_registrations WHERE webinar_id = #{@webinar.id}"
+      ) if ActiveRecord::Base.connection.table_exists?(:webinar_registrations)
+      @webinar.destroy!
       redirect_to admin_webinars_path, notice: "Webinar deleted."
+    rescue => e
+      redirect_to admin_webinar_path(@webinar), alert: "Could not delete: #{e.message}"
     end
 
     def publish

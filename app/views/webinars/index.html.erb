@@ -59,16 +59,23 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         <% past_with_video.each do |webinar| %>
+          <% video_id = webinar.youtube_embed_url.split("/").last %>
           <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm hover:shadow-lg transition-all group">
-            <div class="relative w-full bg-black" style="padding-bottom: 56.25%;">
-              <iframe
-                src="<%= webinar.youtube_embed_url %>?rel=0"
-                class="absolute inset-0 w-full h-full"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                loading="lazy">
-              </iframe>
+            <%# Thumbnail — tap to play inline %>
+            <div class="relative w-full bg-black cursor-pointer" style="padding-bottom: 56.25%;" data-controller="youtube-player" data-youtube-player-video-id-value="<%= video_id %>">
+              <img
+                src="https://img.youtube.com/vi/<%= video_id %>/hqdefault.jpg"
+                alt="<%= webinar.display_title %>"
+                class="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                data-youtube-player-target="thumb"
+              >
+              <div class="absolute inset-0 flex items-center justify-center" data-youtube-player-target="playBtn" data-action="click->youtube-player#play">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-600 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                  <svg class="w-7 h-7 sm:w-9 sm:h-9 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <div class="absolute inset-0 hidden" data-youtube-player-target="player"></div>
             </div>
             <div class="p-4">
               <h3 class="font-bold text-gray-900 line-clamp-2 text-sm leading-snug mb-2"><%= webinar.display_title %></h3>

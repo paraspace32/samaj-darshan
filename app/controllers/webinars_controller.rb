@@ -10,5 +10,9 @@ class WebinarsController < ApplicationController
 
   def show
     @webinar = Webinar.published.find(params[:id])
+    @past_recordings = Webinar.past.order(starts_at: :desc)
+                              .includes(:host).with_attached_cover_image
+                              .where.not(id: @webinar.id)
+                              .limit(20)
   end
 end

@@ -54,8 +54,8 @@
     <% end %>
   <% end %>
 
-  <%# ── PAST RECORDINGS ── %>
-  <% past_with_video = @past_recordings.select(&:embeddable?) %>
+  <%# ── PAST RECORDINGS (only shown on upcoming/live webinar page) ── %>
+  <% past_with_video = @webinar.upcoming? || @webinar.live_now? ? @past_recordings.select(&:embeddable?) : [] %>
   <% if past_with_video.any? %>
     <section class="mt-10 sm:mt-14 max-w-6xl mx-auto px-4 sm:px-0">
       <div class="mb-6 sm:mb-8">

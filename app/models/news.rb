@@ -10,7 +10,7 @@ class News < ApplicationRecord
   has_many :likes, as: :likeable, dependent: :destroy
 
   has_one_attached :cover_image do |attachable|
-    attachable.variant :hero,     resize_to_limit: [ 1600, 800 ],  format: :webp, saver: { quality: 85 }
+    attachable.variant :hero,     resize_to_fill: [ 1600, 900 ],  format: :webp, saver: { quality: 85 }
     attachable.variant :card,     resize_to_limit: [ 800, 450 ],   format: :webp, saver: { quality: 80 }
     attachable.variant :thumb,    resize_to_limit: [ 200, 140 ],   format: :webp, saver: { quality: 75 }
     attachable.variant :carousel, resize_to_limit: [ 1600, 1000 ], format: :webp, saver: { quality: 85 }

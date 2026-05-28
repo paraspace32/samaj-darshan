@@ -3,7 +3,7 @@
     Requires: @news_items, @auto_region, @is_home
     ═══════════════════════════════════════════════════════════════════ %>
 <% active_region_on_home = @auto_region %>
-<turbo-frame id="region-news">
+<turbo-frame id="region-news" target="_top">
 
 <% if active_region_on_home.present? %>
   <%# ── Region news section ── %>

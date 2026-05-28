@@ -127,8 +127,12 @@ class NewsController < ApplicationController
         end
       end
       format.html do
-        # Auto-region responses are per-visitor — never share in public cache
-        fresh_when etag: cache_key_for_index, public: !logged_in? && @auto_region.nil?
+        # Skip HTTP caching for Turbo Frame requests — a 304 with no body
+        # causes Turbo to show "Content missing" since it can't find the frame tag.
+        unless turbo_frame_request?
+          # Auto-region responses are per-visitor — never share in public cache
+          fresh_when etag: cache_key_for_index, public: !logged_in? && @auto_region.nil?
+        end
       end
     end
   end

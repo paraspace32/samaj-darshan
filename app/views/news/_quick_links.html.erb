@@ -4,10 +4,10 @@
     Requires: @active_users, @visitor_stats (for visitor_map)
     ═══════════════════════════════════════════════════════════════════ %>
 <div class="border-t border-gray-100 mt-3 pt-3 sm:mt-5 sm:pt-5 lg:mt-8 lg:pt-8" data-reveal>
-  <div class="lg:flex lg:gap-8 lg:items-start">
+  <div class="flex flex-col lg:flex-row lg:gap-8 lg:items-start">
 
-    <%# ── Cards: first on mobile, right on desktop ── %>
-    <div class="lg:flex-1 lg:min-w-0 lg:order-2">
+    <%# ── Cards: after map on mobile, right on desktop ── %>
+    <div class="order-2 mt-4 lg:mt-0 lg:flex-1 lg:min-w-0 lg:order-2">
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4" data-reveal-stagger>
         <%= link_to webinars_path, class: "group block rounded-2xl p-3.5 sm:p-5 relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-gray-200", style: "background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" do %>
           <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3" style="background: rgba(249,115,22,0.15)">
@@ -67,8 +67,8 @@
       </div>
     </div>
 
-    <%# ── Map: second on mobile, left on desktop ── %>
-    <div class="mt-4 lg:mt-0 lg:w-[480px] lg:shrink-0 lg:order-1">
+    <%# ── Map: first on mobile, left on desktop ── %>
+    <div class="order-1 lg:mt-0 lg:w-[480px] lg:shrink-0 lg:order-1">
       <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
     </div>
 

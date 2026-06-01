@@ -2,6 +2,7 @@
     WhatsApp Share Card — 540x720px compact image card
     Photo + key details + profile link for sharing in groups
     Rendered by WhatsappCardGenerator (photo passed as data URI)
+    Uses only position/table layout (no flexbox — wkhtmltopdf compat)
     ═══════════════════════════════════════════════════════════════ %>
 
 <div style="width:540px;height:720px;background:#fdf7f0;position:relative;overflow:hidden;">
@@ -9,7 +10,7 @@
   <%# ── Top gradient strip ── %>
   <div style="height:5px;background:linear-gradient(90deg,#7c2d12,#c2410c,#ea580c,#f97316,#ea580c,#c2410c,#7c2d12);"></div>
 
-  <%# ── Photo section ── %>
+  <%# ── Photo section (340px) ── %>
   <div style="height:340px;background:linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%);position:relative;overflow:hidden;">
     <%# Decorative circles %>
     <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
@@ -22,35 +23,33 @@
       </span>
     </div>
 
-    <%# Photo %>
-    <div style="display:flex;align-items:center;justify-content:center;height:100%;padding-top:20px;">
-      <div style="width:200px;height:250px;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,200,120,0.6));padding:4px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
-        <div style="width:100%;height:100%;border-radius:13px;overflow:hidden;background:rgba(255,255,255,0.2);">
-          <% if @photo_data_uri.present? %>
-            <img src="<%= @photo_data_uri %>" style="width:100%;height:100%;object-fit:cover;display:block;" />
-          <% else %>
-            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f97316,#ea580c);">
-              <span style="font-size:72px;font-weight:900;color:white;"><%= @biodata.avatar_initial %></span>
-            </div>
-          <% end %>
-        </div>
+    <%# Centered photo using absolute positioning %>
+    <div style="position:absolute;top:50%;left:50%;width:220px;height:270px;margin-left:-110px;margin-top:-125px;border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,200,120,0.6));padding:4px;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+      <div style="width:100%;height:100%;border-radius:13px;overflow:hidden;background:rgba(255,255,255,0.2);">
+        <% if @photo_data_uri.present? %>
+          <img src="<%= @photo_data_uri %>" style="width:100%;height:100%;object-fit:cover;display:block;" />
+        <% else %>
+          <div style="width:100%;height:100%;text-align:center;line-height:262px;background:linear-gradient(135deg,#f97316,#ea580c);">
+            <span style="font-size:72px;font-weight:900;color:white;"><%= @biodata.avatar_initial %></span>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
 
   <%# ── Name section ── %>
   <div style="text-align:center;padding:16px 24px 8px;">
-    <h1 style="font-size:24px;font-weight:900;color:#1c1917;margin:0 0 2px;letter-spacing:-0.01em;line-height:1.2;">
+    <div style="font-size:24px;font-weight:900;color:#1c1917;letter-spacing:-0.01em;line-height:1.2;">
       <%= @biodata.full_name.presence || @biodata.display_name %>
-    </h1>
+    </div>
     <% if @biodata.full_name_hi.present? && @biodata.full_name_hi != @biodata.full_name %>
-      <p style="font-size:15px;color:#78716c;margin:0;font-weight:600;"><%= @biodata.full_name_hi %></p>
+      <div style="font-size:15px;color:#78716c;font-weight:600;margin-top:2px;"><%= @biodata.full_name_hi %></div>
     <% end %>
   </div>
 
-  <%# ── Key details grid ── %>
+  <%# ── Key details as table ── %>
   <div style="padding:6px 28px 0;">
-    <div style="background:white;border:1px solid #fde8cb;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
+    <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:12px;border-collapse:collapse;box-shadow:0 1px 4px rgba(180,83,9,0.06);">
       <%
         details = []
         details << ["Age", "#{@biodata.age} years"] if @biodata.age
@@ -62,18 +61,18 @@
         details << ["Caste", @biodata.caste] if @biodata.caste.present?
       %>
       <% details.first(5).each_with_index do |(label, value), i| %>
-        <div style="display:flex;align-items:center;padding:7px 14px;<%= i < [details.size, 5].min - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>">
-          <span style="font-size:11px;font-weight:700;color:#b45309;min-width:90px;flex-shrink:0;"><%= label %></span>
-          <span style="font-size:11.5px;font-weight:500;color:#1c1917;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><%= value&.truncate(35) %></span>
-        </div>
+        <tr>
+          <td style="font-size:11px;font-weight:700;color:#b45309;padding:8px 14px;width:95px;vertical-align:middle;<%= i < [details.size, 5].min - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
+          <td style="font-size:11.5px;font-weight:500;color:#1c1917;padding:8px 14px;vertical-align:middle;<%= i < [details.size, 5].min - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(35) %></td>
+        </tr>
       <% end %>
-    </div>
+    </table>
   </div>
 
   <%# ── Footer with link ── %>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:52px;background:linear-gradient(150deg,#7c2d12,#c2410c,#ea580c);display:flex;align-items:center;justify-content:center;gap:8px;">
+  <div style="position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(150deg,#7c2d12,#c2410c,#ea580c);text-align:center;line-height:48px;">
     <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:0.04em;">
-      View full profile on
+      See full profile at
     </span>
     <span style="font-size:12px;font-weight:900;color:white;letter-spacing:0.02em;">
       www.samaj-darshan.com

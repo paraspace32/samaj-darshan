@@ -1,94 +1,61 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Generates and shares a biodata WhatsApp image card.
-// Strategy:
-// 1. Fetch card image URL from server (JSON endpoint)
-// 2. Fetch the image as a blob and share as a File via Web Share API
-// 3. If file sharing unsupported, fall back to URL-only share
-// 4. If no share API at all (desktop), navigate to download URL
+// Shares a biodata image card via WhatsApp.
+// 1. Fetches card JPEG from server → shares as image file via Web Share API
+// 2. If file sharing fails → opens wa.me with text link as fallback
 export default class extends Controller {
-  static values = { url: String, downloadUrl: String, name: String }
+  static values = { url: String, name: String, fallback: String }
 
   async share(event) {
     event.preventDefault()
     const btn = event.currentTarget
     const originalHTML = btn.innerHTML
 
-    // Show loading state
     btn.disabled = true
     btn.innerHTML = `
       <svg class="animate-spin" width="16" height="16" fill="none" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.3"/>
         <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
       </svg>
-      <span>Loading...</span>
+      <span>Sharing...</span>
     `
 
-    const downloadUrl = this.hasDownloadUrlValue ? this.downloadUrlValue : null
-    const cardJsonUrl = this.urlValue
-
     try {
-      // Step 1: Get card image URL from server
-      const response = await fetch(cardJsonUrl, {
-        headers: { "Accept": "application/json" }
-      })
-      if (!response.ok) throw new Error(`Server returned ${response.status}`)
+      // Step 1: Get the card image URL from server
+      const resp = await fetch(this.urlValue, { headers: { "Accept": "application/json" } })
+      if (!resp.ok) throw new Error(`Server ${resp.status}`)
+      const { url: imageUrl } = await resp.json()
+      if (!imageUrl) throw new Error("No image URL")
 
-      const data = await response.json()
-      const imageUrl = data.url
-      if (!imageUrl) throw new Error("No image URL in response")
+      // Step 2: Fetch the actual image blob
+      const imgResp = await fetch(imageUrl)
+      if (!imgResp.ok) throw new Error("Image fetch failed")
+      const blob = await imgResp.blob()
 
-      // Step 2: Try sharing the image as a file (best experience for WhatsApp)
-      if (navigator.canShare) {
-        try {
-          const imageResponse = await fetch(imageUrl)
-          if (!imageResponse.ok) throw new Error("Image fetch failed")
+      // Step 3: Create a File and try sharing it
+      const safeName = (this.nameValue || "biodata").replace(/[^a-zA-Z0-9]/g, "_")
+      const file = new File([blob], `${safeName}_card.jpg`, { type: "image/jpeg" })
 
-          const blob = await imageResponse.blob()
-          const fileName = `${(this.nameValue || "biodata").replace(/[^a-zA-Z0-9]/g, "_")}_card.jpg`
-          const file = new File([blob], fileName, { type: "image/jpeg" })
-
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: `${this.nameValue || "Biodata"} - Samaj Darshan`
-            })
-            return // Success — done
-          }
-        } catch (shareErr) {
-          if (shareErr.name === "AbortError") return // User cancelled — that's fine
-          console.warn("File share failed, trying URL share:", shareErr)
-        }
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] })
+        // Success! Image shared directly
+        return
       }
 
-      // Step 3: Fallback — share URL only (shows as a link, not image)
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: `${this.nameValue || "Biodata"} - Samaj Darshan`,
-            text: `${this.nameValue || "Biodata"} — View full biodata on Samaj Darshan`,
-            url: downloadUrl || imageUrl
-          })
-          return
-        } catch (urlShareErr) {
-          if (urlShareErr.name === "AbortError") return
-          console.warn("URL share also failed:", urlShareErr)
-        }
-      }
-
-      // Step 4: Final fallback — navigate to the image directly
-      window.location.href = downloadUrl || imageUrl
-    } catch (error) {
-      console.error("Share card error:", error)
-      // Last resort: try to open the download URL if we have it
-      if (downloadUrl) {
-        window.location.href = downloadUrl
-      } else {
-        alert("Could not generate card. Please try again.")
-      }
+      // canShare not supported or doesn't support files — use wa.me fallback
+      this._openFallback()
+    } catch (err) {
+      if (err.name === "AbortError") return // user cancelled share sheet
+      console.warn("Card share failed:", err)
+      this._openFallback()
     } finally {
       btn.disabled = false
       btn.innerHTML = originalHTML
     }
+  }
+
+  _openFallback() {
+    // Open wa.me link with text — guaranteed to work everywhere
+    window.location.href = this.fallbackValue
   }
 }

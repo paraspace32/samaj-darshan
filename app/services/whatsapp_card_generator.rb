@@ -2,18 +2,26 @@ class WhatsappCardGenerator
   CARD_WIDTH  = 540
   CARD_HEIGHT = 720
   DPI         = 200
+  # Bump this version to force regeneration when template changes
+  TEMPLATE_VERSION = 2
 
   # Generate (or return cached) WhatsApp card image for a biodata.
   # Returns the ActiveStorage attachment.
   def generate(biodata)
-    return biodata.whatsapp_card if biodata.whatsapp_card.attached?
+    if biodata.whatsapp_card.attached?
+      # Regenerate if template version changed (filename encodes version)
+      expected_filename = "biodata_card_#{biodata.id}_v#{TEMPLATE_VERSION}.jpg"
+      return biodata.whatsapp_card if biodata.whatsapp_card.blob.filename.to_s == expected_filename
+
+      biodata.whatsapp_card.purge
+    end
 
     pdf_binary = render_pdf(biodata)
     jpeg_binary = pdf_to_jpeg(pdf_binary)
 
     biodata.whatsapp_card.attach(
       io: StringIO.new(jpeg_binary),
-      filename: "biodata_card_#{biodata.id}.jpg",
+      filename: "biodata_card_#{biodata.id}_v#{TEMPLATE_VERSION}.jpg",
       content_type: "image/jpeg"
     )
 

@@ -41,6 +41,7 @@
         <% if @whatsapp_card_path.present? %>
           <div data-controller="share-card"
                data-share-card-url-value="<%= @whatsapp_card_path %>"
+               data-share-card-download-url-value="<%= @download_card_path %>"
                data-share-card-name-value="<%= @biodata.full_name.presence || @biodata.display_name %>">
             <button data-action="click->share-card#share"
                     style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;background:#25D366;color:white;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.3);cursor:pointer;">

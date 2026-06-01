@@ -56,6 +56,7 @@ class MyBiodatasController < ApplicationController
   def template
     @pdf_download_path = download_pdf_my_biodata_path(@biodata)
     @whatsapp_card_path = @biodata.published? ? whatsapp_card_my_biodata_path(@biodata) : nil
+    @download_card_path = @biodata.published? ? download_card_my_biodata_path(@biodata) : nil
     render layout: "biodata_template"
   end
 

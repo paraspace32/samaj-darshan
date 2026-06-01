@@ -28,6 +28,7 @@ class BiodatasController < ApplicationController
     @biodata = Biodata.published.find(params[:id])
     @pdf_download_path = download_pdf_biodata_path(@biodata)
     @whatsapp_card_path = whatsapp_card_biodata_path(@biodata)
+    @download_card_path = download_card_biodata_path(@biodata)
     render layout: "biodata_template"
   rescue ActiveRecord::RecordNotFound
     redirect_to biodatas_path, alert: t("biodata.not_found")

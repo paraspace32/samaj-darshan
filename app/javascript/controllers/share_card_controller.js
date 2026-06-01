@@ -1,12 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Generates and shares a biodata WhatsApp image card.
-// On mobile: uses Web Share API for native sharing (WhatsApp, etc.)
-// On desktop: opens image in new tab for save/share
+// Strategy:
+// 1. Open download_card URL directly (synchronous, no popup-blocker issues)
+// 2. After page loads the card, try Web Share API with the direct URL
+// 3. Fallback: navigate to the card image for manual save/share
 export default class extends Controller {
-  static values = { url: String, name: String }
+  static values = { url: String, downloadUrl: String, name: String }
 
-  async share(event) {
+  share(event) {
     event.preventDefault()
     const btn = event.currentTarget
     const originalHTML = btn.innerHTML
@@ -18,57 +20,43 @@ export default class extends Controller {
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.3"/>
         <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
       </svg>
-      <span>Generating...</span>
+      <span>Loading...</span>
     `
 
-    try {
-      // Step 1: Get card image URL from server
-      const response = await fetch(this.urlValue, {
-        headers: { "Accept": "application/json" }
-      })
+    // Use the download_card URL which does a server-side redirect to the blob.
+    // This avoids all fetch→blob→File→share complexity that breaks on Safari.
+    const downloadUrl = this.hasDownloadUrlValue ? this.downloadUrlValue : null
+    const cardUrl = this.urlValue
 
-      if (!response.ok) throw new Error(`Server returned ${response.status}`)
+    // Try Web Share API with URL only (no file fetching) — works reliably on iOS Safari
+    if (navigator.share) {
+      const shareData = {
+        title: `${this.nameValue || "Biodata"} - Samaj Darshan`,
+        text: `${this.nameValue || "Biodata"} — View full biodata on Samaj Darshan`,
+        url: downloadUrl || cardUrl
+      }
 
-      const data = await response.json()
-      const imageUrl = data.url
-
-      if (!imageUrl) throw new Error("No image URL in response")
-
-      // Step 2: Try native share on mobile (with file)
-      let shared = false
-      if (navigator.canShare) {
-        try {
-          const imageResponse = await fetch(imageUrl)
-          if (imageResponse.ok) {
-            const blob = await imageResponse.blob()
-            const fileName = `${(this.nameValue || "biodata").replace(/[^a-zA-Z0-9]/g, "_")}_card.jpg`
-            const file = new File([blob], fileName, { type: "image/jpeg" })
-
-            if (navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                files: [file],
-                title: `${this.nameValue} - Biodata`,
-                text: "View full biodata on Samaj Darshan"
-              })
-              shared = true
-            }
+      navigator.share(shareData)
+        .catch((err) => {
+          // User cancelled — that's fine
+          if (err.name !== "AbortError") {
+            console.warn("Share failed, opening card directly:", err)
+            // Fallback: just open the card
+            window.location.href = downloadUrl || cardUrl
           }
-        } catch (e) {
-          if (e.name === "AbortError") { shared = true } // User cancelled — still counts
-          else { console.warn("Native share failed, falling back:", e) }
-        }
-      }
-
-      // Step 3: Fallback — open image in new tab (works everywhere)
-      if (!shared) {
-        window.open(imageUrl, "_blank")
-      }
-    } catch (error) {
-      console.error("Share card error:", error)
-      alert("Could not generate card. Please try again.")
-    } finally {
-      btn.disabled = false
-      btn.innerHTML = originalHTML
+        })
+        .finally(() => {
+          btn.disabled = false
+          btn.innerHTML = originalHTML
+        })
+    } else {
+      // Desktop or no share API: navigate directly to download the card
+      window.location.href = downloadUrl || cardUrl
+      // Restore button after a short delay (page may navigate away)
+      setTimeout(() => {
+        btn.disabled = false
+        btn.innerHTML = originalHTML
+      }, 2000)
     }
   }
 }

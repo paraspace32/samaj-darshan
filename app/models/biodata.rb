@@ -11,6 +11,8 @@ class Biodata < ApplicationRecord
     attachable.variant :thumb,   resize_to_fill: [ 80, 80 ],   format: :webp, saver: { quality: 75 }
   end
 
+  has_one_attached :whatsapp_card
+
   enum :gender, { male: 0, female: 1 }
   enum :status, { draft: 0, pending_review: 1, published: 2, rejected: 3, pending_consent: 4 }
 
@@ -18,6 +20,8 @@ class Biodata < ApplicationRecord
   validates :gender,        presence: true
   validates :date_of_birth, presence: true
   validate :age_must_be_reasonable
+
+  after_save :purge_whatsapp_card_if_stale
 
   scope :visible,       -> { published.order(published_at: :desc) }
   scope :for_gender,    ->(g)        { where(gender: g) if g.present? }
@@ -94,5 +98,14 @@ class Biodata < ApplicationRecord
     return unless date_of_birth
     computed = Date.today.year - date_of_birth.year
     errors.add(:date_of_birth, "must indicate age between 18 and 60") unless computed.between?(18, 60)
+  end
+
+  WHATSAPP_CARD_FIELDS = %w[full_name full_name_hi education occupation city state date_of_birth height_cm caste].freeze
+
+  def purge_whatsapp_card_if_stale
+    return unless whatsapp_card.attached?
+    return unless (saved_changes.keys & WHATSAPP_CARD_FIELDS).any?
+
+    whatsapp_card.purge_later
   end
 end

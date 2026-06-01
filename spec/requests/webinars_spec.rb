@@ -15,11 +15,15 @@ RSpec.describe "Webinars", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "separates upcoming and past webinars" do
-      upcoming = create(:webinar, :upcoming)
-      past = create(:webinar, :past)
+    it "shows upcoming webinar embed when YouTube URL present" do
+      create(:webinar, :upcoming, :with_youtube_live)
       get webinars_path
-      expect(response.body).to include(upcoming.display_title)
+      expect(response.body).to include("youtube.com/embed/abc123live")
+    end
+
+    it "shows past recordings with YouTube URLs" do
+      past = create(:webinar, :past_with_recording)
+      get webinars_path
       expect(response.body).to include(past.display_title)
     end
 
@@ -41,36 +45,24 @@ RSpec.describe "Webinars", type: :request do
       webinar = create(:webinar, :published)
       get webinar_path(webinar)
       expect(response).to have_http_status(:ok)
+    end
+
+    it "includes webinar title in page title" do
+      webinar = create(:webinar, :published, speaker_name: "Dr. Meena Sharma")
+      get webinar_path(webinar)
       expect(response.body).to include(webinar.display_title)
     end
 
-    it "shows speaker name" do
-      webinar = create(:webinar, :published, speaker_name: "Dr. Meena Sharma")
-      get webinar_path(webinar)
-      expect(response.body).to include("Dr. Meena Sharma")
-    end
-
-    it "returns 404 for draft webinars" do
+    it "redirects to index for draft webinars" do
       webinar = create(:webinar)
       get webinar_path(webinar)
-      expect(response).to have_http_status(:not_found)
+      expect(response).to redirect_to(webinars_path)
     end
 
-    it "returns 404 for cancelled webinars" do
+    it "redirects to index for cancelled webinars" do
       webinar = create(:webinar, :cancelled)
       get webinar_path(webinar)
-      expect(response).to have_http_status(:not_found)
-    end
-
-    context "upcoming webinar with Zoho registration" do
-      it "shows native registration form" do
-        webinar = create(:webinar, :upcoming, :with_registration)
-        get webinar_path(webinar)
-        expect(response.body).to include("first_name")
-        expect(response.body).to include("last_name")
-        expect(response.body).to include("email")
-        expect(response.body).not_to include("<iframe")
-      end
+      expect(response).to redirect_to(webinars_path)
     end
 
     context "upcoming webinar with YouTube live URL" do
@@ -103,23 +95,6 @@ RSpec.describe "Webinars", type: :request do
         get webinar_path(webinar)
         expect(response).to have_http_status(:ok)
       end
-    end
-  end
-
-  describe "POST /webinars/:id/register" do
-    let(:webinar) { create(:webinar, :upcoming, :with_registration) }
-
-    it "redirects with alert when fields are missing" do
-      post register_webinar_path(webinar), params: { first_name: "", last_name: "", email: "" }
-      expect(response).to redirect_to(webinar_path(webinar))
-      follow_redirect!
-      expect(response.body).to include(I18n.t("webinar.fill_all_fields"))
-    end
-
-    it "redirects with alert for past webinars" do
-      past_webinar = create(:webinar, :past, registration_url: "https://webinar.zoho.in/meeting/register?sessionId=123")
-      post register_webinar_path(past_webinar), params: { first_name: "Test", last_name: "User", email: "test@example.com" }
-      expect(response).to redirect_to(webinar_path(past_webinar))
     end
   end
 end

@@ -7,9 +7,9 @@ RSpec.describe "Biodatas (public)", type: :request do
   # ── Index ─────────────────────────────────────────────────────────────────
 
   describe "GET /biodatas" do
-    let!(:published_male)   { create(:biodata, :published, gender: :male,   city: "Indore", date_of_birth: 26.years.ago.to_date) }
-    let!(:published_female) { create(:biodata, :published, :female,         city: "Bhopal", date_of_birth: 24.years.ago.to_date) }
-    let!(:draft)            { create(:biodata, user: owner) }
+    let!(:published_male)   { create(:biodata, :published, gender: :male,   city: "Indore", date_of_birth: 26.years.ago.to_date, full_name: "Rahul Sharma") }
+    let!(:published_female) { create(:biodata, :published, :female,         city: "Bhopal", date_of_birth: 24.years.ago.to_date, full_name: "Priya Verma") }
+    let!(:draft)            { create(:biodata, user: owner, full_name: "Draft Person") }
 
     it "returns 200" do
       get biodatas_path
@@ -24,7 +24,7 @@ RSpec.describe "Biodatas (public)", type: :request do
     end
 
     it "does not show pending_consent biodatas" do
-      consent_bd = create(:biodata, :pending_consent, user: owner)
+      consent_bd = create(:biodata, :pending_consent, user: owner, full_name: "Consent Pending")
       get biodatas_path
       expect(response.body).not_to include(consent_bd.full_name)
     end

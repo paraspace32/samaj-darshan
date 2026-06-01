@@ -149,6 +149,8 @@ Rails.application.routes.draw do
     member do
       get :template
       get :download_pdf
+      get :whatsapp_card
+      get :download_card
       post :shortlist
       delete :shortlist, action: :unshortlist
     end
@@ -160,6 +162,8 @@ Rails.application.routes.draw do
       patch :decline_consent
       get :template
       get :download_pdf
+      get :whatsapp_card
+      get :download_card
     end
   end
 

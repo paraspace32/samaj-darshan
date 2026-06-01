@@ -141,6 +141,13 @@ RSpec.describe "Routes", type: :routing do
     it { expect(patch: "/api/v1/admin/categories/1/toggle_active").to route_to("api/v1/admin/categories#toggle_active", id: "1") }
   end
 
+  describe "biodatas WhatsApp card" do
+    it { expect(get: "/biodatas/1/whatsapp_card").to route_to("biodatas#whatsapp_card", id: "1") }
+    it { expect(get: "/biodatas/1/download_card").to route_to("biodatas#download_card", id: "1") }
+    it { expect(get: "/my_biodatas/1/whatsapp_card").to route_to("my_biodatas#whatsapp_card", id: "1") }
+    it { expect(get: "/my_biodatas/1/download_card").to route_to("my_biodatas#download_card", id: "1") }
+  end
+
   describe "webinars (public)" do
     it { expect(get: "/webinars").to route_to("webinars#index") }
     it { expect(get: "/webinars/1").to route_to("webinars#show", id: "1") }

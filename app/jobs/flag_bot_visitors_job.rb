@@ -10,16 +10,22 @@ class FlagBotVisitorsJob < ApplicationJob
 
     flagged = 0
 
+    # Never flag logged-in users as bots — they are real authenticated users
+    logged_in_tokens = Visit.where(visited_at: range).where.not(user_id: nil)
+                            .distinct.pluck(:visitor_token)
+
     high_frequency_tokens(range).each do |token|
+      next if logged_in_tokens.include?(token)
       flagged += Visit.where(visitor_token: token, bot: false).update_all(bot: true)
     end
 
     zero_duration_tokens(range).each do |token|
+      next if logged_in_tokens.include?(token)
       flagged += Visit.where(visitor_token: token, bot: false).update_all(bot: true)
     end
 
     multi_token_ips(range).each do |ip|
-      flagged += Visit.where(ip_address: ip, bot: false).update_all(bot: true)
+      flagged += Visit.where(ip_address: ip, bot: false).where(user_id: nil).update_all(bot: true)
     end
 
     Rails.logger.info "FlagBotVisitors | date=#{date} | flagged=#{flagged} visits"

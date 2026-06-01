@@ -1,9 +1,9 @@
 class WhatsappCardGenerator
   CARD_WIDTH  = 540
   CARD_HEIGHT = 720
-  DPI         = 200
+  DPI         = 300
   # Bump this version to force regeneration when template changes
-  TEMPLATE_VERSION = 3
+  TEMPLATE_VERSION = 4
 
   # Generate (or return cached) WhatsApp card image for a biodata.
   # Returns the ActiveStorage attachment.
@@ -30,26 +30,29 @@ class WhatsappCardGenerator
 
   private
 
+  # Renders the SAME biodatas/template.html.erb used by the app,
+  # wrapped in a tight card layout. Photo is embedded as base64
+  # because wkhtmltopdf can't access Rails routes/GCS URLs.
   def render_pdf(biodata)
-    # Build photo data URI for wkhtmltopdf (it renders from temp file, can't access Rails routes)
-    photo_data_uri = nil
-    if biodata.photo.attached?
-      begin
-        blob = biodata.photo.blob
-        photo_bytes = blob.download
-        mime = blob.content_type || "image/jpeg"
-        photo_data_uri = "data:#{mime};base64,#{Base64.strict_encode64(photo_bytes)}"
-      rescue => e
-        Rails.logger.warn "WhatsappCardGenerator: Could not load photo for biodata #{biodata.id}: #{e.message}"
+    photo_data_uri = build_photo_data_uri(biodata)
+
+    # Use ApplicationController so helpers (optimized_image_tag, t, etc.) work
+    controller = ApplicationController.new
+    controller.request = ActionDispatch::Request.new(
+      Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
+    )
+    html = controller.render_to_string(
+      template: "biodatas/template",
+      layout: "whatsapp_card",
+      assigns: { biodata: biodata }
+    )
+
+    # Replace URL-based photo <img> with base64 data URI (wkhtmltopdf can't access GCS URLs)
+    if photo_data_uri.present?
+      html.gsub!(/<img[^>]*?style="width:100%;height:100%;object-fit:cover[^"]*"[^>]*\/?>/) do
+        %(<img src="#{photo_data_uri}" style="width:100%;height:100%;object-fit:cover;display:block;" />)
       end
     end
-
-    controller = ActionController::Base.new
-    html = controller.render_to_string(
-      template: "biodatas/whatsapp_card",
-      layout: "whatsapp_card",
-      assigns: { biodata: biodata, photo_data_uri: photo_data_uri }
-    )
 
     WickedPdf.new.pdf_from_string(
       html,
@@ -59,12 +62,24 @@ class WhatsappCardGenerator
       disable_smart_shrinking: true,
       print_media_type: false,
       zoom: 1,
-      dpi: 96
+      dpi: 150
     )
   end
 
+  def build_photo_data_uri(biodata)
+    return nil unless biodata.photo.attached?
+
+    blob = biodata.photo.blob
+    photo_bytes = blob.download
+    mime = blob.content_type || "image/jpeg"
+    "data:#{mime};base64,#{Base64.strict_encode64(photo_bytes)}"
+  rescue => e
+    Rails.logger.warn "WhatsappCardGenerator: Could not load photo for biodata #{biodata.id}: #{e.message}"
+    nil
+  end
+
   def pdf_to_jpeg(pdf_binary)
-    # Use vips to convert PDF first page to JPEG
+    # Use vips to convert PDF first page to JPEG at high DPI
     image = Vips::Image.new_from_buffer(pdf_binary, "", dpi: DPI, n: 1)
 
     # Scale to exact card dimensions
@@ -83,6 +98,6 @@ class WhatsappCardGenerator
     # Flatten alpha channel to white background if present
     image = image.flatten(background: [ 255, 255, 255 ]) if image.has_alpha?
 
-    image.jpegsave_buffer(Q: 90)
+    image.jpegsave_buffer(Q: 92)
   end
 end

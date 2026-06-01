@@ -11,10 +11,38 @@
       padding: 0;
       font-family: 'Noto Sans Devanagari', 'Noto Sans', Arial, Helvetica, sans-serif;
       overflow: hidden;
+      background: #fdf7f0;
     }
+    /* Scale the full-width app template to fit the 540px card */
+    .card-wrapper {
+      width: 540px;
+      height: 720px;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Footer overlay at bottom of card */
+    .card-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 36px;
+      background: linear-gradient(150deg, #7c2d12, #c2410c, #ea580c);
+      text-align: center;
+      line-height: 36px;
+      z-index: 10;
+    }
+    .card-footer span { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 0.04em; }
+    .card-footer strong { font-size: 11px; font-weight: 900; color: white; letter-spacing: 0.02em; }
   </style>
 </head>
 <body>
-  <%= yield %>
+  <div class="card-wrapper">
+    <%= yield %>
+    <div class="card-footer">
+      <span>See full profile at </span>
+      <strong>www.samaj-darshan.com</strong>
+    </div>
+  </div>
 </body>
 </html>

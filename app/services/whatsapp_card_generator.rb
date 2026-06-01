@@ -3,7 +3,7 @@ class WhatsappCardGenerator
   CARD_HEIGHT = 720
   DPI         = 300
   # Bump this version to force regeneration when template changes
-  TEMPLATE_VERSION = 5
+  TEMPLATE_VERSION = 6
 
   # Generate (or return cached) WhatsApp card image for a biodata.
   # Returns the ActiveStorage attachment.

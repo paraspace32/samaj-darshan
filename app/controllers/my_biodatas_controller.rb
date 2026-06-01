@@ -1,6 +1,6 @@
 class MyBiodatasController < ApplicationController
   before_action :require_login
-  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :consent, :decline_consent, :template, :download_pdf ]
+  before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :consent, :decline_consent, :template, :download_pdf, :whatsapp_card, :download_card ]
 
   def index
     @biodatas = current_user.biodatas.order(created_at: :desc)
@@ -55,6 +55,7 @@ class MyBiodatasController < ApplicationController
 
   def template
     @pdf_download_path = download_pdf_my_biodata_path(@biodata)
+    @whatsapp_card_path = @biodata.published? ? whatsapp_card_my_biodata_path(@biodata) : nil
     render layout: "biodata_template"
   end
 
@@ -68,6 +69,26 @@ class MyBiodatasController < ApplicationController
            disable_smart_shrinking: true,
            print_media_type: true,
            disposition: "attachment"
+  end
+
+  def whatsapp_card
+    return render json: { error: "not_published" }, status: :unprocessable_entity unless @biodata.published?
+
+    attachment = WhatsappCardGenerator.new.generate(@biodata)
+    render json: { url: url_for(attachment) }
+  rescue => e
+    Rails.logger.error "WhatsApp card generation error: #{e.class} – #{e.message}"
+    render json: { error: "generation_failed" }, status: :unprocessable_entity
+  end
+
+  def download_card
+    return redirect_to my_biodata_path(@biodata), alert: "Biodata must be published" unless @biodata.published?
+
+    attachment = WhatsappCardGenerator.new.generate(@biodata)
+    redirect_to rails_blob_path(attachment, disposition: "attachment")
+  rescue => e
+    Rails.logger.error "WhatsApp card download error: #{e.class} – #{e.message}"
+    redirect_to my_biodata_path(@biodata), alert: t("biodata.load_error")
   end
 
   private

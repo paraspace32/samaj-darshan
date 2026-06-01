@@ -1,5 +1,5 @@
 class BiodatasController < ApplicationController
-  before_action :require_login, only: [ :show, :template, :download_pdf, :shortlist, :unshortlist ]
+  before_action :require_login, only: [ :show, :template, :download_pdf, :whatsapp_card, :download_card, :shortlist, :unshortlist ]
 
   def index
     @biodatas = Biodata.visible
@@ -27,6 +27,7 @@ class BiodatasController < ApplicationController
   def template
     @biodata = Biodata.published.find(params[:id])
     @pdf_download_path = download_pdf_biodata_path(@biodata)
+    @whatsapp_card_path = whatsapp_card_biodata_path(@biodata)
     render layout: "biodata_template"
   rescue ActiveRecord::RecordNotFound
     redirect_to biodatas_path, alert: t("biodata.not_found")
@@ -50,6 +51,28 @@ class BiodatasController < ApplicationController
     redirect_to biodatas_path, alert: t("biodata.not_found")
   rescue => e
     Rails.logger.error "BiodatasController#download_pdf error: #{e.class} – #{e.message}"
+    redirect_to biodatas_path, alert: t("biodata.load_error")
+  end
+
+  def whatsapp_card
+    @biodata = Biodata.published.find(params[:id])
+    attachment = WhatsappCardGenerator.new.generate(@biodata)
+    render json: { url: url_for(attachment) }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "not_found" }, status: :not_found
+  rescue => e
+    Rails.logger.error "WhatsApp card generation error: #{e.class} – #{e.message}"
+    render json: { error: "generation_failed" }, status: :unprocessable_entity
+  end
+
+  def download_card
+    @biodata = Biodata.published.find(params[:id])
+    attachment = WhatsappCardGenerator.new.generate(@biodata)
+    redirect_to rails_blob_path(attachment, disposition: "attachment")
+  rescue ActiveRecord::RecordNotFound
+    redirect_to biodatas_path, alert: t("biodata.not_found")
+  rescue => e
+    Rails.logger.error "WhatsApp card download error: #{e.class} – #{e.message}"
     redirect_to biodatas_path, alert: t("biodata.load_error")
   end
 

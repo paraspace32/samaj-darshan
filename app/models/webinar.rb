@@ -65,8 +65,22 @@ class Webinar < ApplicationRecord
     meeting_url.present? && (live_now? || starts_within_15_min?)
   end
 
+  # Determines the primary CTA for this webinar based on its state and links.
+  def primary_action
+    if ended?
+      youtube_embed_url.present? ? :recording : :ended
+    elsif registration_url.present?
+      :registration
+    elsif youtube_embed_url.present?
+      :youtube_live
+    elsif meeting_url.present? && (live_now? || starts_within_15_min?)
+      :join_link
+    else
+      :info
+    end
+  end
+
   def starts_within_15_min?
     upcoming? && starts_at <= 15.minutes.from_now
   end
-
 end

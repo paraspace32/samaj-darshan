@@ -94,7 +94,7 @@ class NewsController < ApplicationController
       # Only exclude the featured hero item from category sections — allow items
       # shown in side stack / region / trending to reappear under their category.
       hero_id = (@featured_type == :news ? @featured&.id : nil)
-      category_exclude_ids = [hero_id].compact
+      category_exclude_ids = [ hero_id ].compact
 
       @category_sections = @categories.filter_map do |cat|
         items = News.published.where(category: cat).where.not(id: category_exclude_ids)

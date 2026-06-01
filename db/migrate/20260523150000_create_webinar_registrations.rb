@@ -7,6 +7,6 @@ class CreateWebinarRegistrations < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :webinar_registrations, [:webinar_id, :phone], unique: true
+    add_index :webinar_registrations, [ :webinar_id, :phone ], unique: true
   end
 end

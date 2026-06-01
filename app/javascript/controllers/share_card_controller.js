@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Generates and shares a biodata WhatsApp image card.
 // On mobile: uses Web Share API for native sharing (WhatsApp, etc.)
-// On desktop: falls back to direct download
+// On desktop: opens image in new tab for save/share
 export default class extends Controller {
   static values = { url: String, name: String }
 
@@ -22,43 +22,50 @@ export default class extends Controller {
     `
 
     try {
-      // Fetch the card image URL from the server
+      // Step 1: Get card image URL from server
       const response = await fetch(this.urlValue, {
         headers: { "Accept": "application/json" }
       })
 
-      if (!response.ok) throw new Error("Failed to generate card")
+      if (!response.ok) throw new Error(`Server returned ${response.status}`)
 
       const data = await response.json()
       const imageUrl = data.url
 
-      // Fetch the actual image blob for sharing
-      const imageResponse = await fetch(imageUrl)
-      const blob = await imageResponse.blob()
-      const file = new File([blob], `${this.nameValue || "biodata"}_card.jpg`, { type: "image/jpeg" })
+      if (!imageUrl) throw new Error("No image URL in response")
 
-      // Try Web Share API (mobile)
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `${this.nameValue} - Biodata`,
-          text: `View full biodata on Samaj Darshan`
-        })
-      } else {
-        // Desktop fallback: download the image
-        const a = document.createElement("a")
-        a.href = URL.createObjectURL(blob)
-        a.download = `${this.nameValue || "biodata"}_card.jpg`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        URL.revokeObjectURL(a.href)
+      // Step 2: Try native share on mobile (with file)
+      let shared = false
+      if (navigator.canShare) {
+        try {
+          const imageResponse = await fetch(imageUrl)
+          if (imageResponse.ok) {
+            const blob = await imageResponse.blob()
+            const fileName = `${(this.nameValue || "biodata").replace(/[^a-zA-Z0-9]/g, "_")}_card.jpg`
+            const file = new File([blob], fileName, { type: "image/jpeg" })
+
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: `${this.nameValue} - Biodata`,
+                text: "View full biodata on Samaj Darshan"
+              })
+              shared = true
+            }
+          }
+        } catch (e) {
+          if (e.name === "AbortError") { shared = true } // User cancelled — still counts
+          else { console.warn("Native share failed, falling back:", e) }
+        }
+      }
+
+      // Step 3: Fallback — open image in new tab (works everywhere)
+      if (!shared) {
+        window.open(imageUrl, "_blank")
       }
     } catch (error) {
-      if (error.name !== "AbortError") {
-        console.error("Share card error:", error)
-        alert("Could not generate card. Please try again.")
-      }
+      console.error("Share card error:", error)
+      alert("Could not generate card. Please try again.")
     } finally {
       btn.disabled = false
       btn.innerHTML = originalHTML

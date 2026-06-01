@@ -1,114 +1,118 @@
 <%# ═══════════════════════════════════════════════════════════════
-    WhatsApp Share Card — 540x720px compact biodata card
-    Mirrors the app's biodata template design at a smaller scale.
-    Rendered by WhatsappCardGenerator (photo passed as data URI).
-    Uses only position/table layout (no flexbox — wkhtmltopdf compat).
+    WhatsApp Share Card — 540×720px
+    Pixel-perfect replica of biodatas/template.html.erb
+    using TABLE layout (no flexbox — wkhtmltopdf compat)
     ═══════════════════════════════════════════════════════════════ %>
-
 <%
-  # Collect all sections
   personal = [
-    ["Date of Birth", @biodata.date_of_birth&.strftime("%d %B %Y")],
-    ["Height",        @biodata.height_display.presence],
-    ["Complexion",    @biodata.complexion],
-    ["Caste",         @biodata.caste],
+    [t("biodata.date_of_birth"), @biodata.date_of_birth&.strftime("%d %B %Y")],
+    [t("biodata.height"),        @biodata.height_display.presence],
+    [t("biodata.complexion"),    @biodata.complexion],
+    [t("biodata.caste"),         @biodata.caste],
+    [t("biodata.mother_tongue"), @biodata.mother_tongue],
   ].reject { |_, v| v.blank? }
 
   edu_rows = [
-    ["Education",  @biodata.education],
-    ["Occupation", @biodata.occupation],
-    ["Income",     @biodata.annual_income],
+    [t("biodata.education"),     @biodata.education],
+    [t("biodata.occupation"),    @biodata.occupation],
+    [t("biodata.job_location"),  @biodata.job_location],
+    [t("biodata.annual_income"), @biodata.annual_income],
   ].reject { |_, v| v.blank? }
 
   family_rows = [
-    ["Father",       @biodata.father_name],
-    ["Father's Work", @biodata.father_occupation],
-    ["Mother",       @biodata.mother_name],
+    [t("biodata.father_name"),       @biodata.father_name],
+    [t("biodata.father_occupation"), @biodata.father_occupation],
+    [t("biodata.mother_name"),       @biodata.mother_name],
+    [t("biodata.mother_occupation"), @biodata.mother_occupation],
   ].reject { |_, v| v.blank? }
 
   contact_rows = []
-  contact_rows << ["Phone", @biodata.contact_phone] if @biodata.contact_phone.present?
-  contact_rows << ["Email", @biodata.contact_email] if @biodata.contact_email.present?
+  contact_rows << [t("biodata.contact_phone"), @biodata.contact_phone] if @biodata.contact_phone.present?
+  contact_rows << [t("biodata.contact_email"), @biodata.contact_email] if @biodata.contact_email.present?
 
   location = [@biodata.city, @biodata.state].select(&:present?).join(", ")
+  lspacing = I18n.locale == :hi ? "0" : "0.16em"
 %>
 
-<div style="width:540px;height:720px;background:#fdf7f0;position:relative;overflow:hidden;border:1.5px solid #f5c897;">
+<div style="width:540px;height:720px;position:relative;overflow:hidden;">
+<div style="background:#fdf7f0;border-radius:16px;overflow:hidden;border:1.5px solid #f5c897;height:100%;position:relative;">
 
-  <%# ── Top gradient strip ── %>
-  <div style="height:4px;background:linear-gradient(90deg,#7c2d12,#c2410c,#ea580c,#f97316,#ea580c,#c2410c,#7c2d12);"></div>
+  <%# ── Top strip ── %>
+  <div style="height:5px;background:linear-gradient(90deg,#7c2d12,#c2410c,#ea580c,#f97316,#ea580c,#c2410c,#7c2d12);"></div>
 
-  <%# ── Hero Header (matches app template) ── %>
-  <div style="background:linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%);padding:18px 20px 16px;position:relative;overflow:hidden;">
+  <%# ── Hero Header — table layout matching app design ── %>
+  <div style="background:linear-gradient(150deg,#6b2009 0%,#b83a0a 35%,#ea580c 65%,#fb923c 100%);padding:16px 18px 14px;position:relative;overflow:hidden;">
     <%# Decorative circles %>
     <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.06);"></div>
     <div style="position:absolute;bottom:-50px;right:40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.04);"></div>
 
-    <%# Photo + Name row using table layout %>
     <table style="width:100%;border-collapse:collapse;position:relative;z-index:1;">
       <tr>
-        <%# Circular photo %>
-        <td style="width:80px;vertical-align:middle;padding-right:16px;">
-          <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,200,120,0.6));padding:2.5px;box-shadow:0 0 0 2px rgba(255,255,255,0.25),0 6px 20px rgba(0,0,0,0.3);">
-            <div style="width:71px;height:71px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,0.15);">
+        <%# Circular photo with glowing ring — matches app %>
+        <td style="width:78px;vertical-align:middle;padding-right:14px;">
+          <div style="width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.9),rgba(255,200,120,0.6));padding:2.5px;">
+            <div style="width:69px;height:69px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,0.15);">
               <% if @photo_data_uri.present? %>
-                <img src="<%= @photo_data_uri %>" style="width:71px;height:71px;object-fit:cover;display:block;border-radius:50%;" />
+                <img src="<%= @photo_data_uri %>" style="width:69px;height:69px;object-fit:cover;display:block;border-radius:50%;" />
               <% else %>
-                <div style="width:71px;height:71px;text-align:center;line-height:71px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:50%;">
+                <div style="width:69px;height:69px;text-align:center;line-height:69px;background:linear-gradient(135deg,#f97316,#ea580c);border-radius:50%;">
                   <span style="font-size:30px;font-weight:900;color:white;"><%= @biodata.avatar_initial %></span>
                 </div>
               <% end %>
             </div>
           </div>
         </td>
-
         <%# Name & badges %>
         <td style="vertical-align:middle;">
-          <div style="font-size:7px;color:rgba(255,255,255,0.55);font-weight:700;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:5px;">
-            Samaj Darshan &nbsp;✦&nbsp; Biodata
+          <div style="font-size:7px;color:rgba(255,255,255,0.55);font-weight:700;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:4px;">
+            <%= t("brand.name") %> &nbsp;✦&nbsp; <%= t("biodata.template_title") %>
           </div>
-          <div style="font-size:20px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1.1;text-shadow:0 1px 4px rgba(0,0,0,0.2);margin-bottom:2px;">
+          <div style="font-size:18px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1.15;margin-bottom:1px;">
             <%= @biodata.full_name.presence || @biodata.display_name %>
           </div>
           <% if @biodata.full_name_hi.present? && @biodata.full_name_hi != @biodata.full_name %>
-            <div style="font-size:12px;color:rgba(255,255,255,0.78);font-weight:500;margin-bottom:8px;"><%= @biodata.full_name_hi %></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.78);font-weight:500;margin-bottom:6px;"><%= @biodata.full_name_hi %></div>
           <% else %>
-            <div style="margin-bottom:8px;"></div>
+            <div style="margin-bottom:6px;"></div>
           <% end %>
           <%# Badges %>
-          <div>
-            <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);margin-right:4px;">
-              <%= @biodata.gender&.capitalize %>
+          <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);margin-right:3px;">
+            <%= t("biodata.gender_#{@biodata.gender}") %>
+          </span>
+          <% if @biodata.age.present? %>
+            <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);margin-right:3px;">
+              <%= @biodata.age %> <%= t("biodata.years") %>
             </span>
-            <% if @biodata.age.present? %>
-              <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);margin-right:4px;">
-                <%= @biodata.age %> yrs
-              </span>
-            <% end %>
-            <% if location.present? %>
-              <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);">
-                <%= location.truncate(30) %>
-              </span>
-            <% end %>
-          </div>
+          <% end %>
+          <% if location.present? %>
+            <span style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:700;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.35);">
+              📍 <%= location.truncate(28) %>
+            </span>
+          <% end %>
         </td>
       </tr>
     </table>
   </div>
 
-  <%# ── Body ── %>
-  <div style="padding:10px 16px 0;">
+  <%# ── Body sections ── %>
+  <div style="padding:8px 14px 0;">
 
     <%# ── Personal Info ── %>
     <% if personal.any? %>
-      <div style="text-align:center;margin-bottom:6px;">
-        <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;">✦ Personal Details ✦</span>
-      </div>
-      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:10px;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:7px;">
+        <tr>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></td>
+          <td style="text-align:center;white-space:nowrap;padding:0 6px;">
+            <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;">✦ <%= t("biodata.personal_details") %> ✦</span>
+          </td>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></td>
+        </tr>
+      </table>
+      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:8px;">
         <% personal.each_with_index do |(label, value), i| %>
           <tr>
-            <td style="font-size:9.5px;font-weight:700;color:#b45309;padding:5px 10px;width:90px;vertical-align:middle;<%= i < personal.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
-            <td style="font-size:9.5px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < personal.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(35) %></td>
+            <td style="font-size:9px;font-weight:700;color:#b45309;padding:5px 10px;width:85px;vertical-align:middle;<%= i < personal.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
+            <td style="font-size:9px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < personal.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(40) %></td>
           </tr>
         <% end %>
       </table>
@@ -116,14 +120,20 @@
 
     <%# ── Education & Career ── %>
     <% if edu_rows.any? %>
-      <div style="text-align:center;margin-bottom:6px;">
-        <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;">✦ Education & Career ✦</span>
-      </div>
-      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:10px;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:7px;">
+        <tr>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></td>
+          <td style="text-align:center;white-space:nowrap;padding:0 6px;">
+            <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;">✦ <%= t("biodata.education_career") %> ✦</span>
+          </td>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></td>
+        </tr>
+      </table>
+      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:8px;">
         <% edu_rows.each_with_index do |(label, value), i| %>
           <tr>
-            <td style="font-size:9.5px;font-weight:700;color:#b45309;padding:5px 10px;width:90px;vertical-align:middle;<%= i < edu_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
-            <td style="font-size:9.5px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < edu_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(35) %></td>
+            <td style="font-size:9px;font-weight:700;color:#b45309;padding:5px 10px;width:85px;vertical-align:middle;<%= i < edu_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
+            <td style="font-size:9px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < edu_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(40) %></td>
           </tr>
         <% end %>
       </table>
@@ -131,14 +141,20 @@
 
     <%# ── Family ── %>
     <% if family_rows.any? %>
-      <div style="text-align:center;margin-bottom:6px;">
-        <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;">✦ Family ✦</span>
-      </div>
-      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:10px;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:7px;">
+        <tr>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></td>
+          <td style="text-align:center;white-space:nowrap;padding:0 6px;">
+            <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;">✦ <%= t("biodata.family_details") %> ✦</span>
+          </td>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></td>
+        </tr>
+      </table>
+      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:8px;">
         <% family_rows.each_with_index do |(label, value), i| %>
           <tr>
-            <td style="font-size:9.5px;font-weight:700;color:#b45309;padding:5px 10px;width:90px;vertical-align:middle;<%= i < family_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
-            <td style="font-size:9.5px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < family_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(35) %></td>
+            <td style="font-size:9px;font-weight:700;color:#b45309;padding:5px 10px;width:85px;vertical-align:middle;<%= i < family_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
+            <td style="font-size:9px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < family_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(40) %></td>
           </tr>
         <% end %>
       </table>
@@ -146,14 +162,20 @@
 
     <%# ── Contact ── %>
     <% if contact_rows.any? %>
-      <div style="text-align:center;margin-bottom:6px;">
-        <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:0.16em;">✦ Contact ✦</span>
-      </div>
-      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:10px;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:7px;">
+        <tr>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,transparent,#f5c897);"></td>
+          <td style="text-align:center;white-space:nowrap;padding:0 6px;">
+            <span style="font-size:7.5px;font-weight:800;color:#92400e;text-transform:uppercase;letter-spacing:<%= lspacing %>;">✦ <%= t("biodata.contact") %> ✦</span>
+          </td>
+          <td style="width:40%;height:1px;background:linear-gradient(90deg,#f5c897,transparent);"></td>
+        </tr>
+      </table>
+      <table style="width:100%;background:white;border:1px solid #fde8cb;border-radius:8px;border-collapse:collapse;margin-bottom:8px;">
         <% contact_rows.each_with_index do |(label, value), i| %>
           <tr>
-            <td style="font-size:9.5px;font-weight:700;color:#b45309;padding:5px 10px;width:90px;vertical-align:middle;<%= i < contact_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
-            <td style="font-size:9.5px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < contact_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(35) %></td>
+            <td style="font-size:9px;font-weight:700;color:#b45309;padding:5px 10px;width:85px;vertical-align:middle;<%= i < contact_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= label %></td>
+            <td style="font-size:9px;font-weight:400;color:#1c1917;padding:5px 10px;vertical-align:middle;<%= i < contact_rows.size - 1 ? 'border-bottom:1px solid #fef3e2;' : '' %>"><%= value&.truncate(40) %></td>
           </tr>
         <% end %>
       </table>
@@ -162,15 +184,17 @@
   </div>
 
   <%# ── Footer ── %>
-  <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(150deg,#7c2d12,#c2410c,#ea580c);text-align:center;line-height:40px;">
-    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:0.04em;">
-      See full profile at
-    </span>
-    <span style="font-size:11px;font-weight:900;color:white;letter-spacing:0.02em;">
-      www.samaj-darshan.com
-    </span>
+  <div style="position:absolute;bottom:0;left:0;right:0;">
+    <div style="height:4px;background:linear-gradient(90deg,#7c2d12,#c2410c,#ea580c,#f97316,#ea580c,#c2410c,#7c2d12);"></div>
+    <div style="height:34px;background:linear-gradient(150deg,#7c2d12,#c2410c,#ea580c);text-align:center;line-height:34px;">
+      <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:0.04em;">
+        See full profile at
+      </span>
+      <span style="font-size:10px;font-weight:900;color:white;letter-spacing:0.02em;">
+        www.samaj-darshan.com
+      </span>
+    </div>
   </div>
 
-  <%# ── Bottom gradient strip ── %>
-  <div style="position:absolute;bottom:40px;left:0;right:0;height:4px;background:linear-gradient(90deg,#7c2d12,#c2410c,#ea580c,#f97316,#ea580c,#c2410c,#7c2d12);"></div>
+</div>
 </div>

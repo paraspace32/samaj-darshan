@@ -24,12 +24,14 @@ Rails.application.configure do
   # Store uploaded files on Google Cloud Storage in production, fall back to local disk.
   config.active_storage.service = ENV["GCS_BUCKET"].present? ? :google : :local
 
-  # Serve images via proxy route (/rails/active_storage/blobs/proxy/...) instead of
-  # redirect-to-GCS. This avoids an extra redirect hop and lets Thruster / nginx cache them.
-  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+  # Redirect to GCS signed URLs instead of proxying through Rails.
+  # Caddy has no cache layer, so proxy mode was downloading every image from GCS
+  # through Rails on every request (250-640ms per image). Redirect mode sends a
+  # 302 to GCS and the browser fetches directly — Rails is not in the hot path.
+  config.active_storage.resolve_model_to_route = :rails_storage_redirect
 
-  # Signed URLs are valid for 30 minutes (only matters when using redirect mode).
-  config.active_storage.service_urls_expire_in = 30.minutes
+  # Signed URLs valid for 1 hour — browser can cache images for this duration.
+  config.active_storage.service_urls_expire_in = 1.hour
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = ENV.fetch("RAILS_ASSUME_SSL", "true") == "true"

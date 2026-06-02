@@ -19,7 +19,10 @@ class ApplicationController < ActionController::Base
   def load_consent_pending_biodata
     return unless logged_in?
     return if current_user.admin_panel_access?
-    @consent_pending_biodata = current_user.biodatas.pending_consent.where.not(created_by_id: nil).first
+    # Cache per-user to avoid a query on every single request
+    @consent_pending_biodata = Rails.cache.fetch("user/#{current_user.id}/consent_pending", expires_in: 2.minutes) do
+      current_user.biodatas.pending_consent.where.not(created_by_id: nil).first
+    end
   end
 
   def switch_locale_path

@@ -178,14 +178,15 @@ class NewsController < ApplicationController
 
     @trending_articles = News.published
                              .where.not(id: @news_item.id)
-                             .includes(:region, :category)
+                             .includes(:region, :category, :author)
+                             .with_attached_cover_image
                              .order(views_count: :desc, likes_count: :desc)
                              .limit(5)
 
-    # Sidebar widget: latest news (excl. current)
+    # Sidebar widget: latest news (excl. current) — reuse @related if same region data available
     @sidebar_news = News.published
                         .where.not(id: @news_item.id)
-                        .includes(:region, :category)
+                        .includes(:region, :category, :author)
                         .with_attached_cover_image
                         .order(published_at: :desc)
                         .limit(4)

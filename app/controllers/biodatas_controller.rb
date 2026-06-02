@@ -14,10 +14,11 @@ class BiodatasController < ApplicationController
     @page = [ params[:page].to_i, 1 ].max
     @total_count = @biodatas.count
     @biodatas = @biodatas.offset((@page - 1) * @per_page).limit(@per_page)
-    @cities      = Biodata.published.where.not(city: [ nil, "" ]).distinct.pluck(:city).sort
-    @states      = Biodata.published.where.not(state: [ nil, "" ]).distinct.pluck(:state).sort
-    @educations  = Biodata.published.where.not(education: [ nil, "" ]).distinct.pluck(:education).sort
-    @occupations = Biodata.published.where.not(occupation: [ nil, "" ]).distinct.pluck(:occupation).sort
+    # Cache filter options — they rarely change and cost 4 separate queries
+    @cities      = Rails.cache.fetch("biodatas/filter/cities", expires_in: 10.minutes) { Biodata.published.where.not(city: [ nil, "" ]).distinct.pluck(:city).sort }
+    @states      = Rails.cache.fetch("biodatas/filter/states", expires_in: 10.minutes) { Biodata.published.where.not(state: [ nil, "" ]).distinct.pluck(:state).sort }
+    @educations  = Rails.cache.fetch("biodatas/filter/educations", expires_in: 10.minutes) { Biodata.published.where.not(education: [ nil, "" ]).distinct.pluck(:education).sort }
+    @occupations = Rails.cache.fetch("biodatas/filter/occupations", expires_in: 10.minutes) { Biodata.published.where.not(occupation: [ nil, "" ]).distinct.pluck(:occupation).sort }
   end
 
   def show

@@ -220,11 +220,9 @@
 
       function showLoader() {
         if (!loader) return;
-        // Reset bar animation by removing and re-adding class
         loader.classList.remove('hidden', 'loading');
-        void loader.offsetWidth; // force reflow to restart animation
+        void loader.offsetWidth; // restart animation
         loader.classList.add('loading');
-        // Safety fallback — never block more than 4s
         clearTimeout(fallback);
         fallback = setTimeout(hideLoader, 4000);
       }
@@ -234,20 +232,45 @@
         if (loader) loader.classList.add('hidden');
       }
 
-      // Initial page load
+      // Initial page load — hide quickly after DOM ready
       document.addEventListener('DOMContentLoaded', function() {
         setTimeout(hideLoader, 200);
       }, { once: true });
 
-      // Show on every Turbo navigation click
-      document.addEventListener('turbo:before-visit', showLoader);
+      // Show loader on touchstart/mousedown — fires INSTANTLY on tap,
+      // before Turbo even processes the click (no perceptible delay)
+      document.addEventListener('touchstart', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        // Only show for same-origin navigation links (not external, not #anchors, not turbo:false)
+        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            a.getAttribute('target') === '_blank' ||
+            a.getAttribute('data-turbo') === 'false' ||
+            a.getAttribute('rel') === 'noopener') return;
+        showLoader();
+      }, { passive: true });
 
-      // Hide when new page is ready
+      // Desktop fallback — mousedown for non-touch devices
+      document.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return; // left click only
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            a.getAttribute('target') === '_blank' ||
+            a.getAttribute('data-turbo') === 'false' ||
+            a.getAttribute('rel') === 'noopener') return;
+        showLoader();
+      });
+
+      // Hide when new page renders
       document.addEventListener('turbo:load', hideLoader);
-
-      // Hide on Turbo errors too (don't leave user stuck)
       document.addEventListener('turbo:fetch-request-error', hideLoader);
-      document.addEventListener('turbo:frame-load', hideLoader);
+      // If navigation is cancelled (e.g. same page), hide too
+      document.addEventListener('turbo:before-cache', hideLoader);
     })();
   </script>
 

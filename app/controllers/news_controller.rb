@@ -96,13 +96,23 @@ class NewsController < ApplicationController
       hero_id = (@featured_type == :news ? @featured&.id : nil)
       category_exclude_ids = [ hero_id ].compact
 
+      # Load ALL category news in ONE query, then group in Ruby.
+      # This replaces N separate queries (one per category) with a single query.
+      category_ids = @categories.map(&:id)
+      all_category_news = News.published
+                              .where(category_id: category_ids)
+                              .where.not(id: category_exclude_ids)
+                              .includes(:region, :category, :author)
+                              .with_attached_cover_image
+                              .order(published_at: :desc)
+                              .to_a
+      news_by_category = all_category_news.group_by(&:category_id)
+
       @category_sections = @categories.filter_map do |cat|
-        items = News.published.where(category: cat).where.not(id: category_exclude_ids)
-                    .includes(:region, :category, :author).with_attached_cover_image
-                    .order(published_at: :desc).limit(7)
+        items = (news_by_category[cat.id] || []).first(7)
         next if items.empty?
 
-        { category: cat, items: items.to_a }
+        { category: cat, items: items }
       end
     else
       @total_count = @news_items.count

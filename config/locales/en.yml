@@ -379,6 +379,7 @@ en:
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "Education & Career"
     personal_details: "Personal Details"
+    card_see_profile: "See full profile at"
     age: "Age"
   signup:
     title: "Create an account"

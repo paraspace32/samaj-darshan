@@ -478,6 +478,7 @@ hi:
     template_subheading: "Vivah Parichay — Marriage Profile"
     education_career: "शिक्षा एवं व्यवसाय"
     personal_details: "व्यक्तिगत जानकारी"
+    card_see_profile: "पूरा प्रोफ़ाइल देखें"
     age: "आयु"
   signup:
     title: "खाता बनाएं"

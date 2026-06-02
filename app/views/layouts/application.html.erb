@@ -179,6 +179,53 @@
     <% end %>
   </head>
 
+  <%# ── App loader — shows on first paint, hides when page is ready ── %>
+  <style>
+    #app-loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #7c2d12;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    #app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #app-loader .brand { font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.02em; }
+    #app-loader .tagline { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; letter-spacing: 0.05em; }
+    #app-loader .bar-track {
+      width: 140px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 99px; overflow: hidden;
+    }
+    #app-loader .bar-fill {
+      height: 100%; width: 0%; background: #f97316; border-radius: 99px;
+      animation: loader-bar 1.2s ease-in-out forwards;
+    }
+    @keyframes loader-bar {
+      0%   { width: 0%; }
+      40%  { width: 60%; }
+      70%  { width: 80%; }
+      100% { width: 95%; }
+    }
+  </style>
+  <div id="app-loader">
+    <div class="brand"><%= t("brand.short_name") %></div>
+    <div class="bar-track"><div class="bar-fill"></div></div>
+    <div class="tagline"><%= t("brand.tagline") %></div>
+  </div>
+  <script>
+    (function() {
+      var loader = document.getElementById('app-loader');
+      function hideLoader() {
+        if (loader) { loader.classList.add('hidden'); }
+      }
+      // Hide on turbo:load (Turbo navigation) or DOMContentLoaded (first visit)
+      document.addEventListener('turbo:load', hideLoader, { once: true });
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(hideLoader, 300);
+      }, { once: true });
+      // Safety fallback — never block the user more than 3s
+      setTimeout(hideLoader, 3000);
+    })();
+  </script>
+
   <body class="min-h-screen bg-white" data-managed-prompts
         data-controller="prompt-queue"
         data-prompt-queue-logged-in-value="<%= logged_in? %>"

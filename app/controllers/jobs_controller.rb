@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
   def index
-    @job_posts = JobPost.visible.with_attached_cover_image
+    @job_posts = JobPost.visible.with_attached_cover_image.includes(:author)
     @job_posts = @job_posts.by_category(params[:category]) if params[:category].present?
 
     @per_page = 12
@@ -20,14 +20,7 @@ class JobsController < ApplicationController
       nil
     end
 
-    @related = JobPost.published
-                      .where(category: @job_post.category)
-                      .where.not(id: @job_post.id)
-                      .includes(:author)
-                      .with_attached_cover_image
-                      .order(published_at: :desc)
-                      .limit(5)
-
+    # @related and @category_articles were identical queries — merge into one
     @category_articles = JobPost.published
                                 .where(category: @job_post.category)
                                 .where.not(id: @job_post.id)
@@ -35,10 +28,12 @@ class JobsController < ApplicationController
                                 .with_attached_cover_image
                                 .order(published_at: :desc)
                                 .limit(6)
+    @related = @category_articles.first(5)
 
     @trending_articles = JobPost.published
                                 .where.not(id: @job_post.id)
                                 .includes(:author)
+                                .with_attached_cover_image
                                 .order(@job_post.category_new_job_news? ? { likes_count: :desc, comments_count: :desc, published_at: :desc } : { published_at: :desc })
                                 .limit(5)
 

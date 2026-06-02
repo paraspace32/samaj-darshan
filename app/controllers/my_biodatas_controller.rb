@@ -3,7 +3,7 @@ class MyBiodatasController < ApplicationController
   before_action :set_biodata, only: [ :show, :edit, :update, :submit_for_review, :consent, :decline_consent, :template, :download_pdf, :whatsapp_card, :download_card ]
 
   def index
-    @biodatas = current_user.biodatas.order(created_at: :desc)
+    @biodatas = current_user.biodatas.with_attached_photo.order(created_at: :desc)
   end
 
   def show; end

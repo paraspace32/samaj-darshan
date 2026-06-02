@@ -1,6 +1,6 @@
 class EducationController < ApplicationController
   def index
-    @education_posts = EducationPost.visible.with_attached_cover_image
+    @education_posts = EducationPost.visible.with_attached_cover_image.includes(:author)
     @education_posts = @education_posts.by_category(params[:category]) if params[:category].present?
 
     @per_page = 12
@@ -20,14 +20,7 @@ class EducationController < ApplicationController
       nil
     end
 
-    @related = EducationPost.published
-                            .where(category: @education_post.category)
-                            .where.not(id: @education_post.id)
-                            .includes(:author)
-                            .with_attached_cover_image
-                            .order(published_at: :desc)
-                            .limit(5)
-
+    # @related and @category_articles were identical queries — merge into one
     @category_articles = EducationPost.published
                                       .where(category: @education_post.category)
                                       .where.not(id: @education_post.id)
@@ -35,10 +28,12 @@ class EducationController < ApplicationController
                                       .with_attached_cover_image
                                       .order(published_at: :desc)
                                       .limit(6)
+    @related = @category_articles.first(5)
 
     @trending_articles = EducationPost.published
                                       .where.not(id: @education_post.id)
                                       .includes(:author)
+                                      .with_attached_cover_image
                                       .order(likes_count: :desc, comments_count: :desc, published_at: :desc)
                                       .limit(5)
 

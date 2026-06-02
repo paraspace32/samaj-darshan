@@ -69,7 +69,10 @@
 
     <%# ── Map: first on mobile, left on desktop ── %>
     <div class="order-1 lg:mt-0 lg:w-[480px] lg:shrink-0 lg:order-1">
-      <%= render "shared/visitor_map", realtime: @active_users, reporting: @visitor_stats %>
+      <%# Load visitor map via lazy Turbo Frame — never blocks main page render %>
+      <%= turbo_frame_tag "visitor_map", src: visitor_map_path, loading: :lazy do %>
+        <div class="rounded-2xl bg-gray-50 animate-pulse" style="height:260px;"></div>
+      <% end %>
     </div>
 
   </div>

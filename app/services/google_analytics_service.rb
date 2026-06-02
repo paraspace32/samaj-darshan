@@ -15,7 +15,7 @@ class GoogleAnalyticsService
 
   REALTIME_CACHE_KEY  = "ga_realtime_active_users"
   REPORTING_CACHE_KEY = "ga_reporting_visitors"
-  REALTIME_TTL        = 60.seconds
+  REALTIME_TTL        = 5.minutes   # was 60s — longer TTL = fewer blocking API calls
   REPORTING_TTL       = 15.minutes
 
   # ISO 3166-1 alpha-2 → [lat, lng] centroid
@@ -71,11 +71,11 @@ class GoogleAnalyticsService
   # ── Public API ────────────────────────────────────────────────────────────
 
   def self.realtime_data
-    Rails.cache.fetch(REALTIME_CACHE_KEY, expires_in: REALTIME_TTL, skip_nil: true) { fetch_realtime }
+    Rails.cache.fetch(REALTIME_CACHE_KEY, expires_in: REALTIME_TTL) { fetch_realtime }
   end
 
   def self.reporting_data
-    Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL, skip_nil: true) { fetch_reporting }
+    Rails.cache.fetch(REPORTING_CACHE_KEY, expires_in: REPORTING_TTL) { fetch_reporting }
   end
 
   def self.daily_users(start_date:, end_date: nil)

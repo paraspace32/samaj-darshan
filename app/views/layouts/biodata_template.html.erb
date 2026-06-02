@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%# Prevent Turbo from caching this page — it uses a custom layout that breaks on back-navigation %>
+  <meta name="turbo-cache-control" content="no-cache">
   <title><%= @biodata.display_name %> — <%= t("biodata.template_title") %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

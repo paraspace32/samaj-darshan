@@ -179,14 +179,14 @@
     <% end %>
   </head>
 
-  <%# ── App loader — shows on first paint, hides when page is ready ── %>
+  <%# ── App loader — shows on initial load AND every Turbo navigation ── %>
   <style>
     #app-loader {
       position: fixed; inset: 0; z-index: 9999;
       background: #7c2d12;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 20px;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
     }
     #app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     #app-loader .brand { font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.02em; }
@@ -196,16 +196,19 @@
     }
     #app-loader .bar-fill {
       height: 100%; width: 0%; background: #f97316; border-radius: 99px;
-      animation: loader-bar 1.2s ease-in-out forwards;
+    }
+    #app-loader.loading .bar-fill {
+      animation: loader-bar 1.5s ease-in-out forwards;
     }
     @keyframes loader-bar {
       0%   { width: 0%; }
-      40%  { width: 60%; }
-      70%  { width: 80%; }
+      30%  { width: 55%; }
+      60%  { width: 75%; }
+      85%  { width: 90%; }
       100% { width: 95%; }
     }
   </style>
-  <div id="app-loader">
+  <div id="app-loader" class="loading">
     <div class="brand"><%= t("brand.short_name") %></div>
     <div class="bar-track"><div class="bar-fill"></div></div>
     <div class="tagline"><%= t("brand.tagline") %></div>
@@ -213,16 +216,61 @@
   <script>
     (function() {
       var loader = document.getElementById('app-loader');
-      function hideLoader() {
-        if (loader) { loader.classList.add('hidden'); }
+      var fallback;
+
+      function showLoader() {
+        if (!loader) return;
+        loader.classList.remove('hidden', 'loading');
+        void loader.offsetWidth; // restart animation
+        loader.classList.add('loading');
+        clearTimeout(fallback);
+        fallback = setTimeout(hideLoader, 4000);
       }
-      // Hide on turbo:load (Turbo navigation) or DOMContentLoaded (first visit)
-      document.addEventListener('turbo:load', hideLoader, { once: true });
+
+      function hideLoader() {
+        clearTimeout(fallback);
+        if (loader) loader.classList.add('hidden');
+      }
+
+      // Initial page load — hide quickly after DOM ready
       document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(hideLoader, 300);
+        setTimeout(hideLoader, 200);
       }, { once: true });
-      // Safety fallback — never block the user more than 3s
-      setTimeout(hideLoader, 3000);
+
+      // Show loader on touchstart/mousedown — fires INSTANTLY on tap,
+      // before Turbo even processes the click (no perceptible delay)
+      document.addEventListener('touchstart', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        // Only show for same-origin navigation links (not external, not #anchors, not turbo:false)
+        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            a.getAttribute('target') === '_blank' ||
+            a.getAttribute('data-turbo') === 'false' ||
+            a.getAttribute('rel') === 'noopener') return;
+        showLoader();
+      }, { passive: true });
+
+      // Desktop fallback — mousedown for non-touch devices
+      document.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return; // left click only
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            a.getAttribute('target') === '_blank' ||
+            a.getAttribute('data-turbo') === 'false' ||
+            a.getAttribute('rel') === 'noopener') return;
+        showLoader();
+      });
+
+      // Hide when new page renders
+      document.addEventListener('turbo:load', hideLoader);
+      document.addEventListener('turbo:fetch-request-error', hideLoader);
+      // If navigation is cancelled (e.g. same page), hide too
+      document.addEventListener('turbo:before-cache', hideLoader);
     })();
   </script>
 

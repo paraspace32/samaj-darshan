@@ -74,13 +74,7 @@ class NewsController < ApplicationController
       @latest_magazine  = Magazine.visible.includes(cover_image_attachment: :blob).first
       @biodata_count    = Biodata.visible.count
 
-      begin
-        @active_users  = GoogleAnalyticsService.realtime_data
-        @visitor_stats = GoogleAnalyticsService.reporting_data
-      rescue => e
-        Rails.logger.error "[GA] #{e.class}: #{e.message}"
-        @active_users = @visitor_stats = nil
-      end
+      # GA stats are loaded lazily via the visitor_map Turbo Frame — no blocking call here
 
       # ── De-duplicate: exclude ALL latest-news-grid items from category sections ─
       # This ensures category sections always show distinct content from the bottom grid

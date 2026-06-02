@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   # Visit duration ping
   post "visit_ping" => "visits#ping"
 
+  # Lazy-loaded visitor map (GA data — loaded async so it never blocks homepage)
+  get "visitor_map" => "pages#visitor_map", as: :visitor_map
+
   # Authentication (OTP-only via Firebase Phone Auth)
   get  "login" => "sessions#new",     as: :login
   post "login" => "sessions#create"

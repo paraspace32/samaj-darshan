@@ -3,7 +3,7 @@
   <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
     <%= link_to news_path(news_item), class: "group news-list-row" do %>
       <%# Image flush to edges — no padding, self-stretches to full row height %>
-      <div class="w-28 self-stretch rounded-l-xl overflow-hidden shrink-0 -ml-[0.5rem] -my-[0.75rem]" style="min-width:7rem;">
+      <div class="self-stretch overflow-hidden shrink-0" style="min-width:7.5rem; margin-left:-0.5rem; margin-top:-0.75rem; margin-bottom:-0.75rem;">
         <% if news_item.cover_image.attached? %>
           <%= optimized_image_tag news_item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
         <% else %>

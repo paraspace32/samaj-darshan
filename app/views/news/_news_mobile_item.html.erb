@@ -1,9 +1,9 @@
 <% idx ||= 0 %>
-<% cache [ news_item, I18n.locale, "list2", ENV.fetch("CACHE_VERSION", "v1") ] do %>
+<% cache [ news_item, I18n.locale, "list3", ENV.fetch("CACHE_VERSION", "v1") ] do %>
   <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
     <%= link_to news_path(news_item), class: "group news-list-row" do %>
-      <%# Larger thumbnail — 96px wide, 80px tall %>
-      <div class="w-36 h-28 rounded-xl overflow-hidden shrink-0">
+      <%# Image flush to edges — no padding, self-stretches to full row height %>
+      <div class="w-32 self-stretch rounded-l-xl overflow-hidden shrink-0 -ml-[0.5rem] -my-[0.75rem]">
         <% if news_item.cover_image.attached? %>
           <%= optimized_image_tag news_item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
         <% else %>
@@ -12,10 +12,9 @@
           </div>
         <% end %>
       </div>
-      <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-        <%# Bigger title — 3 lines allowed %>
-        <h2 class="text-[16px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
-        <div class="flex items-center gap-2 text-[11.5px] text-gray-400 flex-wrap">
+      <div class="flex-1 min-w-0 flex flex-col justify-between py-1 pl-1">
+        <h2 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
+        <div class="flex items-center gap-2 text-[11px] text-gray-400 flex-wrap">
           <span class="font-bold text-orange-600 truncate max-w-[90px]"><%= news_item.category.display_name %></span>
           <% if news_item.region&.display_name.present? %>
             <span class="text-gray-300">&middot;</span>

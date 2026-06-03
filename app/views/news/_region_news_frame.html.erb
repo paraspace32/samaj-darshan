@@ -22,7 +22,7 @@
       <div class="space-y-2 sm:hidden">
         <% region_extra.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group news-list-row" do %>
-            <div class="w-36 h-28 rounded-xl overflow-hidden shrink-0">
+            <div class="w-32 self-stretch rounded-l-xl overflow-hidden shrink-0 -ml-[0.5rem] -my-[0.75rem]">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
               <% else %>
@@ -31,7 +31,7 @@
                 </div>
               <% end %>
             </div>
-            <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+            <div class="flex-1 min-w-0 flex flex-col justify-between py-1 pl-1">
               <h3 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
               <div class="flex items-center gap-1.5 text-[11.5px] text-gray-400">
                 <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-orange-400"></span>

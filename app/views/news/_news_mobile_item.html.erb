@@ -13,7 +13,7 @@
         <% end %>
       </div>
       <div class="flex-1 min-w-0 flex flex-col justify-between py-1 pl-1">
-        <h2 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
+        <h2 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
         <div class="flex items-center gap-2 text-[11px] text-gray-400 flex-wrap">
           <span class="font-bold text-orange-600 truncate max-w-[90px]"><%= news_item.category.display_name %></span>
           <% if news_item.region&.display_name.present? %>

@@ -76,9 +76,9 @@
           <% if section[:items].size > 1 %>
             <div class="space-y-2">
               <% section[:items].drop(1).each_with_index do |item, idx| %>
-                <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-orange-200 hover:shadow-md transition-all" do %>
-                  <%# Bigger thumbnail on LEFT %>
-                  <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0">
+                <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-orange-200 hover:shadow-md transition-all overflow-hidden" do %>
+                  <%# Image flush to edges %>
+                  <div class="w-28 self-stretch rounded-l-lg overflow-hidden shrink-0 -ml-[0.625rem] -my-[0.625rem]">
                     <% if item.cover_image.attached? %>
                       <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
                     <% else %>

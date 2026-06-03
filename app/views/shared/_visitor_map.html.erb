@@ -1,7 +1,7 @@
 <%# Locals: realtime (hash), reporting (hash) %>
 <%# Leaflet loaded here (not global layout) — only needed on homepage visitor map %>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" onload="window.__leafletReady && window.__leafletReady()"></script>
 <%
   total_users      = reporting&.dig(:total_users).to_i
   total_events     = reporting&.dig(:total_events).to_i
@@ -150,12 +150,16 @@
   }
 
   document.addEventListener('turbo:before-cache', destroyMap);
-  document.addEventListener('turbo:load', initMap);
-  document.addEventListener('turbo:render', initMap);
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMap);
-  } else {
+  // Called when Leaflet finishes loading (via onload on the script tag above)
+  window.__leafletReady = function() {
+    window.__leafletReady = null;
+    initMap();
+  };
+
+  // If Leaflet already loaded (e.g. cached by browser), run immediately
+  if (typeof L !== 'undefined') {
+    window.__leafletReady = null;
     initMap();
   }
 })();

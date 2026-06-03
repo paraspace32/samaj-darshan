@@ -35,7 +35,7 @@
 
   /* ── Glass & surfaces ───────────────────────────────── */
   .glass {
-    background: linear-gradient(135deg, #7c2d12 0%, #b83a0a 50%, #c2410c 100%);
+    background-color: #1a0f08;
   }
 
   .glass-card {

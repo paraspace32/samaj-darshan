@@ -216,61 +216,16 @@
   <script>
     (function() {
       var loader = document.getElementById('app-loader');
-      var fallback;
-
-      function showLoader() {
-        if (!loader) return;
-        loader.classList.remove('hidden', 'loading');
-        void loader.offsetWidth; // restart animation
-        loader.classList.add('loading');
-        clearTimeout(fallback);
-        fallback = setTimeout(hideLoader, 4000);
-      }
-
-      function hideLoader() {
-        clearTimeout(fallback);
-        if (loader) loader.classList.add('hidden');
-      }
-
-      // Initial page load — hide quickly after DOM ready
+      // Only show on first app open — hide once DOM is ready
       document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(hideLoader, 200);
+        setTimeout(function() {
+          if (loader) loader.classList.add('hidden');
+        }, 300);
       }, { once: true });
-
-      // Show loader on touchstart/mousedown — fires INSTANTLY on tap,
-      // before Turbo even processes the click (no perceptible delay)
-      document.addEventListener('touchstart', function(e) {
-        var a = e.target.closest('a[href]');
-        if (!a) return;
-        var href = a.getAttribute('href');
-        // Only show for same-origin navigation links (not external, not #anchors, not turbo:false)
-        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
-            href.startsWith('mailto') || href.startsWith('tel') ||
-            a.getAttribute('target') === '_blank' ||
-            a.getAttribute('data-turbo') === 'false' ||
-            a.getAttribute('rel') === 'noopener') return;
-        showLoader();
-      }, { passive: true });
-
-      // Desktop fallback — mousedown for non-touch devices
-      document.addEventListener('mousedown', function(e) {
-        if (e.button !== 0) return; // left click only
-        var a = e.target.closest('a[href]');
-        if (!a) return;
-        var href = a.getAttribute('href');
-        if (!href || href.startsWith('#') || href.startsWith('javascript') ||
-            href.startsWith('mailto') || href.startsWith('tel') ||
-            a.getAttribute('target') === '_blank' ||
-            a.getAttribute('data-turbo') === 'false' ||
-            a.getAttribute('rel') === 'noopener') return;
-        showLoader();
-      });
-
-      // Hide when new page renders
-      document.addEventListener('turbo:load', hideLoader);
-      document.addEventListener('turbo:fetch-request-error', hideLoader);
-      // If navigation is cancelled (e.g. same page), hide too
-      document.addEventListener('turbo:before-cache', hideLoader);
+      // Safety fallback
+      setTimeout(function() {
+        if (loader) loader.classList.add('hidden');
+      }, 3000);
     })();
   </script>
 

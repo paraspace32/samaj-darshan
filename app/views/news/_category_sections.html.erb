@@ -29,7 +29,7 @@
           <div class="category-scroll -mx-4 px-4">
             <% section[:items].each_with_index do |item, idx| %>
               <%= link_to news_path(item), class: "group category-scroll-card" do %>
-                <div class="relative h-44">
+                <div class="relative h-52">
                   <% if item.cover_image.attached? %>
                     <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
                   <% else %>
@@ -52,45 +52,58 @@
             <% end %>
           </div>
         <% else %>
-          <%# EVEN sections: featured card + compact numbered list %>
+          <%# EVEN sections: featured card + bigger list items %>
           <% mobile_lead = section[:items].first %>
           <% if mobile_lead %>
-            <%= link_to news_path(mobile_lead), class: "group block relative overflow-hidden rounded-xl mb-2" do %>
-              <div class="relative h-44">
+            <%= link_to news_path(mobile_lead), class: "group block relative overflow-hidden rounded-2xl mb-3" do %>
+              <div class="relative h-52">
                 <% if mobile_lead.cover_image.attached? %>
                   <%= optimized_image_tag mobile_lead.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
                 <% else %>
                   <div class="w-full h-full gradient-brand-soft"></div>
                 <% end %>
                 <div class="absolute inset-0" style="background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)"></div>
-                <div class="absolute top-2.5 left-2.5">
-                  <span class="text-[9px] font-black px-2 py-0.5 rounded-md text-white/90 uppercase tracking-wider" style="background: <%= accent %>cc"><%= section[:category].display_name %></span>
+                <div class="absolute top-3 left-3">
+                  <span class="text-[9px] font-black px-2.5 py-1 rounded-lg text-white/90 uppercase tracking-wider" style="background: <%= accent %>cc"><%= section[:category].display_name %></span>
                 </div>
-                <div class="absolute bottom-0 left-0 right-0 p-3">
-                  <h3 class="text-[15px] font-black text-white line-clamp-2 leading-snug tracking-tight group-hover:text-orange-200 transition-colors"><%= mobile_lead.display_title %></h3>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                  <h3 class="text-[16px] font-black text-white line-clamp-2 leading-snug tracking-tight group-hover:text-orange-200 transition-colors"><%= mobile_lead.display_title %></h3>
                   <div class="flex items-center gap-1.5 mt-1.5">
-                    <span class="text-[10px] text-white/40"><%= mobile_lead.region&.display_name %></span>
-                    <span class="text-white/20">&middot;</span>
-                    <span class="text-[10px] text-white/30"><%= mobile_lead.published_at&.strftime("%d %b") %></span>
+                    <span class="text-[11px] text-white/50"><%= mobile_lead.region&.display_name %></span>
+                    <% if mobile_lead.published_at %>
+                      <span class="text-white/25">&middot;</span>
+                      <span class="text-[11px] text-white/35"><%= mobile_lead.published_at.strftime("%d %b") %></span>
+                    <% end %>
                   </div>
                 </div>
               </div>
             <% end %>
           <% end %>
           <% if section[:items].size > 1 %>
-            <div class="space-y-1">
+            <div class="space-y-2">
               <% section[:items].drop(1).each_with_index do |item, idx| %>
-                <%= link_to news_path(item), class: "group flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-50 transition-colors" do %>
-                  <span class="text-[13px] font-black w-4 text-center shrink-0" style="color: <%= accent %>88"><%= idx + 2 %></span>
-                  <div class="flex-1 min-w-0">
-                    <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
-                  </div>
-                  <div class="w-12 h-10 rounded-md overflow-hidden shrink-0">
+                <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-orange-200 hover:shadow-md transition-all" do %>
+                  <%# Bigger thumbnail on LEFT %>
+                  <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
                     <% if item.cover_image.attached? %>
                       <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
                     <% else %>
-                      <div class="w-full h-full gradient-brand-soft"></div>
+                      <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
+                        <span class="text-[11px] font-black" style="color: <%= accent %>55"><%= idx + 2 %></span>
+                      </div>
                     <% end %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-[14px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
+                    <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
+                      <span class="font-bold" style="color: <%= accent %>99"><%= idx + 2 %></span>
+                      <span class="text-gray-200">&middot;</span>
+                      <span class="truncate"><%= item.region&.display_name %></span>
+                      <% if item.published_at %>
+                        <span class="text-gray-200">&middot;</span>
+                        <span><%= item.published_at.strftime("%d %b") %></span>
+                      <% end %>
+                    </div>
                   </div>
                 <% end %>
               <% end %>

@@ -1,7 +1,7 @@
 <%# Locals: realtime (hash), reporting (hash) %>
 <%# Leaflet loaded here (not global layout) — only needed on homepage visitor map %>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <%
   total_users      = reporting&.dig(:total_users).to_i
   total_events     = reporting&.dig(:total_events).to_i

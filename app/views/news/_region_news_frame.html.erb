@@ -22,7 +22,7 @@
       <div class="space-y-2 sm:hidden">
         <% region_extra.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group news-list-row" do %>
-            <div class="w-24 h-20 rounded-xl overflow-hidden shrink-0">
+            <div class="w-36 h-28 rounded-xl overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
               <% else %>
@@ -44,7 +44,7 @@
       <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5">
         <% region_extra.each do |item| %>
           <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
-            <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
+            <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
               <% else %>
@@ -94,7 +94,7 @@
       <div class="hidden sm:grid sm:grid-cols-2 gap-3 lg:gap-5">
         <% latest_all.each do |item| %>
           <%= link_to news_path(item), class: "group flex gap-3 p-3 rounded-xl bg-white border border-gray-100 hover:border-orange-200 hover:shadow-md hover:shadow-orange-50 transition-all card-lift" do %>
-            <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
+            <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
               <% else %>

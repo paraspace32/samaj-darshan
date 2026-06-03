@@ -61,7 +61,7 @@
     <div class="story-stack mt-2">
       <% row1.each do |item| %>
         <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
-          <div class="w-full aspect-[4/3] overflow-hidden">
+          <div class="w-full aspect-[3/2] overflow-hidden">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
             <% else %>
@@ -113,7 +113,7 @@
       <div class="story-stack">
         <% mid_items.each do |item| %>
           <%= link_to commentable_path(item), class: "group story-card bg-orange-50/60 overflow-hidden" do %>
-            <div class="w-full aspect-[4/3] overflow-hidden">
+            <div class="w-full aspect-[3/2] overflow-hidden">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500", loading: "lazy" %>
               <% else %>

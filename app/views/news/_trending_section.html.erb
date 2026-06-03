@@ -18,7 +18,7 @@
     <% trend_hero = @trending.first %>
     <div class="sm:hidden">
       <%= link_to news_path(trend_hero), class: "group block relative overflow-hidden" do %>
-        <div class="relative h-48">
+        <div class="relative h-64">
           <% if trend_hero.cover_image.attached? %>
             <%= optimized_image_tag trend_hero.cover_image, variant: :card, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
           <% else %>

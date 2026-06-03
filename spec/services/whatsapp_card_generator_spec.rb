@@ -4,11 +4,11 @@ RSpec.describe WhatsappCardGenerator do
   let(:biodata) { create(:biodata, :published, full_name: "Rahul Sharma", full_name_hi: "राहुल शर्मा") }
 
   describe "#generate" do
-    context "when whatsapp_card is already attached" do
+    context "when whatsapp_card is already attached with current version" do
       before do
         biodata.whatsapp_card.attach(
           io: StringIO.new("fake-jpeg-data"),
-          filename: "biodata_card_#{biodata.id}.jpg",
+          filename: "biodata_card_#{biodata.id}_v#{WhatsappCardGenerator::TEMPLATE_VERSION}.jpg",
           content_type: "image/jpeg"
         )
       end
@@ -18,6 +18,28 @@ RSpec.describe WhatsappCardGenerator do
         expect(generator).not_to receive(:render_pdf)
         result = generator.generate(biodata)
         expect(result).to be_attached
+      end
+    end
+
+    context "when whatsapp_card is attached with an old version" do
+      before do
+        biodata.whatsapp_card.attach(
+          io: StringIO.new("fake-jpeg-data"),
+          filename: "biodata_card_#{biodata.id}_v1.jpg",
+          content_type: "image/jpeg"
+        )
+      end
+
+      it "purges old card and regenerates" do
+        generator = described_class.new
+        fake_pdf = "fake-pdf-binary"
+        fake_jpeg = "fake-jpeg-binary"
+        allow(generator).to receive(:render_pdf).with(biodata).and_return(fake_pdf)
+        allow(generator).to receive(:pdf_to_jpeg).with(fake_pdf).and_return(fake_jpeg)
+
+        result = generator.generate(biodata)
+        expect(result).to be_attached
+        expect(result.blob.filename.to_s).to include("_v#{WhatsappCardGenerator::TEMPLATE_VERSION}")
       end
     end
 
@@ -34,7 +56,9 @@ RSpec.describe WhatsappCardGenerator do
 
         expect(result).to be_attached
         expect(result.blob.content_type).to eq("image/jpeg")
-        expect(result.blob.filename.to_s).to eq("biodata_card_#{biodata.id}.jpg")
+        expect(result.blob.filename.to_s).to eq(
+          "biodata_card_#{biodata.id}_v#{WhatsappCardGenerator::TEMPLATE_VERSION}.jpg"
+        )
       end
     end
   end
@@ -43,7 +67,6 @@ RSpec.describe WhatsappCardGenerator do
     it "renders the whatsapp_card template as HTML" do
       generator = described_class.new
 
-      # Stub WickedPdf to avoid needing the actual binary
       fake_pdf = "fake-pdf-output"
       wicked_instance = instance_double(WickedPdf)
       allow(WickedPdf).to receive(:new).and_return(wicked_instance)
@@ -104,9 +127,9 @@ RSpec.describe WhatsappCardGenerator do
 
       generator.send(:render_pdf, biodata)
 
-      # Should have the avatar initial fallback, not a data URI
+      # Avatar initial "R" should appear, no data URI
       expect(wicked_instance).to have_received(:pdf_from_string).with(
-        a_string_matching(/font-size:72px.*R/m),
+        a_string_including(">R<"),
         anything
       )
     end
@@ -125,7 +148,10 @@ RSpec.describe WhatsappCardGenerator do
         height_cm: 175
       )
 
-      controller = ActionController::Base.new
+      controller = ApplicationController.new
+      controller.request = ActionDispatch::Request.new(
+        Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
+      )
       html = controller.render_to_string(
         template: "biodatas/whatsapp_card",
         layout: "whatsapp_card",
@@ -139,67 +165,28 @@ RSpec.describe WhatsappCardGenerator do
       expect(html).to include("samaj-darshan.com")
     end
 
-    it "shows caste when fewer other fields are present" do
-      biodata = create(:biodata, :published,
-        full_name: "Caste Person",
-        education: "B.Tech",
-        city: "Indore",
-        caste: "Agarwal",
-        height_cm: nil,
-        occupation: nil
+    it "renders correct card dimensions" do
+      controller = ApplicationController.new
+      controller.request = ActionDispatch::Request.new(
+        Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
       )
-
-      controller = ActionController::Base.new
       html = controller.render_to_string(
         template: "biodatas/whatsapp_card",
         layout: "whatsapp_card",
         assigns: { biodata: biodata, photo_data_uri: nil }
       )
 
-      # With only age, education, location, caste — caste fits in the 5-item limit
-      expect(html).to include("Agarwal")
-    end
-
-    it "renders fixed 540x720 card dimensions" do
-      controller = ActionController::Base.new
-      html = controller.render_to_string(
-        template: "biodatas/whatsapp_card",
-        layout: "whatsapp_card",
-        assigns: { biodata: biodata, photo_data_uri: nil }
-      )
-
-      expect(html).to include("width:540px")
-      expect(html).to include("height:720px")
-    end
-
-    it "limits details to 5 rows maximum" do
-      biodata = create(:biodata, :published,
-        full_name: "Full Details Person",
-        education: "PhD",
-        occupation: "Doctor",
-        city: "Mumbai",
-        state: "Maharashtra",
-        height_cm: 180,
-        caste: "Patel",
-        date_of_birth: 30.years.ago.to_date
-      )
-
-      controller = ActionController::Base.new
-      html = controller.render_to_string(
-        template: "biodatas/whatsapp_card",
-        layout: "whatsapp_card",
-        assigns: { biodata: biodata, photo_data_uri: nil }
-      )
-
-      # Count detail rows (each row has the label span with min-width:90px)
-      detail_rows = html.scan(/min-width:90px/).count
-      expect(detail_rows).to be <= 5
+      expect(html).to include("width:#{WhatsappCardGenerator::CARD_WIDTH}px")
+      expect(html).to include("height:#{WhatsappCardGenerator::CARD_HEIGHT}px")
     end
 
     it "renders photo data URI when provided" do
       fake_data_uri = "data:image/jpeg;base64,/9j/fakedata=="
 
-      controller = ActionController::Base.new
+      controller = ApplicationController.new
+      controller.request = ActionDispatch::Request.new(
+        Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
+      )
       html = controller.render_to_string(
         template: "biodatas/whatsapp_card",
         layout: "whatsapp_card",
@@ -210,7 +197,10 @@ RSpec.describe WhatsappCardGenerator do
     end
 
     it "renders avatar initial when no photo data URI" do
-      controller = ActionController::Base.new
+      controller = ApplicationController.new
+      controller.request = ActionDispatch::Request.new(
+        Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
+      )
       html = controller.render_to_string(
         template: "biodatas/whatsapp_card",
         layout: "whatsapp_card",
@@ -219,6 +209,29 @@ RSpec.describe WhatsappCardGenerator do
 
       expect(html).to include(biodata.avatar_initial)
       expect(html).not_to include("data:image")
+    end
+
+    it "shows caste in personal details" do
+      biodata = create(:biodata, :published,
+        full_name: "Caste Person",
+        education: "B.Tech",
+        city: "Indore",
+        caste: "Agarwal",
+        height_cm: nil,
+        occupation: nil
+      )
+
+      controller = ApplicationController.new
+      controller.request = ActionDispatch::Request.new(
+        Rack::MockRequest.env_for("https://www.samaj-darshan.com/biodatas/#{biodata.id}/whatsapp_card")
+      )
+      html = controller.render_to_string(
+        template: "biodatas/whatsapp_card",
+        layout: "whatsapp_card",
+        assigns: { biodata: biodata, photo_data_uri: nil }
+      )
+
+      expect(html).to include("Agarwal")
     end
   end
 end

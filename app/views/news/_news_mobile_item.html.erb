@@ -3,7 +3,7 @@
   <div class="animate-fade-in" style="animation-delay: <%= idx * 40 %>ms">
     <%= link_to news_path(news_item), class: "group news-list-row" do %>
       <%# Larger thumbnail — 96px wide, 80px tall %>
-      <div class="w-24 h-20 rounded-xl overflow-hidden shrink-0">
+      <div class="w-36 h-28 rounded-xl overflow-hidden shrink-0">
         <% if news_item.cover_image.attached? %>
           <%= optimized_image_tag news_item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
         <% else %>
@@ -14,7 +14,7 @@
       </div>
       <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
         <%# Bigger title — 3 lines allowed %>
-        <h2 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
+        <h2 class="text-[16px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-2"><%= news_item.display_title %></h2>
         <div class="flex items-center gap-2 text-[11.5px] text-gray-400 flex-wrap">
           <span class="font-bold text-orange-600 truncate max-w-[90px]"><%= news_item.category.display_name %></span>
           <% if news_item.region&.display_name.present? %>

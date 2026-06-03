@@ -29,7 +29,7 @@
           <div class="category-scroll -mx-4 px-4">
             <% section[:items].each_with_index do |item, idx| %>
               <%= link_to news_path(item), class: "group category-scroll-card" do %>
-                <div class="relative h-52">
+                <div class="relative h-64">
                   <% if item.cover_image.attached? %>
                     <%= optimized_image_tag item.cover_image, variant: :card, class: "w-full h-full object-cover", loading: "lazy" %>
                   <% else %>
@@ -78,7 +78,7 @@
               <% section[:items].drop(1).each_with_index do |item, idx| %>
                 <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-orange-200 hover:shadow-md transition-all" do %>
                   <%# Bigger thumbnail on LEFT %>
-                  <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
+                  <div class="w-28 h-24 rounded-lg overflow-hidden shrink-0">
                     <% if item.cover_image.attached? %>
                       <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
                     <% else %>
@@ -86,7 +86,7 @@
                     <% end %>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h3 class="text-[14px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
+                    <h3 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
                     <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
                       <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color:<%= accent %>"></span>
                       <span class="truncate"><%= item.region&.display_name %></span>

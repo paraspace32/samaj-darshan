@@ -179,36 +179,29 @@
     <% end %>
   </head>
 
-  <%# ── App loader — shows on initial load AND every Turbo navigation ── %>
+  <%# ── App loader — only on first open of the session ── %>
   <style>
     #app-loader {
       position: fixed; inset: 0; z-index: 9999;
       background: #7c2d12;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 20px;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
     #app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     #app-loader .brand { font-size: 28px; font-weight: 900; color: white; letter-spacing: -0.02em; }
     #app-loader .tagline { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 500; letter-spacing: 0.05em; }
-    #app-loader .bar-track {
-      width: 140px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 99px; overflow: hidden;
-    }
-    #app-loader .bar-fill {
-      height: 100%; width: 0%; background: #f97316; border-radius: 99px;
-    }
-    #app-loader.loading .bar-fill {
-      animation: loader-bar 1.5s ease-in-out forwards;
-    }
-    @keyframes loader-bar {
-      0%   { width: 0%; }
-      30%  { width: 55%; }
-      60%  { width: 75%; }
-      85%  { width: 90%; }
-      100% { width: 95%; }
-    }
+    #app-loader .bar-track { width: 140px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 99px; overflow: hidden; }
+    #app-loader .bar-fill { height: 100%; background: #f97316; border-radius: 99px; animation: loader-bar 1.4s ease-in-out forwards; }
+    @keyframes loader-bar { 0% { width:0% } 40% { width:60% } 75% { width:82% } 100% { width:95% } }
   </style>
-  <div id="app-loader" class="loading">
+  <script>
+    // Hide loader immediately if already seen this session (Turbo re-injects body on every nav)
+    if (sessionStorage.getItem('app_loaded')) {
+      document.write('<style>#app-loader{display:none!important}<\/style>');
+    }
+  </script>
+  <div id="app-loader">
     <div class="brand"><%= t("brand.short_name") %></div>
     <div class="bar-track"><div class="bar-fill"></div></div>
     <div class="tagline"><%= t("brand.tagline") %></div>
@@ -216,16 +209,17 @@
   <script>
     (function() {
       var loader = document.getElementById('app-loader');
-      // Only show on first app open — hide once DOM is ready
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          if (loader) loader.classList.add('hidden');
-        }, 300);
-      }, { once: true });
-      // Safety fallback
-      setTimeout(function() {
+      function hideLoader() {
         if (loader) loader.classList.add('hidden');
-      }, 3000);
+        sessionStorage.setItem('app_loaded', '1');
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(hideLoader, 350);
+      }, { once: true });
+      // turbo:load fires on every Turbo nav — hide immediately on subsequent pages
+      document.addEventListener('turbo:load', hideLoader);
+      // Safety fallback
+      setTimeout(hideLoader, 3000);
     })();
   </script>
 

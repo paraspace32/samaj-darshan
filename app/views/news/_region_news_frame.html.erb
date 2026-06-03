@@ -34,8 +34,7 @@
             <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
               <h3 class="text-[15px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-3 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
               <div class="flex items-center gap-1.5 text-[11.5px] text-gray-400">
-                <span class="font-black text-orange-500/60"><%= idx + 1 %></span>
-                <span class="text-gray-200">&middot;</span>
+                <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-orange-400"></span>
                 <span><%= item.region&.display_name %></span>
               </div>
             </div>
@@ -76,7 +75,6 @@
       <div class="space-y-1.5 sm:hidden">
         <% latest_all.each_with_index do |item, idx| %>
           <%= link_to news_path(item), class: "group flex items-center gap-2.5 p-2 rounded-lg bg-white border border-gray-50 hover:border-orange-200 hover:shadow-sm transition-all" do %>
-            <span class="text-[15px] font-black text-orange-400/70 w-5 text-center shrink-0"><%= idx + 1 %></span>
             <div class="w-16 h-14 rounded-lg overflow-hidden shrink-0">
               <% if item.cover_image.attached? %>
                 <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>

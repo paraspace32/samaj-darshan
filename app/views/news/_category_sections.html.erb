@@ -88,16 +88,13 @@
                     <% if item.cover_image.attached? %>
                       <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover", loading: "lazy" %>
                     <% else %>
-                      <div class="w-full h-full gradient-brand-soft flex items-center justify-center">
-                        <span class="text-[11px] font-black" style="color: <%= accent %>55"><%= idx + 2 %></span>
-                      </div>
+                      <div class="w-full h-full gradient-brand-soft"></div>
                     <% end %>
                   </div>
                   <div class="flex-1 min-w-0">
                     <h3 class="text-[14px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight mb-1"><%= item.display_title %></h3>
                     <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
-                      <span class="font-bold" style="color: <%= accent %>99"><%= idx + 2 %></span>
-                      <span class="text-gray-200">&middot;</span>
+                      <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color:<%= accent %>"></span>
                       <span class="truncate"><%= item.region&.display_name %></span>
                       <% if item.published_at %>
                         <span class="text-gray-200">&middot;</span>
@@ -143,7 +140,6 @@
               <div class="flex-1 min-w-0 flex flex-col gap-0.5 <%= sec_idx.odd? ? 'order-1' : '' %>">
                 <% rest.each_with_index do |item, idx| %>
                   <%= link_to news_path(item), class: "group flex items-center gap-3 p-2.5 rounded-lg hover:bg-orange-50/60 transition-colors" do %>
-                    <span class="text-lg font-black w-6 text-center shrink-0" style="color: <%= accent %><%= idx < 3 ? '66' : '33' %>"><%= idx + 2 %></span>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-[13px] font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug tracking-tight"><%= item.display_title %></h3>
                       <span class="text-[11px] text-gray-400 mt-0.5"><%= item.region&.display_name %> &middot; <%= item.published_at&.strftime("%d %b") %></span>

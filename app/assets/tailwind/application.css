@@ -704,6 +704,7 @@
   /* ── Compact list card (mobile news row) ─────────────── */
   .news-list-row {
     display: flex;
+    align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 0.75rem 0.75rem 0.625rem;
     border-radius: 0.75rem;

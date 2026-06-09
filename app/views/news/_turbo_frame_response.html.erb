@@ -15,7 +15,7 @@
     <div class="space-y-2 mb-4">
       <% @news_items.first(8).each do |item| %>
         <%= link_to news_path(item), class: "group news-list-row" do %>
-          <div class="self-stretch overflow-hidden shrink-0" style="min-width:7.5rem; margin-left:-0.5rem; margin-top:-0.75rem; margin-bottom:-0.75rem;">
+          <div class="self-stretch overflow-hidden shrink-0" style="width:7.5rem; margin-left:-0.5rem; margin-top:-0.75rem; margin-bottom:-0.75rem;">
             <% if item.cover_image.attached? %>
               <%= optimized_image_tag item.cover_image, variant: :thumb, class: "w-full h-full object-cover img-zoom", loading: "lazy" %>
             <% else %>

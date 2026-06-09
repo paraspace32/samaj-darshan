@@ -12,7 +12,7 @@ class News < ApplicationRecord
   has_one_attached :cover_image do |attachable|
     attachable.variant :hero,     resize_to_fill: [ 1600, 900 ],  format: :webp, saver: { quality: 85 }
     attachable.variant :card,     resize_to_limit: [ 800, 450 ],   format: :webp, saver: { quality: 80 }
-    attachable.variant :thumb,    resize_to_limit: [ 200, 140 ],   format: :webp, saver: { quality: 75 }
+    attachable.variant :thumb,    resize_to_fill: [ 360, 290 ],    format: :webp, saver: { quality: 82 }
     attachable.variant :carousel, resize_to_limit: [ 1600, 1000 ], format: :webp, saver: { quality: 85 }
     attachable.variant :og,       resize_to_fill: [ 1200, 800 ],   format: :jpeg, saver: { quality: 80 }
   end

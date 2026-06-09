@@ -730,7 +730,7 @@
   .news-list-row {
     display: flex;
     align-items: stretch;
-    height: 7.5rem;
+    height: 9rem;
     overflow: hidden;
     gap: 0.875rem;
     padding: 0.75rem 0.75rem 0.75rem 0.5rem;

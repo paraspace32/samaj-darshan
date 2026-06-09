@@ -4,7 +4,7 @@
     {
       "name": "rails",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd /Users/paras/samaj_darshan/.claude/worktrees/lucid-perlman-b97561 && BUNDLE_GEMFILE=/Users/paras/samaj_darshan/Gemfile bundle exec rails server -p 3000"],
+      "runtimeArgs": ["-c", "cd /Users/paras/samaj_darshan && bin/rails server -p 3000"],
       "port": 3000
     }
   ]

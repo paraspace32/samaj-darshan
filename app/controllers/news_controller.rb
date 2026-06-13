@@ -35,19 +35,23 @@ class NewsController < ApplicationController
                              .with_attached_cover_image.includes(:author).limit(5)
 
       # ── Hero + Side stack: latest 10 across News, Education, Job ─────────
-      # Combine latest news with hero-eligible education/job posts,
-      # sort by published_at, and pick the top items for the hero area.
-      hero_candidates = News.published.with_attached_cover_image
+      # Combine latest news with hero-eligible education/job posts.
+      # Hero-eligible non-news items are always pinned to the front so that
+      # an admin-selected job/education post always appears as the featured hero,
+      # regardless of how recently news articles were published.
+      news_candidates = News.published.with_attached_cover_image
                             .includes(:region, :category, :author)
                             .order(published_at: :desc).limit(10).to_a
 
-      hero_candidates += EducationPost.hero_eligible.includes(:author)
-                                      .order(published_at: :desc).limit(10).to_a
-
-      hero_candidates += JobPost.hero_eligible.includes(:author)
+      edu_heroes = EducationPost.hero_eligible.includes(:author)
                                 .order(published_at: :desc).limit(10).to_a
 
-      hero_candidates.sort_by! { |item| -(item.published_at&.to_i || 0) }
+      job_heroes = JobPost.hero_eligible.includes(:author)
+                          .order(published_at: :desc).limit(10).to_a
+
+      # Pinned heroes (education + job) always come first; news fills the rest
+      pinned = (edu_heroes + job_heroes).sort_by { |item| -(item.published_at&.to_i || 0) }
+      hero_candidates = pinned + news_candidates.sort_by { |item| -(item.published_at&.to_i || 0) }
       hero_candidates = hero_candidates.first(12)
 
       @featured = hero_candidates.first
